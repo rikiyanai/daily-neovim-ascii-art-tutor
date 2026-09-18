@@ -315,6 +315,19 @@ def pick_drill(drills, tiers, progress, total_drills):
 # lesson - render the buffer the drill is performed in
 # =========================================================================
 
+def _wrap(text, width):
+    out, line = [], ""
+    for word in text.split():
+        if len(line) + len(word) + 1 > width:
+            out.append(line)
+            line = word
+        else:
+            line = (line + " " + word).strip()
+    if line:
+        out.append(line)
+    return out or [""]
+
+
 def region_lines(drill):
     return list(drill["start"])
 
@@ -335,6 +348,11 @@ def write_lesson(path, drill, concept, progress_line):
         "",
         "=== WHAT THIS DRILL BUYS YOU " + "=" * 43,
         "  " + drill.get("buys", ""),
+        "",
+        "=== WHERE THIS SHAPE COMES FROM " + "=" * 40,
+    ]
+    body += ["  " + l for l in _wrap(drill.get("source", "unsourced"), 72)]
+    body += [
         "",
         "=== DO THIS " + "=" * 60,
     ]

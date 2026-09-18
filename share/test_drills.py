@@ -24,6 +24,33 @@ def to_bytes(specstr):
             out += t.encode()
     return out
 
+# The glyph alphabet, from the ascii-art-authoring skill sections 4.1 and 4.2 and
+# the Stone Story tutorial plate 03. A drill whose art uses a glyph outside this
+# set is a sourcing bug: schema v1 shipped `*` (not in any row) and `#`, which is
+# the TRANSPARENCY character, used as ink.
+BASIC     = set("`~!^()-_+=;:'\",.\\/|<>[]{}")
+EXTENDED  = set("\u00b4\u203e\u00a1\u00b7")
+ALNUM     = set("oOvVTL7UcCxX")
+BOXDRAW   = set("\u2500\u2502\u250c\u2510\u2514\u2518\u252c\u2534\u251c\u2524\u253c"
+                "\u2550\u2555\u2552\u255b\u2558\u2564\u2565\u2568")
+PLATE_OBS = set("\u221e\u00af")   # observed in the plates: the adept's staff, and the
+                                   # macron the author typed for the overscore
+ALLOWED = BASIC | EXTENDED | ALNUM | BOXDRAW | PLATE_OBS | {" "}
+
+
+def glyph_violations(d):
+    if d.get("labels"):          # buffer carries deliberate prose labels
+        return []
+    bad = []
+    for line in d["start"] + d["target"]:
+        # TODO is the edit placeholder the drill replaces; it is never art, and
+        # it can sit inside a shape (drill `pairs` starts as "(TODO)").
+        for ch in line.replace("TODO", ""):
+            if ch not in ALLOWED:
+                bad.append(ch)
+    return sorted(set(bad))
+
+
 USE_REAL_CONFIG = "--real" in sys.argv
 cur = gate.load_curriculum()
 fails = []
@@ -52,7 +79,12 @@ for d in cur["drills"]:
         "PASS" if ok else "FAIL", d["title"], d["expected"],
         "" if ok else "  got=%r want=%r" % (region, d["target"]),
         "" if rt_ok else "   [keylog roundtrip differs: %r]" % (rt,)))
-    if not ok:
+    bad = glyph_violations(d)
+    if bad:
+        print("     GLYPH VIOLATION in %s: %r not in the alphabet" % (d["id"], bad))
+    if not d.get("source"):
+        print("     UNSOURCED: %s has no source field" % d["id"])
+    if not ok or bad or not d.get("source"):
         fails.append(d["id"])
 print("\n%d/%d drills passable (config=%s)" % (
     len(cur["drills"]) - len(fails), len(cur["drills"]), "real" if USE_REAL_CONFIG else "none"))

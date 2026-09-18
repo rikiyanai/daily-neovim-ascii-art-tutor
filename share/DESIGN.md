@@ -62,6 +62,43 @@ are full of backslashes and quotes, and hand-escaping them into JSON is exactly
 the bug class that broke drill 2 on 2026-09-14. Regenerate, then re-run
 `test_drills.py --real`.
 
+## The sourcing rule
+
+Added 2026-09-18 after an audit of schema v1. Every drill carries a `source`
+field naming where its shape comes from: a plate from the Stone Story tutorial
+page, or a numbered rule in the ascii-art-authoring skill. The lesson prints it.
+
+v1 failed this completely. All sixteen drills were invented fragments, and the
+audit found three distinct problems:
+
+| problem | drills | detail |
+|---|---|---|
+| unsourced | 16 of 16 | no drill's shape came from anywhere |
+| glyph outside the alphabet | `subtractive erase` | `*` is in no row of the alphabet |
+| transparency char used as ink | `playback order` | `#` is the transparency glyph (skill §7.6) |
+| alphanumeric scatter | `shadow pattern`, `ringed frames`, `spine joint` | skill §4.3 rules 3-4: one alphanumeric, placed where you want the reader to look |
+
+Two things v1 got right and v2 keeps: `+` and `=` ARE in the basic alphabet row,
+so `+---+` was legal, just unsourced; and `'` is a legal glyph, it is simply not
+the same glyph as `´`.
+
+`test_drills.py` now enforces both gates: a drill with no `source`, or with a
+glyph outside `BASIC | EXTENDED | ALNUM | BOXDRAW | PLATE_OBS`, fails the suite.
+
+`PLATE_OBS` holds two glyphs the author demonstrably typed that the skill's
+alphabet table does not list: `∞` (the Poison Adept's staff) and `¯` U+00AF,
+which he used where the alphabet specifies `‾` U+203E. The plate is the evidence
+of what was actually typed, so the validator admits both.
+
+## Typing versus operating
+
+Extended glyphs (`´ ‾ ¡ ·`) are never typed in a drill. They are not on a US
+keyboard, and demanding Option-e mid-drill would be pointless. Drills either
+use ASCII-only runs, or they OPERATE on art that already contains the glyph —
+yank it, copy the row, move the block, delete the column. The `symbol table`
+drill teaches the real workaround: keep a strip of the alphabet in the file and
+yank from it, which is the authoring method's own rule (skill §1.7).
+
 ## Vendorable pieces
 
 Three sections of the runner are self-contained and can be lifted out:
