@@ -1,10 +1,11 @@
 {
- "schema": "vim-daily/curriculum@2",
+ "schema": "vim-daily/curriculum@3",
  "generated": "2026-09-18",
  "provenance": {
-  "concepts": "Framing follows the paradigm-first style of blog.codeminer42.com 'A Noob's Neovim Journey Pt.1' (2024-10-23).",
-  "drill_shape": "concept -> skill -> source -> recipe -> challenge -> mastery counter, the structure used by Vim Hero and vim-adventures lesson trees. The fields are deliberately generic so an external curriculum can be imported into this shape without touching the runner.",
-  "art": "Every drill cites a source in its `source` field: a plate from the Stone Story RPG ASCII tutorial page by Gabriel Santos (Martian Rex, Inc.), or a numbered rule in the ascii-art-authoring skill. Plate excerpts are at most six rows and are used as practice material. Schema v1 invented all sixteen shapes and is retained in git history as a counter-example."
+  "concepts": "share/concepts.json. Framing follows the paradigm-first style of blog.codeminer42.com 'A Noob's Neovim Journey Pt.1' (2024-10-23).",
+  "spine": "The `tutor` field on each drill names the vimtutor lesson node it covers. vimtutor ships with vim and neovim ($VIMRUNTIME/tutor/en/); its lesson SEQUENCE is used as the curriculum spine. No vimtutor text is copied.",
+  "drill_shape": "concept -> skill -> source -> recipe -> challenge -> mastery counter, the structure used by Vim Hero and vim-adventures lesson trees.",
+  "art": "share/art.json, extracted byte-exact from the Stone Story RPG ASCII tutorial plates by share/extract_art.py. Every drill's `source` field names the plate or the numbered rule in the ascii-art-authoring skill that it comes from."
  },
  "tiers": {
   "1": {
@@ -14,7 +15,7 @@
    "unlock_at": 8
   },
   "3": {
-   "unlock_at": 10
+   "unlock_at": 16
   }
  },
  "concepts": {
@@ -49,19 +50,365 @@
  },
  "drills": [
   {
+   "id": "move-x",
+   "title": "spark, one cell",
+   "skill": "move the cursor, delete a character",
+   "concept": "modes",
+   "tier": 1,
+   "tutor": "vim-01 1.1 / 1.3",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    ".",
+    "·",
+    "╨"
+   ],
+   "target": [
+    ".",
+    "╨"
+   ],
+   "recipe": [
+    [
+     "j",
+     "move down one line"
+    ],
+    [
+     "dd",
+     "delete that whole line"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "jdd:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 4 The particle layer is a one-cell animation.",
+   "keys": [
+    "h j k l   left down up right, without leaving the home row",
+    "dd  delete a line     x  delete a character     u  undo"
+   ],
+   "buys": "The home-row four. Every motion you learn later replaces these.",
+   "labels": false,
+   "seconds": 23
+  },
+  {
+   "id": "delete-word",
+   "title": "trim the alphabet",
+   "skill": "delete a word",
+   "concept": "grammar",
+   "tier": 1,
+   "tutor": "vim-01 2.1",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "´ ‾ ¡ ·"
+   ],
+   "target": [
+    "‾ ¡ ·"
+   ],
+   "recipe": [
+    [
+     "dw",
+     "delete the word under the cursor, and the space after it"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "dw:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03 section 5, the four extended glyphs",
+   "keys": [
+    "dw   delete a word        de   delete to the end of the word",
+    "d$   delete to end of line   dd   delete the line"
+   ],
+   "buys": "The first verb+noun sentence: delete, a word.",
+   "labels": true,
+   "seconds": 20
+  },
+  {
+   "id": "delete-eol",
+   "title": "cut the label",
+   "skill": "delete to end of line",
+   "concept": "grammar",
+   "tier": 1,
+   "tutor": "vim-01 2.2",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "(   '   )    Line"
+   ],
+   "target": [
+    "(   '   )"
+   ],
+   "recipe": [
+    [
+     "$",
+     "jump to the end of the line"
+    ],
+    [
+     "F ",
+     "back to the space before the label"
+    ],
+    [
+     "D",
+     "delete from here to the end of the line"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "$F D:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Line style The plate labels the style beside the art.",
+   "keys": [
+    "D = d$   delete to end of line      C = c$   change to end of line",
+    "F<char>  find backwards on this line"
+   ],
+   "buys": "Stripping a label off a line without counting characters.",
+   "labels": true,
+   "seconds": 26
+  },
+  {
+   "id": "count-motion",
+   "title": "two runs on",
+   "skill": "use a count with a motion",
+   "concept": "grammar",
+   "tier": 1,
+   "tutor": "vim-01 2.4",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "_.-´ _.-´ _.-´"
+   ],
+   "target": [
+    "_.-´"
+   ],
+   "recipe": [
+    [
+     "d2W",
+     "delete two WORDS. Capital W, and here is why:"
+    ],
+    [
+     "",
+     "w stops at every punctuation mark, and line art is all punctuation."
+    ],
+    [
+     "",
+     "W is whitespace-delimited, so one run is one W."
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "d2W:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the classic _.-´ stair-step Three copies of the stair-step run.",
+   "keys": [
+    "w  next word, stopping at punctuation     W  next whitespace-delimited WORD",
+    "b B  backwards        e E  end of word",
+    "d2W  delete two runs                      3dd  delete three lines",
+    "For prose, w. For art, W: `_.-´` is four words to w and one WORD to W."
+   ],
+   "buys": "The w/W distinction, on material where it actually bites.",
+   "labels": false,
+   "seconds": 23
+  },
+  {
+   "id": "delete-line",
+   "title": "drop a frame",
+   "skill": "delete whole lines",
+   "concept": "lines-and-blocks",
+   "tier": 1,
+   "tutor": "vim-01 2.6",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "          ./\\",
+    "         ____",
+    "       .─────.",
+    "      ________",
+    "    .─────────."
+   ],
+   "target": [
+    "          ./\\",
+    "         ____",
+    "      ________",
+    "    .─────────."
+   ],
+   "recipe": [
+    [
+     "2j",
+     "move down to the third frame's apex"
+    ],
+    [
+     "dd",
+     "delete that line"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "2jdd:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06, apex rows of pyramid frames 1 to 5",
+   "keys": [
+    "dd   delete a line      3dd  delete three lines      D  delete to end of line"
+   ],
+   "buys": "Frames are lines. Dropping one is one command.",
+   "labels": false,
+   "seconds": 26
+  },
+  {
+   "id": "undo",
+   "title": "delete, then think again",
+   "skill": "the undo command",
+   "concept": "repeat",
+   "tier": 1,
+   "tutor": "vim-01 2.7",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "          ./\\",
+    "         ____",
+    "       .─────.",
+    "      ________",
+    "    .─────────."
+   ],
+   "target": [
+    "         ____",
+    "       .─────.",
+    "      ________",
+    "    .─────────."
+   ],
+   "recipe": [
+    [
+     "dd",
+     "delete the first apex"
+    ],
+    [
+     "u",
+     "undo it. The line comes back."
+    ],
+    [
+     "<C-r>",
+     "redo it. Ctrl and r. The line goes away again."
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "ddu<C-r>:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06, apex rows of pyramid frames 1 to 5",
+   "keys": [
+    "u      undo the last change        <C-r>  redo",
+    "U      undo every change on this line",
+    "Undo is cheap. That is what makes guessing a command a reasonable move."
+   ],
+   "buys": "Nothing you try in normal mode costs more than one keystroke to take back.",
+   "labels": false,
+   "seconds": 26
+  },
+  {
+   "id": "put",
+   "title": "stamp a spark",
+   "skill": "the put command",
+   "concept": "lines-and-blocks",
+   "tier": 1,
+   "tutor": "vim-01 3.1",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "'",
+    "╨"
+   ],
+   "target": [
+    "'",
+    "╨",
+    "'"
+   ],
+   "recipe": [
+    [
+     "yy",
+     "yank this line"
+    ],
+    [
+     "G",
+     "jump to the last line"
+    ],
+    [
+     "p",
+     "put the yanked line below it"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "yyGp:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 1",
+   "keys": [
+    "yy  yank a line    p  put below    P  put above    3p  put three copies"
+   ],
+   "buys": "Copy and paste, without a clipboard or a mouse.",
+   "labels": false,
+   "seconds": 26
+  },
+  {
+   "id": "replace-char",
+   "title": "raise the joint",
+   "skill": "the replace command",
+   "concept": "motion-precision",
+   "tier": 1,
+   "tutor": "vim-01 3.2",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "|--.--|"
+   ],
+   "target": [
+    "|--:--|"
+   ],
+   "recipe": [
+    [
+     "3l",
+     "move onto the joint glyph"
+    ],
+    [
+     "r:",
+     "replace exactly that one character"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "3lr::wq<CR>",
+   "source": "skill §4.6 rule 5: a joint glyph sits differently in its cell. `.` sits too low, `'` sits too high, `:` sits in the middle.",
+   "keys": [
+    "r<char>  replace one character, staying in normal mode",
+    "3rx      replace the next three          R  overwrite until <Esc>"
+   ],
+   "buys": "One glyph, one key, no mode change.",
+   "labels": false,
+   "seconds": 26
+  },
+  {
    "id": "change-word",
    "title": "stair-step run",
    "skill": "change a word in place",
    "concept": "modes",
    "tier": 1,
-   "seconds": 40,
+   "tutor": "vim-01 3.3",
+   "kind": "block",
+   "cursor": "^",
    "start": [
     "TODO"
    ],
    "target": [
     "_.--._"
    ],
-   "source": "skill §4.7 drills 1-2: type the stair-step run, then type it mirrored. Plated as `_.-´` in Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) §6.",
    "recipe": [
     [
      "cw",
@@ -81,30 +428,31 @@
     ]
    ],
    "expected": "cw_.--._<Esc>:wq<CR>",
+   "source": "skill §4.7 drills 1-2: type the stair-step run, then type it mirrored. Plated as `_.-´` in the Lines & Materials section.",
    "keys": [
-    "cw    change to end of word        ciw   change the word, cursor anywhere in it",
-    "caw   change word AND its space    C     change to end of line",
-    "The plate writes the rise as _ . - ´ . The last glyph is an acute accent,",
-    "not an apostrophe. The `symbol table` drill teaches how to get it."
+    "cw   change to end of word      ciw  change the word from anywhere in it",
+    "The plate writes the rise as _ . - ´ . That last glyph is an acute accent,",
+    "not an apostrophe. The `symbol table` drill shows how to get it."
    ],
-   "buys": "The verb+noun sentence, on the one run you will type more than any other.",
-   "cursor": "^",
-   "kind": "block"
+   "buys": "The verb+noun sentence, on the run you will type more than any other.",
+   "labels": false,
+   "seconds": 41
   },
   {
-   "id": "end-of-line",
+   "id": "change-eol",
    "title": "shallowest gradient",
-   "skill": "operate to end of line",
+   "skill": "change to end of line",
    "concept": "grammar",
    "tier": 1,
-   "seconds": 40,
+   "tutor": "vim-01 3.4",
+   "kind": "block",
+   "cursor": "^",
    "start": [
     "TODO"
    ],
    "target": [
     ",.,.,.,."
    ],
-   "source": "skill §4.4: `,` and `.` runs are the shallowest gradient available.",
    "recipe": [
     [
      "C",
@@ -124,208 +472,78 @@
     ]
    ],
    "expected": "C,.,.,.,.<Esc>ZZ",
+   "source": "skill §4.4: `,` and `.` runs give the shallowest gradient available.",
    "keys": [
-    "C   = c$  change to end of line      D   = d$  delete to end of line",
-    "A     append at end of line          I     insert before first non-blank",
-    "0     start of line   ^  first non-blank   $  end of line",
-    "ZZ    save and quit                  ZQ    quit without saving"
+    "C = c$  change to end of line      A  append at end of line",
+    "0  start of line   ^  first non-blank   $  end of line",
+    "ZZ save and quit                   ZQ quit without saving"
    ],
-   "buys": "The shorthand verbs. C, D, A and I are each a contraction of a sentence.",
-   "cursor": "^",
-   "kind": "block"
+   "buys": "The shorthand verbs: each is a contraction of a whole sentence.",
+   "labels": false,
+   "seconds": 38
   },
   {
-   "id": "counted-insert",
-   "title": "fence pattern",
-   "skill": "counted insert",
-   "concept": "repeat",
-   "tier": 1,
-   "seconds": 55,
-   "start": [
-    "TODO"
-   ],
-   "target": [
-    "xxxxxx"
-   ],
-   "source": "skill §4.3 rule 8: use `x` for patterns such as a fence or a grater, never for lines. It is one of the twelve whitelisted alphanumerics.",
-   "recipe": [
-    [
-     "cwx<Esc>",
-     "change the word to a single x"
-    ],
-    [
-     "5ax<Esc>",
-     "append x five more times. The 5 repeats the whole insert."
-    ],
-    [
-     ":wq",
-     "save and quit"
-    ]
-   ],
-   "expected": "cwx<Esc>5ax<Esc>:wq<CR>",
-   "keys": [
-    "3a-<Esc>   appends ---           5i*<Esc>   inserts *****",
-    ".          repeat last change    u   undo       <C-r>  redo",
-    "Counts work on nearly everything: 3dd, 2yy, 4j, d3w",
-    "Alphanumerics are gaze anchors. Use them for texture, or for an eye."
-   ],
-   "buys": "A count turns one insert into a run. This is how texture gets typed.",
-   "cursor": "^",
-   "kind": "block"
-  },
-  {
-   "id": "counts",
-   "title": "trough",
-   "skill": "counts instead of key-mashing",
-   "concept": "grammar",
-   "tier": 1,
-   "seconds": 50,
-   "start": [
-    "TODO"
-   ],
-   "target": [
-    "\\______/"
-   ],
-   "source": "skill §4.4: `/` and `\\` runs are the natural 60° diagonal, and a `_` run is the floor between them.",
-   "recipe": [
-    [
-     "cw\\<Esc>",
-     "change the word to a single backslash"
-    ],
-    [
-     "6a_<Esc>",
-     "append the floor six times. Do NOT press _ six times."
-    ],
-    [
-     "a/<Esc>",
-     "append the closing diagonal"
-    ],
-    [
-     ":wq",
-     "save and quit"
-    ]
-   ],
-   "expected": "cw\\<Esc>6a_<Esc>a/<Esc>:wq<CR>",
-   "keys": [
-    "3a-<Esc>   append --- after cursor     3i-<Esc>   insert --- before cursor",
-    "r<char>    replace exactly one char    R          overwrite mode",
-    "One angle has several material renderings. Choose by material, not angle."
-   ],
-   "buys": "Saying how many, once, instead of saying it again and again.",
-   "cursor": "^",
-   "kind": "block"
-  },
-  {
-   "id": "find-char",
-   "title": "dither band",
-   "skill": "find-character motions",
+   "id": "search",
+   "title": "find the anchor",
+   "skill": "the search command",
    "concept": "motion-precision",
    "tier": 1,
-   "seconds": 60,
+   "tutor": "vim-01 4.2",
+   "kind": "block",
+   "cursor": "^",
    "start": [
-    "TODO"
+    "`::::::.:.'.'.'.'.'.'.'. .'.´",
+    "  `':;:::::.:.'.'.'.'.'.'·´",
+    "      `'::;;;;;;;:·:'·'´"
    ],
    "target": [
-    ".:.:.:.:"
+    "`::::::.:.'.'.'.'.'.'.'. .'.´",
+    "      `'::;;;;;;;:·:'·'´"
    ],
-   "source": "skill §8: build a shading band by alternating two glyphs.",
    "recipe": [
     [
-     "cw",
-     "change the word under the cursor"
+     "/`",
+     "search for the backtick"
     ],
     [
-     ".:.:.:.:",
-     "alternate the two glyphs of the band"
+     "<CR>",
+     "run the search"
     ],
     [
-     "<Esc>",
-     "leave insert mode"
-    ],
-    [
-     "0",
-     "jump to the start of the line"
-    ],
-    [
-     "f:",
-     "jump to the first colon, then press ; ; to hop the rest"
+     "dd",
+     "delete the line it landed on"
     ],
     [
      ":wq",
      "save and quit"
     ]
    ],
-   "expected": "cw.:.:.:.:<Esc>0f:;;:wq<CR>",
+   "expected": "/`<CR>dd:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 10, the dithered sphere, lower band",
    "keys": [
-    "f:    find next : on this line     F:    find previous :",
-    "t:    stop just BEFORE the next :  ;     repeat the find forward",
-    ",     repeat the find backward     df:   delete up to and including next :"
+    "/text  search forward    ?text  search backward",
+    "n      next match        N      previous match",
+    "<C-o>  jump back to where you were      <C-i>  jump forward again"
    ],
-   "buys": "Travelling by landmark instead of by counting cells.",
-   "cursor": "^",
-   "kind": "block"
+   "buys": "Finding a cell by what is in it, not by counting to it.",
+   "labels": false,
+   "seconds": 29
   },
   {
-   "id": "dot",
-   "title": "lighten the band",
-   "skill": "the dot command",
-   "concept": "repeat",
-   "tier": 1,
-   "seconds": 60,
-   "start": [
-    "::::::::"
-   ],
-   "target": [
-    ".:.:.:.:"
-   ],
-   "source": "skill §8 rule 2: lighten a band by ERASING members of it, not by swapping to a lighter glyph.",
-   "recipe": [
-    [
-     "r.",
-     "replace this colon with a period"
-    ],
-    [
-     "2l",
-     "skip one cell"
-    ],
-    [
-     ".",
-     "the dot key repeats r. at the new cursor"
-    ],
-    [
-     "2l .",
-     "and again"
-    ],
-    [
-     "2l .",
-     "and once more, then :wq"
-    ]
-   ],
-   "expected": "r.2l.2l.2l.:wq<CR>",
-   "keys": [
-    ".     repeat the last change        3.    repeat it three times",
-    "u     undo                          <C-r>  redo",
-    "The dot repeats the last INSERT or OPERATOR, not motions and not : commands.",
-    "Habit: keep edits small and repeatable, and let dot do the volume."
-   ],
-   "buys": "The single highest-leverage key on the board.",
-   "cursor": "^",
-   "kind": "block"
-  },
-  {
-   "id": "pairs",
-   "title": "line-style lamp",
-   "skill": "matching pairs and text objects",
+   "id": "match-paren",
+   "title": "check the pair",
+   "skill": "matching parentheses",
    "concept": "text-objects",
    "tier": 1,
-   "seconds": 55,
+   "tutor": "vim-01 4.3",
+   "kind": "block",
+   "cursor": "^",
    "start": [
     "(TODO)"
    ],
    "target": [
     "(   '   )"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) §3, the Line style plate. This is the lamp's body row, under `(   '   )`.",
    "recipe": [
     [
      "ci(",
@@ -341,7 +559,7 @@
     ],
     [
      "%",
-     "bounce between the matching brackets to check the pair"
+     "bounce between the brackets to check the pair"
     ],
     [
      ":wq",
@@ -349,15 +567,657 @@
     ]
    ],
    "expected": "ci(   '   <Esc>%:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Line style This is the lamp's body row.",
    "keys": [
-    "ci(    change inside ( )          ca(    change ( ) as well",
-    "di\"    delete inside quotes       yi[    yank inside brackets",
-    "%      jump between matching ( ) [ ] { }",
-    "The cursor may sit anywhere inside the object. No navigation needed."
+    "%    jump between matching ( ) [ ] { }",
+    "ci(  change inside parens     ca(  change the parens as well",
+    "The cursor may sit anywhere inside the object."
    ],
-   "buys": "i = inner, a = around. One mnemonic, one hundred commands.",
+   "buys": "i = inner, a = around. One mnemonic, a hundred commands.",
+   "labels": false,
+   "seconds": 50
+  },
+  {
+   "id": "substitute",
+   "title": "swap one glyph",
+   "skill": "the substitute command",
+   "concept": "registers-and-ranges",
+   "tier": 1,
+   "tutor": "vim-01 4.4",
+   "kind": "block",
    "cursor": "^",
-   "kind": "block"
+   "start": [
+    "|--.--|"
+   ],
+   "target": [
+    "|--:--|"
+   ],
+   "recipe": [
+    [
+     ":s/./:/",
+     "substitute, but the dot means `any character` in a pattern"
+    ],
+    [
+     "",
+     "so escape it: type  :s/\\./:/  exactly"
+    ],
+    [
+     "<CR>",
+     "run it"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": ":s/\\./:/<CR>:wq<CR>",
+   "source": "skill §4.6 rule 5: `:` sits at mid-height in the cell, `.` sits too low.",
+   "keys": [
+    ":s/old/new/     first match on this line",
+    ":s/old/new/g    every match on this line",
+    ":%s/old/new/g   every match in the file",
+    "In a pattern, . means any character. Escape it as \\. to mean a literal dot."
+   ],
+   "buys": "The first taste of the colon line, and of patterns.",
+   "labels": false,
+   "seconds": 41
+  },
+  {
+   "id": "substitute-all",
+   "title": "lighten every band",
+   "skill": "substitute across the file",
+   "concept": "registers-and-ranges",
+   "tier": 1,
+   "tutor": "vim-01 4.4",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "::::",
+    "::::",
+    "::::"
+   ],
+   "target": [
+    ".:.:",
+    ".:.:",
+    ".:.:"
+   ],
+   "recipe": [
+    [
+     ":%s/::/.:/g",
+     "on every line, replace each :: with .:"
+    ],
+    [
+     "<CR>",
+     "run it"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": ":%s/::/.:/g<CR>:wq<CR>",
+   "source": "skill §8 rule 2: lighten a shading band by erasing members of it, not by swapping to a lighter glyph.",
+   "keys": [
+    ":%s/a/b/g    every match in the file",
+    ":%s/a/b/gc   ask for confirmation at each one",
+    ":5,9s/a/b/g  only on lines 5 to 9"
+   ],
+   "buys": "One command instead of forty edits.",
+   "labels": false,
+   "seconds": 50
+  },
+  {
+   "id": "open-line",
+   "title": "pad the frame",
+   "skill": "open a line",
+   "concept": "lines-and-blocks",
+   "tier": 1,
+   "tutor": "vim-01 6.1",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "'",
+    "╨"
+   ],
+   "target": [
+    "",
+    "'",
+    "╨"
+   ],
+   "recipe": [
+    [
+     "O",
+     "open a blank line ABOVE the cursor"
+    ],
+    [
+     "<Esc>",
+     "leave insert mode"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "O<Esc>:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 1 skill §9 step h: pad every frame to the height of the tallest one before rendering.",
+   "keys": [
+    "o  open a line below and start typing      O  open one above",
+    "Frames in a set must be the same height, so padding is routine."
+   ],
+   "buys": "Padding frames to a common height, one keystroke per row.",
+   "labels": false,
+   "seconds": 20
+  },
+  {
+   "id": "append",
+   "title": "ground the run",
+   "skill": "append text",
+   "concept": "grammar",
+   "tier": 1,
+   "tutor": "vim-01 6.2",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "_.-"
+   ],
+   "target": [
+    "_.-´"
+   ],
+   "recipe": [
+    [
+     "A",
+     "append at the end of the line"
+    ],
+    [
+     "",
+     "then put the acute accent there"
+    ],
+    [
+     "<Esc>",
+     "leave insert mode"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "A´<Esc>:wq<CR>",
+   "source": "skill §4.4: the classic stair-step is `_ . - ´`. If your keyboard cannot type ´ directly, do the `symbol table` drill instead.",
+   "keys": [
+    "a  append after the cursor      A  append at end of line",
+    "i  insert before the cursor     I  insert before the first non-blank"
+   ],
+   "buys": "Four ways into insert mode, each saving a motion.",
+   "labels": false,
+   "seconds": 23
+  },
+  {
+   "id": "yank-put",
+   "title": "hold a spark",
+   "skill": "yank and put a line",
+   "concept": "lines-and-blocks",
+   "tier": 1,
+   "tutor": "vim-01 6.4",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "•",
+    "╨"
+   ],
+   "target": [
+    "•",
+    "•",
+    "╨"
+   ],
+   "recipe": [
+    [
+     "yy",
+     "yank this line"
+    ],
+    [
+     "p",
+     "put a copy of it below"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "yyp:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 2 skill §10: a hold is a repeated frame.",
+   "keys": [
+    "yy p   the cheapest duplicate there is",
+    "3yy    yank three lines      \"ayy   yank into register a"
+   ],
+   "buys": "A hold in animation is a repeated frame, and two keystrokes here.",
+   "labels": false,
+   "seconds": 23
+  },
+  {
+   "id": "join",
+   "title": "close the seam",
+   "skill": "join two lines",
+   "concept": "lines-and-blocks",
+   "tier": 1,
+   "tutor": "vim-01 extras",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "_.-",
+    "-._"
+   ],
+   "target": [
+    "_.- -._"
+   ],
+   "recipe": [
+    [
+     "J",
+     "join the next line onto this one, with a space between"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "J:wq<CR>",
+   "source": "skill §4.7 drill 2: type the run, then type it mirrored.",
+   "keys": [
+    "J   join the line below, inserting a space",
+    "gJ  join without inserting anything",
+    "3J  join three lines"
+   ],
+   "buys": "Two rows become one row without retyping either.",
+   "labels": false,
+   "seconds": 17
+  },
+  {
+   "id": "toggle-case",
+   "title": "swap the eye",
+   "skill": "toggle case",
+   "concept": "repeat",
+   "tier": 1,
+   "tutor": "vim-01 extras",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "( o )"
+   ],
+   "target": [
+    "( O )"
+   ],
+   "recipe": [
+    [
+     "2l",
+     "move onto the o"
+    ],
+    [
+     "~",
+     "toggle its case"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "2l~:wq<CR>",
+   "source": "skill §4.3 rule 3: place one alphanumeric only where you want the reader to look, such as an eye. Both `o` and `O` are on the twelve-glyph whitelist.",
+   "keys": [
+    "~    toggle the case of one character      3~   toggle three",
+    "g~w  toggle the case of a word             gUU  upper-case the line"
+   ],
+   "buys": "The smallest possible edit, and a real one: o and O read as different eyes.",
+   "labels": false,
+   "seconds": 23
+  },
+  {
+   "id": "text-object-paren",
+   "title": "around versus inside",
+   "skill": "a-objects versus i-objects",
+   "concept": "text-objects",
+   "tier": 2,
+   "tutor": "vim-02 2.1.1",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "(   '   )"
+   ],
+   "target": [
+    "'"
+   ],
+   "recipe": [
+    [
+     "f'",
+     "land on the apostrophe inside the brackets"
+    ],
+    [
+     "ca(",
+     "change AROUND the parens: the brackets go too"
+    ],
+    [
+     "'",
+     "type a single apostrophe"
+    ],
+    [
+     "<Esc>",
+     "leave insert mode"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "f'ca('<Esc>:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Line style",
+   "keys": [
+    "ci(  change inside the parens       ca(  change the parens as well",
+    "di\"  delete inside quotes           dap  delete a paragraph and its blank line",
+    "i = inner, a = around."
+   ],
+   "buys": "The difference between the contents and the container.",
+   "labels": false,
+   "seconds": 35
+  },
+  {
+   "id": "paragraph-object",
+   "title": "drop a layer",
+   "skill": "operate on a paragraph",
+   "concept": "lines-and-blocks",
+   "tier": 2,
+   "tutor": "vim-02 2.1.1",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "'",
+    "╨",
+    "",
+    "•",
+    "╨"
+   ],
+   "target": [
+    "'",
+    "╨"
+   ],
+   "recipe": [
+    [
+     "3j",
+     "move into the SECOND block"
+    ],
+    [
+     "dap",
+     "delete that paragraph AND its blank separator"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "3jdap:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 1 skill §3 rule 5: layers are stored as blank-line-separated blocks in one file, back layer first.",
+   "keys": [
+    "dap  delete a paragraph and its blank line    dip  just the paragraph",
+    "yap  yank one                                 }    jump to the next blank line",
+    "A blank-line-separated block IS a layer. That is why ap matters here."
+   ],
+   "buys": "A frame or a layer is a paragraph. Address it as one.",
+   "labels": false,
+   "seconds": 29
+  },
+  {
+   "id": "named-register",
+   "title": "two glyphs at once",
+   "skill": "named registers",
+   "concept": "registers-and-ranges",
+   "tier": 2,
+   "tutor": "vim-02 2.1.2",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "´",
+    "‾",
+    "x"
+   ],
+   "target": [
+    "´",
+    "‾",
+    "´"
+   ],
+   "recipe": [
+    [
+     "\"ayy",
+     "yank this line into register a"
+    ],
+    [
+     "2j",
+     "move to the last line"
+    ],
+    [
+     "V",
+     "select that line"
+    ],
+    [
+     "\"ap",
+     "put register a OVER the selection"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "\"ayy2jV\"ap:wq<CR>",
+   "source": "skill §1.7: keep a symbol-table file of glyphs open beside the drawing. Named registers are that table, inside the editor.",
+   "keys": [
+    "\"ayy  yank a line into register a      \"ap  put it back",
+    "\"Ayy  APPEND to register a             :reg  list every register",
+    "Twenty-six registers means twenty-six glyphs held at once."
+   ],
+   "buys": "A bank of clipboards, which is what glyph work actually needs.",
+   "labels": false,
+   "seconds": 44
+  },
+  {
+   "id": "yank-register-0",
+   "title": "the yank survives",
+   "skill": "the numbered registers",
+   "concept": "registers-and-ranges",
+   "tier": 2,
+   "tutor": "vim-02 2.1.4",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "´",
+    "x",
+    "x"
+   ],
+   "target": [
+    "´",
+    "x",
+    "´"
+   ],
+   "recipe": [
+    [
+     "yy",
+     "yank the glyph line"
+    ],
+    [
+     "j",
+     "down to the first x"
+    ],
+    [
+     "dd",
+     "delete it. That overwrites the unnamed register, but NOT register 0."
+    ],
+    [
+     "\"0p",
+     "put register 0: the last YANK, not the last delete"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "yyjdd\"0p:wq<CR>",
+   "source": "skill §1.7, the symbol-table workflow: a delete must not cost you the glyph you just copied.",
+   "keys": [
+    "\"0p   the last yank, even after a delete overwrote the unnamed register",
+    "\"1p   the last delete    \"2p  the one before that",
+    "This is the fix for `I yanked, then deleted, and my yank was gone`."
+   ],
+   "buys": "Why your paste stopped working, and the register that fixes it.",
+   "labels": false,
+   "seconds": 38
+  },
+  {
+   "id": "marks",
+   "title": "back to the anchor",
+   "skill": "marks",
+   "concept": "motion-precision",
+   "tier": 2,
+   "tutor": "vim-02 2.1.6",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "          ./\\",
+    "         ____",
+    "       .─────.",
+    "      ________",
+    "    .─────────."
+   ],
+   "target": [
+    "         ____",
+    "       .─────.",
+    "      ________",
+    "    .─────────."
+   ],
+   "recipe": [
+    [
+     "ma",
+     "drop mark a on this line"
+    ],
+    [
+     "G",
+     "jump to the last line"
+    ],
+    [
+     "'a",
+     "jump straight back to mark a"
+    ],
+    [
+     "dd",
+     "delete it"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "maG'add:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06, apex rows of pyramid frames 1 to 5",
+   "keys": [
+    "ma   set mark a here      'a   jump to the line of mark a",
+    "`a   jump to the exact cell of mark a      :marks  list them",
+    "d'a  delete from here to mark a"
+   ],
+   "buys": "A bookmark, so a long file stops costing you your place.",
+   "labels": false,
+   "seconds": 35
+  },
+  {
+   "id": "visual-delete",
+   "title": "select and cut",
+   "skill": "visual mode",
+   "concept": "lines-and-blocks",
+   "tier": 2,
+   "tutor": "vim-01 5.3",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "          ./\\",
+    "         ____",
+    "       .─────.",
+    "      ________",
+    "    .─────────."
+   ],
+   "target": [
+    "      ________",
+    "    .─────────."
+   ],
+   "recipe": [
+    [
+     "V",
+     "enter line-wise visual mode"
+    ],
+    [
+     "2j",
+     "extend the selection down two lines"
+    ],
+    [
+     "d",
+     "delete the selection"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "V2jd:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06, apex rows of pyramid frames 1 to 5",
+   "keys": [
+    "v   character-wise    V   line-wise    <C-v>  block-wise",
+    "gv  reselect whatever you had selected last",
+    "o   in visual mode, jump to the other end of the selection"
+   ],
+   "buys": "Select first, then act, for when you cannot name the motion.",
+   "labels": false,
+   "seconds": 26
+  },
+  {
+   "id": "block-insert",
+   "title": "column of bars",
+   "skill": "blockwise insert",
+   "concept": "lines-and-blocks",
+   "tier": 2,
+   "tutor": "vim-01 6.x",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "\\",
+    "\\",
+    "\\"
+   ],
+   "target": [
+    "|\\",
+    "|\\",
+    "|\\"
+   ],
+   "recipe": [
+    [
+     "<C-v>",
+     "blockwise visual mode (Ctrl and v)"
+    ],
+    [
+     "jj",
+     "extend down two lines"
+    ],
+    [
+     "I|",
+     "capital I: insert at the LEFT edge of the block"
+    ],
+    [
+     "<Esc>",
+     "leave insert mode. The bar lands on all three lines."
+    ]
+   ],
+   "expected": "<C-v>jjI|<Esc>:wq<CR>",
+   "source": "skill §4.4: the rotation triple is `\\` then `\\|` then `/`; the vertical bar is the in-between frame.",
+   "keys": [
+    "<C-v>jjI text <Esc>   insert down a column",
+    "<C-v>jj$A text <Esc>  append to the end of several lines",
+    "<C-v>jjd              delete a column",
+    "Nothing appears to happen until you press <Esc>."
+   ],
+   "buys": "Editing a rectangle. Frame work is rectangle work.",
+   "labels": false,
+   "seconds": 32
   },
   {
    "id": "block-append",
@@ -365,7 +1225,9 @@
    "skill": "blockwise append",
    "concept": "lines-and-blocks",
    "tier": 2,
-   "seconds": 70,
+   "tutor": "vim-01 6.x",
+   "kind": "block",
+   "cursor": "^",
    "start": [
     "\\",
     "\\",
@@ -376,39 +1238,37 @@
     "\\|",
     "\\|"
    ],
-   "source": "skill §4.4: the rotation triple is `\\` then `\\|` then `/`. The vertical bar is the in-between frame.",
    "recipe": [
     [
      "<C-v>",
-     "enter blockwise visual mode (Ctrl and v together)"
+     "blockwise visual mode"
     ],
     [
      "jj",
-     "extend the block down two lines"
+     "extend down two lines"
     ],
     [
      "$",
-     "extend it to the end of every line"
+     "extend to the end of every line"
     ],
     [
      "A|",
-     "capital A: append after the block. Type one bar."
+     "capital A: append after the block"
     ],
     [
      "<Esc>",
-     "leave insert mode. It lands on all three lines."
+     "leave insert mode"
     ]
    ],
    "expected": "<C-v>jj$A|<Esc>:wq<CR>",
+   "source": "skill §4.4: `\\` then `\\|` then `/` is the rotation triple. The bar is the tween.",
    "keys": [
-    "<C-v>jj$A text <Esc>  append to the end of several lines",
-    "<C-v>jjI  text <Esc>  insert down a column instead",
-    "<C-v>jjd             delete a column",
-    "The edit looks like it only happened on one line until you press <Esc>."
+    "<C-v>jj$A  appends to lines of different lengths, correctly",
+    "<C-v>jjI   inserts at a fixed column instead"
    ],
-   "buys": "Editing a rectangle. A rotation in-between is a rectangle edit.",
-   "cursor": "^",
-   "kind": "block"
+   "buys": "The in-between frame of a rotation, in one command.",
+   "labels": false,
+   "seconds": 35
   },
   {
    "id": "block-erase",
@@ -416,7 +1276,9 @@
    "skill": "blockwise delete",
    "concept": "lines-and-blocks",
    "tier": 2,
-   "seconds": 85,
+   "tutor": "vim-01 6.x",
+   "kind": "block",
+   "cursor": "^",
    "start": [
     "\\/|__|__|__|_\\",
     "\\/|__|__|__|_\\",
@@ -427,7 +1289,6 @@
     "\\/|__|__|_\\",
     "\\/|__|__|_\\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) §13, the subtractive-animation pyramid. skill §10: copy the frame, delete one unit, repeat.",
    "recipe": [
     [
      "2l",
@@ -435,7 +1296,7 @@
     ],
     [
      "<C-v>",
-     "enter blockwise visual mode"
+     "blockwise visual mode"
     ],
     [
      "jjll",
@@ -451,15 +1312,67 @@
     ]
    ],
    "expected": "2l<C-v>jjlld:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 1 of 7 skill §10: copy the frame, delete one unit, repeat.",
    "keys": [
-    "<C-v>jjd      delete a rectangle       <C-v>jjr.   fill it with one glyph",
-    "<C-v>jj~      toggle case in a column",
-    "Subtractive animation: draw the finished object, then erase one unit per",
-    "frame, then re-sort the frames into playback order."
+    "<C-v>jjd   delete a rectangle      <C-v>jjr.  fill it with one glyph",
+    "Subtractive animation: draw the finished object, erase one unit per frame,",
+    "then re-sort the frames into playback order."
    ],
-   "buys": "Erasing a unit per frame is how accretive animations are actually authored.",
+   "buys": "Erasing a unit per frame is how accretive animation is really authored.",
+   "labels": false,
+   "seconds": 38
+  },
+  {
+   "id": "block-replace",
+   "title": "fill a rectangle",
+   "skill": "blockwise replace",
+   "concept": "lines-and-blocks",
+   "tier": 2,
+   "tutor": "vim-01 6.x",
+   "kind": "block",
    "cursor": "^",
-   "kind": "block"
+   "start": [
+    "|--|",
+    "|--|",
+    "|--|"
+   ],
+   "target": [
+    "|::|",
+    "|::|",
+    "|::|"
+   ],
+   "recipe": [
+    [
+     "l",
+     "move onto the first dash"
+    ],
+    [
+     "<C-v>",
+     "blockwise visual mode"
+    ],
+    [
+     "jjl",
+     "extend down two lines and right one column"
+    ],
+    [
+     "r:",
+     "replace every cell in the rectangle"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "l<C-v>jjlr::wq<CR>",
+   "source": "skill §8: a shading band is built by alternating two glyphs across a region.",
+   "keys": [
+    "<C-v>...r<char>  fill a rectangle with one glyph",
+    "<C-v>...~        toggle case across a rectangle",
+    "<C-v>...d        cut it out"
+   ],
+   "buys": "Repainting a region without touching the cells around it.",
+   "labels": false,
+   "seconds": 35
   },
   {
    "id": "macro",
@@ -467,7 +1380,9 @@
    "skill": "record and replay a macro",
    "concept": "repeat",
    "tier": 2,
-   "seconds": 100,
+   "tutor": "vim-02 extras",
+   "kind": "block",
+   "cursor": "^",
    "start": [
     "/__\\",
     "/__\\",
@@ -480,7 +1395,6 @@
     "'/__\\'",
     "'/__\\'"
    ],
-   "source": "skill §4.6 rule 5: `'` sits high in the cell, `.` sits too low, `:` sits in the middle. Here `'` caps each frame cell.",
    "recipe": [
     [
      "qq",
@@ -488,11 +1402,11 @@
     ],
     [
      "I'<Esc>",
-     "insert a cap at the start of the line"
+     "cap the start of the line"
     ],
     [
      "A'<Esc>",
-     "append a cap at the end of the line"
+     "cap the end of the line"
     ],
     [
      "j",
@@ -504,7 +1418,7 @@
     ],
     [
      "3@q",
-     "replay the macro three times"
+     "replay it three times"
     ],
     [
      ":wq",
@@ -512,15 +1426,16 @@
     ]
    ],
    "expected": "qqI'<Esc>A'<Esc>jq3@q:wq<CR>",
+   "source": "skill §4.6 rule 5: `'` sits high in its cell, so it caps a frame cleanly.",
    "keys": [
-    "qa ... q   record into register a       @a    replay it",
-    "@@         replay the last macro again   10@a  replay it ten times",
-    "Always record the cursor move to the next item as part of the macro.",
-    "\"ap pastes the macro out as plain text, so you can edit it and yank it back."
+    "qa ... q  record into register a     @a   replay      10@a  replay ten times",
+    "@@        replay the last macro again",
+    "Always record the move to the next item as part of the macro.",
+    "\"ap pastes a macro out as text, so you can edit it and yank it back."
    ],
-   "buys": "Teaching the editor a new verb, on the spot, in about four seconds.",
-   "cursor": "^",
-   "kind": "block"
+   "buys": "Teaching the editor a new verb, in about four seconds.",
+   "labels": false,
+   "seconds": 53
   },
   {
    "id": "symbol-table",
@@ -528,8 +1443,9 @@
    "skill": "yank a glyph, put it over another",
    "concept": "registers-and-ranges",
    "tier": 2,
-   "seconds": 90,
-   "labels": true,
+   "tutor": "vim-02 2.1.2",
+   "kind": "block",
+   "cursor": "^",
    "start": [
     "alphabet:  ´ ‾ ¡ ·",
     "slope:     _.-'"
@@ -538,15 +1454,14 @@
     "alphabet:  ´ ‾ ¡ ·",
     "slope:     _.-´"
    ],
-   "source": "skill §1.7: keep the glyph alphabet and a personal symbol-table file open beside the drawing. skill §4.2: ´ is the mirror of the backtick. It is NOT the apostrophe, and it is not on your keyboard.",
    "recipe": [
     [
      "W",
-     "jump to the first extended glyph on the alphabet line"
+     "jump to the first extended glyph"
     ],
     [
      "yl",
-     "yank exactly one character into the unnamed register"
+     "yank exactly one character"
     ],
     [
      "j$",
@@ -554,7 +1469,7 @@
     ],
     [
      "vp",
-     "select that one character and put the yanked glyph over it"
+     "select that character and put the yanked one over it"
     ],
     [
      ":wq",
@@ -562,24 +1477,168 @@
     ]
    ],
    "expected": "Wylj$vp:wq<CR>",
+   "source": "skill §1.7: keep the glyph alphabet open beside the drawing. skill §4.2: ´ is the mirror of the backtick. It is not the apostrophe, and it is not on your keyboard.",
    "keys": [
-    "yl    yank one character        3yl   yank three",
-    "vp    select, then put OVER the selection",
-    "\"ayl  yank into register a      \"ap   put register a back",
-    "This is how an artist types a glyph that is not on the keyboard: keep a",
+    "yl   yank one character         3yl  yank three",
+    "vp   select, then put OVER the selection",
+    "This is how an artist types a glyph the keyboard does not have: keep a",
     "strip of them in the file and copy from it. Never retype by hand."
    ],
    "buys": "The four extended glyphs, without fighting your keyboard layout.",
-   "cursor": "^",
-   "kind": "block"
+   "labels": true,
+   "seconds": 35
   },
   {
-   "id": "hold-frames",
+   "id": "dot-repeat",
+   "title": "walk an edit down",
+   "skill": "the dot command",
+   "concept": "repeat",
+   "tier": 2,
+   "tutor": "vim-01 extras",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "|--.--|",
+    "|--.--|",
+    "|--.--|"
+   ],
+   "target": [
+    "|--:--|",
+    "|--:--|",
+    "|--:--|"
+   ],
+   "recipe": [
+    [
+     "3l",
+     "move onto the joint glyph"
+    ],
+    [
+     "r:",
+     "replace it"
+    ],
+    [
+     "j.",
+     "step down. The dot repeats r: at the SAME column."
+    ],
+    [
+     "j.",
+     "and again"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "3lr:j.j.:wq<CR>",
+   "source": "skill §4.6 rule 5: `.` sits too low, `'` too high, `:` in the middle.",
+   "keys": [
+    "j keeps your column, so j. walks one edit down a stack of frames",
+    "3.  repeat the change three times",
+    "For a taller stack, record it: qq r: j q  then 20@q"
+   ],
+   "buys": "Vertical repetition without a macro.",
+   "labels": false,
+   "seconds": 38
+  },
+  {
+   "id": "find-char",
+   "title": "hop the band",
+   "skill": "find-character motions",
+   "concept": "motion-precision",
+   "tier": 2,
+   "tutor": "vim-01 extras",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    ".:.:.:.:"
+   ],
+   "target": [
+    ".:.:."
+   ],
+   "recipe": [
+    [
+     "f:",
+     "find the first colon"
+    ],
+    [
+     ";",
+     "repeat the find"
+    ],
+    [
+     ";",
+     "and again"
+    ],
+    [
+     "D",
+     "delete from here to the end of the line"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "f:;;D:wq<CR>",
+   "source": "skill §8: a shading band alternates two glyphs, which makes it a row of landmarks.",
+   "keys": [
+    "f:  find next :     F:  find previous :     ;  repeat     ,  reverse",
+    "t:  stop just BEFORE the next :            df:  delete up to and including it"
+   ],
+   "buys": "Travelling by landmark instead of counting cells.",
+   "labels": false,
+   "seconds": 29
+  },
+  {
+   "id": "ex-copy",
+   "title": "duplicate a base row",
+   "skill": "ex ranges",
+   "concept": "registers-and-ranges",
+   "tier": 2,
+   "tutor": "vim-01 extras",
+   "kind": "block",
+   "cursor": "j^",
+   "start": [
+    "  \\´\\/_|__|__|__|_\\",
+    "   \\/|__|__|__|__|_\\"
+   ],
+   "target": [
+    "  \\´\\/_|__|__|__|_\\",
+    "   \\/|__|__|__|__|_\\",
+    "   \\/|__|__|__|__|_\\"
+   ],
+   "recipe": [
+    [
+     ":t.",
+     "copy THIS line to just after itself. Colon, t, dot."
+    ],
+    [
+     "<CR>",
+     "run it"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": ":t.<CR>:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 1 of 7 The base rows of the pyramid.",
+   "keys": [
+    ":t.   copy this line below itself     :t0  copy it to the top",
+    ":m0   move this line to the top       :m$  move it to the bottom",
+    "yyp does the same as :t. Ranges scale to a hundred lines; yyp does not."
+   ],
+   "buys": "The colon line takes a range, and the range is the half that scales.",
+   "labels": false,
+   "seconds": 26
+  },
+  {
+   "id": "hold-frame",
    "title": "hold a walk frame",
    "skill": "counted line yank and put",
    "concept": "lines-and-blocks",
    "tier": 3,
-   "seconds": 70,
+   "tutor": "vim-01 6.4",
+   "kind": "block",
+   "cursor": "^",
    "start": [
     "      ,",
     "   ∞_/(_",
@@ -608,7 +1667,6 @@
     "   |/__\\",
     "    `  ´"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 1. skill §10: add holds by repeating frames.",
    "recipe": [
     [
      "6yy",
@@ -616,11 +1674,11 @@
     ],
     [
      "G",
-     "jump to the last line. p puts AFTER the cursor, so this matters."
+     "jump to the last line"
     ],
     [
      "2p",
-     "put the frame back twice. A three-frame hold."
+     "put the frame back twice"
     ],
     [
      ":wq",
@@ -628,15 +1686,15 @@
     ]
    ],
    "expected": "6yyG2p:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 1 of 10 skill §10: add holds by repeating frames.",
    "keys": [
-    "6yy 2p    copy a 6-line frame and stamp it down twice",
-    "yap p     yank a blank-line-separated frame and put it",
-    "P         put ABOVE the cursor instead of below",
-    "A hold in animation is a repeated frame. Here it is two keystrokes."
+    "6yy 2p  copy a 6-line frame and stamp it down twice",
+    "yap p   yank a blank-line-separated frame and put it",
+    "P       put ABOVE the cursor instead of below"
    ],
    "buys": "A real frame, copied the way a real frame file gets built.",
-   "cursor": "^",
-   "kind": "block"
+   "labels": false,
+   "seconds": 32
   },
   {
    "id": "tween-frame",
@@ -644,7 +1702,9 @@
    "skill": "copy a frame, change one row",
    "concept": "lines-and-blocks",
    "tier": 3,
-   "seconds": 150,
+   "tutor": "vim-01 6.4",
+   "kind": "block",
+   "cursor": "^",
    "start": [
     "      ,",
     "   ∞_/(_",
@@ -667,50 +1727,95 @@
     "   |/__\\",
     "    `  ´"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, frames 1 and 2 of the Poison Adept walk. They differ in exactly one row. skill §10: preserve the glyph pattern between frames wherever the part has not changed.",
    "recipe": [
     [
      "6yy",
      "yank the frame"
     ],
     [
-     "G",
-     "jump to the last line"
+     "Gp",
+     "copy it below. That copy is now frame 2."
     ],
     [
-     "p",
-     "put an identical copy below. That copy is now frame 2."
+     "3j$",
+     "fourth row of the copy, last cell"
     ],
     [
-     "3j0",
-     "drop to the fourth row of the copy, column zero"
+     "x",
+     "drop the trailing paren"
     ],
     [
-     "5l r,",
-     "move to the accent and replace it with a comma"
+     "r/",
+     "the space becomes a diagonal"
     ],
     [
-     "l r/",
-     "next cell: replace the space with a diagonal"
+     "hr,",
+     "step back: the accent becomes a comma"
     ],
     [
-     "l x",
-     "delete the trailing paren, then :wq"
+     ":wq",
+     "save and quit"
     ]
    ],
-   "expected": "6yyGp3j05lr,lr/lx:wq<CR>",
+   "expected": "6yyGp3j$xr/hr,:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 1 of 10 Frames 1 and 2 differ in exactly one row. skill §10: preserve the glyph pattern between frames wherever the part has not changed.",
    "keys": [
-    "This is the whole craft in one exercise: copy the previous frame, then",
-    "change ONLY the cells that move. Everything you do not touch stays",
-    "registered, which is what stops an animation from boiling.",
+    "Copy the previous frame, then change ONLY the cells that move. Everything",
+    "you do not touch stays registered, which is what stops an animation boiling.",
     "",
-    "yyp then edit    the cheapest tween there is",
-    "<C-v> then r     change a rectangle between frames",
-    "qq ... q then @q when the same change repeats across many frames"
+    "yyp then edit     the cheapest tween there is",
+    "<C-v> then r      change a rectangle between frames"
    ],
-   "buys": "Temporal coherence: the frames that follow are edits of the frame before.",
+   "buys": "Temporal coherence: every frame is an edit of the frame before it.",
+   "labels": false,
+   "seconds": 56
+  },
+  {
+   "id": "break-seam",
+   "title": "break the seam",
+   "skill": "two surgical replaces",
+   "concept": "text-objects",
+   "tier": 3,
+   "tutor": "vim-01 3.2",
+   "kind": "block",
    "cursor": "^",
-   "kind": "block"
+   "start": [
+    "  .---./     \\",
+    " /     \\      :"
+   ],
+   "target": [
+    "  .---.´     \\",
+    " /     \\      :"
+   ],
+   "recipe": [
+    [
+     "f/",
+     "find the slash that joins the two forms"
+    ],
+    [
+     "r´",
+     "replace it with an acute accent, which does not touch the other form"
+    ],
+    [
+     "",
+     "(if ´ is hard to type, do the `symbol table` drill first)"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "f/r´:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 9, two forms sharing a seam glyph skill §3: a glyph shared between two objects creates a false connection. Replace it with a partial-coverage glyph placed away from the seam.",
+   "keys": [
+    "The plate shows this edit as a before/after pair, with an arrow between them.",
+    "It is two character replacements, and it is the whole depth technique:",
+    "  a shared glyph reads as a join           break it",
+    "  a deleted cell at a seam reads as shadow leave it empty"
+   ],
+   "buys": "Depth, from one character. This is the highest-value edit in the whole method.",
+   "labels": false,
+   "seconds": 26
   },
   {
    "id": "playback-order",
@@ -718,7 +1823,9 @@
    "skill": "swap adjacent lines",
    "concept": "lines-and-blocks",
    "tier": 3,
-   "seconds": 55,
+   "tutor": "vim-01 extras",
+   "kind": "block",
+   "cursor": "j^",
    "start": [
     "          ./\\",
     "       .─────.",
@@ -731,12 +1838,10 @@
     "       .─────.",
     "      ________"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) §13, the subtractive pyramid: apex rows of frames 1 to 4. skill §10: authoring order and playback order are independent; re-sort the frames afterwards.",
-   "cursor": "j^",
    "recipe": [
     [
      "ddp",
-     "delete this line and put it back after the next one. They swap."
+     "delete this line and put it back after the next. They swap."
     ],
     [
      ":wq",
@@ -744,36 +1849,47 @@
     ]
    ],
    "expected": "ddp:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06, apex rows of pyramid frames 1 to 5 skill §10: authoring order and playback order are independent; re-sort the frames afterwards.",
    "keys": [
-    "ddp    swap this line with the one below     ddkP   swap with the one above",
-    ":m+1   move this line down one              :m-2   move it up one",
-    ":5,9m0 move a range of lines to the top of the file"
+    "ddp    swap with the line below      ddkP  swap with the line above",
+    ":m+1   move this line down one       :m-2  move it up one",
+    ":5,9m0 move a range to the top"
    ],
    "buys": "Re-sorting frames is one idiom, not a rewrite.",
-   "kind": "block"
+   "labels": false,
+   "seconds": 23
   },
   {
-   "id": "ex-copy",
-   "title": "duplicate a base row",
-   "skill": "ex ranges",
+   "id": "range-normal",
+   "title": "one edit, every row",
+   "skill": "run a normal command over a range",
    "concept": "registers-and-ranges",
    "tier": 3,
-   "seconds": 60,
+   "tutor": "vim-01 5.3",
+   "kind": "block",
+   "cursor": "^",
    "start": [
-    "  \\´\\/_|__|__|__|_\\",
-    "   \\/|__|__|__|__|_\\"
+    "_.-",
+    "_.-",
+    "_.-"
    ],
    "target": [
-    "  \\´\\/_|__|__|__|_\\",
-    "   \\/|__|__|__|__|_\\",
-    "   \\/|__|__|__|__|_\\"
+    "_.-'",
+    "_.-'",
+    "_.-'"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) §13, the subtractive pyramid base rows.",
-   "cursor": "j^",
    "recipe": [
     [
-     ":t.",
-     "copy THIS line (.) to just after THIS line. Colon, t, dot."
+     "VG",
+     "select from here to the last line"
+    ],
+    [
+     ":",
+     "press colon. Vim fills in the range '<,'> for you."
+    ],
+    [
+     "normal A'",
+     "run `A'` in normal mode on every selected line"
     ],
     [
      "<CR>",
@@ -784,15 +1900,17 @@
      "save and quit"
     ]
    ],
-   "expected": ":t.<CR>:wq<CR>",
+   "expected": "VG:normal A'<CR>:wq<CR>",
+   "source": "skill §4.4: `'` plus `´` reads as a very slight inclination; capping a run is a per-row edit you want to apply to the whole set at once.",
    "keys": [
-    ":t.     copy this line below itself      :t0    copy it to the top",
-    ":m0     move this line to the top        :m$    move it to the bottom",
-    ":%s/o/0/g   substitute on every line",
-    "yyp does the same as :t. Ranges scale to a hundred lines; yyp does not."
+    ":'<,'>normal A;   append ; to every selected line",
+    ":%normal I// commentiment every line in the file",
+    ":g/pattern/cmd    run cmd on every MATCHING line (whole buffer -- careful)",
+    "Selecting first and then pressing : is how you scope a range safely."
    ],
-   "buys": "The colon line takes a range, and the range is the half that scales.",
-   "kind": "block"
+   "buys": "Any normal-mode command, applied to a whole range at once.",
+   "labels": false,
+   "seconds": 53
   },
   {
    "id": "mirror-run",
@@ -800,7 +1918,9 @@
    "skill": "single character replace",
    "concept": "motion-precision",
    "tier": 3,
-   "seconds": 60,
+   "tutor": "vim-01 3.2",
+   "kind": "block",
+   "cursor": "j^",
    "start": [
     "_.-",
     "_.-"
@@ -809,20 +1929,18 @@
     "_.-",
     "-._"
    ],
-   "source": "skill §4.7 drills 6-7: mirror art by retyping the row backwards with each glyph swapped for its mirror. Never use a software flip.",
-   "cursor": "j^",
    "recipe": [
     [
      "r-",
      "replace the underscore with a dash"
     ],
     [
-     "l r.",
-     "step right, replace the period with a period"
+     "lr.",
+     "step right, replace with a period"
     ],
     [
-     "l r_",
-     "step right, replace the dash with an underscore"
+     "lr_",
+     "step right, replace with an underscore"
     ],
     [
      ":wq",
@@ -830,60 +1948,132 @@
     ]
    ],
    "expected": "r-lr.lr_:wq<CR>",
+   "source": "skill §4.7 drills 6-7: mirror art by retyping the row backwards with each glyph swapped for its mirror. Never use a software flip.",
    "keys": [
-    "r<char>   replace exactly one character, staying in normal mode",
-    "3rx       replace the next three characters with x",
-    "The mirror table: _ <-> _   . <-> .   - <-> -   / <-> \\   ( <-> )",
-    "                  ` <-> ´   , <-> .   { <-> }   < <-> >"
+    "The mirror table:  _ <-> _    . <-> .    - <-> -",
+    "                   / <-> \\    ( <-> )    { <-> }    < <-> >",
+    "                   ` <-> ´    , <-> .",
+    "r<char>  replace one character      3rx  replace three"
    ],
-   "buys": "r is the surgical tool: one glyph, one key, no mode change.",
-   "kind": "block"
+   "buys": "Mirroring by hand, which is the only way that preserves the style.",
+   "labels": false,
+   "seconds": 38
   },
   {
-   "id": "dot-column",
-   "title": "joint glyph",
-   "skill": "the dot command across lines",
-   "concept": "repeat",
+   "id": "pad-frames",
+   "title": "pad to height",
+   "skill": "open lines above",
+   "concept": "lines-and-blocks",
    "tier": 3,
-   "seconds": 70,
+   "tutor": "vim-01 6.1",
+   "kind": "block",
+   "cursor": "^",
    "start": [
-    "|--.--|",
-    "|--.--|",
-    "|--.--|"
+    "'",
+    "╨"
    ],
    "target": [
-    "|--:--|",
-    "|--:--|",
-    "|--:--|"
+    "",
+    "",
+    "'",
+    "╨"
    ],
-   "source": "skill §4.6 rule 5: test a joint glyph three ways. `.` sits too low, `'` sits too high, `:` sits in the middle. Rule 6: `:` preserves a corner, `-` turns it into a curve.",
    "recipe": [
     [
-     "3l",
-     "move onto the joint glyph"
+     "O",
+     "open a blank line above"
+    ],
+    [
+     "<Esc>",
+     "leave insert mode"
+    ],
+    [
+     ".",
+     "the dot repeats the whole open-line change"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "O<Esc>.:wq<CR>",
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 1 skill §9 step h: count the rows in the tallest frame and pad every other frame to that height before rendering.",
+   "keys": [
+    "O<Esc> then .   pad a frame one row at a time",
+    "3O<Esc>         or do it in one count",
+    "A frame set of mixed heights renders as a jitter."
+   ],
+   "buys": "The least glamorous step in animation, reduced to two keystrokes.",
+   "labels": false,
+   "seconds": 23
+  },
+  {
+   "id": "macro-frames",
+   "title": "cap every frame",
+   "skill": "replay a macro over a frame set",
+   "concept": "repeat",
+   "tier": 3,
+   "tutor": "vim-02 extras",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "|--|",
+    "|--|",
+    "|--|",
+    "|--|",
+    "|--|"
+   ],
+   "target": [
+    "|::|",
+    "|::|",
+    "|::|",
+    "|::|",
+    "|::|"
+   ],
+   "recipe": [
+    [
+     "qq",
+     "start recording into register q"
+    ],
+    [
+     "l",
+     "move onto the first dash"
+    ],
+    [
+     "vl",
+     "select it and the one after it"
     ],
     [
      "r:",
-     "replace it with the middle-height glyph"
+     "replace both"
     ],
     [
-     "j.",
-     "step down. The dot repeats r: at the SAME column."
+     "j0",
+     "step to the next frame row"
     ],
     [
-     "j.",
-     "and again, then :wq"
+     "q",
+     "stop recording"
+    ],
+    [
+     "4@q",
+     "replay it on the remaining four"
+    ],
+    [
+     ":wq",
+     "save and quit"
     ]
    ],
-   "expected": "3lr:j.j.:wq<CR>",
+   "expected": "qqlvlr:j0q4@q:wq<CR>",
+   "source": "skill §8: a shading band is a region of alternating glyphs, applied per frame.",
    "keys": [
-    "j keeps your column, so j. walks one edit down a stack of frames",
-    "3.        repeat the change three times in place",
-    "For a taller stack, record it instead: qq r: j q then 20@q"
+    "qq ... q then 4@q   the same edit across a whole frame set",
+    "A macro beats the dot when the edit is more than one operator.",
+    "If a macro goes wrong, u undoes the whole replay one step at a time."
    ],
-   "buys": "Vertical repetition without a macro: the cheapest way to edit a stack.",
-   "cursor": "^",
-   "kind": "block"
+   "buys": "One recorded edit, applied to every frame in the set.",
+   "labels": false,
+   "seconds": 53
   }
  ]
 }

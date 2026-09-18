@@ -129,6 +129,16 @@ def decode_keylog(raw: bytes):
             out.append(_apply_mod(mod, "<C-%s>" % chr(0x60 + b)))
         elif b < 0x7F:
             out.append(_apply_mod(mod, chr(b)))
+        elif 0xC2 <= b <= 0xF4:
+            # A UTF-8 lead byte. The art uses multibyte glyphs (\u00b4 \u203e \u00a1 \u00b7),
+            # so `r\u00b4` logs C2 B4 and must decode as ONE key, not two replacement
+            # characters. 0x80 is K_SPECIAL and is handled above; it is never a
+            # UTF-8 lead byte, so the two cases cannot collide.
+            n_cont = 1 if b < 0xE0 else (2 if b < 0xF0 else 3)
+            out.append(_apply_mod(mod, raw[i:i + 1 + n_cont].decode("utf-8", "replace")))
+            mod = ""
+            i += 1 + n_cont
+            continue
         else:
             out.append(_apply_mod(mod, raw[i:i + 1].decode("utf-8", "replace")))
         mod = ""

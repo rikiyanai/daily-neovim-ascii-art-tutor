@@ -1,7 +1,7 @@
 # vim-daily
 
 Short vim drills that interrupt you once an hour, in a tmux popup, and make you
-actually type the keys. Seventeen drills across three tiers, each one opening with
+actually type the keys. Forty-two drills across three tiers, each one opening with
 a paradigm-level explanation of *why* the mechanic exists rather than a list of
 keystrokes to memorise.
 
@@ -73,6 +73,17 @@ copy the previous frame, then change only the cells that move.
     `  ´
 ```
 
+## What is in it
+
+- **42 drills**, median **6 keystrokes**, longest 14. 36 of them estimate under
+  45 seconds. They fire hourly, so a drill you dread is a drill you skip.
+- **24 vimtutor lesson nodes** covered, from `1.1 MOVING THE CURSOR` through
+  registers, marks and ranges.
+- **44 art excerpts** in `share/art.json`, extracted byte-exact from the tutorial
+  plates: ten walk-cycle frames, seven pyramid frames, the four style renderings,
+  the line-run and anti-aliasing plates, the dithered sphere, and the particle
+  and hand layers from the Sacrificial Pit scene.
+
 ## Install
 
 ```sh
@@ -123,16 +134,30 @@ and `launchctl unload ~/Library/LaunchAgents/com.vim-daily.hourly.plist`.
 
 ## Writing your own drills
 
-Drills are data, in `share/curriculum.json`, under a versioned schema
-(`vim-daily/curriculum@1`) kept deliberately generic so an external curriculum
-can be imported into the same shape without touching the runner.
+Three data files, none of which the runner is hard-coded against:
 
-**Every drill must cite a source.** Either a plate from the tutorial page or a
-numbered rule in the authoring method. The first version of this curriculum
-invented all sixteen shapes — `x_x_x_`, `+---+`, `.:*:.`, `[###]` — and two of
-them used glyphs outside the alphabet, including `#`, which is the transparency
-character, used as ink. `test_drills.py` now fails any drill with no `source`
-field or a glyph outside the alphabet.
+    share/concepts.json    the seven paradigm chapters
+    share/art.json         the art library, with per-entry provenance
+    share/curriculum.json  generated: drills that pair a skill with an art entry
+
+The curriculum spine is **vimtutor's lesson sequence** — it ships with vim and
+neovim at `$VIMRUNTIME/tutor/en/`, so the spine is verifiable on your own
+machine. Each drill names the node it covers in its `tutor` field. No vimtutor
+text is copied; only the sequence is followed, and coverage is measurable.
+
+Three rules, all enforced by `test_drills.py`:
+
+- **SOURCED** — every drill names its art provenance and its vimtutor node. The
+  first version of this curriculum invented all sixteen shapes (`x_x_x_`,
+  `+---+`, `.:*:.`, `[###]`), and two used glyphs outside the alphabet, one of
+  them `#`, which is the transparency character, used as ink.
+- **SHORT** — at most 16 keystrokes and 75 seconds, at most 8 starting rows.
+- **REAL** — the recipe is driven through an actual nvim and must reach the
+  target. Targets are *derived* from the art by the operation being taught,
+  never retyped, because a retyped target is one no recipe can reach.
+
+Re-derive the art library with `share/extract_art.py /path/to/ascii-tutorial-page`.
+The plates themselves are not redistributed here.
 
 Edit `share/gen_curriculum.py`, not the JSON — the art is full of backslashes,
 quotes and non-ASCII glyphs, and hand-escaping that into JSON is the bug class
@@ -143,11 +168,18 @@ share/gen_curriculum.py && share/test_drills.py --real
 ```
 
 `test_drills.py` drives every drill through a real nvim, types exactly the
-documented recipe, and asserts the buffer reaches the documented target, then
-checks the glyph alphabet and the `source` field. A drill whose recipe does not
-produce its target must not ship. It caught one on the first run: `3yy` then
-`2p` interleaves the frames, because `p` pastes after the cursor and not after
-the yanked block.
+documented recipe, asserts the buffer reaches the target, and then checks the
+glyph alphabet, the provenance fields and the length gates. 42/42 pass under
+both a clean config and a full one.
+
+It earns its keep. On the run that expanded the set to 42 it caught nine
+defects, including one that mattered: a `:g/^/m0` drill, meant to reverse four
+frames, reordered **the entire lesson file** — `:g` is whole-buffer, and the
+lesson's own instructions sit above the drill region. It now teaches a
+range-scoped `:normal` instead. It also caught `d2w` eating half a run (`w`
+stops at punctuation, and line art is all punctuation — `W` is what art work
+wants), and `dap` swallowing the instruction text above the marker because the
+region was contiguous with it.
 
 Implementation notes, including what the keystroke decoder has to get right, are
 in [share/DESIGN.md](share/DESIGN.md).

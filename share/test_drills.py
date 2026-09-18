@@ -33,8 +33,9 @@ EXTENDED  = set("\u00b4\u203e\u00a1\u00b7")
 ALNUM     = set("oOvVTL7UcCxX")
 BOXDRAW   = set("\u2500\u2502\u250c\u2510\u2514\u2518\u252c\u2534\u251c\u2524\u253c"
                 "\u2550\u2555\u2552\u255b\u2558\u2564\u2565\u2568")
-PLATE_OBS = set("\u221e\u00af")   # observed in the plates: the adept's staff, and the
-                                   # macron the author typed for the overscore
+PLATE_OBS = set("\u221e\u00af\u2022")  # observed in the plates: the adept's staff, the
+                                   # macron typed where the alphabet specifies \u203e,
+                                   # and the bullet used in the particle layer
 ALLOWED = BASIC | EXTENDED | ALNUM | BOXDRAW | PLATE_OBS | {" "}
 
 
@@ -80,11 +81,24 @@ for d in cur["drills"]:
         "" if ok else "  got=%r want=%r" % (region, d["target"]),
         "" if rt_ok else "   [keylog roundtrip differs: %r]" % (rt,)))
     bad = glyph_violations(d)
+    problems = []
     if bad:
-        print("     GLYPH VIOLATION in %s: %r not in the alphabet" % (d["id"], bad))
+        problems.append("GLYPH %r not in the alphabet" % (bad,))
     if not d.get("source"):
-        print("     UNSOURCED: %s has no source field" % d["id"])
-    if not ok or bad or not d.get("source"):
+        problems.append("no source field")
+    if not d.get("tutor"):
+        problems.append("no tutor node")
+    # SHORT gate: these fire hourly. A drill you dread is a drill you skip.
+    nkeys = len(gate.strip_save_tail(gate.tokenize(d["expected"])))
+    if nkeys > 16:
+        problems.append("TOO LONG: %d keystrokes (max 16)" % nkeys)
+    if d.get("seconds", 0) > 75:
+        problems.append("TOO SLOW: %ds (max 75)" % d["seconds"])
+    if len(d["start"]) > 8 or len(d["target"]) > 20:
+        problems.append("TOO BIG: %d start rows, %d target rows" % (len(d["start"]), len(d["target"])))
+    for pr in problems:
+        print("     %s: %s" % (d["id"], pr))
+    if not ok or problems:
         fails.append(d["id"])
 print("\n%d/%d drills passable (config=%s)" % (
     len(cur["drills"]) - len(fails), len(cur["drills"]), "real" if USE_REAL_CONFIG else "none"))

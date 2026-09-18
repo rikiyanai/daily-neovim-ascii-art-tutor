@@ -1,0 +1,427 @@
+{
+ "schema": "vim-daily/art@1",
+ "attribution": "Excerpts from the Stone Story RPG ASCII tutorial page by Gabriel Santos, Martian Rex, Inc. Used as practice material.",
+ "art": {
+  "walk1": {
+   "rows": [
+    "      ,",
+    "   ∞_/(_",
+    "   |{\\\\",
+    "   |-´ )",
+    "   |/__\\",
+    "    `  ´"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 1 of 10"
+  },
+  "walk2": {
+   "rows": [
+    "      ,",
+    "   ∞_/(_",
+    "   |{\\\\",
+    "   |-,/",
+    "   |/__\\",
+    "    `  ´"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 2 of 10"
+  },
+  "walk3": {
+   "rows": [
+    "      ,",
+    "   ∞_/(_",
+    "   |{\\\\",
+    "   |-, )",
+    "   |( (",
+    "     `¯"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 3 of 10"
+  },
+  "walk4": {
+   "rows": [
+    "   ∞  ,",
+    "   |_/(_",
+    "   |{\\\\",
+    "   |`, \\",
+    "    (_(",
+    "      '"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 4 of 10"
+  },
+  "walk5": {
+   "rows": [
+    "",
+    "   ∞  ,",
+    "   |_/(_",
+    "   |{\\\\",
+    "   |`,/",
+    "    /__\\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 5 of 10"
+  },
+  "walk6": {
+   "rows": [
+    "    `  ´",
+    "",
+    "     ∞,",
+    "    //(_",
+    "   /{\\\\",
+    "  /`¯, )"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 6 of 10"
+  },
+  "walk7": {
+   "rows": [
+    "    ( (",
+    "     `¯",
+    "      ,",
+    "    ∞/(_",
+    "   /{\\\\",
+    "  /-´, \\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 7 of 10"
+  },
+  "walk8": {
+   "rows": [
+    " /  (_(",
+    "      '",
+    "      ,",
+    "    ∞/(_",
+    "   /{\\\\",
+    "  /-´,/"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 8 of 10"
+  },
+  "walk9": {
+   "rows": [
+    " /  /__\\",
+    "    `  ´",
+    "      ,",
+    "  ∞ _/(_",
+    "  | {\\\\",
+    "  |-´, )"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 9 of 10"
+  },
+  "walk10": {
+   "rows": [
+    "  | ( (",
+    "     `¯",
+    "      ,",
+    "  ∞ _/(_",
+    "  | {\\\\",
+    "  |-´, \\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 10 of 10"
+  },
+  "pyr1": {
+   "rows": [
+    "          ./\\",
+    "       .´\\/__\\",
+    "    .´\\´\\/__|_\\",
+    " .´\\ \\´\\/_|__|_\\",
+    "\\´\\´\\´\\/|__|__|_\\",
+    " \\´\\´\\/__|__|__|_\\",
+    "  \\´\\/_|__|__|__|_\\",
+    "   \\/|__|__|__|__|_\\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 1 of 7"
+  },
+  "pyr2": {
+   "rows": [
+    "         ____",
+    "       .´\\___\\",
+    "    .´\\´\\/__|_\\",
+    " .´\\ \\´\\/_|__|_\\",
+    "\\´\\´\\´\\/|__|__|_\\",
+    " \\´\\´\\/__|__|__|_\\",
+    "  \\´\\/_|__|__|__|_\\",
+    "   \\/|__|__|__|__|_\\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 2 of 7"
+  },
+  "pyr3": {
+   "rows": [
+    "       .─────.",
+    "    .´\\´\\_____\\",
+    " .´\\ \\´\\/_|__|_\\",
+    "\\´\\´\\´\\/|__|__|_\\",
+    " \\´\\´\\/__|__|__|_\\",
+    "  \\´\\/_|__|__|__|_\\",
+    "   \\/|__|__|__|__|_\\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 3 of 7"
+  },
+  "pyr4": {
+   "rows": [
+    "      ________",
+    "    .´\\  ____ \\",
+    " .´\\ \\´\\_______\\",
+    "\\´\\´\\´\\/|__|__|_\\",
+    " \\´\\´\\/__|__|__|_\\",
+    "  \\´\\/_|__|__|__|_\\",
+    "   \\/|__|__|__|__|_\\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 4 of 7"
+  },
+  "pyr5": {
+   "rows": [
+    "    .─────────.",
+    " .´\\ \\ ·=====· \\",
+    "\\´\\´\\´\\_________\\",
+    " \\´\\´\\/__|__|__|_\\",
+    "  \\´\\/_|__|__|__|_\\",
+    "   \\/|__|__|__|__|_\\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 5 of 7"
+  },
+  "pyr6": {
+   "rows": [
+    "   ____________",
+    " .´\\  ________ \\",
+    "\\´\\´\\ \\______´\\ \\",
+    " \\´\\´\\___________\\",
+    "  \\´\\/_|__|__|__|_\\",
+    "   \\/|__|__|__|__|_\\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 6 of 7"
+  },
+  "pyr7": {
+   "rows": [
+    " .─────────────.",
+    "\\´\\ .─────────, \\",
+    " \\´\\ \\_______´_\\ \\",
+    "  \\´\\_____________\\",
+    "   \\/|__|__|__|__|_\\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 7 of 7"
+  },
+  "pyr_apexes": {
+   "rows": [
+    "          ./\\",
+    "         ____",
+    "       .─────.",
+    "      ________",
+    "    .─────────."
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06, apex rows of pyramid frames 1 to 5"
+  },
+  "lamp_block": {
+   "rows": [
+    " ▄▄▄ ▄▄▄",
+    "█████████    Block",
+    " ▀█████▀",
+    "   ▀█▀"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Block style"
+  },
+  "lamp_filled": {
+   "rows": [
+    " .oo.oo.",
+    "d8888888b    Filled",
+    "'8888888'",
+    "  '888'",
+    "    '"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Filled style"
+  },
+  "lamp_line": {
+   "rows": [
+    " .-. .-.",
+    "(   '   )",
+    " `.   .´",
+    "   `:´"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Line style"
+  },
+  "lamp_box": {
+   "rows": [
+    " ┌─┐ ┌─┐",
+    "┌┘ └┬┘ └┐",
+    "╘╕     ╒╛    Box Drawing",
+    " ╘═╕ ╒═╛",
+    "   ╘╤╛"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Box Drawing style"
+  },
+  "alphabet_ext": {
+   "rows": [
+    "´ ‾ ¡ ·"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03 section 5, the four extended glyphs"
+  },
+  "run_steep": {
+   "rows": [
+    "  /",
+    " /",
+    "/"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the steep diagonal run"
+  },
+  "run_shallow": {
+   "rows": [
+    "   ,´",
+    "  /",
+    ",´"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, a shallower run using ,´"
+  },
+  "run_period": {
+   "rows": [
+    "    .´",
+    "  .´",
+    ".´   _"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the .´ run"
+  },
+  "run_under": {
+   "rows": [
+    "   _/",
+    " _/",
+    "/"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the _/ run"
+  },
+  "run_stair": {
+   "rows": [
+    "   _.-´",
+    ".-´"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the classic _.-´ stair-step"
+  },
+  "run_long": {
+   "rows": [
+    "      _,.-",
+    ",.-'´‾"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, a long shallow run"
+  },
+  "run_flat": {
+   "rows": [
+    "     ___,-",
+    ",---´"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the flattest run"
+  },
+  "aa_ramp": {
+   "rows": [
+    "|    \\          |    |    |          /    /    /    /",
+    "|     \\          \\    .   '         |    /    ¡    .",
+    "|      \\         |    |    |        |    |    |    |",
+    "|       \\         \\    .   '        |    \\    !    '",
+    "|        \\        |    |    |        \\    \\    \\    \\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 7, anti-aliasing of near-vertical lines"
+  },
+  "seam_joined": {
+   "rows": [
+    "        .---.                .---.",
+    "  .---./     \\         .---.´     \\",
+    " /     \\      :  ->   /     \\      :",
+    ":       :    /       :       :    /",
+    " \\     /`---´         \\     / ·--´",
+    "  `---´                `---´"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 9, two forms sharing a seam glyph"
+  },
+  "dither_top": {
+   "rows": [
+    "             _ _ ___ _ _",
+    "       .-'´   ____,      `'-._",
+    "   .:´     _.-·´ o/`___      ·`.",
+    " .:'     ,´  _.-._\\¯¯`-.`.      `.",
+    ".:'     /  ,´           `.`.    ` \\"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 10, the dithered sphere, upper band"
+  },
+  "dither_low": {
+   "rows": [
+    "`::::::.:.'.'.'.'.'.'.'. .'.´",
+    "  `':;:::::.:.'.'.'.'.'.'·´",
+    "      `'::;;;;;;;:·:'·'´"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 10, the dithered sphere, lower band"
+  },
+  "shadow_gnd": {
+   "rows": [
+    "__\\_________\\(    )___\\_________\\_____",
+    "________\\_____'--' _________\\_________",
+    "____\\_________      ____\\_________\\___",
+    "_\\________\\______    _________\\_______",
+    "______\\_________\\__  _____\\_________\\_",
+    "___\\________\\_______ _\\_________\\_____"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 11, hatched ground under a figure"
+  },
+  "hand1": {
+   "rows": [
+    "  _",
+    "\\( )/",
+    " `, \\",
+    " '-,_)"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, hand/arm layer frame 1"
+  },
+  "hand2": {
+   "rows": [
+    "  _",
+    "\\( )/",
+    " ; (",
+    "'-,_)"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, hand/arm layer frame 2"
+  },
+  "hand3": {
+   "rows": [
+    "   _",
+    "  ( /",
+    " _! |",
+    "'-,_)"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, hand/arm layer frame 3"
+  },
+  "spark1": {
+   "rows": [
+    "'",
+    "╨"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 1"
+  },
+  "spark2": {
+   "rows": [
+    "•",
+    "╨"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 2"
+  },
+  "spark3": {
+   "rows": [
+    ":",
+    "╨"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 3"
+  },
+  "spark4": {
+   "rows": [
+    ".",
+    "·",
+    "╨"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 4"
+  },
+  "spark5": {
+   "rows": [
+    "·",
+    "'",
+    "╨"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 5"
+  },
+  "spark6": {
+   "rows": [
+    "'",
+    "'",
+    "╨"
+   ],
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 6"
+  }
+ }
+}
