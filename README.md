@@ -1,9 +1,13 @@
-# vim-daily
+# practice your neovim and ascii art skills 
 
 Short vim drills that interrupt you once an hour, in a tmux popup, and make you
-actually type the keys. Forty-two drills across three tiers, each one opening with
+actually type the keys. The drills are across three tiers, each one opening with
 a paradigm-level explanation of *why* the mechanic exists rather than a list of
 keystrokes to memorise.
+
+The ascii art itself is inspired by Standard combo's lecture on ascii art authoring. 
+Note: this is for begginers, once I am good enough and feel like it, I'll probably add harder exercises, 
+feel free to PR any ones you feel would be useful.
 
 When you get it wrong it shows you what you typed next to what the recipe asked
 for, because the keystrokes are recorded.
@@ -24,7 +28,7 @@ And it keeps a streak.
 
 ## Why the drills are ASCII art
 
-Because a monospaced text editor is an animation tool, and the operations that
+Because its cool and arguably more fun than having to practice neovim on modfying fizz fuzz foo and hello world strings. Also, the drills will hone your skills in ascii art authoring. Practice is key. Other monospaced text editor is an animation tool, and the operations that
 make frame-by-frame art tractable are exactly the vim operations worth owning:
 copy a frame, erase one column across it, re-sort frames from authoring order
 into playback order, walk one edit down a stack. The tier-3 drills are those
