@@ -1,0 +1,678 @@
+#!/usr/bin/env python3
+"""vim-daily-gate - short hourly vim drills, monospaced-art flavoured.
+
+History
+  2026-09-14a  Rewritten in bash. The original fired only in a login shell
+               outside tmux, which with auto-attach meant ~never.
+  2026-09-14b  No instruction text may contain the word a motion targets; the
+               editor opens with the cursor already parked on the edit.
+  2026-09-15   Failure output gained an expected-vs-actual column diff.
+  2026-09-18   Rewritten in Python. Reasons the bash version could not grow:
+               * drills were a `case` statement, so every new exercise meant
+                 editing the runner. They are now data (curriculum.json).
+               * a drill could only ever be one line, which ruled out the
+                 frame/rectangle work that monospaced art actually consists of.
+               * there was no record of WHAT WAS TYPED, only of the final line,
+                 so a failure could not say which keystroke went wrong.
+               Added: hourly cadence, streak counter, paradigm-level concept
+               text per drill, 16 drills across 3 tiers, blockwise/macro/ex
+               frame drills, and a typed-vs-recipe keystroke table on failure.
+
+Usage
+  vim-daily-gate                 run a drill if one is due
+  vim-daily-gate --if-due        same, but exit 0 silently when nothing is due
+  vim-daily-gate --force         run the next drill regardless of cap/cooldown
+  vim-daily-gate --drill N|ID    run a specific drill
+  vim-daily-gate --list          list every drill, its tier and its skill
+  vim-daily-gate --due-quiet     exit 0 if a drill is due, 1 if not, no output
+  vim-daily-gate --status        progress, streak and per-skill mastery
+  vim-daily-gate --streak        one line: the current streak
+  vim-daily-gate --concepts [N]  print the paradigm chapters (the "why")
+  vim-daily-gate --export-progress   progress as JSON on stdout
+
+Environment
+  VIM_DAILY_SKIP=1          bypass entirely for this shell
+  VIM_DAILY_TARGET=12       drills per day
+  VIM_DAILY_COOLDOWN=3600   seconds between prompts (default: hourly)
+  VIM_DAILY_MAX_TRIES=3     attempts before the gate lets you through anyway
+  VIM_DAILY_CURRICULUM      path to an alternate curriculum.json
+"""
+
+import datetime as dt
+import difflib
+import json
+import os
+import random
+import re
+import subprocess
+import sys
+
+HOME = os.path.expanduser("~")
+STATE = os.path.join(os.environ.get("XDG_STATE_HOME", os.path.join(HOME, ".local/state")), "vim-daily")
+SHARE = os.path.join(os.environ.get("XDG_DATA_HOME", os.path.join(HOME, ".local/share")), "vim-daily")
+CURRICULUM = os.environ.get("VIM_DAILY_CURRICULUM", os.path.join(SHARE, "curriculum.json"))
+PROGRESS = os.path.join(STATE, "progress.json")
+STAMP = os.path.join(STATE, "last-prompt")
+
+TARGET = int(os.environ.get("VIM_DAILY_TARGET", "12"))
+COOLDOWN = int(os.environ.get("VIM_DAILY_COOLDOWN", "3600"))
+MAX_TRIES = int(os.environ.get("VIM_DAILY_MAX_TRIES", "3"))
+EDITOR = os.environ.get("EDITOR", "nvim")
+
+MARKER = ">>>>>>>>>>  edit below this line, nothing above it  <<<<<<<<<<"
+
+BOLD, DIM, OFF = "\033[1m", "\033[2m", "\033[0m"
+GREEN, RED, YELLOW = "\033[32m", "\033[31m", "\033[33m"
+if not sys.stdout.isatty():
+    BOLD = DIM = OFF = GREEN = RED = YELLOW = ""
+
+
+# =========================================================================
+# keys - decode what was actually typed, and compare it to the recipe
+# Vendorable on its own: takes bytes, returns readable vim key tokens.
+# =========================================================================
+
+_CSI = {b"A": "<Up>", b"B": "<Down>", b"C": "<Right>", b"D": "<Left>",
+        b"H": "<Home>", b"F": "<End>"}
+
+
+_MODBITS = ((0x01, "S-"), (0x02, "C-"), (0x04, "A-"), (0x08, "M-"))
+
+
+def _apply_mod(mod, tok):
+    if not mod:
+        return tok
+    inner = tok[1:-1] if tok.startswith("<") and tok.endswith(">") else tok
+    return "<" + mod + inner + ">"
+
+
+def decode_keylog(raw: bytes):
+    """Turn nvim's -w scriptout into readable key tokens."""
+    out, i, n, mod = [], 0, len(raw), ""
+    while i < n:
+        b = raw[i]
+        if b == 0x80 and i + 2 < n and raw[i + 1] == 0xFC:
+            # K_SPECIAL KS_MODIFIER <mask>: a modifier applied to the NEXT key.
+            # This is how nvim reports Esc-followed-immediately-by-a-key, which
+            # it folds into Meta (verified 2026-09-18: Esc then 0 with no gap
+            # logs 80 fc 08 30 = <M-0>). Dropping it silently printed a bare
+            # "0" in the table and made a real failure unexplainable.
+            mod = "".join(name for bit, name in _MODBITS if raw[i + 2] & bit)
+            i += 3
+            continue
+        if b == 0x1B:                                  # ESC, or an escape seq
+            if i + 2 < n and raw[i + 1:i + 2] == b"[":
+                j = i + 2
+                while j < n and raw[j:j + 1] in b"0123456789;":
+                    j += 1
+                if j < n:
+                    out.append(_apply_mod(mod, _CSI.get(raw[j:j + 1], "<Esc-seq>")))
+                    mod = ""
+                    i = j + 1
+                    continue
+            out.append(_apply_mod(mod, "<Esc>"))
+        elif b == 0x0D:
+            out.append(_apply_mod(mod, "<CR>"))
+        elif b == 0x0A:
+            out.append(_apply_mod(mod, "<NL>"))
+        elif b == 0x09:
+            out.append(_apply_mod(mod, "<Tab>"))
+        elif b in (0x08, 0x7F):
+            out.append(_apply_mod(mod, "<BS>"))
+        elif b == 0x80:
+            # Any other K_SPECIAL triple. nvim injects these itself during f/r/.
+            # handling (verified 2026-09-18: `f.;` logs 66 2e 80 fd 35 3b). They
+            # are not keys the human pressed, so they stay out of the table.
+            i += 3
+            continue
+        elif b < 0x20:
+            out.append(_apply_mod(mod, "<C-%s>" % chr(0x60 + b)))
+        elif b < 0x7F:
+            out.append(_apply_mod(mod, chr(b)))
+        else:
+            out.append(_apply_mod(mod, raw[i:i + 1].decode("utf-8", "replace")))
+        mod = ""
+        i += 1
+    return out
+
+
+def tokenize(spec: str):
+    """Split a recipe key-string into the same tokens decode_keylog emits."""
+    out, i, n = [], 0, len(spec)
+    while i < n:
+        if spec[i] == "<":
+            m = re.match(r"<(?:[A-Za-z]-)?[A-Za-z0-9]+>", spec[i:])
+            if m:
+                out.append(m.group(0))
+                i += len(m.group(0))
+                continue
+        out.append(spec[i])
+        i += 1
+    return out
+
+
+_SAVE_EX = {"w", "wq", "wq!", "x", "x!", "q", "q!", "qa", "wqa"}
+
+
+def strip_save_tail(toks):
+    """Drop a trailing save command so :wq vs ZZ is never reported as an error."""
+    t = list(toks)
+    for _ in range(4):
+        if len(t) >= 2 and t[-2] == "Z" and t[-1] in ("Z", "Q"):
+            t = t[:-2]
+            continue
+        if t and t[-1] == "<CR>":
+            try:
+                k = len(t) - 1 - t[::-1].index(":", 1)
+            except ValueError:
+                break
+            if "".join(t[k + 1:-1]) in _SAVE_EX:
+                t = t[:k]
+                continue
+        break
+    return t
+
+
+def keystroke_table(typed, expected, width=34):
+    """Two columns: what you did, next to what the recipe asked for."""
+    a, b = strip_save_tail(typed), strip_save_tail(expected)
+    if not a:
+        return ["  (no keystrokes recorded)"]
+    rows = []
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
+        mine, theirs = "".join(a[i1:i2]), "".join(b[j1:j2])
+        if tag == "equal":
+            rows.append((mine, theirs, "ok", DIM))
+        elif tag == "replace":
+            rows.append((mine, theirs, "not this", RED))
+        elif tag == "delete":
+            rows.append((mine, "", "extra", YELLOW))
+        else:
+            rows.append(("", theirs, "you skipped this", RED))
+    lines = ["  %-*s  %-*s  %s" % (width, "YOU TYPED", width, "THE RECIPE ASKS FOR", ""),
+             "  %s  %s  %s" % ("-" * width, "-" * width, "-" * 16)]
+    shown = 0
+    for mine, theirs, note, colour in rows:
+        while mine or theirs or note:
+            lines.append("  %s%-*s  %-*s  %s%s" % (
+                colour, width, mine[:width], width, theirs[:width], note, OFF))
+            mine, theirs, note = mine[width:], theirs[width:], ""
+            shown += 1
+            if shown > 40:
+                return lines + ["  ... (truncated)"]
+    return lines
+
+
+# =========================================================================
+# progress - streak, per-drill mastery, and which drill comes next
+# Vendorable on its own: reads the log directory, returns plain dicts.
+# =========================================================================
+
+def day_log(day):
+    return os.path.join(STATE, "%s.log" % day)
+
+
+def day_counts():
+    """{date: completions} for every day the gate has ever recorded."""
+    counts = {}
+    if not os.path.isdir(STATE):
+        return counts
+    for name in os.listdir(STATE):
+        m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})\.log", name)
+        if not m:
+            continue
+        try:
+            with open(os.path.join(STATE, name)) as f:
+                n = sum(1 for line in f if line.strip())
+        except OSError:
+            n = 0
+        if n:
+            counts[dt.date.fromisoformat(m.group(1))] = n
+    return counts
+
+
+def streaks(counts, today=None):
+    """(current, longest, total_days, total_drills).
+
+    The current streak is measured back from today, or from yesterday when
+    today is still empty, so it does not read as broken before your first
+    drill of the day.
+    """
+    today = today or dt.date.today()
+    if not counts:
+        return 0, 0, 0, 0
+    anchor = today if counts.get(today) else today - dt.timedelta(days=1)
+    cur, d = 0, anchor
+    while counts.get(d):
+        cur += 1
+        d -= dt.timedelta(days=1)
+    longest, run, prev = 0, 0, None
+    for d in sorted(counts):
+        run = run + 1 if prev and (d - prev).days == 1 else 1
+        longest = max(longest, run)
+        prev = d
+    return cur, max(longest, cur), len(counts), sum(counts.values())
+
+
+def load_progress(drills):
+    if os.path.exists(PROGRESS):
+        try:
+            with open(PROGRESS) as f:
+                return json.load(f)
+        except (OSError, ValueError):
+            pass
+    # First run: seed mastery from the logs the bash version already wrote,
+    # matching on the drill title it recorded.
+    p = {"schema": "vim-daily/progress@1", "drills": {}, "last_id": None}
+    by_title = {d["title"]: d["id"] for d in drills}
+    for name in sorted(os.listdir(STATE)) if os.path.isdir(STATE) else []:
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}\.log", name):
+            continue
+        with open(os.path.join(STATE, name)) as f:
+            for line in f:
+                fields = dict(kv.split("=", 1) for kv in line.rstrip("\n").split("\t") if "=" in kv)
+                did = by_title.get(fields.get("drill", ""))
+                if not did:
+                    continue
+                rec = p["drills"].setdefault(did, {"seen": 0, "passed": 0, "failed": 0, "last": None})
+                rec["passed"] += 1
+                rec["seen"] += 1
+                rec["last"] = fields.get("completed_at")
+                p["last_id"] = did
+    return p
+
+
+def save_progress(p):
+    os.makedirs(STATE, exist_ok=True)
+    tmp = PROGRESS + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(p, f, indent=1)
+    os.replace(tmp, PROGRESS)
+
+
+def unlocked(drills, tiers, total_drills):
+    out = [d for d in drills
+           if total_drills >= tiers.get(str(d.get("tier", 1)), {}).get("unlock_at", 0)]
+    return out or [d for d in drills if d.get("tier", 1) == 1]
+
+
+def pick_drill(drills, tiers, progress, total_drills):
+    """Weakest skill first: fewest passes, then least recently seen.
+
+    This replaces the bash version's `day-of-year % 7`, which meant the same
+    two drills every day regardless of what you were bad at.
+    """
+    pool = unlocked(drills, tiers, total_drills)
+    if len(pool) > 1 and progress.get("last_id"):
+        pool = [d for d in pool if d["id"] != progress["last_id"]] or pool
+    def key(d):
+        r = progress["drills"].get(d["id"], {})
+        return (r.get("passed", 0), r.get("last") or "", random.random())
+    return sorted(pool, key=key)[0]
+
+
+# =========================================================================
+# lesson - render the buffer the drill is performed in
+# =========================================================================
+
+def region_lines(drill):
+    return list(drill["start"])
+
+
+def write_lesson(path, drill, concept, progress_line):
+    tgt = drill["target"]
+    body = [
+        "Vim drill - %s" % drill["title"],
+        "Skill: %s" % drill["skill"],
+        "%s" % progress_line,
+        "",
+        "=== WHY THIS EXISTS " + "=" * 52,
+        concept["title"],
+        "",
+    ]
+    body += ["  " + l for l in concept["paradigm"].split("\n")]
+    body += [
+        "",
+        "=== WHAT THIS DRILL BUYS YOU " + "=" * 43,
+        "  " + drill.get("buys", ""),
+        "",
+        "=== DO THIS " + "=" * 60,
+    ]
+    for keys, desc in drill["recipe"]:
+        body.append("  %-14s %s" % (keys, desc))
+    body += ["", "=== KEYS WORTH KEEPING " + "=" * 49]
+    body += ["  " + l for l in drill.get("keys", [])]
+    body += [
+        "",
+        "Auto-pairing is off in this buffer, so what you type is what you get.",
+        "STUCK?  :q!  then answer  n          Another drill any time:  vim-drill",
+        "Read the WHY section any time with  gg  , come back with  G",
+        "",
+        "=== MAKE THE LINES UNDER THE MARKER LOOK EXACTLY LIKE THIS " + "=" * 14,
+    ]
+    body += ["  │" + l for l in tgt]
+    body += ["", MARKER]
+    start = len(body) + 1                     # 1-based line number of first editable line
+    body += region_lines(drill)
+    with open(path, "w") as f:
+        f.write("\n".join(body) + "\n")
+    return start
+
+
+def read_region(path):
+    with open(path) as f:
+        lines = f.read().split("\n")
+    if MARKER not in lines:
+        return None
+    region = lines[lines.index(MARKER) + 1:]
+    while region and not region[-1].strip():
+        region.pop()
+    return region
+
+
+def matches(region, target):
+    if region is None:
+        return False
+    return [l.rstrip() for l in region] == [l.rstrip() for l in target]
+
+
+def reset_region(path, drill):
+    with open(path) as f:
+        lines = f.read().split("\n")
+    if MARKER not in lines:
+        return
+    head = lines[:lines.index(MARKER) + 1]
+    with open(path, "w") as f:
+        f.write("\n".join(head + region_lines(drill)) + "\n")
+
+
+def show_diff(region, target):
+    print("\n%sNot matching yet.%s" % (BOLD, OFF))
+    if region is None:
+        print("  The %s marker line is gone, so there is nothing to check." % "edit-below")
+        print("  Press r at the prompt to reset the drill.")
+        return
+    n = max(len(region), len(target))
+    for i in range(n):
+        want = target[i] if i < len(target) else None
+        got = region[i] if i < len(region) else None
+        if want is not None and got is not None and want.rstrip() == got.rstrip():
+            print("  %s  ok   │%s%s" % (DIM, got, OFF))
+            continue
+        if want is None:
+            print("  %s  extra line │%s%s" % (RED, got, OFF))
+            continue
+        if got is None:
+            print("  %s  missing    │%s%s" % (RED, want, OFF))
+            continue
+        print("  %swanted │%s%s" % (RED, want, OFF))
+        print("  %syours  │%s%s" % (RED, got, OFF))
+        k = 0
+        while k < min(len(want), len(got)) and want[k] == got[k]:
+            k += 1
+        print("         %s^ first difference at column %d" % (" " * k, k + 1))
+        if k < len(want) and k < len(got):
+            print("          wanted %r there, got %r" % (want[k], got[k]))
+        elif len(got) < len(want):
+            print("          that line is %d character(s) too short" % (len(want) - len(got)))
+        else:
+            print("          that line is %d character(s) too long" % (len(got) - len(want)))
+
+
+# =========================================================================
+# editor
+# =========================================================================
+
+NOPAIRS = ("pcall(function() vim.b.minipairs_disable = true end) "
+           "pcall(function() vim.b.autopairs_enabled = false end) "
+           "pcall(function() vim.b.delimitMate_autoclose = 0 end)")
+
+
+def run_editor(path, start_line, cursor, keylog):
+    """Open the lesson with the cursor parked on the edit and keystrokes logged.
+
+    Auto-pairing is disabled FOR THIS BUFFER ONLY. This is a precaution, not a
+    diagnosed fix: a 2026-09-15 failure blamed on mini.pairs did not reproduce
+    when a real interactive nvim was driven in tmux. Do not cite it as a cause;
+    the keystroke table below is the actual diagnostic.
+    """
+    try:
+        os.unlink(keylog)          # -w appends, so start each attempt clean
+    except OSError:
+        pass
+    env = dict(os.environ, VIM_DAILY_ACTIVE="1")
+    base = os.path.basename(EDITOR)
+    if base == "nvim":
+        cmd = [EDITOR, "+lua " + NOPAIRS, "+%d" % start_line, "+normal! " + cursor,
+               "-w", keylog, path]
+    elif base in ("vim", "vi", "view", "gvim", "mvim"):
+        cmd = [EDITOR, "+silent! let b:delimitMate_autoclose = 0", "+%d" % start_line,
+               "+normal! " + cursor, "-w", keylog, path]
+    else:
+        cmd = [EDITOR, path]
+    subprocess.call(cmd, env=env)
+
+
+# =========================================================================
+# gate
+# =========================================================================
+
+def load_curriculum():
+    with open(CURRICULUM) as f:
+        return json.load(f)
+
+
+def seconds_since_prompt():
+    try:
+        return int(dt.datetime.now().timestamp() - os.stat(STAMP).st_mtime)
+    except OSError:
+        return 999999
+
+
+def progress_banner(counts, done_today):
+    cur, best, days, total = streaks(counts)
+    flame = "\U0001F525" if cur >= 3 else ""
+    bits = ["%s%d/%d today%s" % (BOLD, done_today, TARGET, OFF),
+            ("streak %s%d day%s%s %s" % (BOLD, cur, "" if cur == 1 else "s", OFF, flame)).rstrip(),
+            "best %d" % best,
+            "%d drill%s all time" % (total, "" if total == 1 else "s")]
+    return "  ·  ".join(bits)
+
+
+def hold_open():
+    """Keep a tmux popup on screen long enough to read it.
+
+    `tmux display-popup -E` destroys the pane the moment the command exits, so
+    without this the completion line and the keystroke table would flash past
+    and vanish. The retry prompt already blocks; these are the exits that do not.
+    """
+    if not os.environ.get("VIM_DAILY_POPUP"):
+        return
+    try:
+        input("\n%spress Enter to close%s " % (DIM, OFF))
+    except (EOFError, KeyboardInterrupt):
+        pass
+
+
+def record_completion(drill, attempts, counts):
+    os.makedirs(STATE, exist_ok=True)
+    today = dt.date.today().isoformat()
+    with open(day_log(today), "a") as f:
+        f.write("completed_at=%s\tdrill=%s\tskill=%s\tconcept=%s\tid=%s\tattempts=%d\n" % (
+            dt.datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z"),
+            drill["title"], drill["skill"], drill.get("concept", ""), drill["id"], attempts))
+
+
+def do_drill(drill, cur, progress, counts, done_today):
+    concept = cur["concepts"][drill["concept"]]
+    lesson = os.path.join(STATE, "%s-%s.txt" % (dt.date.today().isoformat(), drill["id"]))
+    keylog = os.path.join(STATE, "keys-%s.log" % drill["id"])
+    banner = progress_banner(counts, done_today)
+    start = write_lesson(lesson, drill, concept, "Concept: " + concept["title"])
+    open(STAMP, "a").close()
+    os.utime(STAMP, None)
+
+    rec = progress["drills"].setdefault(drill["id"], {"seen": 0, "passed": 0, "failed": 0, "last": None})
+    rec["seen"] += 1
+    progress["last_id"] = drill["id"]
+
+    tries = 0
+    while True:
+        tries += 1
+        print("\n%sVim drill: %s%s   (skill: %s)" % (BOLD, drill["title"], OFF, drill["skill"]))
+        print(banner)
+        print("%sWhy: %s%s" % (DIM, concept["title"], OFF))
+        print("Cursor starts on the edit. Quit any time with :q! then n.\n")
+
+        run_editor(lesson, start, drill.get("cursor", "^"), keylog)
+        region = read_region(lesson)
+
+        if matches(region, drill["target"]):
+            rec["passed"] += 1
+            rec["last"] = dt.datetime.now().astimezone().isoformat()
+            record_completion(drill, tries, counts)
+            save_progress(progress)
+            counts = day_counts()
+            cur_s, best, _, total = streaks(counts)
+            print("%sDrill complete: %s%s   %s" % (GREEN, drill["title"], OFF,
+                                                   progress_banner(counts, counts.get(dt.date.today(), 0))))
+            if cur_s > best - 1 and cur_s > 1:
+                print("%sStreak extended to %d days.%s" % (GREEN, cur_s, OFF))
+            print("%s%s%s" % (DIM, drill.get("buys", ""), OFF))
+            print("%sthe why: vim-daily-gate --concepts %s%s" % (DIM, drill["concept"], OFF))
+            hold_open()
+            return 0
+
+        rec["failed"] += 1
+        save_progress(progress)
+        show_diff(region, drill["target"])
+        try:
+            with open(keylog, "rb") as f:
+                typed = decode_keylog(f.read())
+        except OSError:
+            typed = []
+        print("\n%sWHAT YOU TYPED, NEXT TO THE RECIPE%s  %s(save command not compared)%s"
+              % (BOLD, OFF, DIM, OFF))
+        for line in keystroke_table(typed, tokenize(drill.get("expected", ""))):
+            print(line)
+
+        if tries >= MAX_TRIES:
+            print("\nLetting you through after %d attempts. Retry later with: vim-drill" % tries)
+            hold_open()
+            return 0
+        try:
+            ans = input("\nTry again, or reset the lines and retry? [Y/n/r] ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return 0
+        if ans in ("n", "no", "q"):
+            print("Skipped. Retry later with: vim-drill")
+            hold_open()
+            return 0
+        if ans in ("r", "reset"):
+            reset_region(lesson, drill)
+            print("Lines reset.")
+
+
+def is_due(done_today):
+    if os.environ.get("VIM_DAILY_SKIP") or os.environ.get("VIM_DAILY_ACTIVE") or os.environ.get("NVIM"):
+        return False
+    if done_today >= TARGET:
+        return False
+    if seconds_since_prompt() < COOLDOWN:
+        return False
+    return True
+
+
+def main(argv):
+    os.makedirs(STATE, exist_ok=True)
+    cur = load_curriculum()
+    drills, tiers = cur["drills"], cur.get("tiers", {})
+    progress = load_progress(drills)
+    counts = day_counts()
+    today = dt.date.today()
+    done_today = counts.get(today, 0)
+    _, _, _, total = streaks(counts)
+
+    mode = argv[0] if argv else "run"
+
+    if mode == "--list":
+        for i, d in enumerate(drills):
+            r = progress["drills"].get(d["id"], {})
+            lock = "" if d in unlocked(drills, tiers, total) else "  (locked)"
+            print("%2d  t%d  %-24s %-34s passed %d%s" % (
+                i, d.get("tier", 1), d["title"], d["skill"], r.get("passed", 0), lock))
+        return 0
+
+    if mode == "--concepts":
+        want = argv[1] if len(argv) > 1 else None
+        for name, c in cur["concepts"].items():
+            if want and want not in name:
+                continue
+            print("%s%s%s\n%s\n" % (BOLD, c["title"], OFF, c["paradigm"]))
+        return 0
+
+    if mode == "--streak":
+        c, b, days, tot = streaks(counts)
+        print("vim drills: streak %d day%s (best %d), %d today, %d all time"
+              % (c, "" if c == 1 else "s", b, done_today, tot))
+        return 0
+
+    if mode == "--export-progress":
+        c, b, days, tot = streaks(counts)
+        json.dump({"schema": "vim-daily/export@1", "date": today.isoformat(),
+                   "today": done_today, "target": TARGET, "streak": c, "longest_streak": b,
+                   "active_days": days, "total_completed": tot,
+                   "drills": progress["drills"]}, sys.stdout, indent=1)
+        print()
+        return 0
+
+    if mode == "--status":
+        c, b, days, tot = streaks(counts)
+        print("%svim drills%s  %s" % (BOLD, OFF, progress_banner(counts, done_today)))
+        print("active days: %d   cadence: every %ds, cap %d/day" % (days, COOLDOWN, TARGET))
+        print("since last prompt: %ds" % seconds_since_prompt())
+        print("\n%-26s %-34s %s" % ("DRILL", "SKILL", "passed/failed"))
+        for d in drills:
+            r = progress["drills"].get(d["id"], {})
+            mark = "" if d in unlocked(drills, tiers, total) else " (locked)"
+            print("%-26s %-34s %d/%d%s" % (d["title"], d["skill"],
+                                           r.get("passed", 0), r.get("failed", 0), mark))
+        last14 = [today - dt.timedelta(days=i) for i in range(13, -1, -1)]
+        print("\nlast 14 days  " + "".join("█" if counts.get(d) else "·" for d in last14))
+        return 0
+
+    forced = None
+    if mode == "--drill":
+        key = argv[1] if len(argv) > 1 else "0"
+        forced = next((d for d in drills if d["id"] == key), None)
+        if forced is None:
+            try:
+                forced = drills[int(key)]
+            except (ValueError, IndexError):
+                print("no such drill: %s" % key, file=sys.stderr)
+                return 1
+        mode = "--force"
+
+    if mode == "--due-quiet":
+        return 0 if is_due(done_today) else 1
+
+    if mode != "--force":
+        if not is_due(done_today):
+            if mode == "--if-due":
+                return 0
+            print("No drill due. %d/%d done today. Force one with: vim-drill" % (done_today, TARGET))
+            return 0
+
+    if os.environ.get("TERM") == "dumb" or not sys.stdin.isatty() or not sys.stdout.isatty():
+        return 0
+
+    drill = forced or pick_drill(drills, tiers, progress, total)
+    return do_drill(drill, cur, progress, counts, done_today)
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main(sys.argv[1:]))
+    except KeyboardInterrupt:
+        sys.exit(0)

@@ -1,0 +1,7 @@
+# Practice state lives in ~/.local/state/vim-daily/ and is NOT tracked here.
+# It is a log of when you sat at your machine, which does not belong in a
+# public repo. Back it up somewhere private if you care about the streak.
+state/
+*.log
+__pycache__/
+.DS_Store

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Bare `vim-drill` forces a drill. With arguments, pass them straight through,
+# so `vim-drill --list` / `--status` / `--concepts` work. Before 2026-09-18 this
+# always injected --force, so `vim-drill --list` silently ran a drill instead.
+[ $# -eq 0 ] && exec "$HOME/.local/bin/vim-daily-gate" --force
+exec "$HOME/.local/bin/vim-daily-gate" "$@"

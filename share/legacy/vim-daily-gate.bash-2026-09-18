@@ -1,0 +1,330 @@
+#!/usr/bin/env bash
+# vim-daily-gate - short daily vim drills, ASCII-art flavoured.
+#
+# History:
+# 2026-09-14a  Rewritten. The old version fired only in a login shell outside
+#              tmux, which with auto-attach meant ~never (zero completions ever
+#              recorded), and its one-line hints taught no keystrokes.
+# 2026-09-14b  Fixed two things that actively confused the user:
+#              * The recipe said "/TODO<CR> jump to the placeholder" -- but the
+#                word TODO appeared in that instruction line too, so the search
+#                matched the INSTRUCTIONS and the drill was edited in the wrong
+#                place. No instruction text may contain the placeholder word.
+#              * The editor now opens with the cursor already on the word to
+#                change (+normal! GW), so there is no navigation step at all.
+#
+# Usage:
+#   vim-daily-gate              run a drill if one is due
+#   vim-daily-gate --if-due     same, but exit 0 silently when nothing is due
+#   vim-daily-gate --force      run the next drill regardless of cap/cooldown
+#   vim-daily-gate --drill N    run drill N (0-6) directly
+#   vim-daily-gate --list       list the seven drills and the skill each teaches
+#   vim-daily-gate --due-quiet  exit 0 if a drill is due, 1 if not (no output)
+#   vim-daily-gate --status     print today's progress
+#
+# Environment:
+#   VIM_DAILY_SKIP=1          bypass entirely for this shell
+#   VIM_DAILY_TARGET=2        drills per day
+#   VIM_DAILY_COOLDOWN=10800  seconds between prompts
+#   VIM_DAILY_MAX_TRIES=3     attempts before the gate lets you through anyway
+
+set -uo pipefail
+
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/vim-daily"
+today="$(date +%F)"
+log="$state_dir/$today.log"
+prompt_stamp="$state_dir/last-prompt"
+editor="${EDITOR:-nvim}"
+target_count="${VIM_DAILY_TARGET:-2}"
+cooldown="${VIM_DAILY_COOLDOWN:-10800}"
+max_tries="${VIM_DAILY_MAX_TRIES:-3}"
+
+# The word that sits on the line you edit. It must NEVER appear anywhere else
+# in the lesson file, or a search/motion aimed at it will hit the wrong line.
+placeholder="TODO"
+
+mode="${1:-run}"
+mkdir -p "$state_dir"
+
+completed_today() {
+  [[ -f "$log" ]] && grep -c . "$log" 2>/dev/null || printf 0
+}
+
+seconds_since_prompt() {
+  local now mtime
+  now="$(date +%s)"
+  [[ -f "$prompt_stamp" ]] || { printf 999999; return; }
+  mtime="$(stat -f %m "$prompt_stamp" 2>/dev/null || printf 0)"
+  printf '%s' $(( now - mtime ))
+}
+
+# ---------------------------------------------------------------------------
+# Drill table. Each drill teaches ONE named skill. The cursor starts ON the
+# word to change, so every recipe begins with the actual skill, not navigation.
+# ---------------------------------------------------------------------------
+load_drill() {
+  case "$1" in
+  0)
+    title="stair-step mirror"
+    skill="change a word in place"
+    target="ART: _.-''-._"
+    recipe=$'  cw            change the word under the cursor\n  _.-\'\'-._      type this (two single quotes, not one double quote)\n  <Esc>         leave insert mode\n  :wq           save and quit'
+    keys=$'  cw    change to end of word      ciw   change the word, cursor anywhere in it\n  caw   change word AND its space   C     change to end of line\n  dw    delete a word               x     delete one character'
+    ;;
+  1)
+    title="small arch"
+    skill="operate to end of line"
+    target="ART: .'-._.-'."
+    recipe=$'  C             change from the cursor to the end of the line\n  .\'-._.-\'.     type this\n  <Esc>         leave insert mode\n  ZZ            save and quit (no colon needed)'
+    keys=$'  C   = c$  change to end of line     D   = d$  delete to end of line\n  A     append at end of line         I     insert before first non-blank\n  0     start of line    ^  first non-blank    $  end of line\n  ZZ    save and quit                 ZQ    quit without saving'
+    ;;
+  2)
+    title="slash symmetry"
+    skill="counted insert"
+    target="ART: /\__/"
+    recipe=$'  cw            change the word under the cursor\n  /\\            type a slash, then a backslash\n  <Esc>         leave insert mode\n  2a_<Esc>      append _ TWICE -- the 2 repeats the whole insert\n  a/<Esc>       append the closing slash\n  :wq           save and quit'
+    keys=$'  3a-<Esc>   appends ---          5i*<Esc>   inserts *****\n  .          repeat last change    u   undo      <C-r>  redo\n  Counts work on nearly everything: 3dd, 2yy, 4j, d3w'
+    ;;
+  3)
+    title="box fragment"
+    skill="counts instead of key-mashing"
+    target="ART: +---+"
+    recipe=$'  cw+<Esc>      change the word to a single +\n  3a-<Esc>      append - three times (do NOT press - three times)\n  a+<Esc>       append the closing +\n  :wq           save and quit'
+    keys=$'  3a-<Esc>   append --- after cursor    3i-<Esc>   insert --- before cursor\n  r<char>    replace exactly one char   R          overwrite mode\n  ~          toggle case               3~         toggle three chars'
+    ;;
+  4)
+    title="wave"
+    skill="find-character motions"
+    target="ART: ~._.~._."
+    recipe=$'  cw            change the word under the cursor\n  ~._.~._.      type this\n  <Esc>         leave insert mode\n  0             jump to the start of the line\n  f.            jump to the first dot, then press ; ; to hop the rest\n  :wq           save and quit'
+    keys=$'  f.    find next . on this line     F.    find previous .\n  t.    stop just BEFORE the next .   ;     repeat the find forward\n  ,     repeat the find backward      df.   delete up to and including next .'
+    ;;
+  5)
+    title="shadow pattern"
+    skill="the dot command"
+    target="ART: x_x_x_"
+    recipe=$'  cw            change the word under the cursor\n  x_            type this\n  <Esc>         leave insert mode\n  ax_<Esc>      append x_   <-- the dot key will repeat THIS edit\n  .             press the dot key. It repeats that edit. Done.\n  :wq           save and quit'
+    keys=$'  .     repeat the last change       3.    repeat it three times\n  u     undo                         <C-r>  redo\n  The dot repeats the last INSERT or OPERATOR -- not motions, not : commands.\n  Habit: keep edits small and repeatable, and let dot do the rest.'
+    ;;
+  *)
+    title="nested shape"
+    skill="matching pairs and text objects"
+    target="ART: <{[()]}>"
+    recipe=$'  cw            change the word under the cursor\n  <{[()]}>      type this\n  <Esc>         leave insert mode\n  0 then f{     jump to the opening brace\n  %             bounce to its matching closing brace\n  :wq           save and quit'
+    keys=$'  %      jump between matching ( ) [ ] { }\n  ci(    change inside parens      ci"   change inside quotes\n  di[    delete inside brackets     ya{   yank around braces\n  vi(    visually select inside parens'
+    ;;
+  esac
+}
+
+drill_index_for_slot() {
+  local base=$(( 10#$(date +%j) % 7 ))
+  printf '%s' $(( (base + $1 * 3) % 7 ))
+}
+
+write_lesson() {
+  cat > "$1" <<EOF
+Vim drill - $title
+Skill: $skill
+
+Your cursor is already on the word to replace, on the last line.
+If you lose it, press:  G  then  W
+Auto-pairing is OFF in this buffer, so what you type is what you get.
+
+DO THIS
+$recipe
+
+KEYS WORTH KEEPING
+$keys
+
+STUCK?  press  :q!  then answer  n      Another any time:  vim-drill
+
+MAKE THE LAST LINE LOOK EXACTLY LIKE THIS
+$target
+
+EDIT: (change the line below, then save)
+ART: $placeholder
+EOF
+}
+
+check_lesson() {
+  # Compare in bash, never through `awk -v`: awk expands escapes in -v
+  # assignments, so a target containing a backslash (drill 2) would lose it and
+  # the drill could never be completed. Found 2026-09-14.
+  local answer
+  answer="$(awk 'previous ~ /^EDIT:/ { print; exit } { previous = $0 }' "$1")"
+  [[ "$answer" == "$target" ]]
+}
+
+run_editor() {
+  # Two things happen before you get the buffer:
+  #
+  # 1. Auto-pairing is disabled FOR THIS BUFFER ONLY. This is a PRECAUTION, not
+  #    a diagnosed fix. A 2026-09-15 failure on drill 6 was blamed on mini.pairs
+  #    and that blame did NOT hold up: driving a real interactive nvim in tmux
+  #    with this config typed "<{[()]}>" correctly, with and without the flag --
+  #    mini.pairs types over its own closers. The flag stays because a typing
+  #    drill should not compete with any pair plugin, but do not cite it as the
+  #    cause of a mangled line. The real diagnostic is the diff printed below.
+  #
+  # 2. The cursor is parked on the placeholder: G = last line, W = next WORD
+  #    (past "ART:"), so there is no navigation step to get wrong.
+  local nopairs_lua='pcall(function() vim.b.minipairs_disable = true end) pcall(function() vim.b.autopairs_enabled = false end) pcall(function() vim.b.delimitMate_autoclose = 0 end)'
+  case "$(basename "$editor")" in
+    nvim)
+      VIM_DAILY_ACTIVE=1 "$editor" "+lua $nopairs_lua" "+normal! GW" "$1" ;;
+    vim|vi|view|gvim|mvim)
+      VIM_DAILY_ACTIVE=1 "$editor" \
+        "+silent! let b:delimitMate_autoclose = 0" "+normal! GW" "$1" ;;
+    *)
+      VIM_DAILY_ACTIVE=1 "$editor" "$1" ;;
+  esac
+}
+
+current_answer() {
+  awk 'previous ~ /^EDIT:/ { print; exit } { previous = $0 }' "$1"
+}
+
+# Print expected vs actual with a caret under the first differing column.
+# Without this, a failed drill says only "not matching" and you are left
+# guessing -- which is exactly what happened on 2026-09-15.
+show_diff() {
+  local got
+  got="$(current_answer "$1")"
+  printf '\nNot matching yet.\n'
+  TARGET="$target" GOT="$got" python3 -c '
+import os
+t = os.environ["TARGET"]
+g = os.environ["GOT"]
+print("  wanted: [%s]" % t)
+print("  yours:  [%s]" % g)
+n = min(len(t), len(g))
+i = 0
+while i < n and t[i] == g[i]:
+    i += 1
+if t == g:
+    print("  (lines look identical -- check for a trailing space)")
+else:
+    print("          %s^ first difference at column %d" % (" " * i, i + 1))
+    if i < len(t) and i < len(g):
+        print("          wanted %r here, got %r" % (t[i], g[i]))
+    elif len(g) < len(t):
+        print("          your line is %d character(s) too short" % (len(t) - len(g)))
+    else:
+        print("          your line is %d character(s) too long" % (len(g) - len(t)))
+' 2>/dev/null || printf '  wanted: [%s]\n  yours:  [%s]\n' "$target" "$got"
+}
+
+reset_edit_line() {
+  python3 -c '
+import sys
+p = sys.argv[1]
+ph = sys.argv[2]
+lines = open(p).read().split("\n")
+for i, l in enumerate(lines):
+    if l.startswith("EDIT:"):
+        lines[i+1] = "ART: " + ph
+open(p, "w").write("\n".join(lines))
+' "$1" "$placeholder" 2>/dev/null
+}
+
+record_completion() {
+  printf 'completed_at=%s\tdrill=%s\tskill=%s\ttarget=%s\n' \
+    "$(date '+%Y-%m-%dT%H:%M:%S%z')" "$title" "$skill" "$target" >> "$log"
+}
+
+# ---------------------------------------------------------------------------
+
+forced_index=""
+if [[ "$mode" == "--drill" ]]; then
+  forced_index="${2:-0}"
+  mode="--force"
+fi
+
+if [[ "$mode" == "--list" ]]; then
+  for i in 0 1 2 3 4 5 6; do
+    load_drill "$i"
+    printf '%s  %-22s %-34s %s\n' "$i" "$title" "$skill" "$target"
+  done
+  exit 0
+fi
+
+done_count="$(completed_today)"
+
+if [[ "$mode" == "--status" ]]; then
+  printf 'vim drills today: %s/%s\n' "$done_count" "$target_count"
+  printf 'since last prompt: %ss (cooldown %ss)\n' "$(seconds_since_prompt)" "$cooldown"
+  [[ -f "$log" ]] && cat "$log"
+  exit 0
+fi
+
+is_due() {
+  [[ -n "${VIM_DAILY_SKIP:-}" ]] && return 1
+  [[ -n "${VIM_DAILY_ACTIVE:-}" || -n "${NVIM:-}" ]] && return 1
+  (( done_count >= target_count )) && return 1
+  (( $(seconds_since_prompt) < cooldown )) && return 1
+  return 0
+}
+
+if [[ "$mode" == "--due-quiet" ]]; then
+  is_due && exit 0 || exit 1
+fi
+
+if [[ "$mode" != "--force" ]]; then
+  if ! is_due; then
+    [[ "$mode" == "--if-due" ]] && exit 0
+    printf 'No drill due. %s/%s done today. Force one with: vim-drill\n' "$done_count" "$target_count"
+    exit 0
+  fi
+fi
+
+if [[ "${TERM:-}" == "dumb" || ! -t 0 || ! -t 1 ]]; then
+  exit 0
+fi
+
+if ! command -v "$editor" >/dev/null 2>&1; then
+  printf 'Vim daily drill skipped: editor not found: %s\n' "$editor" >&2
+  exit 0
+fi
+
+slot="$done_count"
+(( slot > 1 )) && slot=1
+if [[ -n "$forced_index" ]]; then
+  load_drill "$forced_index"
+  lesson="$state_dir/$today-drill$forced_index.txt"
+else
+  load_drill "$(drill_index_for_slot "$slot")"
+  lesson="$state_dir/$today-slot$slot-drill.txt"
+fi
+
+write_lesson "$lesson"
+touch "$prompt_stamp"
+
+tries=0
+while true; do
+  tries=$(( tries + 1 ))
+  shown=$(( done_count + 1 ))
+  (( shown > target_count )) && shown="$target_count"
+  printf '\n\033[1mVim drill %s of %s: %s\033[0m  (skill: %s)\n' \
+    "$shown" "$target_count" "$title" "$skill"
+  printf 'Cursor starts on the word to change. Quit any time with :q! then n.\n\n'
+
+  run_editor "$lesson"
+
+  if check_lesson "$lesson"; then
+    record_completion
+    printf 'Drill complete: %s  (%s/%s today)\n' "$title" "$(completed_today)" "$target_count"
+    exit 0
+  fi
+
+  show_diff "$lesson"
+  if (( tries >= max_tries )); then
+    printf 'Letting you through after %s attempts. Retry later with: vim-drill\n' "$tries"
+    exit 0
+  fi
+  printf 'Try again, or reset the line and retry? [Y/n/r] '
+  if ! read -r answer; then printf '\n'; exit 0; fi
+  case "$answer" in
+    n|N|no|NO|No|q|Q) printf 'Skipped. Retry later with: vim-drill\n'; exit 0 ;;
+    r|R|reset)        reset_edit_line "$lesson"; printf 'Line reset to the placeholder.\n' ;;
+  esac
+done
