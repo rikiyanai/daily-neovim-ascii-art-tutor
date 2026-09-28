@@ -3152,3 +3152,27 @@ is preserved at `share/audits/lesson-prerequisite-clarity-matrix.md`.
 visibility findings require per-question layout/contract work. The standalone
 animation lesson pack is authored and rights-audited but not yet wired into the
 live generator.
+
+## VD-24 · 2026-09-28 — compact questions wrapped choices off-screen
+
+**Status:** PARTIAL — the measured compact rendering class is fixed; open-text
+accepted-variant disclosure remains open.
+
+The VD-20 renderer audit counted 141 likely 80×24 overflows because terminal
+autowrap split long prompts/choices unpredictably, and typed-key questions
+stacked START above TARGET. The runtime now deliberately wraps compact prompt
+paragraphs at 64 cells, compresses each multiple-choice animation/Neovim pair
+onto one line while retaining both halves, and renders typed-key START and
+TARGET side by side. This changes layout only; grading and semantic choice
+indices remain unchanged.
+
+The headed 80×24 module-check test now checks every presented question has four
+complete one-line `A · V` choices, and the five-question check reaches its real
+Neovim artifact. M0.P0 and the full guided/fail/retry/pass/repeat popup also
+pass at 80×24. The route test's stale `passed=10` setup was corrected to 11:
+after M0.P0 was added, 10 selected M0.07 rather than the asserted M0.08 check.
+
+Still open from VD-20: decode/why acceptance uses hidden term groups. The UI
+shows the response shape and a non-answer example, then shows the exact grammar
+and one accepted answer after a wrong attempt, but it does not expose every
+accepted synonym before grading.

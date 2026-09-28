@@ -542,6 +542,29 @@ def _question_map(cur):
     return {q["id"]: q for q in cur["questions"]}
 
 
+def _compact_question_text(value, width=64):
+    """Wrap compact prompts deliberately instead of letting the terminal do it."""
+    paragraphs = []
+    for paragraph in str(value).split("\n\n"):
+        line = " ".join(part.strip() for part in paragraph.splitlines() if part.strip())
+        if line:
+            paragraphs.append(textwrap.fill(line, width=width))
+    return "\n".join(paragraphs)
+
+
+def _compact_choice_text(value, width=62):
+    """Keep both animation and Vim halves visible on one compact row."""
+    value = " ".join(str(value).split())
+    for marker in (" · V: ", " | NEOVIM: "):
+        if marker in value:
+            animation, neovim = value.split(marker, 1)
+            left = textwrap.shorten(animation, width=28, placeholder="…")
+            right = textwrap.shorten(neovim, width=width - len(left) - 5,
+                                     placeholder="…")
+            return "%s · V: %s" % (left, right)
+    return textwrap.shorten(value, width=width, placeholder="…")
+
+
 def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=None):
     order = list(range(len(q["choices"])))
     letters = "abcd"[:len(order)]
@@ -558,6 +581,9 @@ def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=Non
                and shutil.get_terminal_size((80, 24)).lines < 38)
     prompt = q.get("compact_prompt", q["prompt"]) if compact else q["prompt"]
     displayed_choices = q.get("compact_choices", q["choices"]) if compact else q["choices"]
+    if compact:
+        prompt = _compact_question_text(prompt)
+        displayed_choices = [_compact_choice_text(choice) for choice in displayed_choices]
     if evidence is not None:
         evidence.update({
             "question_prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
@@ -748,15 +774,32 @@ def ask_authored_question(q, *, input_fn=input, shuffle=True, rendered=None,
     if form in ("multiple_choice", "predict_art"):
         return ask_question(q, input_fn=input_fn, shuffle=shuffle, rendered=rendered,
                             evidence=evidence)
-    print("\n%s" % q["prompt"])
+    compact = (__import__("sys").stdout.isatty()
+               and shutil.get_terminal_size((80, 24)).lines < 38)
+    prompt_text = q["prompt"]
+    if compact and form == "typed_keys":
+        sections = q["prompt"].split("\n\n")
+        animation = sections[0].removeprefix("ANIMATION\n") if sections else q["prompt"]
+        prompt_text = _compact_question_text(
+            "ANIMATION: %s\n\nNEOVIM: make START become TARGET; type keys only; effect is graded."
+            % animation)
+    print("\n%s" % prompt_text)
     if form == "typed_keys":
         contract = q["answer_contract"]
-        print("\n  START")
-        for line in contract["initial_lines"]:
-            print("  │" + line)
-        print("  TARGET")
-        for line in contract["target_lines"]:
-            print("  │" + line)
+        if compact:
+            print("\n  START%27sTARGET" % "")
+            initial, target = contract["initial_lines"], contract["target_lines"]
+            for index in range(max(len(initial), len(target))):
+                before = initial[index] if index < len(initial) else ""
+                after = target[index] if index < len(target) else ""
+                print("  │%-30s │%s" % (before[:30], after[:30]))
+        else:
+            print("\n  START")
+            for line in contract["initial_lines"]:
+                print("  │" + line)
+            print("  TARGET")
+            for line in contract["target_lines"]:
+                print("  │" + line)
         prompt = "  keys (Vim notation such as <Esc> or <CR>): "
     else:
         prompt = "  your answer: "

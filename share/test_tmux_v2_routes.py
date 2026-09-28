@@ -188,9 +188,20 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
 
             if route in ("concept", "check", "review"):
                 wait_signal(inner, question)
-                prompt = " ".join(capture(outer, pane).split())
+                prompt_raw = capture(outer, pane)
+                prompt = " ".join(prompt_raw.split())
                 assert "DO THIS" in prompt and "answer (a-d)" in prompt, prompt
                 assert "ANIMATION" in prompt and "NEOVIM" in prompt and "both" in prompt.lower(), prompt
+
+                def assert_compact_choices_fit(screen):
+                    if ROWS >= 38:
+                        return
+                    choice_lines = [line for line in screen.splitlines()
+                                    if re.search(r"\s[abcd]\)\s", line)]
+                    assert len(choice_lines) >= 4, screen
+                    assert all("· V:" in line for line in choice_lines[-4:]), screen
+
+                assert_compact_choices_fit(prompt_raw)
 
             if route == "concept":
                 question_id = CARDS[card_id]["question_ids"][
@@ -226,6 +237,7 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                     tmux(outer, "send-keys", "-t", pane, "Enter")
                     if number < 5:
                         wait_signal(inner, question)
+                        assert_compact_choices_fit(capture(outer, pane))
                 try:
                     wait_signal(inner, ready)
                 except AssertionError as exc:
@@ -352,7 +364,7 @@ if "--only-m005" in sys.argv:
     raise SystemExit(0)
 
 if "--only-check" in sys.argv:
-    exercise("five-question module check", passed=10, route="check", card_id="M0.08",
+    exercise("five-question module check", passed=11, route="check", card_id="M0.08",
              artifact_card="M0.08")
     raise SystemExit(0)
 
@@ -370,7 +382,7 @@ exercise("independent retrieval", passed=5, route="independent", card_id="M0.04"
          artifact_card="M0.04")
 exercise("two executable methods", passed=7, route="compare", card_id="M0.05",
          artifact_card="M0.05")
-exercise("five-question module check", passed=10, route="check", card_id="M0.08",
+exercise("five-question module check", passed=11, route="check", card_id="M0.08",
          artifact_card="M0.08")
 exercise("spaced review", passed=4, route="review", due_review=True)
 
