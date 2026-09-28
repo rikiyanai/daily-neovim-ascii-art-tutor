@@ -1,0 +1,548 @@
+#!/usr/bin/env python3
+"""Acceptance test for the real client-attached tmux popup route.
+
+This deliberately does not invoke the lesson directly. A nested tmux client
+attaches to an isolated server, that server fires the installed
+``client-attached`` hook, and an outer tmux pane captures the popup exactly as
+the attached terminal renders it.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import time
+import uuid
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+GATE = Path.home() / ".local" / "bin" / "vim-daily-gate"
+HOOK = Path.home() / ".tmux" / "scripts" / "vim-drill-popup.sh"
+COLUMNS = int(os.environ.get("VIM_DAILY_TEST_COLUMNS", "188"))
+ROWS = int(os.environ.get("VIM_DAILY_TEST_ROWS", "49"))
+CLEAN_MODE = os.environ.get("VIM_DAILY_TEST_CLEAN") == "1"
+CURRICULUM = json.loads((ROOT / "share" / "curriculum-v2.json").read_text(encoding="utf-8"))
+M0_FIRST = next(card for card in CURRICULUM["cards"] if card["id"] == "M0.01")
+M0_FIRST_QUESTION = next(question for question in CURRICULUM["questions"]
+                         if question["id"] == "M0.01.P01")
+
+
+def run(*args, **kwargs):
+    return subprocess.run(args, check=True, text=True, **kwargs)
+
+
+def tmux(socket, *args, **kwargs):
+    return run("tmux", "-L", socket, *args, **kwargs)
+
+
+def capture_outer(socket, pane):
+    return tmux(socket, "capture-pane", "-p", "-t", pane, "-S", "-60",
+                capture_output=True).stdout
+
+
+def capture_until(socket, pane, needles, timeout=5.0):
+    """Capture until every needle is rendered, or return the last screen.
+
+    A capture taken immediately after send-keys can precede the redraw. This
+    bounds the wait; it never weakens the assertion made on the returned screen.
+    """
+    import time
+    deadline = time.monotonic() + timeout
+    while True:
+        screen = capture_outer(socket, pane)
+        flat = " ".join(screen.split())
+        if all(any(n in flat for n in (needle if isinstance(needle, tuple) else (needle,)))
+               for needle in needles) or time.monotonic() >= deadline:
+            return screen
+        time.sleep(0.1)
+
+
+def capture_until_absent(socket, pane, needles, timeout=5.0):
+    """Capture after transient UI text has disappeared."""
+    deadline = time.monotonic() + timeout
+    while True:
+        screen = capture_outer(socket, pane)
+        flat = " ".join(screen.split())
+        if all(needle not in flat for needle in needles) or time.monotonic() >= deadline:
+            return screen
+        time.sleep(0.1)
+
+
+with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
+    root = Path(tmp)
+    data = root / "data"
+    state = root / "state"
+    data.mkdir()
+    state.mkdir()
+    (data / "vim-daily").symlink_to(ROOT / "share", target_is_directory=True)
+
+    token = uuid.uuid4().hex[:12]
+    inner_socket = "vimdaily-inner-" + token
+    outer_socket = "vimdaily-outer-" + token
+    inner_session = "lesson"
+    outer_session = "terminal"
+    ready = "vim-daily-ready-" + token
+    feedback = "vim-daily-feedback-" + token
+    question = "vim-daily-question-" + token
+    post = "vim-daily-post-" + token
+    done = "vim-daily-done-" + token
+    lesson_env = {
+        # The default route uses the learner's installed Neovim config. Keep
+        # its data root so LazyVim never mistakes the test for a fresh install.
+        "XDG_DATA_HOME": os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local" / "share")),
+        "XDG_STATE_HOME": str(state),
+        "EDITOR": "nvim",
+        "TERM": "xterm-256color",
+        "VIM_DAILY_TMUX_READY_SIGNAL": ready,
+        "VIM_DAILY_TMUX_QUESTION_SIGNAL": question,
+        "VIM_DAILY_TMUX_FEEDBACK_SIGNAL": feedback,
+        "VIM_DAILY_TMUX_POST_SIGNAL": post,
+        "VIM_DAILY_TMUX_FINISHED_SIGNAL": done,
+    }
+    if CLEAN_MODE:
+        lesson_env["VIM_DAILY_CLEAN"] = "1"
+    process_env = dict(os.environ, **lesson_env)
+
+    # The grammar primer now precedes the first editor card. Seed only that
+    # card so this acceptance test can keep exercising the full live Neovim
+    # surface while the paired typed-key question still runs in this popup.
+    tutor_state = state / "vim-daily"
+    tutor_state.mkdir(parents=True)
+    (tutor_state / "events-v2.jsonl").write_text(json.dumps({
+        "type": "card", "result": "pass", "card_id": "M0.P0", "module_id": "M0",
+        "at": "2026-09-28T00:00:00-04:00",
+    }) + "\n", encoding="utf-8")
+
+    if GATE.resolve() != ROOT / "bin" / "vim-daily-gate":
+        raise AssertionError("installed gate does not resolve to this checkout: %s" % GATE.resolve())
+    gate_source = GATE.read_text(encoding="utf-8")
+    if gate_source.count("cindent=false") < 2:
+        raise AssertionError("art-local cindent must be disabled initially and after plugins load")
+    if not HOOK.is_file():
+        raise AssertionError("installed client-attached hook is missing: %s" % HOOK)
+    if HOOK.resolve() != ROOT / "tmux" / "vim-drill-popup.sh":
+        raise AssertionError("installed hook does not resolve to this checkout: %s" % HOOK.resolve())
+
+    # Parse the real tmux configuration on an isolated server and inspect the
+    # resulting hook.  A hand-installed test hook alone could mask stale user
+    # configuration.
+    config_socket = "vimdaily-config-" + token
+    try:
+        run("tmux", "-L", config_socket, "-f", str(Path.home() / ".tmux.conf"),
+            "new-session", "-d", "-s", "config-check")
+        configured = tmux(config_socket, "show-hooks", "-g", "client-attached",
+                          capture_output=True).stdout
+        if str(HOOK) not in configured:
+            raise AssertionError("real tmux config installed a different client-attached hook: " + configured)
+    finally:
+        subprocess.run(["tmux", "-L", config_socket, "kill-server"],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    due = subprocess.run([str(GATE), "--due-quiet"], env=process_env,
+                         text=True, capture_output=True)
+    if due.returncode != 0 or due.stdout or due.stderr:
+        raise AssertionError("fresh isolated state was not silently due: %r" % due)
+
+    try:
+        # Start a clean inner server with no client. The only route that starts
+        # the lesson below is the same installed client-attached hook used by
+        # the real tmux configuration.
+        run("tmux", "-L", inner_socket, "-f", "/dev/null", "new-session", "-d",
+            "-s", inner_session, "-x", str(COLUMNS), "-y", str(ROWS))
+        for key, value in lesson_env.items():
+            tmux(inner_socket, "set-environment", "-g", key, value)
+        tmux(inner_socket, "set-hook", "-g", "client-attached",
+             "run-shell -b %s" % HOOK)
+        tmux(inner_socket, "wait-for", "-L", ready)
+        tmux(inner_socket, "wait-for", "-L", question)
+        tmux(inner_socket, "wait-for", "-L", feedback)
+        tmux(inner_socket, "wait-for", "-L", post)
+        tmux(inner_socket, "wait-for", "-L", done)
+
+        # The outer server supplies a real terminal for the inner attached
+        # client. Capturing this pane therefore captures display-popup itself,
+        # not merely the pane hidden underneath the popup.
+        nested_attach = "env -u TMUX tmux -L %s attach-session -t %s" % (
+            inner_socket, inner_session)
+        run("tmux", "-L", outer_socket, "-f", "/dev/null", "new-session", "-d",
+            "-s", outer_session, "-x", str(COLUMNS), "-y", str(ROWS), nested_attach)
+        outer_pane = tmux(outer_socket, "list-panes", "-t", outer_session,
+                          "-F", "#{pane_id}", capture_output=True).stdout.strip()
+
+        try:
+            tmux(inner_socket, "wait-for", "-L", question, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", question)
+        except subprocess.TimeoutExpired as exc:
+            screen = capture_outer(outer_socket, outer_pane)
+            raise AssertionError("paired typed-key question did not render:\n" + screen) from exc
+        question_screen = capture_outer(outer_socket, outer_pane)
+        question_flat = " ".join(question_screen.split())
+        if not all(text in question_flat for text in ("ANIMATION", "NEOVIM", "START", "TARGET")):
+            raise AssertionError("paired typed-key prompt is incomplete:\n" + question_screen)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l",
+             M0_FIRST_QUESTION["answer_contract"]["sample_answer"])
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+
+        try:
+            tmux(inner_socket, "wait-for", "-L", ready, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", ready)
+        except subprocess.TimeoutExpired as exc:
+            screen = capture_outer(outer_socket, outer_pane)
+            raise AssertionError(
+                "client-attached hook did not render a ready popup:\n" + screen
+            ) from exc
+
+        screen = capture_outer(outer_socket, outer_pane)
+        required = [
+            "vim drill · :wq submit · Enter advances/closes",
+            "NEOVIM × ASCII ANIMATION",
+            "M0.01",
+            "DO THIS",
+            "NORMAL",
+            "PROGRESS M0 1/11 learning",
+            "XP 10",
+            "TARGET",
+        ]
+        if ROWS < 38:
+            required += ["RECIPE"]
+        else:
+            required += ["COMMAND RECIPE", "WHY THIS EXISTS", "Motion intent:",
+                         "Authoring principle:", "Failure to watch:"]
+        screen = capture_until(outer_socket, outer_pane, required)
+        flattened = " ".join(screen.split())
+        missing = [text for text in required if text not in flattened]
+        if missing:
+            raise AssertionError(
+                "automatic popup capture missing %r:\n%s" % (missing, screen)
+            )
+        if not (state / "vim-daily" / "last-prompt").exists():
+            raise AssertionError("the submitted paired question did not record attempt evidence")
+        if "--show-capture" in sys.argv:
+            print("--- AUTOMATIC CLIENT-ATTACHED POPUP pane=%s ---" % outer_pane)
+            print(screen.rstrip())
+
+        # Inspect the lower half of the same read-only brief. This proves the
+        # legacy teaching sections exist in the rendered UI, not merely in a
+        # generated file hidden below the split viewport.
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "C-w", "w")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", "/KEYS WORTH KEEPING")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter", "z", "t")
+        key_required = [
+            "KEYS WORTH KEEPING",
+            "replace one character",
+        ]
+        key_brief = capture_until(outer_socket, outer_pane, key_required)
+        # At 80x24 the brief pane is ~12 rows, so the source sections sit below
+        # the key vocabulary; search for them separately (VD-13).
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", "/WHERE THIS METHOD")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter", "z", "t")
+        source_required = [
+            "WHERE THIS METHOD COMES FROM",
+            "ascii-art-authoring",
+            ("LEGACY SOURCE", "LEGACY LESSON SOURCES"),
+        ]
+        key_brief += capture_until(outer_socket, outer_pane, source_required)
+        key_required += source_required
+        key_flattened = " ".join(key_brief.split())
+        key_missing = [text for text in key_required
+                       if not any(option in key_flattened for option in
+                                  (text if isinstance(text, tuple) else (text,)))]
+        if key_missing:
+            raise AssertionError(
+                "legacy key/source teaching missing %r:\n%s" % (key_missing, key_brief)
+            )
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", "/LEGACY VIM CONCEPT")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter", "z", "t")
+        concept_brief = capture_until(outer_socket, outer_pane,
+                                      ["LEGACY VIM CONCEPT", "Motions:"])
+        concept_flat = " ".join(concept_brief.split())
+        if "LEGACY VIM CONCEPT" not in concept_flat or "Motions:" not in concept_flat:
+            raise AssertionError("legacy concept prose missing:\n" + concept_brief)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "G")
+        lower_required = [
+            "READING THE RECIPE",
+            "<C-k>.M middle-dot",  # "digraph" may wrap past the split border
+            "SUBMIT / STUCK",
+            ":q! exits without submission",
+        ]
+        lower_brief = capture_until(outer_socket, outer_pane, lower_required)
+        lower_flattened = " ".join(lower_brief.split())
+        lower_missing = [text for text in lower_required if text not in lower_flattened]
+        if lower_missing:
+            raise AssertionError(
+                "scrollable teaching brief missing %r:\n%s" % (lower_missing, lower_brief)
+            )
+        if "--show-capture" in sys.argv:
+            print("--- LEGACY KEYS/SOURCE BRIEF pane=%s ---" % outer_pane)
+            print(key_brief.rstrip())
+            print("--- LEGACY CONCEPT BRIEF pane=%s ---" % outer_pane)
+            print(concept_brief.rstrip())
+            print("--- SCROLLED TEACHING BRIEF pane=%s ---" % outer_pane)
+            print(lower_brief.rstrip())
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "C-w", "w")
+
+        # The personal config owns the default editor chrome. Only the explicit
+        # clean fallback owns a TUTOR statusline and F1 help float.
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "v")
+        visual_screen = capture_until(outer_socket, outer_pane, ["VISUAL"])
+        if "VISUAL" not in " ".join(visual_screen.split()):
+            raise AssertionError("live mode line did not enter VISUAL:\n" + visual_screen)
+        visual_flat = " ".join(visual_screen.split())
+        if CLEAN_MODE and "TUTOR" not in visual_flat:
+            raise AssertionError("clean fallback tutor chrome is missing:\n" + visual_screen)
+        if not CLEAN_MODE and "TUTOR" in visual_flat:
+            raise AssertionError("personal lualine was replaced by tutor chrome:\n" + visual_screen)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Escape")
+        if CLEAN_MODE:
+            tmux(outer_socket, "send-keys", "-t", outer_pane, "F1")
+            help_screen = capture_until(outer_socket, outer_pane,
+                                        ["CHEAT SHEET", "NEW LINE BELOW"])
+            if "CHEAT SHEET" not in " ".join(help_screen.split()):
+                raise AssertionError("clean fallback F1 help did not open:\n" + help_screen)
+            tmux(outer_socket, "send-keys", "-t", outer_pane, "F1")
+            capture_until_absent(outer_socket, outer_pane, ["CHEAT SHEET"])
+        else:
+            tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", ":WhichKey")
+            tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+            which_key_screen = capture_until(
+                outer_socket, outer_pane, ["Start of line", "Prev word"])
+            which_key_flat = " ".join(which_key_screen.split())
+            if "Start of line" not in which_key_flat or "Prev word" not in which_key_flat:
+                raise AssertionError("personal WhichKey did not open:\n" + which_key_screen)
+            tmux(outer_socket, "send-keys", "-t", outer_pane, "Escape")
+            closed_which_key = capture_until_absent(
+                outer_socket, outer_pane, ["Start of line", "Prev word"])
+            closed_flat = " ".join(closed_which_key.split())
+            if "Start of line" in closed_flat or "Prev word" in closed_flat:
+                raise AssertionError("personal WhichKey did not close:\n" + closed_which_key)
+
+        # Personal config remains in charge, but `o` in an indented art row
+        # must start at column zero. Prove the behavior through the saved file,
+        # then undo it so the graded attempt still begins at its checkpoint.
+        art_path = state / "vim-daily" / "projects" / "spark-loop" / "strip.txt"
+        before_indent_probe = art_path.read_text(encoding="utf-8")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "o")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", "X")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Escape")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", ":w")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        deadline = time.monotonic() + 5
+        while art_path.read_text(encoding="utf-8") == before_indent_probe and time.monotonic() < deadline:
+            time.sleep(0.05)
+        probed_lines = art_path.read_text(encoding="utf-8").splitlines()
+        if "X" not in probed_lines:
+            raise AssertionError("o inherited art indentation or probe keys were lost: %r" % probed_lines)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "u")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", ":w")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        deadline = time.monotonic() + 5
+        while art_path.read_text(encoding="utf-8") != before_indent_probe and time.monotonic() < deadline:
+            time.sleep(0.05)
+        if art_path.read_text(encoding="utf-8") != before_indent_probe:
+            raise AssertionError("indent probe did not restore the lesson checkpoint")
+
+        # Legacy coaching parity: the operator's hint-mode Hardtime intervenes
+        # on wasteful repeated unit motions while the learner is still editing.
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "k", "k", "k", "k", "k")
+        coached_screen = capture_until(outer_socket, outer_pane, [
+            ("You pressed the k key", "Hardtime", "HARDTIME · k BLOCKED")])
+        coached_flat = " ".join(coached_screen.split())
+        # hardtime.nvim's notice is titled "Hardtime"; at 80x24 its message is
+        # truncated ("You pressed the k key too …"), so accept the title.
+        if not ("You pressed the k key" in coached_flat or "Hardtime" in coached_flat
+                or "HARDTIME · k BLOCKED" in coached_flat):
+            raise AssertionError("repeated-motion coach did not intervene:\n" + coached_screen)
+
+        # First submit no edit. This proves the exact automatic route also
+        # keeps a failed attempt visible with replay and unchanged progress.
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", ":wq")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        try:
+            tmux(inner_socket, "wait-for", "-L", feedback, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", feedback)
+        except subprocess.TimeoutExpired as exc:
+            stuck = capture_outer(outer_socket, outer_pane)
+            raise AssertionError(
+                "automatic popup did not render failed-attempt feedback:\n" + stuck
+            ) from exc
+
+        failed_screen = capture_outer(outer_socket, outer_pane)
+        failed_flattened = " ".join(failed_screen.split())
+        if not (state / "vim-daily" / "last-prompt").exists():
+            raise AssertionError("failed attempt evidence did not start the cooldown")
+        failed_required = [
+            "DO THIS",
+            "ATTEMPT NOT PASSED",
+            "no progress awarded",
+            "ARTIFACT REPLAY",
+            "KEYSTROKE LEDGER",
+            "YOU TYPED",
+            "THE RECIPE ASKS FOR",
+            "DO / AVOID",
+            "SOURCE",
+        ]
+        if ROWS < 28:
+            failed_required += ["YOURS", "TARGET", "✗"]
+        elif ROWS < 55:
+            failed_required += ["not this"]
+        else:
+            failed_required += [
+                "YOURS (what you saved)", "TARGET (what it should be)",
+                "first difference at column",
+                "YOU TYPED", "THE RECIPE ASKS FOR", "you skipped this",
+                "WHY THIS EXISTS", "Authoring principle:", "Failure to watch:",
+                "WHAT THIS LESSON BUYS YOU",
+            ]
+        failed_missing = [text for text in failed_required if text not in failed_flattened]
+        if failed_missing:
+            raise AssertionError(
+                "failed-attempt popup capture missing %r:\n%s" % (failed_missing, failed_screen)
+            )
+        if "--show-capture" in sys.argv:
+            print("--- FAILED FEEDBACK PAGE pane=%s ---" % outer_pane)
+            print(failed_screen.rstrip())
+
+        # Page two owns progress; it cannot be scrolled away by a long key
+        # table or buffer diff on page one.
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        try:
+            tmux(inner_socket, "wait-for", "-L", post, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", post)
+        except subprocess.TimeoutExpired as exc:
+            stuck = capture_outer(outer_socket, outer_pane)
+            raise AssertionError("failed attempt did not render progress page:\n" + stuck) from exc
+        failed_progress_screen = capture_outer(outer_socket, outer_pane)
+        failed_progress_flat = " ".join(failed_progress_screen.split())
+        failed_progress_required = [
+            "PROGRESS UNCHANGED", "SKILL TREE / MODULE PROGRESS", "M0", "1/11",
+            "streak: 1 day", "next: M0.01",
+        ]
+        missing = [text for text in failed_progress_required if text not in failed_progress_flat]
+        if not (("XP 10" in failed_progress_flat and "today 1/12" in failed_progress_flat)
+                or ("XP: 10" in failed_progress_flat
+                    and "today: 1/12 lessons" in failed_progress_flat)):
+            missing.append("compact or full XP/today progress evidence")
+        if missing:
+            raise AssertionError("failed progress page missing %r:\n%s" %
+                                 (missing, failed_progress_screen))
+        if "--show-capture" in sys.argv:
+            print("--- UNCHANGED PROGRESS PAGE pane=%s ---" % outer_pane)
+            print(failed_progress_screen.rstrip())
+
+        # Retry from the restored checkpoint. The same popup must then render
+        # the successful debrief and wait for an explicit close.
+        tmux(inner_socket, "wait-for", "-L", ready)
+        tmux(inner_socket, "wait-for", "-L", feedback)
+        tmux(inner_socket, "wait-for", "-L", post)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        try:
+            tmux(inner_socket, "wait-for", "-L", ready, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", ready)
+        except subprocess.TimeoutExpired as exc:
+            stuck = capture_outer(outer_socket, outer_pane)
+            raise AssertionError("automatic popup retry did not reopen Neovim:\n" + stuck) from exc
+
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", M0_FIRST["expected"])
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", ":wq")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        try:
+            tmux(inner_socket, "wait-for", "-L", feedback, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", feedback)
+        except subprocess.TimeoutExpired as exc:
+            stuck = capture_outer(outer_socket, outer_pane)
+            raise AssertionError(
+                "automatic popup did not render the successful post-lesson screen:\n" + stuck
+            ) from exc
+
+        post_screen = capture_outer(outer_socket, outer_pane)
+        post_flattened = " ".join(post_screen.split())
+        post_required = [
+            "LESSON COMPLETE",
+            "ARTIFACT REPLAY",
+            "KEYSTROKE LEDGER",
+            "YOU TYPED",
+            "THE RECIPE ASKS FOR",
+            "DO / AVOID",
+            "SOURCE",
+        ]
+        if ROWS < 28:
+            post_required += ["BEFORE", "AFTER (yours)", "exact target"]
+        elif ROWS < 55:
+            post_required += [M0_FIRST["expected"]]
+        else:
+            post_required += [
+                "before", "after", "RESULT exact saved target verified",
+                "YOU TYPED", "THE RECIPE ASKS FOR", "WHY THIS EXISTS",
+                "WHAT THIS LESSON BUYS YOU",
+            ]
+        post_missing = [text for text in post_required if text not in post_flattened]
+        if post_missing:
+            raise AssertionError(
+                "post-lesson popup capture missing %r:\n%s" % (post_missing, post_screen)
+            )
+        if "--show-capture" in sys.argv:
+            print("--- SUCCESS FEEDBACK PAGE pane=%s ---" % outer_pane)
+            print(post_screen.rstrip())
+
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        try:
+            tmux(inner_socket, "wait-for", "-L", post, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", post)
+        except subprocess.TimeoutExpired as exc:
+            stuck = capture_outer(outer_socket, outer_pane)
+            raise AssertionError("success did not render progression page:\n" + stuck) from exc
+        progress_screen = capture_outer(outer_socket, outer_pane)
+        progress_flat = " ".join(progress_screen.split())
+        progress_required = [
+            "PROGRESS AWARDED", "SKILL TREE / MODULE PROGRESS", "M0", "2/11",
+            "streak: 1 day", "next: M0.02",
+        ]
+        missing = [text for text in progress_required if text not in progress_flat]
+        if not (("XP 20" in progress_flat and "today 2/12" in progress_flat)
+                or ("XP: 20" in progress_flat
+                    and "today: 2/12 lessons" in progress_flat)):
+            missing.append("compact or full XP/today progress evidence")
+        if missing:
+            raise AssertionError("success progress page missing %r:\n%s" %
+                                 (missing, progress_screen))
+        if "--show-capture" in sys.argv:
+            print("--- AWARDED PROGRESS PAGE pane=%s ---" % outer_pane)
+            print(progress_screen.rstrip())
+
+        # The popup must remain open on the debrief until the learner closes it.
+        held_before = capture_outer(outer_socket, outer_pane)
+        time.sleep(0.25)
+        held_after = capture_outer(outer_socket, outer_pane)
+        if "PROGRESS AWARDED" not in held_before or "PROGRESS AWARDED" not in held_after:
+            raise AssertionError("progress page did not remain visibly held before explicit close")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        try:
+            tmux(inner_socket, "wait-for", "-L", done, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", done)
+        except subprocess.TimeoutExpired as exc:
+            stuck = capture_outer(outer_socket, outer_pane)
+            raise AssertionError(
+                "automatic popup submission did not finish:\n" + stuck
+            ) from exc
+        closed_screen = capture_outer(outer_socket, outer_pane)
+        if "PROGRESS AWARDED" in closed_screen:
+            raise AssertionError("explicit close left the popup visible:\n" + closed_screen)
+
+        events = [
+            json.loads(line)
+            for line in (state / "vim-daily" / "events-v2.jsonl")
+            .read_text(encoding="utf-8").splitlines()
+        ]
+        assert any(row.get("card_id") == "M0.01" and row.get("result") == "pass"
+                   for row in events), events
+        profile = "clean fallback" if CLEAN_MODE else "real user config"
+        print("PASS client-attached hook rendered and completed the automatic popup (%dx%d, %s)" %
+              (COLUMNS, ROWS, profile))
+    finally:
+        for socket in (outer_socket, inner_socket):
+            subprocess.run(["tmux", "-L", socket, "kill-server"],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

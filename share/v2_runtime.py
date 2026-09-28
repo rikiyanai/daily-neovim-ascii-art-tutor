@@ -15,6 +15,7 @@ import os
 import random
 import re
 import shutil
+import subprocess
 import tempfile
 import textwrap
 import time
@@ -41,6 +42,7 @@ class RuntimeConfig:
     post_page_break: object | None = None
     post_rendered: object | None = None
     question_rendered: object | None = None
+    question_answer: object | None = None
 
 
 def load_curriculum(share):
@@ -63,10 +65,13 @@ def validate_curriculum(cur):
     if cur.get("schema") != "vim-daily/curriculum@4":
         raise ValueError("unsupported v2 curriculum schema")
     module_count = len(cur.get("modules", []))
-    if module_count < 1 or len(cur.get("cards", [])) != module_count * 8:
-        raise ValueError("v2 curriculum must contain eight cards per module")
-    if len(cur.get("questions", [])) != module_count * 10:
-        raise ValueError("v2 curriculum must contain ten questions per module")
+    if module_count < 1 or not cur.get("cards"):
+        raise ValueError("v2 curriculum must contain modules and cards")
+    declared_cards = sum(len(module.get("card_ids", [])) for module in cur["modules"])
+    if len(cur["cards"]) != declared_cards:
+        raise ValueError("v2 card inventory does not match module card_ids")
+    if not cur.get("questions"):
+        raise ValueError("v2 curriculum must contain authored questions")
     cids = [c["id"] for c in cur["cards"]]
     qids = [q["id"] for q in cur["questions"]]
     if len(cids) != len(set(cids)) or len(qids) != len(set(qids)):
@@ -92,6 +97,16 @@ def validate_curriculum(cur):
             raise ValueError("dangling question reference at %s" % card["id"])
         if not card.get("lesson_benefit"):
             raise ValueError("card %s is missing its executable lesson benefit" % card["id"])
+        for field in ("grammar_families", "grammar_stage", "paired_question_ids",
+                      "question_placement", "master_habits", "master_stages"):
+            if not card.get(field):
+                raise ValueError("card %s is missing grammar-first field %s" % (
+                    card["id"], field))
+        if any(qid not in qset for qid in card.get("paired_question_ids", [])):
+            raise ValueError("card %s has a dangling paired question" % card["id"])
+        if not card.get("paired_question_ids") and not (
+                card.get("pairing_exception") or {}).get("reason"):
+            raise ValueError("card %s needs a paired question or written exception" % card["id"])
         if card.get("expected") and (not card.get("show_target") or not card.get("hint")):
             raise ValueError("edit card %s must expose its target and action hint" % card["id"])
         if (card.get("expected") and not card.get("show_recipe", False)
@@ -157,41 +172,52 @@ def validate_curriculum(cur):
                 raise ValueError("card %s has incomplete animation metadata" % card["id"])
             if card["animation"].get("role") == "hold" and not card["animation"].get("hold_reason"):
                 raise ValueError("card %s has a hold without a reason" % card["id"])
+    choice_forms = {"multiple_choice", "predict_art"}
+    text_forms = {"typed_keys", "decode", "complete", "why"}
     for q in cur["questions"]:
-        if len(q["choices"]) != 4 or len(q["feedback"]) != 4:
-            raise ValueError("question %s must have exactly four choices and four feedback messages" % q["id"])
-        if not 0 <= q.get("correct_choice", -1) < len(q["choices"]):
-            raise ValueError("question %s has an invalid correct choice" % q["id"])
+        form = q.get("form")
+        if form not in choice_forms | text_forms:
+            raise ValueError("question %s has unsupported form %r" % (q["id"], form))
+        for field in ("card_id", "grammar_family", "grammar_breakdown_id",
+                      "paired_invariant", "placement", "placement_reason", "answer_contract"):
+            if not q.get(field):
+                raise ValueError("question %s is missing paired field %s" % (q["id"], field))
+        if form in choice_forms:
+            if len(q.get("choices", [])) != 4 or len(q.get("feedback", [])) != 4:
+                raise ValueError("choice question %s must have four choices and feedback messages" % q["id"])
+            if not 0 <= q.get("correct_choice", -1) < len(q["choices"]):
+                raise ValueError("question %s has an invalid correct choice" % q["id"])
         if q.get("module_id") not in module_set:
             raise ValueError("question %s refers to an unknown module" % q["id"])
         if not q.get("source_ref"):
             raise ValueError("question %s has no source reference" % q["id"])
-        paired_fields = ("animation_prompt", "animation_answer", "neovim_prompt", "neovim_answer")
-        if any(not q.get(field) for field in paired_fields):
-            raise ValueError("question %s is not paired across animation and Neovim" % q["id"])
         if "ANIMATION\n" not in q.get("prompt", "") or "NEOVIM\n" not in q.get("prompt", ""):
             raise ValueError("question %s does not display both paired prompts" % q["id"])
-        if any("ANIMATION:" not in choice or "NEOVIM:" not in choice
-               for choice in q["choices"]):
-            raise ValueError("question %s has a one-sided answer choice" % q["id"])
-        if (len(q.get("compact_choices", [])) != len(q["choices"])
-                or any("A:" not in choice or "V:" not in choice
-                       for choice in q.get("compact_choices", []))):
-            raise ValueError("question %s has an invalid compact paired choice" % q["id"])
-        if "ANIMATION:" not in q.get("compact_prompt", "") or "NEOVIM:" not in q.get("compact_prompt", ""):
-            raise ValueError("question %s has an invalid compact paired prompt" % q["id"])
-        if any("Not yet" in message or "one or both halves" in message.lower()
-               for message in q["feedback"]):
-            raise ValueError("question %s has generic wrong-answer feedback" % q["id"])
-        animation_halves = [choice.split(" | NEOVIM: ", 1)[0] for choice in q["choices"]]
-        neovim_halves = [choice.split(" | NEOVIM: ", 1)[1] for choice in q["choices"]]
-        if sorted(animation_halves.count(value) for value in set(animation_halves)) != [2, 2]:
-            raise ValueError("question %s leaks its answer by animation-half frequency" % q["id"])
-        if sorted(neovim_halves.count(value) for value in set(neovim_halves)) != [2, 2]:
-            raise ValueError("question %s leaks its answer by Neovim-half frequency" % q["id"])
+        if form == "multiple_choice":
+            paired_fields = ("animation_prompt", "animation_answer", "neovim_prompt", "neovim_answer")
+            if any(not q.get(field) for field in paired_fields):
+                raise ValueError("question %s is not paired across animation and Neovim" % q["id"])
+            if any("ANIMATION:" not in choice or "NEOVIM:" not in choice
+                   for choice in q["choices"]):
+                raise ValueError("question %s has a one-sided answer choice" % q["id"])
+            if (len(q.get("compact_choices", [])) != len(q["choices"])
+                    or any("A:" not in choice or "V:" not in choice
+                           for choice in q.get("compact_choices", []))):
+                raise ValueError("question %s has an invalid compact paired choice" % q["id"])
+            if "ANIMATION:" not in q.get("compact_prompt", "") or "NEOVIM:" not in q.get("compact_prompt", ""):
+                raise ValueError("question %s has an invalid compact paired prompt" % q["id"])
+            if any("Not yet" in message or "one or both halves" in message.lower()
+                   for message in q["feedback"]):
+                raise ValueError("question %s has generic wrong-answer feedback" % q["id"])
+            animation_halves = [choice.split(" | NEOVIM: ", 1)[0] for choice in q["choices"]]
+            neovim_halves = [choice.split(" | NEOVIM: ", 1)[1] for choice in q["choices"]]
+            if sorted(animation_halves.count(value) for value in set(animation_halves)) != [2, 2]:
+                raise ValueError("question %s leaks its answer by animation-half frequency" % q["id"])
+            if sorted(neovim_halves.count(value) for value in set(neovim_halves)) != [2, 2]:
+                raise ValueError("question %s leaks its answer by Neovim-half frequency" % q["id"])
     question_signatures = [
         (" ".join(q["prompt"].split()).casefold(),
-         tuple(" ".join(choice.split()).casefold() for choice in q["choices"]))
+         tuple(" ".join(choice.split()).casefold() for choice in q.get("choices", [])))
         for q in cur["questions"]
     ]
     if len(question_signatures) != len(set(question_signatures)):
@@ -280,6 +306,7 @@ def project(cur, events):
     passed = set()
     attempts = {}
     question_attempts = {}
+    passed_questions = set()
     check_concepts = set()
     reviews = {}
     earned_review_stages = set()
@@ -307,6 +334,8 @@ def project(cur, events):
         if event.get("question_id") and event.get("type") in ("question", "review"):
             qid = event["question_id"]
             question_attempts[qid] = question_attempts.get(qid, 0) + 1
+            if event.get("result") == "pass":
+                passed_questions.add(qid)
         if event.get("type") == "check_concepts" and event.get("result") == "pass":
             check_concepts.add(card_id)
         if event.get("type") == "review":
@@ -343,6 +372,7 @@ def project(cur, events):
     out = {
         "schema": "vim-daily/progress@2", "revision": cur["revision"], "passed_cards": sorted(passed),
         "attempts": attempts, "question_attempts": question_attempts, "reviews": reviews,
+        "passed_questions": sorted(passed_questions),
         "check_concepts": sorted(check_concepts),
         "modules": modules, "completed_at": completed_at, "ledger_errors": errors,
         "active_remediations": active_remediations,
@@ -499,9 +529,201 @@ def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=Non
     return right, chosen
 
 
+_KEY_TOKEN = re.compile(r"<([^>]+)>")
+_FORBIDDEN_EX = re.compile(
+    r"(?i):\s*(?:!|w(?:rite)?\b|wa\b|x\b|xit\b|q(?:uit)?\b|qa\b|e(?:dit)?\b|"
+    r"source\b|so\b|runtime\b|packadd\b|lua\b|python\w*\b|perl\b|ruby\b|"
+    r"terminal\b|term\b|call\b|execute\b|redir\b|cd\b|lcd\b|tcd\b|"
+    r"vnew\b|new\b|split\b|vsplit\b|tabnew\b)")
+
+
+def _notation_bytes(text):
+    """Convert displayed Vim key notation into the bytes consumed by `nvim -s`."""
+    controls = {
+        "esc": b"\x1b", "cr": b"\r", "enter": b"\r", "return": b"\r",
+        "nl": b"\n", "bs": b"\x7f", "tab": b"\t", "space": b" ",
+        "lt": b"<", "bar": b"|",
+    }
+    out = bytearray()
+    cursor = 0
+    for match in _KEY_TOKEN.finditer(text):
+        out.extend(text[cursor:match.start()].encode("utf-8"))
+        token = match.group(1)
+        lowered = token.casefold()
+        if lowered in controls:
+            out.extend(controls[lowered])
+        elif lowered.startswith("c-") and len(token[2:]) == 1:
+            char = token[2:]
+            out.append(ord(char.upper()) & 0x1f)
+        else:
+            raise ValueError("unsupported key notation <%s>" % token)
+        cursor = match.end()
+    out.extend(text[cursor:].encode("utf-8"))
+    return bytes(out)
+
+
+def _safe_typed_effect(contract, answer):
+    """Run learner keys in an isolated scratch Neovim and compare their effect."""
+    evidence = {"effect_version": contract.get("effect_version", 1),
+                "raw_answer": answer}
+    if not answer.strip():
+        return False, evidence, "No keys were entered."
+    if _FORBIDDEN_EX.search(answer) or "<C-z>" in answer or "<C-\\>" in answer:
+        evidence["rejected"] = "unsafe-or-external-command"
+        return False, evidence, "That answer leaves the bounded scratch-edit sandbox."
+    try:
+        typed = _notation_bytes(answer)
+    except ValueError as exc:
+        evidence["rejected"] = "unsupported-notation"
+        return False, evidence, str(exc)
+    executable = shutil.which("nvim")
+    if not executable:
+        evidence["rejected"] = "nvim-unavailable"
+        return False, evidence, "Neovim is unavailable, so the semantic answer could not be checked."
+    with tempfile.TemporaryDirectory(prefix="vim-daily-question-") as tmp:
+        root = Path(tmp)
+        artifact = root / "scratch.txt"
+        script = root / "keys.bin"
+        result_path = root / "result.json"
+        initial = contract.get("initial_lines", [])
+        artifact.write_text("\n".join(initial) + "\n", encoding="utf-8")
+        result_lua = (
+            "lua local p=%s; local r={lines=vim.api.nvim_buf_get_lines(0,0,-1,true),"
+            "cursor=vim.api.nvim_win_get_cursor(0),wins=#vim.api.nvim_list_wins(),"
+            "tabs=#vim.api.nvim_list_tabpages()}; vim.fn.writefile({vim.json.encode(r)},p)"
+            % json.dumps(str(result_path))
+        )
+        bootstrap = b":set noautoindent nosmartindent nocindent indentexpr=\rgg^"
+        trailer = b"\x1b:" + result_lua.encode("utf-8") + b"\r:qa!\r"
+        script.write_bytes(bootstrap + typed + trailer)
+        isolated = root / "xdg"
+        isolated.mkdir()
+        env = dict(os.environ)
+        env.update({"HOME": str(root), "XDG_CONFIG_HOME": str(isolated),
+                    "XDG_DATA_HOME": str(isolated), "XDG_STATE_HOME": str(isolated),
+                    "XDG_CACHE_HOME": str(isolated)})
+        proc = subprocess.run(
+            [executable, "-u", "NONE", "-i", "NONE", "-n", "-s", str(script),
+             str(artifact)], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env=env, timeout=10, check=False)
+        evidence["nvim_returncode"] = proc.returncode
+        evidence["input_sha256"] = hashlib.sha256(
+            ("\n".join(initial) + "\n").encode("utf-8")).hexdigest()
+        if proc.returncode != 0 or not result_path.exists():
+            evidence["stderr"] = proc.stderr.decode("utf-8", "replace")[-500:]
+            return False, evidence, "Neovim could not evaluate that key sequence."
+        result = json.loads(result_path.read_text(encoding="utf-8"))
+    target = contract.get("target_lines", [])
+    evidence.update({
+        "result_lines_sha256": hashlib.sha256(
+            ("\n".join(result["lines"]) + "\n").encode("utf-8")).hexdigest(),
+        "target_lines_sha256": hashlib.sha256(
+            ("\n".join(target) + "\n").encode("utf-8")).hexdigest(),
+        "result_cursor": result.get("cursor"), "window_count": result.get("wins"),
+        "tab_count": result.get("tabs"),
+    })
+    right = result.get("lines") == target
+    if contract.get("target_cursor"):
+        right = right and result.get("cursor") == contract["target_cursor"]
+    right = right and result.get("wins") == 1 and result.get("tabs") == 1
+    return right, evidence, ("The scratch art matches TARGET exactly." if right else
+                             "The scratch art does not yet match TARGET exactly.")
+
+
+def _term_group_result(answer, groups):
+    normalized = " ".join(answer.casefold().split())
+    missing = [group for group in groups
+               if not any(term.casefold() in normalized for term in group)]
+    return not missing, missing
+
+
+def _print_grammar_breakdown(q, missing=None):
+    print("  GRAMMAR BREAKDOWN")
+    for part in q.get("grammar_breakdown", []):
+        if isinstance(part, list):
+            part = " + ".join(part)
+        print("    • %s" % part)
+    # VD-13: decode the actual commands the question quoted, key by key, so a
+    # wrong answer teaches `3daw`, `rO`, `:8s/-/=/g` instead of only the rules.
+    quoted = []
+    for text in re.findall(r"`([^`]+)`", q.get("prompt", "")):
+        if text not in quoted and not text.startswith("[") and len(text) <= 40:
+            quoted.append(text)
+    if quoted:
+        K = _keys_module()
+        print("  THOSE COMMANDS, KEY BY KEY")
+        for text in quoted:
+            for line in K.explain_lines(text):
+                print("    %s" % line)
+    if missing:
+        print("  Reconsider: %s" % "; ".join(" / ".join(group) for group in missing))
+
+
+def ask_authored_question(q, *, input_fn=input, shuffle=True, rendered=None,
+                          evidence=None):
+    """Ask one authored form; return (right, semantic answer)."""
+    form = q.get("form", "multiple_choice")
+    if form in ("multiple_choice", "predict_art"):
+        return ask_question(q, input_fn=input_fn, shuffle=shuffle, rendered=rendered,
+                            evidence=evidence)
+    print("\n%s" % q["prompt"])
+    if form == "typed_keys":
+        contract = q["answer_contract"]
+        print("\n  START")
+        for line in contract["initial_lines"]:
+            print("  │" + line)
+        print("  TARGET")
+        for line in contract["target_lines"]:
+            print("  │" + line)
+        prompt = "  keys (Vim notation such as <Esc> or <CR>): "
+    else:
+        prompt = "  your answer: "
+    if rendered:
+        rendered(q, [])
+    try:
+        answer = input_fn(prompt).strip()
+    except (EOFError, KeyboardInterrupt):
+        print()
+        return None, None
+    if evidence is not None:
+        evidence.update({"raw_answer": answer, "question_form": form,
+                         "question_prompt_sha256": hashlib.sha256(
+                             q["prompt"].encode("utf-8")).hexdigest()})
+    contract = q["answer_contract"]
+    missing = None
+    if form == "typed_keys":
+        right, effect_evidence, message = _safe_typed_effect(contract, answer)
+        if evidence is not None:
+            evidence.update(effect_evidence)
+    elif form == "complete":
+        normalized = " ".join(answer.casefold().split())
+        accepted = {" ".join(value.casefold().split())
+                    for value in contract.get("accepted_answers", [])}
+        right = normalized in accepted
+        message = ("That completes the grammar." if right else
+                   "That does not complete the stated grammar yet.")
+    else:
+        right, missing = _term_group_result(answer, contract.get("required_term_groups", []))
+        message = ("Your explanation names every required part." if right else
+                   "Your explanation is missing one or more required parts.")
+    print("  %s" % message)
+    if not right:
+        _print_grammar_breakdown(q, missing)
+    return right, answer
+
+
+def _configured_question_input(cfg, q):
+    if cfg.question_answer is None:
+        return input
+    return lambda _prompt: cfg.question_answer(q)
+
+
 def _question_for_card(cur, progress, card):
     qmap = _question_map(cur)
-    qids = card.get("question_ids", [])
+    # VD-13: the grammar-primer concept card (M0.P0) owns only
+    # paired_question_ids; without this fallback run_concept crashed on None.
+    qids = card.get("question_ids") or card.get("paired_question_ids") or []
+    qids = [qid for qid in qids if qid in qmap]
     if not qids:
         return None
     # Rotate within the card bank so a retry is not the same immediate stem.
@@ -509,8 +731,63 @@ def _question_for_card(cur, progress, card):
     return qmap[qids[n % len(qids)]]
 
 
+def _question_event(cur, card, q, right, answer, evidence, **extra):
+    row = {
+        "type": "question", "result": "pass" if right else "fail",
+        "card_id": card["id"], "module_id": card["module_id"],
+        "question_id": q["id"], "question_form": q.get("form"),
+        "placement": q.get("placement"), "curriculum_revision": cur["revision"],
+        "question_evidence": evidence,
+    }
+    if isinstance(answer, int):
+        row["choice"] = answer
+    else:
+        row["answer"] = answer
+    row.update(extra)
+    return row
+
+
+def run_paired_questions(cfg, cur, progress, card, placement):
+    """Run unanswered card-owned questions at the authored pre/post position."""
+    qmap = _question_map(cur)
+    passed = set(progress.get("passed_questions", []))
+    qids = [qid for qid in card.get("paired_question_ids", [])
+            if qid not in passed and qmap[qid].get("placement") == placement]
+    replay = None
+    for qid in qids:
+        q = qmap[qid]
+        evidence = {}
+        right, answer = ask_authored_question(
+            q, input_fn=_configured_question_input(cfg, q),
+            shuffle=cfg.question_answer is None,
+            rendered=cfg.question_rendered, evidence=evidence)
+        if right is None:
+            return None, replay
+        append_event(cfg, _question_event(
+            cur, card, q, right, answer, evidence, paired=True))
+        replay = {"type": "paired_question", "question": q,
+                  "answer": answer, "right": bool(right),
+                  "question_evidence": evidence}
+        progress = rebuild(cfg, cur)
+        if not right:
+            append_event(cfg, {
+                "type": "card", "result": "fail", "card_id": card["id"],
+                "module_id": card["module_id"], "reason": "paired-question",
+                "question_id": qid, "placement": placement,
+            })
+            _schedule_remediation(
+                cfg, card, "Q", "%s question %s with its grammar breakdown" % (
+                    placement, qid),
+                "paired %s question not yet demonstrated" % q.get("form"))
+            return False, replay
+        passed.add(qid)
+    return True, replay
+
+
 def _review_question(cur, progress, module_id, previous_qid=None):
-    bank = [q for q in cur["questions"] if q["module_id"] == module_id and q["id"] != previous_qid]
+    bank = [q for q in cur["questions"]
+            if q["module_id"] == module_id and q["id"] != previous_qid
+            and q.get("form") == "multiple_choice"]
     return min(bank, key=lambda q: (progress["question_attempts"].get(q["id"], 0), q["id"]))
 
 
@@ -593,6 +870,67 @@ def _lesson_context(cur, card):
     }
 
 
+_KEYS_MODULE = None
+
+
+def _keys_module():
+    """Load share/v2_keys.py (key-by-key explanations, VD-13) next to this file."""
+    global _KEYS_MODULE
+    if _KEYS_MODULE is None:
+        import importlib.util
+        path = Path(__file__).with_name("v2_keys.py")
+        spec = importlib.util.spec_from_file_location("vim_daily_v2_keys", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        _KEYS_MODULE = module
+    return _KEYS_MODULE
+
+
+def _card_key_strings(card):
+    keys = [card.get("expected") or ""]
+    keys += [method.get("keys", "") for method in card.get("method_alternatives", [])]
+    return [k for k in keys if k]
+
+
+def _key_teaching(card, width=None):
+    """VD-13: teach how the needed keys work; reveal the exact answer only when shown."""
+    strings = _card_key_strings(card)
+    if not strings:
+        return []
+    K = _keys_module()
+    clip = (lambda text: _clip(text, width)) if width else (lambda text: text)
+    if card.get("show_recipe"):
+        lines = ["THE RECIPE, KEY BY KEY"]
+        lines += ["  " + clip(line) for line in K.explain_lines(strings[0])]
+        return lines
+    lines = ["HOW THE KEYS YOU NEED WORK  (the exact answer stays hidden)",
+             "  " + clip(K.GRAMMAR)]
+    seen = []
+    for keys in strings:
+        for line in K.teach_lines(keys):
+            if line not in seen:
+                seen.append(line)
+    lines += ["  " + clip(line) for line in seen]
+    return lines
+
+
+def _answer_breakdown(card, width=None):
+    """VD-13: after an attempt, the answer split into commands with meanings."""
+    keys = card.get("expected") or ""
+    if not keys:
+        return []
+    K = _keys_module()
+    lines = ["THE ANSWER, KEY BY KEY"]
+    for line in K.explain_lines(keys):
+        lines.append("  " + (_clip(line, width) if width else line))
+    for method in card.get("method_alternatives", []):
+        if method.get("keys") and method["keys"] != keys:
+            lines.append("  or (%s):" % method.get("label", "other method"))
+            lines += ["    " + (_clip(line, width - 2) if width else line)
+                      for line in K.explain_lines(method["keys"])]
+    return lines
+
+
 def _progress_line(cfg, progress, card):
     cell = progress["modules"][card["module_id"]]
     streak, best, total = _legacy_streak(cfg.state)
@@ -643,8 +981,9 @@ def _write_session_lesson(cfg, cur, progress, card):
             key_vocabulary.append(line)
     if compact_brief:
         header = [
-            _clip("NEOVIM × ASCII ANIMATION · %s · %s" % (
-                card["id"], _progress_line(cfg, progress, card)), 68),
+            "NEOVIM × ASCII ANIMATION · %s" % card["id"],
+            # VD-13: own line, so XP/today survive the 68-cell clip.
+            _clip(_progress_line(cfg, progress, card), 68),
             "DO THIS · " + _clip(card["prompt"], 54),
         ]
         if not show_recipe:
@@ -658,6 +997,7 @@ def _write_session_lesson(cfg, cur, progress, card):
             header.append("RECIPE  " + recipe)
         else:
             header.append("EVIDENCE  exact command keys remain hidden")
+        header.extend(_key_teaching(card, width=66))
         if card.get("method_alternatives"):
             header.append("COMPARISON  appears after verification")
         header.extend([
@@ -706,6 +1046,7 @@ def _write_session_lesson(cfg, cur, progress, card):
         header.extend("  %-14s %s" % (keys, why) for keys, why in card["recipe"])
     else:
         header.extend(["HINT", "  " + hint, "  Exact keystrokes stay hidden until evaluation."])
+    header.extend(_key_teaching(card))
     if not show_recipe and card.get("method_alternatives"):
         header.extend([
             "CHALLENGE",
@@ -879,6 +1220,21 @@ def _without_brief_navigation(typed):
     """Remove keystrokes used only to inspect the tutor's read-only split."""
     out, index = [], 0
     while index < len(typed):
+        # VD-13: the brief is now reached with <C-w>w (or <C-w>h in the wide
+        # layout); keys typed there (scrolling, /search) are not art edits.
+        for go, back in ((["<C-w>", "w"], ["<C-w>", "w"]),
+                         (["<C-w>", "h"], ["<C-w>", "l"])):
+            if typed[index:index + 2] == go:
+                end = index + 2
+                while end < len(typed) and typed[end:end + 2] != back:
+                    end += 1
+                if typed[end:end + 2] == back:
+                    index = end + 2
+                    break
+        else:
+            go = None
+        if go is not None:
+            continue
         if typed[index:index + 2] == ["<C-w>", "k"]:
             end = index + 2
             while end < len(typed) and typed[end:end + 2] != ["<C-w>", "j"]:
@@ -1269,7 +1625,7 @@ _FEEDBACK_TRAILER_LINES = 4
 
 def _post_feedback_ultra(card, replay, completed, context, concept_replay,
                          check_replay, bold, off, replay_rows=None, minimal=False,
-                         ledger_rows=None):
+                         ledger_rows=None, breakdown_packed=False):
     """Fit essential result evidence in an 80x24 popup without scrolling it away."""
     if replay and replay.get("type") == "edit":
         print("%sARTIFACT REPLAY%s  %s" % (
@@ -1299,12 +1655,24 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
                 replay["method_evidence_error"], 68))
         elif replay.get("method_family"):
             print("METHOD EVIDENCE  demonstrated: %s" % replay["method_family"])
+    elif replay and replay.get("type") == "paired_question":
+        q = replay["question"]
+        print("%sQUESTION REPLAY%s  %s · %s" % (
+            bold, off, q.get("form", "question"),
+            "correct" if replay.get("right") else "needs work"))
+        print("you: %s" % _clip(replay.get("answer", "(none)"), 64))
+        _print_grammar_breakdown(q)
     elif replay and replay.get("type") in ("concept", "review"):
         q, chosen = replay["question"], replay["chosen"]
-        correct = q["correct_choice"]
-        print("%sCONCEPT REPLAY%s  you: %s" % (bold, off, _clip(q["choices"][chosen])))
-        print("correct: %s · why: %s" % (
-            _clip(q["choices"][correct], 34), _clip(q["feedback"][correct], 34)))
+        if q.get("choices"):
+            correct = q["correct_choice"]
+            print("%sCONCEPT REPLAY%s  you: %s" % (bold, off, _clip(q["choices"][chosen])))
+            print("correct: %s · why: %s" % (
+                _clip(q["choices"][correct], 34), _clip(q["feedback"][correct], 34)))
+        else:
+            print("%sCONCEPT REPLAY%s  %s" % (bold, off, q.get("form", "question")))
+            print("you: %s" % _clip(replay.get("answer", chosen), 64))
+            _print_grammar_breakdown(q)
         edit = replay.get("edit_replay")
         if edit:
             print("%sEDIT REPLAY%s  %s" % (
@@ -1341,8 +1709,21 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
                           if keys != card.get("cursor"))
         print("%sDO / AVOID%s  %s · no out-of-scope or inexact edits" % (
             bold, off, path or card.get("expected", "(none)")))
-        for method in card.get("method_alternatives", []):
-            print("ALSO %s: %s" % (method["label"], method["keys"]))
+        width = max(40, shutil.get_terminal_size((80, 24)).columns - 4)
+        breakdown = _answer_breakdown(card, width=width)
+        if breakdown and (breakdown_packed or minimal):
+            # Tight popup: one wrapped paragraph instead of one row per command.
+            items = " · ".join(line.strip() for line in breakdown[1:])
+            wrapped = textwrap.wrap("%s  %s" % (breakdown[0], items), width=width) or [""]
+            for line in wrapped[:3]:
+                print(line)
+        elif breakdown:
+            print("%s%s%s" % (bold, breakdown[0], off))
+            for line in breakdown[1:]:
+                print(line)
+        else:
+            for method in card.get("method_alternatives", []):
+                print("ALSO %s: %s" % (method["label"], method["keys"]))
     print("%sSOURCE%s  %s" % (bold, off, context["source"]))
 
 
@@ -1372,7 +1753,8 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
     context = _lesson_context(cur, card)
     compact = (__import__("sys").stdout.isatty()
                and shutil.get_terminal_size((80, 24)).lines < 55)
-    concept_replay = bool(replay and replay.get("type") in ("concept", "review"))
+    concept_replay = bool(replay and replay.get("type") in (
+        "concept", "review", "paired_question"))
     review_replay = bool(replay and replay.get("type") == "review")
     check_replay = replay if replay and replay.get("type") == "module_check" else (
         replay.get("check_replay") if replay else None)
@@ -1417,21 +1799,28 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
                      - status_lines - do_lines - _FEEDBACK_TRAILER_LINES)
         ledger_total = max(1, len((replay or {}).get("table", [])) - 2)
 
+        packed = False
+
         def render(rows, minimal=False, ledger=None):
             buffer = io.StringIO()
             with contextlib.redirect_stdout(buffer):
                 _post_feedback_ultra(card, replay, completed, context, concept_replay,
                                      check_replay, bold, off, replay_rows=rows,
-                                     minimal=minimal, ledger_rows=ledger)
+                                     minimal=minimal, ledger_rows=ledger,
+                                     breakdown_packed=packed)
             return buffer.getvalue()
 
         rows = max(1, available)
         ledger = ledger_total
         text = render(rows, ledger=ledger)
-        # Shrink the ledger to three rows first, then the artifact replay, then
-        # the ledger to one row, so both two-column comparisons stay visible.
+        # Shrink the ledger to three rows first, then pack the key-by-key
+        # answer into a paragraph (VD-13), then the artifact replay, then the
+        # ledger to one row, so both two-column comparisons stay visible.
         while text.count("\n") > available and ledger > 3:
             ledger -= 1
+            text = render(rows, ledger=ledger)
+        if text.count("\n") > available:
+            packed = True
             text = render(rows, ledger=ledger)
         while text.count("\n") > available and rows > 1:
             rows -= 1
@@ -1464,15 +1853,27 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
             print("  METHOD EVIDENCE: %s" % replay["method_evidence_error"])
         elif replay.get("method_family"):
             print("  METHOD EVIDENCE: demonstrated %s" % replay["method_family"])
+    elif replay and replay.get("type") == "paired_question":
+        q = replay["question"]
+        print("\n%sQUESTION REPLAY%s" % (bold, off))
+        print("  form:      %s" % q.get("form", "question"))
+        print("  placement: %s — %s" % (
+            q.get("placement", "paired"), q.get("placement_reason", "")))
+        print("  you wrote: %s" % replay.get("answer", "(none)"))
+        _print_grammar_breakdown(q)
     elif replay and replay.get("type") in ("concept", "review"):
         q = replay["question"]
         chosen = replay["chosen"]
-        correct = q["correct_choice"]
         print("\n%sCONCEPT REPLAY%s" % (bold, off))
         print("  prompt: %s" % q["prompt"])
-        print("  you chose: %s" % q["choices"][chosen])
-        print("  correct:   %s" % q["choices"][correct])
-        print("  why:       %s" % q["feedback"][correct])
+        if q.get("choices"):
+            correct = q["correct_choice"]
+            print("  you chose: %s" % q["choices"][chosen])
+            print("  correct:   %s" % q["choices"][correct])
+            print("  why:       %s" % q["feedback"][correct])
+        else:
+            print("  you wrote: %s" % replay.get("answer", chosen))
+            _print_grammar_breakdown(q)
         edit = replay.get("edit_replay")
         if edit:
             print("\n%sCHANGED-ART EDIT REPLAY%s" % (bold, off))
@@ -1555,11 +1956,14 @@ def _post_progress(cfg, cur, card, progress, *, completed=True):
     if ultra:
         module = next(m for m in cur["modules"] if m["id"] == card["module_id"])
         passed = set(progress["passed_cards"])
-        cells = " ".join("%02d%s" % (
-            int(cid.rsplit(".", 1)[1]), "✓" if cid in passed else "○")
+        cells = " ".join("%s%s" % (
+            (lambda sfx: "%02d" % int(sfx) if sfx.isdigit() else sfx)(cid.rsplit(".", 1)[1]),
+            "✓" if cid in passed else "○")
             for cid in module["card_ids"])
-        print("CURRENT MODULE MAP  %s %s · today %d/%d" % (
-            module["id"], cells, _legacy_today(cfg.state), cfg.target))
+        # VD-13: new card labels (P0, O, T) lengthened the map; keep the
+        # daily count on its own line so it is never split by wrapping.
+        print("CURRENT MODULE MAP  %s %s" % (module["id"], cells))
+        print("today %d/%d" % (_legacy_today(cfg.state), cfg.target))
     else:
         print("\n%sCURRENT MODULE MAP%s" % (bold, off))
         print(_module_card_map(cur, progress, card["module_id"]))
@@ -1661,15 +2065,14 @@ def run_concept(cfg, cur, progress, card):
     if not ultra:
         print("CHECK YOUR UNDERSTANDING: both the animation reading and Neovim decision must be correct.")
     question_evidence = {}
-    right, chosen = ask_question(q, rendered=cfg.question_rendered,
-                                 evidence=question_evidence)
+    right, chosen = ask_authored_question(
+        q, input_fn=_configured_question_input(cfg, q),
+        shuffle=cfg.question_answer is None,
+        rendered=cfg.question_rendered, evidence=question_evidence)
     if right is None:
         return 0
-    append_event(cfg, {"type": "question", "result": "pass" if right else "fail",
-                       "card_id": card["id"], "module_id": card["module_id"],
-                       "question_id": q["id"], "choice": chosen,
-                       "curriculum_revision": cur["revision"],
-                       "question_evidence": question_evidence})
+    append_event(cfg, _question_event(
+        cur, card, q, right, chosen, question_evidence))
     if not right:
         append_event(cfg, {"type": "card", "result": "fail", "card_id": card["id"],
                            "module_id": card["module_id"], "reason": "concept-answer"})
@@ -1680,14 +2083,16 @@ def run_concept(cfg, cur, progress, card):
             "incorrect paired animation/Neovim choice")
         failed_progress = rebuild(cfg, cur)
         _post_lesson(cfg, cur, card, failed_progress,
-                     {"type": "concept", "question": q, "chosen": chosen}, completed=False)
+                     {"type": "concept", "question": q, "chosen": chosen,
+                      "answer": chosen}, completed=False)
         print("\nA different variant will be used next time; the card did not advance.")
         if cfg.post_rendered:
             cfg.post_rendered()
         cfg.hold_open()
         return 1
     return _complete(cfg, cur, card, question_id=q["id"],
-                     replay={"type": "concept", "question": q, "chosen": chosen})
+                     replay={"type": "concept", "question": q, "chosen": chosen,
+                             "answer": chosen})
 
 
 def _latest_check_replay(cfg, cur, card):
@@ -1746,17 +2151,16 @@ def run_check_questions(cfg, cur, progress, card):
     outcomes = []
     for qid in selected:
         question_evidence = {}
-        right, chosen = ask_question(qmap[qid], rendered=cfg.question_rendered,
-                                     evidence=question_evidence)
+        right, chosen = ask_authored_question(
+            qmap[qid], input_fn=_configured_question_input(cfg, qmap[qid]),
+            shuffle=cfg.question_answer is None,
+            rendered=cfg.question_rendered, evidence=question_evidence)
         if right is None:
             return None, None
         score += int(right)
         outcomes.append({"question": qmap[qid], "right": bool(right), "chosen": chosen})
-        append_event(cfg, {"type": "question", "result": "pass" if right else "fail",
-                           "card_id": card["id"], "module_id": card["module_id"],
-                           "question_id": qid, "choice": chosen, "check": True,
-                           "curriculum_revision": cur["revision"],
-                           "question_evidence": question_evidence})
+        append_event(cfg, _question_event(
+            cur, card, qmap[qid], right, chosen, question_evidence, check=True))
     print("check questions: %d/%d" % (score, len(outcomes)))
     replay = {"type": "module_check", "outcomes": outcomes, "score": score,
               "threshold": card.get("pass_questions", len(outcomes))}
@@ -1783,18 +2187,6 @@ def run_check_questions(cfg, cur, progress, card):
 
 def run_edit(cfg, cur, progress, card):
     check_replay = None
-    if card["kind"] == "module_check":
-        check_passed, check_replay = run_check_questions(cfg, cur, progress, card)
-        if check_passed is None:
-            return 0
-        if not check_passed:
-            failed_progress = rebuild(cfg, cur)
-            _post_lesson(cfg, cur, card, failed_progress, check_replay, completed=False)
-            print("\nThe module check did not advance. A later attempt will use changed choices.")
-            if cfg.post_rendered:
-                cfg.post_rendered()
-            cfg.hold_open()
-            return 1
     path = _artifact_path(cfg, card)
     variants = card.get("variants", [])
     if variants:
@@ -1812,6 +2204,30 @@ def run_edit(cfg, cur, progress, card):
             known_starts = [[line.rstrip() for line in variant["start"]] for variant in variants]
             if existing in known_starts:
                 _write_lines_atomic(path, card["start"])
+    pair_passed, pair_replay = run_paired_questions(cfg, cur, progress, card, "before")
+    if pair_passed is None:
+        return 0
+    if not pair_passed:
+        failed_progress = rebuild(cfg, cur)
+        _post_lesson(cfg, cur, card, failed_progress, pair_replay, completed=False)
+        print("\nThe paired question did not advance the card. Its grammar breakdown is retained above.")
+        if cfg.post_rendered:
+            cfg.post_rendered()
+        cfg.hold_open()
+        return 1
+    progress = rebuild(cfg, cur)
+    if card["kind"] == "module_check":
+        check_passed, check_replay = run_check_questions(cfg, cur, progress, card)
+        if check_passed is None:
+            return 0
+        if not check_passed:
+            failed_progress = rebuild(cfg, cur)
+            _post_lesson(cfg, cur, card, failed_progress, check_replay, completed=False)
+            print("\nThe module check did not advance. A later attempt will use changed choices.")
+            if cfg.post_rendered:
+                cfg.post_rendered()
+            cfg.hold_open()
+            return 1
     if not path.exists():
         _write_new(path, card["start"])
     current = _read_lines(path)
@@ -1889,6 +2305,18 @@ def run_edit(cfg, cur, progress, card):
                 recovery_replay = {"type": "module_check", "outcomes": [],
                                    "score": 0, "threshold": 0}
             recovery_replay["playback_verified"] = playback_ok
+        after_passed, after_replay = run_paired_questions(
+            cfg, cur, rebuild(cfg, cur), card, "after")
+        if after_passed is None:
+            return 0
+        if not after_passed:
+            failed_progress = rebuild(cfg, cur)
+            _post_lesson(cfg, cur, card, failed_progress, after_replay, completed=False)
+            print("\nThe saved target is preserved; explain the method before this card advances.")
+            if cfg.post_rendered:
+                cfg.post_rendered()
+            cfg.hold_open()
+            return 1
         return _complete(cfg, cur, card, extra=recovery_extra, replay=recovery_replay)
     if current != [x.rstrip() for x in card["start"]]:
         print("Project checkpoint differs from the start required by %s:" % card["id"])
@@ -1965,6 +2393,18 @@ def run_edit(cfg, cur, progress, card):
                 extra["method_family"] = method_family
             if card.get("method_requirement"):
                 extra["required_method"] = card["method_requirement"]["label"]
+            after_passed, after_replay = run_paired_questions(
+                cfg, cur, rebuild(cfg, cur), card, "after")
+            if after_passed is None:
+                return 0
+            if not after_passed:
+                failed_progress = rebuild(cfg, cur)
+                _post_lesson(cfg, cur, card, failed_progress, after_replay, completed=False)
+                print("\nThe saved target is preserved; explain the method before this card advances.")
+                if cfg.post_rendered:
+                    cfg.post_rendered()
+                cfg.hold_open()
+                return 1
             return _complete(cfg, cur, card, extra=extra,
                              replay=replay)
         failure_event = {"type": "card", "result": "fail", "card_id": card["id"],
@@ -1993,12 +2433,9 @@ def run_edit(cfg, cur, progress, card):
         if replay.get("method_evidence_error"):
             print(replay["method_evidence_error"])
         print("failed snapshot preserved; working artifact restored to this card's checkpoint")
-        if card.get("kind") == "transfer":
-            print("This transfer attempt stops here so the scheduled changed-art variant is next.")
-            if cfg.post_rendered:
-                cfg.post_rendered()
-            cfg.hold_open()
-            return 1
+        # VD-13: a failed transfer used to stop here ("changed-art variant is
+        # next"), so the learner could not retry. It now falls through to the
+        # same retry prompt as every other edit; the remediation stays scheduled.
         if tries >= cfg.max_tries:
             print("Attempt limit reached; no progress was awarded.")
             if cfg.post_rendered:
@@ -2202,8 +2639,10 @@ def _module_card_map(cur, progress, module_id):
     passed = set(progress["passed_cards"])
     cells = []
     for card_id in module["card_ids"]:
-        ordinal = int(card_id.rsplit(".", 1)[1])
-        cells.append("%02d%s" % (ordinal, "✓" if card_id in passed else "○"))
+        # VD-13: non-numeric ids such as the M0.P0 grammar primer crashed here.
+        suffix = card_id.rsplit(".", 1)[1]
+        label = "%02d" % int(suffix) if suffix.isdigit() else suffix
+        cells.append("%s%s" % (label, "✓" if card_id in passed else "○"))
     return "%s cards: %s" % (module_id, " ".join(cells))
 
 

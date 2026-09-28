@@ -61,6 +61,12 @@ def to_bytes(value):
     return data
 
 
+def answer_question(question):
+    if question.get("choices"):
+        return "abcd"[question["correct_choice"]]
+    return question["answer_contract"]["sample_answer"]
+
+
 with (HERE / "curriculum-v2.json").open(encoding="utf-8") as f:
     cur = json.load(f)
 v2.validate_curriculum(cur)
@@ -86,11 +92,22 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["paradigm"] == concept["paradigm"]
 
 assert len(cur["modules"]) == 19
-assert len(cur["cards"]) == 152
-assert len(cur["questions"]) == 190
-assert len({card["title"] for card in cur["cards"]}) == 152
-assert len({card["prompt"] for card in cur["cards"]}) == 152
+assert len(cur["cards"]) == 155
+assert len(cur["questions"]) == 307
+assert len({card["title"] for card in cur["cards"]}) == 155
+assert len({card["prompt"] for card in cur["cards"]}) == 155
 card_by_id = {card["id"]: card for card in cur["cards"]}
+question_by_id = {question["id"]: question for question in cur["questions"]}
+mc_questions = [question for question in cur["questions"]
+                if question["form"] == "multiple_choice"]
+assert {question["form"] for question in cur["questions"]} == {
+    "multiple_choice", "typed_keys", "decode", "complete", "predict_art", "why"}
+assert all(card.get("paired_question_ids") for card in cur["cards"])
+assert all(qid in question_by_id
+           for card in cur["cards"] for qid in card["paired_question_ids"])
+assert [card["id"] for card in cur["cards"] if card["module_id"] == "M0"] == [
+    "M0.P0", "M0.01", "M0.02", "M0.O", "M0.03", "M0.04",
+    "M0.T", "M0.05", "M0.06", "M0.07", "M0.08"]
 # M0.04 must not demand substitution before it has been shown. M0.02 is the
 # guided introduction; M0.04 names the family but keeps its exact line/keys
 # hidden as retrieval practice.
@@ -106,26 +123,26 @@ assert {method["evidence"]["kind"] for method in
         card_by_id["M0.05"]["method_alternatives"]} == {
             "linewise_yank_put", "ex_copy"}
 assert all(len(q["choices"]) == 4 and len(q["feedback"]) == 4
-           for q in cur["questions"])
+           for q in mc_questions)
 assert all(all(q.get(field) for field in (
     "animation_prompt", "animation_answer", "neovim_prompt", "neovim_answer"))
-           for q in cur["questions"])
+           for q in mc_questions)
 assert all("ANIMATION\n" in q["prompt"] and "NEOVIM\n" in q["prompt"]
            and all("ANIMATION:" in choice and "NEOVIM:" in choice
                    for choice in q["choices"])
-           for q in cur["questions"])
+           for q in mc_questions)
 assert all("ANIMATION:" in q["compact_prompt"] and "NEOVIM:" in q["compact_prompt"]
            and len(q["compact_choices"]) == len(q["choices"])
            and all("A:" in choice and "V:" in choice for choice in q["compact_choices"])
-           for q in cur["questions"])
+           for q in mc_questions)
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in cur["questions"]}) == 190
-assert sum("│" in q["animation_prompt"] for q in cur["questions"]) >= 55
+            for q in mc_questions}) == 190
+assert sum("│" in q["animation_prompt"] for q in mc_questions) >= 55
 assert all("Not yet" not in feedback and "one or both halves" not in feedback.lower()
-           for q in cur["questions"] for feedback in q["feedback"])
-for q in cur["questions"]:
+           for q in mc_questions for feedback in q["feedback"])
+for q in mc_questions:
     animation_halves = [choice.split(" | NEOVIM: ", 1)[0] for choice in q["choices"]]
     neovim_halves = [choice.split(" | NEOVIM: ", 1)[1] for choice in q["choices"]]
     assert sorted(animation_halves.count(value) for value in set(animation_halves)) == [2, 2]
@@ -141,14 +158,15 @@ for question in [q for q in cur["questions"] if q["id"].endswith("Q01") and q["m
     assert "BEFORE" in question["prompt"] and "AFTER" in question["prompt"]
     assert question["prompt"].count("│") >= 6, question["id"]
 assert all([c["ordinal"] for c in cur["cards"] if c["module_id"] == m["id"]] == list(range(1, 9))
-           for m in cur["modules"])
+           for m in cur["modules"] if m["id"] != "M0")
 assert all(len(c.get("question_ids", [])) == 10
            for c in cur["cards"] if c["kind"] == "module_check")
 assert all("key-hidden" in c["prompt"] and c["expected"] not in c["prompt"]
            and all(why not in c["prompt"] for _keys, why in c["recipe"])
            for c in cur["cards"] if c["kind"] == "module_check")
 assert all(len(c.get("question_ids", [])) == 5
-           for c in cur["cards"] if c["kind"] == "concept")
+           for c in cur["cards"] if c["kind"] == "concept" and c["id"] != "M0.P0")
+assert card_by_id["M0.P0"]["question_ids"] == ["M0.P0.P01"]
 m3_concept = next(c for c in cur["cards"] if c["id"] == "M3.03")
 assert "M3.Q04" in m3_concept["question_ids"]
 assert "ci(" in next(q for q in cur["questions"] if q["id"] == "M3.Q04")["prompt"]
@@ -299,13 +317,38 @@ with contextlib.redirect_stdout(io.StringIO()):
         shuffle=False)
 assert right and chosen == output_prediction["correct_choice"]
 
+# Typed-key questions are graded by their effect in an isolated Neovim, not
+# by string equality. Both valid paths pass; a different resulting glyph does
+# not. Question evidence alone never awards card XP.
+typed_question = question_by_id["M0.01.P01"]
+for equivalent in ("j0f.ro", "jf.ro"):
+    right, evidence, _message = v2._safe_typed_effect(
+        typed_question["answer_contract"], equivalent)
+    assert right and evidence["result_lines_sha256"] == evidence["target_lines_sha256"]
+wrong, _evidence, _message = v2._safe_typed_effect(
+    typed_question["answer_contract"], "j0f.rx")
+assert not wrong
+wrong_output = io.StringIO()
+with contextlib.redirect_stdout(wrong_output):
+    right, answer = v2.ask_authored_question(
+        typed_question, input_fn=lambda _prompt: "j0f.rx", shuffle=False)
+assert not right and answer == "j0f.rx"
+assert "GRAMMAR BREAKDOWN" in wrong_output.getvalue()
+question_only = v2.project(cur, [{
+    "type": "question", "result": "pass", "card_id": "M0.01",
+    "module_id": "M0", "question_id": typed_question["id"],
+}])
+assert typed_question["id"] in question_only["passed_questions"]
+assert question_only["xp"] == 0 and not question_only["passed_cards"]
+
 # Merely opening and interrupting a popup cannot consume the hourly cooldown.
 # append_event advances the stamp only for a durable pass/fail attempt.
 with tempfile.TemporaryDirectory() as tmp:
     cfg = v2.RuntimeConfig(state=tmp, share=str(HERE), editor="nvim", max_tries=1,
                            target=12, cooldown=3600, stamp=str(Path(tmp) / "stamp"),
                            run_editor=lambda *_: None, decode_keylog=lambda _: [],
-                           hold_open=lambda: None, colours=("", "", "", "", "", ""))
+                           hold_open=lambda: None, colours=("", "", "", "", "", ""),
+                           question_answer=answer_question)
     assert not Path(cfg.stamp).exists()
     v2.append_event(cfg, {"type": "session_open", "card_id": "M0.03"})
     assert not Path(cfg.stamp).exists()
@@ -327,7 +370,8 @@ with tempfile.TemporaryDirectory() as tmp:
     cfg = v2.RuntimeConfig(state=tmp, share=str(HERE), editor="nvim", max_tries=1,
                            target=12, cooldown=3600, stamp=str(Path(tmp) / "stamp"),
                            run_editor=finish_migrated_artifact, decode_keylog=lambda _: [],
-                           hold_open=lambda: None, colours=("", "", "", "", "", ""))
+                           hold_open=lambda: None, colours=("", "", "", "", "", ""),
+                           question_answer=answer_question)
     artifact = v2._artifact_path(cfg, migration_card)
     artifact.parent.mkdir(parents=True, exist_ok=True)
     artifact.write_text(" · \n · \n", encoding="utf-8")
@@ -424,7 +468,7 @@ p = v2.project(cur, [])
 assert p["modules"]["M0"]["state"] == "available"
 assert p["modules"]["M1"]["state"] == "locked"
 assert p["modules"]["M2"]["state"] == "locked"
-assert v2.next_card(cur, p)["id"] == "M0.01"
+assert v2.next_card(cur, p)["id"] == "M0.P0"
 # Level progression remains monotonic and bounded within each 80-XP band even
 # after the old ten-title ceiling and the full course/review XP maximum.
 level_samples = [v2._level(xp) for xp in range(0, 2801)]
@@ -432,16 +476,17 @@ assert all(level_samples[index][0] <= level_samples[index + 1][0]
            for index in range(len(level_samples) - 1))
 assert all(0 <= into < needed for _level, _title, into, needed in level_samples)
 assert v2._level(800)[0] == 11 and v2._level(800)[2] == 0
-events = [{"type": "card", "result": "pass", "card_id": "M0.%02d" % n,
+events = [{"type": "card", "result": "pass", "card_id": card_id,
            "module_id": "M0", "at": "2026-09-27T00:00:00+00:00"}
-          for n in range(1, 9)]
+          for card_id in next(module for module in cur["modules"]
+                              if module["id"] == "M0")["card_ids"]]
 p = v2.project(cur, events)
 assert p["modules"]["M0"]["state"] == "mastered"
 assert p["modules"]["M1"]["state"] == "available"
 assert p["modules"]["M2"]["state"] == "available"
 assert p["modules"]["M3"]["state"] == "locked"
 assert v2.next_card(cur, p)["id"] == "M1.01"
-assert p["xp"] == 80 and "first-module" in p["badges"]
+assert p["xp"] == 110 and "first-module" in p["badges"]
 almost = v2.project(cur, events[:-1])
 assert almost["modules"]["M0"]["state"] == "check_ready"
 with contextlib.redirect_stdout(io.StringIO()):
@@ -457,7 +502,9 @@ with tempfile.TemporaryDirectory() as tmp:
     output = io.StringIO()
     with contextlib.redirect_stdout(output):
         assert v2.run(cfg, ["--card", "M0.03"]) == 1
-    assert "complete M0.01 first" in output.getvalue()
+    assert "complete M0.P0 first" in output.getvalue()
+    v2.append_event(cfg, {"type": "card", "result": "pass", "card_id": "M0.P0",
+                          "module_id": "M0"})
     v2.append_event(cfg, {"type": "card", "result": "pass", "card_id": "M0.01",
                           "module_id": "M0"})
     output = io.StringIO()
@@ -535,7 +582,7 @@ with tempfile.TemporaryDirectory() as tmp:
         assert first["title"] in text and first["prompt"] in text
         assert "DO THIS" in text
         assert "TARGET" in text and "COMMAND RECIPE" in text
-        assert "PROGRESS  M0 0/8 available" in text and "XP 0" in text
+        assert "PROGRESS  M0 0/11 available" in text and "XP 0" in text
         assert "WHY THIS EXISTS" in text
         assert first_module["meaning"] in text
         assert first_module["principle"] in text
@@ -566,7 +613,8 @@ with tempfile.TemporaryDirectory() as tmp:
                            target=12, cooldown=3600, stamp=str(Path(tmp) / "stamp"),
                            run_editor=finish_visible_lesson,
                            decode_keylog=lambda _: tokenize(first["expected"]),
-                           hold_open=lambda: None, colours=("", "", "", "", "", ""))
+                           hold_open=lambda: None, colours=("", "", "", "", "", ""),
+                           question_answer=answer_question)
     progress = v2.project(cur, [])
     output = io.StringIO()
     with contextlib.redirect_stdout(output):
@@ -583,9 +631,9 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "Streak extended to 1 day." in rendered
     assert "best 1" in rendered and "1 drill all time" in rendered
     assert "SKILL TREE / MODULE PROGRESS" in rendered
-    assert "M0  Spark loop" in rendered and "1/8" in rendered
+    assert "M0  Spark loop" in rendered and "1/11" in rendered
     assert "XP: 10" in rendered and "today: 1/12 lessons" in rendered
-    assert "next: M0.02" in rendered
+    assert "next: M0.P0" in rendered
     assert v2.project(cur, v2.read_events(cfg))["passed_cards"] == ["M0.01"]
 
     # Surface-job parity for one representative legacy lesson. Command/content
@@ -704,7 +752,7 @@ with tempfile.TemporaryDirectory() as tmp:
                            target=12, cooldown=3600, stamp=str(Path(tmp) / "stamp"),
                            run_editor=target_without_keys, decode_keylog=lambda _: [],
                            hold_open=lambda: None, colours=("", "", "", "", "", ""),
-                           tokenize=tokenize)
+                           tokenize=tokenize, question_answer=answer_question)
     output = io.StringIO()
     with contextlib.redirect_stdout(output):
         assert v2.run_edit(cfg, cur, v2.project(cur, []), compare) == 1
@@ -723,7 +771,7 @@ with tempfile.TemporaryDirectory() as tmp:
                            target=12, cooldown=3600, stamp=str(Path(tmp) / "stamp"),
                            run_editor=lambda *_: None, decode_keylog=lambda _: [],
                            hold_open=lambda: None, colours=("", "", "", "", "", ""),
-                           tokenize=tokenize)
+                           tokenize=tokenize, question_answer=answer_question)
     artifact = Path(tmp) / "projects" / compare["project_id"] / "strip.txt"
     artifact.parent.mkdir(parents=True)
     artifact.write_text("\n".join(compare["target"]) + "\n", encoding="utf-8")
@@ -741,7 +789,7 @@ with tempfile.TemporaryDirectory() as tmp:
                            target=12, cooldown=3600, stamp=str(Path(tmp) / "stamp"),
                            run_editor=wrong_edit, decode_keylog=lambda _: [],
                            hold_open=lambda: None, colours=("", "", "", "", "", ""),
-                           tokenize=tokenize)
+                           tokenize=tokenize, question_answer=answer_question)
     with contextlib.redirect_stdout(io.StringIO()):
         assert v2.run_edit(cfg, cur, v2.project(cur, []), card) == 1
     artifact = Path(tmp) / "projects" / card["project_id"] / "strip.txt"
@@ -759,6 +807,7 @@ with tempfile.TemporaryDirectory() as tmp:
                            target=12, cooldown=3600, stamp=str(Path(tmp) / "stamp"),
                            run_editor=fail_transfer, decode_keylog=lambda _: [],
                            hold_open=lambda: None, colours=("", "", "", "", "", ""),
+                           question_answer=answer_question,
                            tokenize=tokenize)
     with contextlib.redirect_stdout(io.StringIO()):
         assert v2.run_edit(cfg, cur, v2.rebuild(cfg, cur), transfer) == 1
@@ -959,7 +1008,7 @@ for sequence, family in (
             run_editor=finish_compare,
             decode_keylog=lambda _data, answer=sequence: tokenize(answer),
             hold_open=lambda: None, colours=("", "", "", "", "", ""),
-            tokenize=tokenize)
+            tokenize=tokenize, question_answer=answer_question)
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
             assert v2.run_edit(cfg, cur, v2.project(cur, []), m005) == 0
@@ -1198,7 +1247,10 @@ for mutator in (
     lambda broken: broken["questions"][0].__setitem__("correct_choice", 4),
     lambda broken: broken["cards"][0].__setitem__("module_id", "M404"),
     lambda broken: broken["modules"][0]["card_ids"].__setitem__(0, "M0.99"),
-    lambda broken: broken["cards"][5].__setitem__("variants", [broken["cards"][5]["variants"][0]]),
+    lambda broken: next(card for card in broken["cards"]
+                        if card.get("kind") == "transfer").__setitem__(
+                            "variants", [next(card for card in broken["cards"]
+                                               if card.get("kind") == "transfer")["variants"][0]]),
     lambda broken: next(card for card in broken["cards"]
                         if card["id"] == "M0.05").pop("duplicate_frames"),
 ):
@@ -1210,7 +1262,7 @@ for mutator in (
     except ValueError:
         pass
 
-print("\n152/152 executable lessons present; %d/%d primary edit recipes passable (config=%s); "
+print("\n155/155 executable lessons present; %d/%d primary edit recipes passable (config=%s); "
       "38 conceptual/check lessons, 38 changed-art transfer variants, "
       "38 compare paths, and graph/questions/state valid" % (
           len(edit_cards) - len(failures), len(edit_cards), "real" if use_real else "none"))

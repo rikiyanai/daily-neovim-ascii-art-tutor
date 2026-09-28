@@ -838,6 +838,12 @@ def progress_banner(counts, done_today):
     return "  ·  ".join(bits)
 
 
+# VD-13 defect 6: set by main() for the v2 lesson route; hold_open() records
+# an explicit request to continue with the next lesson in the same popup.
+_OFFER_NEXT = False
+_NEXT_REQUESTED = False
+
+
 def hold_open():
     """Keep a tmux popup on screen long enough to read it.
 
@@ -845,13 +851,19 @@ def hold_open():
     without this the completion line and the keystroke table would flash past
     and vanish. The retry prompt already blocks; these are the exits that do not.
     """
+    global _NEXT_REQUESTED
     if not os.environ.get("VIM_DAILY_POPUP"):
         return
 
+    prompt = ("\n%spress Enter to close  ·  n then Enter = next lesson now%s "
+              if _OFFER_NEXT else "\n%spress Enter to close%s ")
     try:
-        input("\n%spress Enter to close%s " % (DIM, OFF))
+        answer = input(prompt % (DIM, OFF))
     except (EOFError, KeyboardInterrupt):
-        pass
+        return
+    # VD-13 defect 6: a motivated learner may continue in the same popup.
+    if _OFFER_NEXT and answer.strip().lower() in ("n", "next"):
+        _NEXT_REQUESTED = True
 
 
 def signal_post_rendered():
@@ -1008,7 +1020,15 @@ def main(argv):
             post_page_break=post_page_break,
             post_rendered=signal_post_rendered,
             question_rendered=signal_question_rendered)
+        global _OFFER_NEXT, _NEXT_REQUESTED
+        _OFFER_NEXT = mode in ("run", "--force", "--if-due")
         result = v2.run(cfg, argv, force=(mode == "--force"))
+        # VD-13 defect 6: "n" at the closing prompt starts the next due lesson
+        # in the same popup. It is the learner's explicit request, so it uses
+        # the on-demand (--force) route, like prefix+V; Enter still closes.
+        while _OFFER_NEXT and _NEXT_REQUESTED and result is not None:
+            _NEXT_REQUESTED = False
+            result = v2.run(cfg, ["--force"], force=True)
         if result is not None:
             finished_signal = os.environ.get("VIM_DAILY_TMUX_FINISHED_SIGNAL")
             # The client-attached hook probes with --due-quiet before opening

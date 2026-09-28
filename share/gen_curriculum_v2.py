@@ -3212,6 +3212,21 @@ def question(module, number):
     ]
     return {
         "id": f"{mid}.Q{number:02d}", "module_id": mid,
+        "card_id": f"{mid}.03" if number <= 5 else f"{mid}.07",
+        "form": "multiple_choice",
+        "grammar_family": "paired-animation-neovim-diagnosis",
+        "grammar_breakdown_id": "paired-animation-neovim-diagnosis",
+        "grammar_breakdown": [
+            "read the visible animation evidence",
+            "name the bounded Neovim action and scope",
+            "reject any answer whose animation or Neovim half is wrong",
+        ],
+        "paired_invariant": module["principle"],
+        "placement": "before",
+        "placement_reason": (
+            "The learner must interpret the visible animation evidence and bounded edit "
+            "before the concept or diagnosis card can advance."
+        ),
         "type": {
             1: "visual_reading", 2: "principle_choice", 3: "diagnosis",
             4: "command_prediction", 5: "method_comparison", 6: "transfer_reasoning",
@@ -3224,6 +3239,389 @@ def question(module, number):
         "animation_prompt": animation_prompt, "animation_answer": animation_correct,
         "neovim_prompt": neovim_prompt, "neovim_answer": neovim_correct,
         "compact_prompt": compact_prompt, "compact_choices": compact_choices,
+        "answer_contract": {"form": "multiple_choice"},
+    }
+
+
+FAMILY_DEFS = {
+    "normal-motion": {
+        "class": "standalone_normal",
+        "grammar": "motion or landmark command + optional count; movement alone must not change art",
+        "terms": [["motion", "move", "cursor"], ["landmark", "row", "column", "cell"]],
+    },
+    "normal-replace": {
+        "class": "standalone_normal",
+        "grammar": "r + replacement glyph; overwrite one cell without shifting the row",
+        "terms": [["replace", "overwrite", "r"], ["cell", "glyph"], ["width", "shift", "registered"]],
+    },
+    "linewise-yank-put": {
+        "class": "standalone_normal",
+        "grammar": "count + yy copies whole rows; p/P puts the linewise object below/above",
+        "terms": [["yank", "copy"], ["line", "row", "frame"], ["put", "paste"]],
+    },
+    "normal-open-line": {
+        "class": "standalone_normal",
+        "grammar": "o/O opens one row below/above and enters Insert; <Esc> returns to Normal",
+        "terms": [["open", "new line", "new row", "o"], ["below", "above"], ["escape", "normal"]],
+    },
+    "ex-substitute": {
+        "class": "ex",
+        "grammar": ["address/range", "s command", "pattern", "replacement", "flags", "<CR> execution"],
+        "terms": [["range", "address", "line"], ["substitute", "replace"], ["pattern"], ["flag", "global", "g"], ["enter", "execute"]],
+    },
+    "ex-copy": {
+        "class": "ex",
+        "grammar": ["source address/range", "t/copy command", "destination address", "<CR> execution"],
+        "terms": [["range", "source", "lines", "rows"], ["copy", "t"], ["destination", "after", "end"], ["enter", "execute"]],
+    },
+    "ex-move": {
+        "class": "ex",
+        "grammar": ["source address/range", "m/move command", "destination address", "<CR> execution"],
+        "terms": [["range", "source", "lines", "rows"], ["move"], ["destination", "after", "before"]],
+    },
+    "operator-motion-object": {
+        "class": "operator",
+        "grammar": "[count] operator [count] motion-or-text-object",
+        "terms": [["operator", "verb"], ["motion", "object", "noun"], ["scope", "count"]],
+    },
+    "visual-scope": {
+        "class": "visual",
+        "grammar": "Visual mode + bounded selection + operator; selection shape owns the edit scope",
+        "terms": [["visual", "selection"], ["line", "block", "column", "scope"]],
+    },
+    "repeat": {
+        "class": "standalone_normal",
+        "grammar": ". repeats the last change; n/N and ;/, repeat searches or character finds",
+        "terms": [["repeat", "dot", "next"], ["change", "search", "find"]],
+    },
+    "register": {
+        "class": "standalone_normal",
+        "grammar": "\"{register} selects storage; yank fills it and p/P or <C-r>{register} retrieves it",
+        "terms": [["register", "palette"], ["yank", "copy"], ["put", "retrieve", "paste"]],
+    },
+    "macro": {
+        "class": "standalone_normal",
+        "grammar": "q{register} records bounded edits; q stops; @{register} replays at a homologous anchor",
+        "terms": [["record", "macro"], ["register"], ["replay", "repeat"]],
+    },
+    "replace-mode": {
+        "class": "standalone_normal",
+        "grammar": "R enters Replace mode; typed glyphs overwrite cells until <Esc>",
+        "terms": [["replace mode", "overwrite"], ["escape", "normal"], ["width", "shift"]],
+    },
+    "search-landmark": {
+        "class": "standalone_normal",
+        "grammar": "/pattern<CR> searches; f/t land on or before a visible character landmark",
+        "terms": [["search", "find", "landmark"], ["pattern", "character"], ["cursor", "cell"]],
+    },
+    "ex-command": {
+        "class": "ex",
+        "grammar": ["address/range when needed", "command", "arguments", "flags when needed", "<CR> execution"],
+        "terms": [["command"], ["argument", "range", "address"], ["enter", "execute"]],
+    },
+}
+
+
+MASTER_COVERAGE = {
+    "M0": (["H1", "H3"], ["S0", "A0"]),
+    "M1": (["H2"], ["S1", "A1"]),
+    "M2": (["H1", "H2"], ["S3", "A1"]),
+    "M3": (["H3"], ["S2", "A2"]),
+    "M4": (["H2", "H4", "H7"], ["S4", "A2"]),
+    "M5": (["H3", "H4", "H7"], ["S6", "A4"]),
+    "M6": (["H3", "H9"], ["A5"]),
+    "M7": (["H5"], ["A4", "A6"]),
+    "M8": (["H2", "H8"], ["A4", "A7"]),
+    "M9": (["H1", "H3", "H9"], ["A0", "A4", "A7"]),
+    "M10": (["H2"], ["S5", "P"]),
+    "M11": (["H1", "H4", "H5"], ["S0", "A3"]),
+    "M12": (["H2", "H5"], ["S1", "A4"]),
+    "M13": (["H2", "H5"], ["S2", "A4"]),
+    "M14": (["H3", "H6", "H9"], ["S5", "A1"]),
+    "M15": (["H4", "H8"], ["S7", "A5"]),
+    "M16": (["H3", "H9"], ["A0"]),
+    "M17": (["H2", "H5"], ["A3", "A7"]),
+    "M18": (["H1", "H3", "H9"], ["A6", "A7"]),
+}
+
+
+def infer_grammar_families(card):
+    """Classify commands from executable syntax, with no scan of art prose."""
+    keys = card.get("expected", "")
+    normal_keys = re.sub(r":[^<]*(?:<CR>|$)", "", keys)
+    plain_normal = re.sub(r"<[^>]+>", "", normal_keys)
+    families = []
+    def add(name):
+        if name not in families:
+            families.append(name)
+    if re.search(r":[^<]*(?:s[/@]|substitute)", keys): add("ex-substitute")
+    if re.search(r":[^<]*(?:t|co(?:py)?)(?:\$|\d)", keys): add("ex-copy")
+    if re.search(r":[^<]*(?:m|move)(?:\$|\d)", keys): add("ex-move")
+    if re.search(r"(?:\d+)?yy|yap", keys): add("linewise-yank-put")
+    if "<C-v>" in keys or re.search(r"(?:^|<Esc>)V", keys): add("visual-scope")
+    if re.search(r"(?:daw|ci\(|dd|D|C)", plain_normal): add("operator-motion-object")
+    if re.search(r"r.", plain_normal): add("normal-replace")
+    if re.search(r"(?:^|[0-9G])(?:o|O)", plain_normal): add("normal-open-line")
+    if "qq" in plain_normal or re.search(r"@\w", plain_normal): add("macro")
+    if re.search(r"(?<![fFtTr/])\.", plain_normal):
+        add("repeat")
+    if re.search(r'"[a-z0-9]', keys) or "<C-r>" in keys: add("register")
+    if "R" in plain_normal: add("replace-mode")
+    if re.search(r"/[^<]+", plain_normal) or re.search(r"[ftFT].", plain_normal):
+        add("search-landmark")
+    if re.search(r":[^<]+<CR>", keys) and not any(
+            name.startswith("ex-") for name in families):
+        add("ex-command")
+    if re.search(r"(?:gg|G|\d+[hjkl|]|[wWeEbB$^0{}])", plain_normal): add("normal-motion")
+    if not families and keys: add("normal-motion")
+    return families
+
+
+def _family_breakdown(families):
+    rows = []
+    for name in families:
+        if name not in FAMILY_DEFS:
+            continue
+        grammar = FAMILY_DEFS[name]["grammar"]
+        rows.append(" + ".join(grammar) if isinstance(grammar, list) else grammar)
+    return rows
+
+
+def paired_question(module, card):
+    """One card-owned non-template question grounded in this exact art edit."""
+    families = card["grammar_families"]
+    primary = families[0]
+    family = FAMILY_DEFS[primary]
+    qid = card["id"] + ".P01"
+    ordinal = card["ordinal"]
+    common = {
+        "id": qid, "card_id": card["id"], "module_id": card["module_id"],
+        "grammar_family": primary, "grammar_breakdown_id": primary,
+        "grammar_breakdown": _family_breakdown([primary]),
+        "paired_invariant": module["principle"], "source_ref": module["source_ref"],
+        "difficulty": 1 + int(ordinal >= 4),
+    }
+    if ordinal in (1, 6) or card["id"] in ("M0.O",):
+        common.update({
+            "form": "typed_keys", "placement": "before",
+            "placement_reason": (
+                "The learner must work out a real edit on a scratch copy before the recipe "
+                "or transfer attempt can become performance evidence."
+            ),
+            "prompt": (
+                "ANIMATION\n%s\n\nNEOVIM\nOn the scratch copy, make START become TARGET. "
+                "Type any safe key sequence with the same effect; spelling is not graded."
+            ) % card["prompt"],
+            "answer_contract": {
+                "form": "typed_keys", "initial_lines": card["start"],
+                "target_lines": card["target"], "initial_cursor": card.get("cursor", "^"),
+                "forbidden_side_effects": ["write", "shell", "extra_window", "extra_tab"],
+                "sample_answer": card["expected"], "effect_version": 1,
+            },
+        })
+    elif ordinal == 2 or card["id"] == "M0.T":
+        common.update({
+            "form": "decode", "placement": "before",
+            "placement_reason": (
+                "The command must be decomposed into scope and action before the guided "
+                "recipe is exposed."
+            ),
+            "prompt": (
+                "ANIMATION\n%s\n\nNEOVIM\nDecode `%s` in plain language. Explain its scope "
+                "and why that scope preserves the complete animation object."
+            ) % (module["principle"], card["expected"]),
+            "answer_contract": {
+                "form": "decode", "display": card["expected"],
+                "required_term_groups": family["terms"],
+                "sample_answer": " ".join(group[0] for group in family["terms"]),
+            },
+        })
+    elif ordinal == 4:
+        common.update({
+            "form": "predict_art", "placement": "before",
+            "placement_reason": (
+                "Prediction makes the learner state the intended changed region before a "
+                "key-hidden retrieval, without revealing its command path."
+            ),
+            "prompt": (
+                "ANIMATION\n%s\n\nNEOVIM\nBefore editing, which result and scope are correct?"
+            ) % card["prompt"],
+            "choices": [
+                "TARGET exactly; only the acting frame/region changes.",
+                "START unchanged; navigation alone proves the skill.",
+                "TARGET shifted one column; insertion is harmless in fixed-width art.",
+                "Every similar glyph in the project changes, even outside the stated frame.",
+            ],
+            "correct_choice": 0,
+            "feedback": [
+                "Correct: the named acting region changes and registered cells remain fixed.",
+                "Navigation without the requested art change does not satisfy the card.",
+                "A one-column shift breaks frame registration.",
+                "Project-wide scope exceeds the visible animation contract.",
+            ],
+            "answer_contract": {"form": "predict_art", "answer_mode": "choice"},
+        })
+    elif ordinal == 5:
+        common.update({
+            "form": "why", "placement": "after",
+            "placement_reason": (
+                "The exact result must exist before the learner compares cursor dependence, "
+                "scope, and animation risk across the two valid methods."
+            ),
+            "prompt": (
+                "ANIMATION\n%s\n\nNEOVIM\nWhy was the demonstrated method safe for this "
+                "frame, and what scope error would the other task shape risk?"
+            ) % module["principle"],
+            "answer_contract": {
+                "form": "why",
+                "required_term_groups": [["frame", "rows", "range", "object"],
+                                         ["scope", "cursor", "registered", "unchanged"]],
+                "sample_answer": "The complete frame is the object; bounded scope keeps registered cells unchanged.",
+            },
+        })
+    else:
+        grammar = family["grammar"]
+        ex = family["class"] == "ex"
+        common.update({
+            "form": "complete", "placement": "before",
+            "placement_reason": (
+                "The learner completes the reusable grammar before the checkpoint; the card's "
+                "exact hidden recipe remains undisclosed."
+            ),
+            "prompt": (
+                "ANIMATION\n%s\n\nNEOVIM\nComplete the reusable grammar: %s"
+            ) % (module["principle"],
+                 "an Ex statement runs only after ____" if ex else
+                 "[count] operator [count] ____ names the operated scope"),
+            "answer_contract": {
+                "form": "complete",
+                "accepted_answers": (["<CR>", "Enter", "the Enter key"] if ex else
+                                     ["motion", "text object", "motion or text object"]),
+                "sample_answer": "<CR>" if ex else "motion or text object",
+            },
+        })
+    return common
+
+
+def m0_extra_cards(module):
+    """Migration-safe prerequisite inserts; existing M0 ids never move."""
+    base = {
+        "module_id": "M0", "skill": module["skill"], "source_ref": module["source_ref"],
+        "medium": "monospace", "node_ids": [module["node"]],
+        "master_habits": ["H1", "H3"], "master_stages": ["S0", "A0"],
+    }
+    primer = dict(base, **{
+        "id": "M0.P0", "ordinal": 0, "kind": "concept",
+        "title": "Spark loop · Vim grammar primer", "project_id": module["project"],
+        "variant_group": "M0.grammar-primer", "lesson_benefit": (
+            "distinguish operator sentences, standalone Normal commands, and Ex statements"
+        ),
+        "prompt": (
+            "Vim is a language. Work out which grammar owns an edit: [count] operator "
+            "[count] motion/object, a standalone Normal command, or an Ex statement made of "
+            "address/range + command + arguments + flags + Enter."
+        ),
+        "grammar_families": ["operator-motion-object", "normal-replace", "ex-substitute"],
+        "grammar_stage": "explanation", "key_vocabulary": [
+            "[count] operator [count] motion-or-text-object",
+            "standalone Normal command + operand/scope",
+            ":[address-or-range] command arguments flags <CR>",
+        ],
+    })
+    open_line = dict(base, **{
+        "id": "M0.O", "ordinal": 2.5, "kind": "guided_edit",
+        "title": "Spark loop · Open rows without indentation drift",
+        "project_id": "m0-open-line-lab", "artifact": "transfer",
+        "variant_group": "M0.open-line", "lesson_benefit": (
+            "learn o/O and mode exit before a hidden card can require newly authored rows"
+        ),
+        "prompt": (
+            "Create the second three-row spark below the first with open-line entry; keep every "
+            "ray in its original column and return to Normal mode."
+        ),
+        "start": ["  \\|/", "-- o --", "  /|\\"],
+        "target": ["  \\|/", "-- o --", "  /|\\", "  \\|/", "-- O --", "  /|\\"],
+        "expected": "Go<C-u>  \\|/<Esc>o<C-u>-- O --<Esc>o  /|\\<Esc>",
+        "recipe": [["G", "start from the last existing row"],
+                   ["o<C-u>…<Esc>", "open below, clear inherited indent, type the registered row, and return to Normal"]],
+        "cursor": "^", "show_target": True, "show_recipe": True,
+        "hint": (
+            "o opens below and enters Insert; O opens above. <C-u> clears inherited indent; "
+            "the tutor also disables indentation only in the art buffer so columns survive."
+        ),
+        "frame_slices": [3, 3], "grammar_families": ["normal-open-line"],
+        "grammar_stage": "guided",
+    })
+    ex_copy = dict(base, **{
+        "id": "M0.T", "ordinal": 4.5, "kind": "guided_edit",
+        "title": "Spark loop · Addressed whole-frame copy",
+        "project_id": "m0-ex-copy-lab", "artifact": "transfer",
+        "variant_group": "M0.ex-copy", "lesson_benefit": (
+            "work out source range, copy command, destination, and Enter before M0.05 hides them"
+        ),
+        "prompt": (
+            "Copy the complete three-row flare after the file with one addressed Ex statement."
+        ),
+        "start": ["  \\|/", "== O ==", "  /|\\"],
+        "target": ["  \\|/", "== O ==", "  /|\\", "  \\|/", "== O ==", "  /|\\"],
+        "expected": ":1,3t$<CR>",
+        "recipe": [[":1,3", "source range: all three frame rows"],
+                   ["t$", "copy that range after the last line"],
+                   ["<CR>", "execute the complete Ex statement"]],
+        "cursor": "^", "show_target": True, "show_recipe": True,
+        "hint": (
+            "Ex copy grammar is source range + t/copy + destination + Enter; `$` means the "
+            "last line, independent of cursor position."
+        ),
+        "frame_slices": [3, 3], "grammar_families": ["ex-copy"],
+        "grammar_stage": "guided",
+        "duplicate_frames": [{
+            "frames": [1, 2], "role": "scaffold",
+            "reason": "a working whole-frame copy used to learn addressed Ex scope",
+            "playback": False,
+        }],
+    })
+    for card in (primer, open_line, ex_copy):
+        card["roadmap_contract"] = card["prompt"]
+        card.setdefault("key_vocabulary", _family_breakdown(card["grammar_families"]))
+    return primer, open_line, ex_copy
+
+
+def primer_question(module):
+    return {
+        "id": "M0.P0.P01", "card_id": "M0.P0", "module_id": "M0",
+        "form": "decode", "grammar_family": "vim-language-primer",
+        "grammar_breakdown_id": "vim-language-primer",
+        "grammar_breakdown": [
+            "operator sentence: [count] operator [count] motion/text-object",
+            "standalone command: command plus its immediate argument",
+            "Ex sentence: :[address/range] command arguments flags <CR>",
+        ],
+        "paired_invariant": "fixed-width animation edits need an explicit scope before keys are chosen",
+        "placement": "before",
+        "placement_reason": (
+            "The learner classifies all three Vim grammars before any M0 recipe is treated as a sentence."
+        ),
+        "prompt": (
+            "ANIMATION\nA spark frame must keep its rows and columns registered.\n\n"
+            "NEOVIM\nClassify these three sentences: `3daw`, `rO`, and `:8s/-/=/g<CR>`. "
+            "Name the operator grammar, the standalone command, and the Ex parts."
+        ),
+        "source_ref": module["source_ref"], "difficulty": 1,
+        "answer_contract": {
+            "form": "decode",
+            "required_term_groups": [
+                ["operator", "verb"], ["motion", "object", "noun"],
+                ["standalone", "replace", "overwrite"],
+                ["ex", "range", "address"], ["substitute", "pattern", "replacement"],
+                ["flag", "global", "g"], ["enter", "execute"],
+            ],
+            "sample_answer": (
+                "3daw is count plus delete operator plus a word object; rO is standalone "
+                "replace/overwrite; the Ex statement has line 8, substitute, pattern -, "
+                "replacement =, global flag g, then Enter executes."
+            ),
+        },
     }
 
 
@@ -3496,6 +3894,19 @@ def make_cards(module, catalog_prompts):
             else:
                 family = "technique:%s" % card_id
             card["review_method_family"] = family
+        habits, stages = MASTER_COVERAGE[mid]
+        card["master_habits"] = habits
+        card["master_stages"] = stages
+        if card.get("expected"):
+            card["grammar_families"] = infer_grammar_families(card)
+            card["grammar_stage"] = (
+                "guided" if ordinal in (1, 2) else
+                "hidden" if ordinal in (4, 5, 6, 8) else "interpretation"
+            )
+            card.setdefault("key_vocabulary", _family_breakdown(card["grammar_families"]))
+        else:
+            card["grammar_families"] = ["paired-animation-neovim-diagnosis"]
+            card["grammar_stage"] = "interpretation"
         cards.append(card)
     return cards
 
@@ -3504,6 +3915,11 @@ def build():
     modules, cards, questions = [], [], []
     catalog_prompts = load_catalog_prompts()
     for module in MODULES:
+        module_cards = make_cards(module, catalog_prompts)
+        if module["id"] == "M0":
+            primer, open_line, ex_copy = m0_extra_cards(module)
+            module_cards = [primer, module_cards[0], module_cards[1], open_line,
+                            module_cards[2], module_cards[3], ex_copy] + module_cards[4:]
         modules.append({
             "id": module["id"], "title": module["title"], "node": module["node"],
             "project_id": module["project"], "skill": module["skill"],
@@ -3514,10 +3930,36 @@ def build():
             "defect": module["defect"], "basic": module["basic"],
             "scaled": module["scaled"], "source_ref": module["source_ref"],
             "medium": module.get("medium", "monospace"),
-            "prerequisites": PREREQUISITES[module["id"]], "card_ids": [f"{module['id']}.{n:02d}" for n in range(1, 9)],
+            "prerequisites": PREREQUISITES[module["id"]],
+            "card_ids": [card["id"] for card in module_cards],
         })
-        cards.extend(make_cards(module, catalog_prompts))
+        cards.extend(module_cards)
         questions.extend(question(module, n) for n in range(1, 11))
+        if module["id"] == "M0":
+            questions.append(primer_question(module))
+    module_map = {module["id"]: module for module in MODULES}
+    qmap = {q["id"]: q for q in questions}
+    for card in cards:
+        if card["id"] == "M0.P0":
+            pair_ids = ["M0.P0.P01"]
+            card["question_ids"] = list(pair_ids)
+        elif card.get("expected"):
+            pair = paired_question(module_map[card["module_id"]], card)
+            questions.append(pair)
+            qmap[pair["id"]] = pair
+            pair_ids = [pair["id"]]
+        else:
+            pair_ids = card.get("question_ids", [])[:1]
+            for qid in pair_ids:
+                qmap[qid]["card_id"] = card["id"]
+        card["paired_question_ids"] = pair_ids
+        paired = [qmap[qid] for qid in pair_ids]
+        card["question_placement"] = {
+            "before": [q["id"] for q in paired if q["placement"] in ("before", "both")],
+            "after": [q["id"] for q in paired if q["placement"] in ("after", "both")],
+            "rationale": {q["id"]: q["placement_reason"] for q in paired},
+        }
+        card["pairing_exception"] = None
     legacy = json.loads(LEGACY.read_text(encoding="utf-8"))
     legacy_drills = {drill["id"]: drill for drill in legacy["drills"]}
     card_map = {card["id"]: card for card in cards}
@@ -3592,47 +4034,58 @@ def validate(cur):
                     f"{card_id}: {label} frame {index} is a toy stimulus "
                     f"(nonblank_rows={len(nonblank)}, ink={ink}, width={width})")
     if len(modules) != 19: errors.append(f"expected 19 modules, got {len(modules)}")
-    if len(cards) != 152: errors.append(f"expected 152 cards, got {len(cards)}")
-    if len(questions) != 190: errors.append(f"expected 190 questions, got {len(questions)}")
+    expected_cards = sum(len(module["card_ids"]) for module in modules)
+    if len(cards) != expected_cards:
+        errors.append(f"module card inventories name {expected_cards} cards, got {len(cards)}")
+    if len(cards) <= 152: errors.append("grammar insertion must grow the 152-card baseline")
+    if len(questions) <= 190: errors.append("mixed-form pairing must grow the 190-question baseline")
     for label, rows in (("card", cards), ("question", questions)):
         ids = [row["id"] for row in rows]
         if len(ids) != len(set(ids)): errors.append(f"duplicate {label} ids")
     qids = {q["id"] for q in questions}
     for q in questions:
-        if len(q["choices"]) != 4 or len(q["feedback"]) != 4:
-            errors.append(f"{q['id']}: exactly four choices and four feedback messages required")
-        if not 0 <= q["correct_choice"] < len(q["choices"]): errors.append(f"{q['id']}: invalid answer")
-        paired_fields = ("animation_prompt", "animation_answer", "neovim_prompt", "neovim_answer")
-        if any(not q.get(field) for field in paired_fields):
-            errors.append(f"{q['id']}: missing animation/Neovim paired-question fields")
-        if "ANIMATION\n" not in q.get("prompt", "") or "NEOVIM\n" not in q.get("prompt", ""):
-            errors.append(f"{q['id']}: prompt does not visibly pair animation and Neovim")
-        if any("ANIMATION:" not in choice or "NEOVIM:" not in choice for choice in q["choices"]):
-            errors.append(f"{q['id']}: every choice must answer both halves")
-        if (len(q.get("compact_choices", [])) != len(q["choices"])
-                or any("A:" not in choice or "V:" not in choice
-                       for choice in q.get("compact_choices", []))):
-            errors.append(f"{q['id']}: compact choices must preserve both paired halves")
-        if "ANIMATION:" not in q.get("compact_prompt", "") or "NEOVIM:" not in q.get("compact_prompt", ""):
-            errors.append(f"{q['id']}: compact prompt must preserve both domains")
         if not q.get("source_ref"): errors.append(f"{q['id']}: missing source reference")
-        if any("Not yet" in message or "one or both halves" in message.lower()
-               for message in q["feedback"]):
-            errors.append(f"{q['id']}: generic wrong-answer feedback is forbidden")
-        if q["id"].endswith("Q01") and q["module_id"] != "M10":
-            if "BEFORE" not in q["prompt"] or "AFTER" not in q["prompt"] or q["prompt"].count("│") < 6:
-                errors.append(f"{q['id']}: visual reading must preserve multi-row BEFORE/AFTER art")
+        if ("ANIMATION\n" not in q.get("prompt", "")
+                or "NEOVIM\n" not in q.get("prompt", "")):
+            errors.append(f"{q['id']}: prompt does not visibly pair animation and Neovim")
+        for field in ("card_id", "form", "grammar_family", "grammar_breakdown_id",
+                      "paired_invariant", "placement", "placement_reason", "answer_contract"):
+            if not q.get(field): errors.append(f"{q['id']}: missing paired-question field {field}")
+        if q.get("form") in ("multiple_choice", "predict_art") and q.get("choices"):
+            if len(q["choices"]) != 4 or len(q["feedback"]) != 4:
+                errors.append(f"{q['id']}: choice form requires four choices and feedback messages")
+            if not 0 <= q.get("correct_choice", -1) < len(q["choices"]):
+                errors.append(f"{q['id']}: invalid answer")
+        if q.get("form") == "multiple_choice":
+            paired_fields = ("animation_prompt", "animation_answer", "neovim_prompt", "neovim_answer")
+            if any(not q.get(field) for field in paired_fields):
+                errors.append(f"{q['id']}: missing animation/Neovim paired-question fields")
+            if any("ANIMATION:" not in choice or "NEOVIM:" not in choice for choice in q["choices"]):
+                errors.append(f"{q['id']}: every choice must answer both halves")
+            if (len(q.get("compact_choices", [])) != len(q["choices"])
+                    or any("A:" not in choice or "V:" not in choice
+                           for choice in q.get("compact_choices", []))):
+                errors.append(f"{q['id']}: compact choices must preserve both paired halves")
+            if "ANIMATION:" not in q.get("compact_prompt", "") or "NEOVIM:" not in q.get("compact_prompt", ""):
+                errors.append(f"{q['id']}: compact prompt must preserve both domains")
+            if any("Not yet" in message or "one or both halves" in message.lower()
+                   for message in q["feedback"]):
+                errors.append(f"{q['id']}: generic wrong-answer feedback is forbidden")
+            if q["id"].endswith("Q01") and q["module_id"] != "M10":
+                if "BEFORE" not in q["prompt"] or "AFTER" not in q["prompt"] or q["prompt"].count("│") < 6:
+                    errors.append(f"{q['id']}: visual reading must preserve multi-row BEFORE/AFTER art")
     signatures = [(" ".join(q["prompt"].split()).casefold(),
-                   tuple(" ".join(choice.split()).casefold() for choice in q["choices"]))
+                   tuple(" ".join(choice.split()).casefold() for choice in q.get("choices", [])))
                   for q in questions]
     if len(signatures) != len(set(signatures)):
         errors.append("duplicate conceptual question/choice set")
-    stems = [q["animation_prompt"].split("\n\n", 1)[0].casefold() for q in questions]
+    mc_questions = [q for q in questions if q.get("form") == "multiple_choice"]
+    stems = [q["animation_prompt"].split("\n\n", 1)[0].casefold() for q in mc_questions]
     if len(stems) != len(set(stems)):
         errors.append("every conceptual item needs its own authored animation stem")
-    if sum("│" in q["animation_prompt"] for q in questions) < 55:
+    if sum("│" in q["animation_prompt"] for q in mc_questions) < 55:
         errors.append("at least half the conceptual bank must show the art it asks about")
-    for q in questions:
+    for q in mc_questions:
         animation_halves = [choice.split(" | NEOVIM: ", 1)[0] for choice in q["choices"]]
         neovim_halves = [choice.split(" | NEOVIM: ", 1)[1] for choice in q["choices"]]
         if sorted(animation_halves.count(value) for value in set(animation_halves)) != [2, 2]:
@@ -3648,7 +4101,7 @@ def validate(cur):
         own = [c for c in cards if c["module_id"] == module["id"]]
         if module["card_ids"] != [c["id"] for c in own]:
             errors.append(f"{module['id']}: card_ids do not match owned cards")
-        if [c["ordinal"] for c in own] != list(range(1, 9)):
+        if module["id"] != "M0" and [c["ordinal"] for c in own] != list(range(1, 9)):
             errors.append(f"{module['id']}: card sequence is not 1..8")
         project_steps = [c for c in own if c.get("artifact") == "project"]
         for before, after in zip(project_steps, project_steps[1:]):
@@ -3663,6 +4116,18 @@ def validate(cur):
     for card in cards:
         if not card.get("prompt"): errors.append(f"{card['id']}: missing authored prompt")
         if not card.get("lesson_benefit"): errors.append(f"{card['id']}: missing honest lesson benefit")
+        for field in ("grammar_families", "grammar_stage", "paired_question_ids",
+                      "question_placement", "master_habits", "master_stages"):
+            if not card.get(field):
+                errors.append(f"{card['id']}: missing grammar-first field {field}")
+        for qid in card.get("paired_question_ids", []):
+            if qid not in qids:
+                errors.append(f"{card['id']}: missing paired question {qid}")
+        if card.get("pairing_exception"):
+            if not card["pairing_exception"].get("reason"):
+                errors.append(f"{card['id']}: pairing exception lacks a written reason")
+        elif not card.get("paired_question_ids"):
+            errors.append(f"{card['id']}: every card needs a paired question")
         if card.get("start"):
             frame_rows = module_map[card["module_id"]].get("frame_rows")
             check_visual(card["id"], "start", card["start"], frame_rows)

@@ -2681,3 +2681,91 @@ curriculum implementation remains in progress.
   - The legacy route had `vim-drill` for another drill, but no in-popup
     continue either.
   Queued to Codex.
+- **Defect 6 implemented by Claude (operator: "wire the next feature here now").**
+  - In the v2 lesson routes (`run`, `--force`, `--if-due`), `hold_open()` now
+    prompts `press Enter to close · n then Enter = next lesson now`.
+  - `n` sets `_NEXT_REQUESTED`, and `main()` then runs the next lesson in the
+    same popup through the on-demand (`--force`) route. Enter still closes.
+  - Legacy drills keep the plain prompt.
+  - Code: `bin/vim-daily-gate` `hold_open`, `_OFFER_NEXT`/`_NEXT_REQUESTED`,
+    and `main` v2 branch.
+  - Evidence:
+    - isolated tmux 188×49 on a copy of the real state, with the real config:
+      M0.06 failure → the prompt shown above → `n` opened the next lesson
+      (`transfer-M0.06.txt`) → Enter exited;
+    - `test_tmux_v2.py` passes at 188×49, 100×36 and 80×24 (real user
+      config); `test_drills.py` 46/46.
+  - Not yet seen by the operator in a real scheduled popup.
+
+### VD-17 · 2026-09-28 — Grammar-first pairing runtime and M0 prerequisite insertion
+
+**Implemented slice (not the end of the broader hidden-first inventory):**
+
+- The generated course now contains 155 cards and 307 authored questions.
+  The question bank has 190 paired animation/Neovim multiple-choice items,
+  39 effect-graded typed-key items, 21 decode items, 19 completion items,
+  19 prediction items, and 19 why items. Every card declares at least one
+  paired question, its before/after placement, a card-specific placement
+  reason, grammar family/stage, and H/S/A coverage metadata.
+- M0 now begins `M0.P0 → M0.01 → M0.02 → M0.O → M0.03 → M0.04 →
+  M0.T → M0.05 → M0.06 → M0.07 → M0.08`. `M0.P0` asks the learner to
+  classify operator, standalone-Normal, and Ex grammar. `M0.O` visibly teaches
+  `o`, `<C-u>`, and `<Esc>` without relying on inherited indentation.
+  `M0.T` visibly teaches addressed `:t` before M0.05 can hide it. Existing
+  card IDs did not move.
+- Typed-key questions are evaluated by replaying the learner's notation in an
+  isolated `nvim -u NONE` scratch buffer and comparing resulting lines (and,
+  when declared, cursor state). The evaluator rejects file writes, shell/
+  runtime execution, extra windows/tabs, and unsupported notation. It accepts
+  effect-equivalent paths: both `j0f.ro` and `jf.ro` pass M0.01's scratch
+  contract, while `j0f.rx` fails.
+- Wrong typed/decode/complete/why answers re-render `GRAMMAR BREAKDOWN` and
+  record evidence but award no card XP. `progress-v2.json` now separately
+  projects `passed_questions`; a question-only pass leaves XP at zero.
+- Edit cards run unanswered paired questions at their authored before/after
+  point. Module checks run their paired prerequisite before the five-question
+  checkpoint. Post-edit why questions preserve an exact saved artifact while
+  withholding card credit until the explanation passes.
+- Runtime validation no longer assumes exactly eight cards and ten all-MC
+  questions per module. It validates all six forms, pairing fields, declared
+  module inventories, and written pairing exceptions.
+
+**Defects found while executing this slice:**
+
+- The first M0.O recipe inherited indentation under bare Neovim. The recipe
+  now uses `<C-u>` only on the two newly opened rows that can inherit leading
+  indentation; its third open row deliberately omits `<C-u>` because using it
+  at column zero joins the line above. The art-buffer-local `noautoindent`,
+  `nosmartindent`, `nocindent`, and empty `indentexpr` protection remains.
+- The module-check flow originally asked its five bank questions before the
+  newly declared paired prerequisite. `run_edit` now executes the authored
+  before-question first, then the five-question checkpoint, then the artifact.
+- Raw command-family inference mistook a glyph-search dot for Normal `.` and
+  control-key notation for operator commands. Inference now removes Ex spans
+  and angle-bracket key tokens before classifying Normal-mode syntax.
+
+**Direct evidence:**
+
+- `python3 share/test_v2.py`: 155/155 cards structurally present; 116/116
+  primary edit recipes pass in isolated Neovim; mixed-form, semantic-effect,
+  pairing, no-XP-on-question, remediation, review, replay, and schema checks
+  pass.
+- `python3 share/test_v2.py --real`: the same 116/116 primary edit recipes
+  pass with the operator's real Neovim configuration.
+- `python3 share/test_tmux_v2_routes.py --only-m005`: the corrected M0.05
+  extra-motion/corrected-Ex route still passes after the paired after-question.
+- `python3 share/test_tmux_v2_routes.py --only-check`: the paired prerequisite,
+  five questions, and unhinted M0.08 artifact run in that order and pass in a
+  real 188×49 tmux popup.
+- `python3 share/test_tmux_v2.py`: the automatic client-attached route answers
+  M0.01's semantic typed-key prerequisite, preserves the operator's real
+  lualine/WhichKey/Hardtime UI, records failure practice, retries, passes, and
+  shows 2/11 M0 progress at 188×49.
+
+**Still open:** the consequential hidden-first families listed in VD-16
+(`dd`, `ci(`/text objects, Visual block/registers, digraphs, `D`, `:m`, dot,
+macros, `:g … normal!`, virtual columns, `E/B`, undo-tree work, and expression
+substitution) still need their inserted guided microcards and a generator gate
+that proves explanation → interpretation/completion → shown performance →
+hidden retrieval → changed-art review. This entry does not mark that inventory
+complete.

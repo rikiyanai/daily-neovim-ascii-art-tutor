@@ -36,7 +36,8 @@ def tmux(socket, *args, **kwargs):
 def wait_signal(socket, signal):
     try:
         tmux(socket, "wait-for", "-L", signal, timeout=20)
-        tmux(socket, "wait-for", "-U", signal)
+        subprocess.run(["tmux", "-L", socket, "wait-for", "-U", signal],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except subprocess.TimeoutExpired as exc:
         raise AssertionError("timed out waiting for tmux signal %s" % signal) from exc
 
@@ -83,14 +84,21 @@ def seed(root, passed, *, artifact_card=None, due_review=False, progress_to=None
     state = root / "state" / "vim-daily"
     state.mkdir(parents=True)
     rows = []
-    seed_ids = ["M0.%02d" % ordinal for ordinal in range(1, passed + 1)]
+    m0_ids = next(module for module in CUR["modules"] if module["id"] == "M0")["card_ids"]
+    seed_ids = list(m0_ids[:passed])
     if progress_to:
-        module_number, ordinal = map(int, (progress_to[1:].split(".")))
-        seed_ids = ["M%d.%02d" % (number, card_ordinal)
-                    for number in range(module_number)
-                    for card_ordinal in range(1, 9)]
-        seed_ids += ["M%d.%02d" % (module_number, card_ordinal)
-                     for card_ordinal in range(1, ordinal)]
+        seed_ids = []
+        found = False
+        for module in CUR["modules"]:
+            for candidate in module["card_ids"]:
+                if candidate == progress_to:
+                    found = True
+                    break
+                seed_ids.append(candidate)
+            if found:
+                break
+        if not found:
+            raise AssertionError("unknown progress target %s" % progress_to)
     for card_id in seed_ids:
         module_id = card_id.split(".", 1)[0]
         rows.append({
@@ -116,7 +124,10 @@ def seed(root, passed, *, artifact_card=None, due_review=False, progress_to=None
 
 
 def answer_for(question_id, order=(0, 1, 2, 3)):
-    return "abcd"[list(order).index(QUESTIONS[question_id]["correct_choice"])]
+    question = QUESTIONS[question_id]
+    if question.get("choices"):
+        return "abcd"[list(order).index(question["correct_choice"])]
+    return question["answer_contract"]["sample_answer"]
 
 
 def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_review=False,
@@ -166,6 +177,15 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             pane = tmux(outer, "list-panes", "-t", "terminal", "-F", "#{pane_id}",
                         capture_output=True).stdout.strip()
 
+            if route not in ("concept", "review"):
+                card = CARDS[card_id]
+                for qid in card.get("question_placement", {}).get("before", []):
+                    wait_signal(inner, question)
+                    paired_prompt = " ".join(capture(outer, pane).split())
+                    assert "ANIMATION" in paired_prompt and "NEOVIM" in paired_prompt
+                    send_text(outer, pane, answer_for(qid))
+                    tmux(outer, "send-keys", "-t", pane, "Enter")
+
             if route in ("concept", "check", "review"):
                 wait_signal(inner, question)
                 prompt = " ".join(capture(outer, pane).split())
@@ -197,13 +217,15 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 send_spec(outer, pane, review_variant["expected"] + "ZZ")
             elif route == "check":
                 for number in range(1, 6):
-                    if number < 5:
-                        tmux(inner, "wait-for", "-L", question)
                     send_text(outer, pane, answer_for("M0.Q%02d" % number))
                     tmux(outer, "send-keys", "-t", pane, "Enter")
                     if number < 5:
                         wait_signal(inner, question)
-                wait_signal(inner, ready)
+                try:
+                    wait_signal(inner, ready)
+                except AssertionError as exc:
+                    raise AssertionError("module check never opened editor:\n" +
+                                         capture(outer, pane)) from exc
                 brief = " ".join(capture(outer, pane).split())
                 assert "M0.08" in brief and "exact command keys" in brief
                 assert "TARGET" in brief and "HINT" in brief
@@ -231,6 +253,14 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                     assert "comparison appears after verification" in brief.lower(), brief
                 send_spec(outer, pane, key_sequence or card["expected"] + "ZZ")
 
+            if route not in ("concept", "review"):
+                for qid in CARDS[card_id].get("question_placement", {}).get("after", []):
+                    wait_signal(inner, question)
+                    post_prompt = " ".join(capture(outer, pane).split())
+                    assert "ANIMATION" in post_prompt and "NEOVIM" in post_prompt
+                    send_text(outer, pane, answer_for(qid))
+                    tmux(outer, "send-keys", "-t", pane, "Enter")
+
             wait_signal(inner, feedback)
             feedback_screen = " ".join(capture(outer, pane).split())
             if route == "review":
@@ -241,8 +271,9 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             if route == "concept":
                 assert "CONCEPT REPLAY" in feedback_screen
             if route == "compare":
-                assert all(method["label"] in feedback_screen and method["keys"] in feedback_screen
-                           for method in CARDS[card_id]["method_alternatives"])
+                assert all(method["label"] in feedback_screen
+                           for method in CARDS[card_id]["method_alternatives"]), feedback_screen
+                assert CARDS[card_id]["expected"] in feedback_screen, feedback_screen
                 expected_family = next(method["label"] for method in CARDS[card_id]["method_alternatives"]
                                        if method["keys"] == CARDS[card_id]["expected"])
                 assert "METHOD EVIDENCE" in feedback_screen and expected_family in feedback_screen
@@ -310,21 +341,26 @@ if "--only-m005" in sys.argv:
     # Reproduce the operator's valid-but-non-pristine interaction: look around,
     # correct a typo inside the addressed copy, then save and quit separately.
     # The exact target plus the semantic :{range}t{destination} command must pass.
-    exercise("M0.05 corrected method evidence", passed=4, route="compare",
+    exercise("M0.05 corrected method evidence", passed=7, route="compare",
              card_id="M0.05", artifact_card="M0.05",
              key_sequence="jj:7,9t$<CR>:ew<BS><BS>wq<CR>")
     raise SystemExit(0)
 
-exercise("conceptual check", passed=2, route="concept", card_id="M0.03",
+if "--only-check" in sys.argv:
+    exercise("five-question module check", passed=10, route="check", card_id="M0.08",
+             artifact_card="M0.08")
+    raise SystemExit(0)
+
+exercise("conceptual check", passed=4, route="concept", card_id="M0.03",
          choice_order=(2, 3, 0, 1))
-exercise("conceptual changed-stem retry", passed=2, route="concept", card_id="M0.03",
+exercise("conceptual changed-stem retry", passed=4, route="concept", card_id="M0.03",
          failed_attempts=1, choice_order=(2, 3, 0, 1))
-exercise("guided full task and target", passed=0, route="guided", card_id="M0.01")
-exercise("independent retrieval", passed=3, route="independent", card_id="M0.04",
+exercise("guided full task and target", passed=1, route="guided", card_id="M0.01")
+exercise("independent retrieval", passed=5, route="independent", card_id="M0.04",
          artifact_card="M0.04")
-exercise("two executable methods", passed=4, route="compare", card_id="M0.05",
+exercise("two executable methods", passed=7, route="compare", card_id="M0.05",
          artifact_card="M0.05")
-exercise("five-question module check", passed=7, route="check", card_id="M0.08",
+exercise("five-question module check", passed=10, route="check", card_id="M0.08",
          artifact_card="M0.08")
 exercise("spaced review", passed=4, route="review", due_review=True)
 
