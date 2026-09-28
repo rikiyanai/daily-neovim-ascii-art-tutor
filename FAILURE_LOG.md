@@ -3176,3 +3176,33 @@ Still open from VD-20: decode/why acceptance uses hidden term groups. The UI
 shows the response shape and a non-answer example, then shows the exact grammar
 and one accepted answer after a wrong attempt, but it does not expose every
 accepted synonym before grading.
+
+## VD-25 · 2026-09-28 18:28 — M0.O is an obsolete typing wall, not an `o` micro-lesson
+
+**Status:** OPEN while the live animation-pack generator integration is in
+flight; source correction and migration proof are required immediately after
+that ownership window closes.
+
+The operator passed the repaired M0.P0 at 18:27:37, then failed M0.O twice at
+18:28:46 and 18:28:54. The durable first keylog is
+`~/.local/state/vim-daily/projects/m0-open-line-lab/keys-M0.O-attempt-0001.log`:
+it begins with the shown `G`, `o`, `<C-u>`, and the first ray row, then contains
+repeated recovery/undo input and exits without a target. The second attempt is
+`:q!`. The artifact was correctly restored to the old three-row start.
+
+The card's supposed single-family lesson requires a 46-character recipe and
+18 literal art characters:
+`Go<C-u>  \\|/<Esc>o<C-u>-- O --<Esc>o  /|\\<Esc>`. It asks the beginner to
+author an entire second three-row spark while simultaneously learning `G`,
+`o`, `<C-u>`, Insert mode, `<Esc>`, and exact whitespace. Worse, `<C-u>` was a
+workaround for inherited indentation, but the runtime now correctly disables
+autoindent/smartindent/cindent/indentexpr in the art buffer. The workaround is
+obsolete and teaches noise.
+
+Required correction: make M0.O one visible `o` micro-performance. Supply the
+first five rows of two three-row spark frames and ask the learner to open only
+the missing lower-ray row (`Go  /|\\<Esc>`). The recipe must separately name
+`G`, `o`, the literal row, and `<Esc>`; no `<C-u>`. Accept the old three-row
+start as a migration source so the operator's restored artifact upgrades
+without deletion or a manual repair. Add a generator test bounding M0.O's
+literal typing burden and a real headed retry proof.
