@@ -3253,6 +3253,11 @@ FAMILY_DEFS = {
         "grammar": "r + replacement glyph; overwrite one cell without shifting the row",
         "terms": [["replace", "overwrite", "r"], ["cell", "glyph"], ["width", "shift", "registered"]],
     },
+    "change-to-end": {
+        "class": "operator",
+        "grammar": "C is c$; change from the cursor through row end, type replacement text, then <Esc>",
+        "terms": [["change", "operator", "C"], ["end", "row", "line"], ["escape", "normal"], ["width", "shift"]],
+    },
     "linewise-yank-put": {
         "class": "standalone_normal",
         "grammar": "count + yy copies whole rows; p/P puts the linewise object below/above",
@@ -3391,6 +3396,109 @@ FAMILY_DEFS = {
 }
 
 
+# Comparison cards ask a free-text "why" only after the learner has used one
+# method and the debrief has named both.  Each contract below is tied to that
+# exact animation and those exact methods; a stock answer from another module
+# must not pass (VD-21/22).
+WHY_SPECS = {
+    "M0.05": {
+        "question": "When is addressed copy safer than counted yank/put, and what complete object must both methods duplicate?",
+        "groups": [["address", "range", "7,9"], ["cursor", "position"], ["three-row", "three row", "flare", "frame"]],
+        "sample": "Addressed copy does not depend on cursor position; both methods must duplicate the complete three-row flare frame.",
+    },
+    "M1.05": {
+        "question": "How do local edit plus dot and bounded substitution differ, and which joint-only scope must both preserve?",
+        "groups": [["dot", "repeat", "local"], ["substitute", "pattern"], ["joint", "colon", "semicolon"]],
+        "sample": "Dot repeats a verified local joint edit; substitution uses a joint pattern, and both must change only the colon joints to semicolons.",
+    },
+    "M2.05": {
+        "question": "Why might two local eye replacements be safer than a regex, and what must a scoped substitute avoid matching?",
+        "groups": [["local", "each eye", "two eye"], ["substitute", "regex", "pattern"], ["contour", "outline"]],
+        "sample": "Local replacements visit each eye explicitly; a scoped regex is shorter but must match only eye spellings and never the contour.",
+    },
+    "M3.05": {
+        "question": "What cursor assumption separates counted yank/put from addressed copy, and how many pose rows belong to the object?",
+        "groups": [["cursor", "position"], ["address", "1,6", "range"], ["six", "6", "pose rows"]],
+        "sample": "Counted yank starts from the correct cursor row; addressed copy names lines 1 through 6, and both copy all six pose rows.",
+    },
+    "M4.05": {
+        "question": "Why must either seam method copy the complete first frame after redrawing the return midpoint, rather than only the changed cells?",
+        "groups": [["return", "midpoint"], ["complete", "three-row", "three row", "first frame"], ["seam", "loop", "registration"]],
+        "sample": "After redrawing the return midpoint, both methods copy the complete three-row first frame so registration closes the loop seam.",
+    },
+    "M5.05": {
+        "question": "What does an addressed seven-row midpoint protect that counted yank must track by cursor, and which rows are redrawn afterward?",
+        "groups": [["seven", "7", "range"], ["cursor", "count"], ["moving", "foreground", "rows"]],
+        "sample": "The addressed range protects all seven midpoint rows; counted yank relies on cursor and count, then only the moving foreground rows are redrawn.",
+    },
+    "M6.05": {
+        "question": "After copying the five-row build, why does either method clear the copied shoulder row instead of deleting that row?",
+        "groups": [["five", "5", "frame", "build"], ["clear", "D"], ["delete row", "height", "registration"]],
+        "sample": "Both methods copy the complete five-row build and clear the shoulder with D; deleting the row would collapse frame height and registration.",
+    },
+    "M7.05": {
+        "question": "When is a recorded five-row-step macro appropriate, when is :global safer, and which material-band rows may change?",
+        "groups": [["macro", "record"], ["global", ":g", "pattern"], ["material", "band", "matching rows"]],
+        "sample": "The macro is safe at homologous anchors five rows apart; :global is safer when a pattern selects only the exact material-band rows.",
+    },
+    "M8.05": {
+        "question": "Why does the ranged substitute name the complete first pose, while the local method may touch only its arm cell?",
+        "groups": [["range", "1,5", "first pose"], ["local", "arm", "cell"], ["other pose", "outside", "unchanged"]],
+        "sample": "The substitution range limits the pattern to lines 1–5 of the first pose; the local method changes one arm cell and leaves other poses unchanged.",
+    },
+    "M9.05": {
+        "question": "What registration does copy-then-vary preserve, and what must direct row authoring reproduce exactly in the falling midpoint?",
+        "groups": [["copy", "registered"], ["rail", "ground"], ["three", "3", "rows", "midpoint"]],
+        "sample": "Copy-then-vary preserves the registered rails and ground; direct authoring must reproduce all three bounded midpoint rows exactly.",
+    },
+    "M10.05": {
+        "question": "Why can an addressed range be safer than counted yank for the impact pose, and what three-row hatched object must stay intact?",
+        "groups": [["address", "range", "7,9"], ["cursor", "position"], ["impact", "three-row", "hatch"]],
+        "sample": "The addressed range avoids cursor-position dependence; both methods copy the complete three-row hatched impact pose.",
+    },
+    "M11.05": {
+        "question": "How does current-row substitution bound the two indicator changes, and what would an unbounded substitution risk?",
+        "groups": [["current row", "copied row"], ["two", "2", "indicator"], ["other row", "outside", "unbounded"]],
+        "sample": "Current-row substitution changes both indicators on the copied row only; an unbounded substitute could alter indicators in other frames.",
+    },
+    "M12.05": {
+        "question": "Compare repeated character search with row-scoped substitution: what two base cells are owned, and which scope must not expand?",
+        "groups": [["search", ";", "repeat"], ["substitute", "row"], ["two", "2", "base cells"]],
+        "sample": "Repeated search visits the two base cells; row-scoped substitution changes those same two cells without expanding beyond the copied row.",
+    },
+    "M13.05": {
+        "question": "Why are repeated landmark edits and a row-scoped material substitute equivalent only when exactly three acting cells are owned?",
+        "groups": [["landmark", "find", ";"], ["substitute", "row"], ["three", "3", "acting cells"]],
+        "sample": "Landmark repeats visit each of the three acting cells; the row-scoped substitute is equivalent only because it matches those three cells and no others.",
+    },
+    "M14.05": {
+        "question": "What boundary does yap discover that an addressed copy must count explicitly, and why must the blank separator travel with the frame?",
+        "groups": [["paragraph", "yap", "boundary"], ["address", "four", "4", "lines"], ["blank", "separator", "frame"]],
+        "sample": "yap discovers the paragraph boundary; addressed copy must name all four lines, including the blank separator that keeps frames distinct.",
+    },
+    "M15.05": {
+        "question": "How do blockwise $A and a bounded range substitution reach the same row ends without shifting the texture frame?",
+        "groups": [["block", "$A", "visual"], ["range", "substitute"], ["three", "3", "row ends", "width"]],
+        "sample": "Blockwise $A appends at all three selected row ends; bounded substitution owns the same three-row range, and neither shifts existing cells.",
+    },
+    "M16.05": {
+        "question": "Why must both the addressed move and linewise delete/put own the same five-line plan block rather than individual rows?",
+        "groups": [["move", ":m", "address"], ["delete", "put", "visual"], ["five", "5", "block", "lines"]],
+        "sample": "The Ex move addresses the five-line block directly; Visual delete/put selects those same five lines so the plan stays intact.",
+    },
+    "M17.05": {
+        "question": "When does search plus dot risk the wrong match, and how does :global restrict the eye replacement pass?",
+        "groups": [["search", "dot", "next match"], ["global", ":g", "pattern"], ["eye", "o", "matching lines"]],
+        "sample": "Search plus dot depends on each next match being an eye; :global restricts the Normal replacement to lines selected by the eye pattern.",
+    },
+    "M18.05": {
+        "question": "Why may the expression method derive check digits but never generate mirrored art, and what does the manual method inspect?",
+        "groups": [["expression", "derive"], ["check", "digit", "marker"], ["art", "mirror", "top row", "frame"]],
+        "sample": "The expression derives only each check digit from an already-authored frame row; the manual method inspects both frames, and neither generates mirrored art.",
+    },
+}
+
+
 MASTER_COVERAGE = {
     "M0": (["H1", "H3"], ["S0", "A0"]),
     "M1": (["H2"], ["S1", "A1"]),
@@ -3445,7 +3553,7 @@ def infer_grammar_families(card):
     if re.search(r":[^<]*(?:m|move)(?:\$|\d)", keys): add("ex-move")
     if re.search(r":(?:%|\d+(?:,\d+)?)?g[/@]", keys): add("global-normal")
     if re.search(r"(?:\d+)?yy|yap", keys): add("linewise-yank-put")
-    if "<C-v>" in keys or re.search(r"(?:^|<Esc>)V", keys): add("visual-scope")
+    if "<C-v>" in keys or "V" in plain_normal: add("visual-scope")
     if "<C-v>" in keys and re.search(r"\$A", keys): add("block-append")
     if re.search(r"(?:^|[^A-Za-z])v(?:[^A-Za-z]|$)", plain_normal): add("visual-characterwise")
     if re.search(r"(?:\d+)?dd|D", plain_normal): add("linewise-delete")
@@ -3463,6 +3571,7 @@ def infer_grammar_families(card):
     if "virtualedit" in keys or re.search(r"\d+\|", plain_normal): add("virtual-column")
     if re.search(r"[WBE]", plain_normal): add("word-boundary")
     if "R" in plain_normal: add("replace-mode")
+    if "C" in plain_normal: add("change-to-end")
     if re.search(r"/[^<]+", plain_normal) or re.search(r"[ftFT].", plain_normal):
         add("search-landmark")
     if (re.search(r":[^<]+<CR>", keys) and "virtual-column" not in families
@@ -3490,12 +3599,17 @@ def paired_question(module, card):
     families = card["grammar_families"]
     primary = families[0]
     family = FAMILY_DEFS[primary]
+    required_terms = []
+    for family_name in families:
+        for group in FAMILY_DEFS.get(family_name, {}).get("terms", []):
+            if group not in required_terms:
+                required_terms.append(group)
     qid = card["id"] + ".P01"
     ordinal = card["ordinal"]
     common = {
         "id": qid, "card_id": card["id"], "module_id": card["module_id"],
         "grammar_family": primary, "grammar_breakdown_id": primary,
-        "grammar_breakdown": _family_breakdown([primary]),
+        "grammar_breakdown": _family_breakdown(families),
         "paired_invariant": module["principle"], "source_ref": module["source_ref"],
         "difficulty": 1 + int(ordinal >= 4),
     }
@@ -3504,22 +3618,22 @@ def paired_question(module, card):
     }
     if is_bridge:
         common.update({
-            "form": "decode", "placement": "before",
+            "form": "decode", "placement": "after",
             "placement_reason": (
-                "This inserted bridge makes the learner name the new command's scope before "
-                "its keys are exposed in guided performance."
+                "This inserted bridge first shows and practises the new command, then asks "
+                "the learner to name every command part and its animation scope."
             ),
             "prompt": (
-                "ANIMATION\n%s\n\nNEOVIM\nDecode `%s` in plain language. Name the command "
-                "parts and the exact animation scope they own."
+                "ANIMATION\n%s\n\nNEOVIM\nYou just used `%s`. Decode it in plain language. "
+                "Name every command part and the exact animation scope it owned."
             ) % (card["prompt"], card["expected"]),
             "answer_contract": {
                 "form": "decode", "display": card["expected"],
-                "required_term_groups": family["terms"],
-                "sample_answer": " ".join(group[0] for group in family["terms"]),
+                "required_term_groups": required_terms,
+                "sample_answer": " ".join(group[0] for group in required_terms),
             },
         })
-    elif ordinal in (1, 6) or card["id"] in ("M0.O",):
+    elif ordinal == 6:
         common.update({
             "form": "typed_keys", "placement": "before",
             "placement_reason": (
@@ -3537,21 +3651,48 @@ def paired_question(module, card):
                 "sample_answer": card["expected"], "effect_version": 1,
             },
         })
-    elif ordinal == 2 or card["id"] == "M0.T":
+    elif ordinal == 1 or card["id"] == "M0.O":
+        action = "; ".join(why for _keys, why in card.get("recipe", []))
         common.update({
-            "form": "decode", "placement": "before",
+            "form": "predict_art", "placement": "after",
             "placement_reason": (
-                "The command must be decomposed into scope and action before the guided "
-                "recipe is exposed."
+                "The learner first sees and types the new command in the guided edit; this "
+                "short choice then checks the resulting scope without demanding a second key sequence."
             ),
             "prompt": (
-                "ANIMATION\n%s\n\nNEOVIM\nDecode `%s` in plain language. Explain its scope "
+                "ANIMATION\n%s\n\nNEOVIM\nYou just completed the guided command. Which "
+                "summary correctly describes what it did?"
+            ) % card["prompt"],
+            "choices": [
+                "It made the stated bounded edit while preserving every registered cell outside that scope.",
+                "It only moved the cursor; no requested art cell changed.",
+                "It inserted extra cells and shifted the rest of the fixed-width row.",
+                "It rewrote every similar glyph in the project, including unrelated frames.",
+            ],
+            "correct_choice": 0,
+            "feedback": [
+                "Correct: %s." % action,
+                "The guided result required an art change, not navigation alone.",
+                "Shifting the row would violate fixed-width registration.",
+                "The command was bounded to the stated subject; project-wide scope was not requested.",
+            ],
+            "answer_contract": {"form": "predict_art", "answer_mode": "choice"},
+        })
+    elif ordinal == 2 or card["id"] == "M0.T":
+        common.update({
+            "form": "decode", "placement": "after",
+            "placement_reason": (
+                "The complete recipe is shown and practised first; the learner then decomposes "
+                "the command without being asked to infer untaught keys."
+            ),
+            "prompt": (
+                "ANIMATION\n%s\n\nNEOVIM\nYou just used `%s`. Decode it in plain language. Explain its scope "
                 "and why that scope preserves the complete animation object."
             ) % (module["principle"], card["expected"]),
             "answer_contract": {
                 "form": "decode", "display": card["expected"],
-                "required_term_groups": family["terms"],
-                "sample_answer": " ".join(group[0] for group in family["terms"]),
+                "required_term_groups": required_terms,
+                "sample_answer": " ".join(group[0] for group in required_terms),
             },
         })
     elif ordinal == 4:
@@ -3580,6 +3721,7 @@ def paired_question(module, card):
             "answer_contract": {"form": "predict_art", "answer_mode": "choice"},
         })
     elif ordinal == 5:
+        why_spec = WHY_SPECS[card["id"]]
         common.update({
             "form": "why", "placement": "after",
             "placement_reason": (
@@ -3587,14 +3729,12 @@ def paired_question(module, card):
                 "scope, and animation risk across the two valid methods."
             ),
             "prompt": (
-                "ANIMATION\n%s\n\nNEOVIM\nWhy was the demonstrated method safe for this "
-                "frame, and what scope error would the other task shape risk?"
-            ) % module["principle"],
+                "ANIMATION\n%s\n\nNEOVIM\n%s"
+            ) % (module["principle"], why_spec["question"]),
             "answer_contract": {
                 "form": "why",
-                "required_term_groups": [["frame", "rows", "range", "object"],
-                                         ["scope", "cursor", "registered", "unchanged"]],
-                "sample_answer": "The complete frame is the object; bounded scope keeps registered cells unchanged.",
+                "required_term_groups": why_spec["groups"],
+                "sample_answer": why_spec["sample"],
             },
         })
     else:
@@ -3635,15 +3775,18 @@ def m0_extra_cards(module):
             "distinguish operator sentences, standalone Normal commands, and Ex statements"
         ),
         "prompt": (
-            "Vim is a language. Work out which grammar owns an edit: [count] operator "
-            "[count] motion/object, a standalone Normal command, or an Ex statement made of "
-            "address/range + command + arguments + flags + Enter."
+            "Use the movement grammar taught above to interpret one new command. "
+            "Do not decode operators, text objects, or Ex commands yet."
         ),
-        "grammar_families": ["operator-motion-object", "normal-replace", "ex-substitute"],
+        "teaching_lines": [
+            "Vim's first small sentence is [count] + motion.",
+            "j moves down one row; 4j moves down four. Neither changes art.",
+            "Operators, text objects, replacement and : commands come later.",
+        ],
+        "grammar_families": ["normal-motion"],
         "grammar_stage": "explanation", "key_vocabulary": [
-            "[count] operator [count] motion-or-text-object",
-            "standalone Normal command + operand/scope",
-            ":[address-or-range] command arguments flags <CR>",
+            "[count] + motion",
+            "j = down one row; 4j = down four rows",
         ],
     })
     open_line = dict(base, **{
@@ -3768,6 +3911,19 @@ def guided_bridge_cards(module):
              ["3dd", "count three whole rows and delete them linewise"]],
             "linewise-delete", 3.5)))
     elif mid == "M3":
+        register_bridge = bridge(
+            "REG", "Copy a complete pose through a named register",
+            "Store the complete three-row pose in register a, put it below, then change only the copied eye.",
+            [" /---\\ ", "|  o  |", " \\---/ "],
+            [" /---\\ ", "|  o  |", " \\---/ ", " /---\\ ", "|  O  |", " \\---/ "],
+            "ggV2j\"ayG\"ap5G0forO",
+            [["ggV2j", "select the complete pose linewise"],
+             ["\"ay", "yank the selection into register a"],
+             ["G\"ap", "put that register after the file"],
+             ["5G0forO", "change only the copied eye"]],
+            "register", 5.5)
+        register_bridge["grammar_families"].append("visual-scope")
+        register_bridge["key_vocabulary"] = _family_breakdown(register_bridge["grammar_families"])
         rows.extend([
             ("M3.04", bridge(
                 "CI", "Change inside the eye object",
@@ -3778,17 +3934,7 @@ def guided_bridge_cards(module):
                  ["ci(", "change the text object inside parentheses"],
                  ["O<Esc>", "type the new pupil and return to Normal"]],
                 "operator-motion-object", 3.25)),
-            ("M3.06", bridge(
-                "REG", "Copy a complete pose through a named register",
-                "Store the complete three-row pose in register a, put it below, then change only the copied eye.",
-                [" /---\\ ", "|  o  |", " \\---/ "],
-                [" /---\\ ", "|  o  |", " \\---/ ", " /---\\ ", "|  O  |", " \\---/ "],
-                "ggV2j\"ayG\"ap5G0forO",
-                [["ggV2j", "select the complete pose linewise"],
-                 ["\"ay", "yank the selection into register a"],
-                 ["G\"ap", "put that register after the file"],
-                 ["5G0forO", "change only the copied eye"]],
-                "register", 5.5)),
+            ("M3.06", register_bridge),
             ("M3.08", bridge(
                 "DI", "Enter one Unicode accent by digraph",
                 "Replace the pose core with a middle dot using the digraph entry, without shifting its row.",
@@ -3990,38 +4136,51 @@ def command_review_contract(cards):
 def primer_question(module):
     return {
         "id": "M0.P0.P01", "card_id": "M0.P0", "module_id": "M0",
-        "form": "decode", "grammar_family": "vim-language-primer",
+        "form": "multiple_choice", "grammar_family": "vim-language-primer",
         "grammar_breakdown_id": "vim-language-primer",
         "grammar_breakdown": [
-            "operator sentence: [count] operator [count] motion/text-object",
-            "standalone command: command plus its immediate argument",
-            "Ex sentence: :[address/range] command arguments flags <CR>",
+            "count: how many times the following motion runs",
+            "motion: where the cursor moves without changing art",
+            "5j: repeat the down-one-row j motion five times",
         ],
         "paired_invariant": "fixed-width animation edits need an explicit scope before keys are chosen",
         "placement": "before",
         "placement_reason": (
-            "The learner classifies all three Vim grammars before any M0 recipe is treated as a sentence."
+            "The card first teaches count + motion with 4j, then asks the learner to transfer only that taught grammar to 5j."
         ),
         "prompt": (
-            "ANIMATION\nA spark frame must keep its rows and columns registered.\n\n"
-            "NEOVIM\nClassify these three sentences: `3daw`, `rO`, and `:8s/-/=/g<CR>`. "
-            "Name the operator grammar, the standalone command, and the Ex parts."
+            "ANIMATION\nYou want to inspect the fifth row below the cursor without changing any art.\n\n"
+            "NEOVIM\nThe lesson just taught `4j`. What does the unfamiliar command `5j` mean?"
         ),
+        "animation_prompt": "Inspect a lower animation row while leaving every glyph registered.",
+        "animation_answer": "cursor inspection leaves every art cell unchanged",
+        "neovim_prompt": "Transfer the taught 4j pattern to 5j.",
+        "neovim_answer": "5 is the count and j is the down-one-row motion, so the cursor moves down five rows",
+        "compact_prompt": (
+            "ANIMATION: inspect a lower row without changing art.\n"
+            "NEOVIM: transfer the taught `4j` pattern to `5j`."
+        ),
+        "choices": [
+            "ANIMATION: cursor inspection leaves every art cell unchanged | NEOVIM: 5 is the count and j is the down-one-row motion, so the cursor moves down five rows",
+            "ANIMATION: cursor inspection leaves every art cell unchanged | NEOVIM: 5 addresses line five and j deletes that line",
+            "ANIMATION: moving the cursor rewrites the five crossed art cells | NEOVIM: 5 is the count and j is the down-one-row motion, so the cursor moves down five rows",
+            "ANIMATION: moving the cursor rewrites the five crossed art cells | NEOVIM: 5 addresses line five and j deletes that line",
+        ],
+        "compact_choices": [
+            "A: art unchanged · V: 5=count, j=down",
+            "A: art unchanged · V: line 5 is deleted",
+            "A: five cells change · V: 5=count, j=down",
+            "A: five cells change · V: line 5 is deleted",
+        ],
+        "correct_choice": 0,
+        "feedback": [
+            "Correct: count 5 repeats the j down motion five times and does not edit the buffer.",
+            "No: 5j is Normal-mode count plus motion; it neither addresses nor deletes line five.",
+            "No: neither character enters Insert mode; 5j only moves the cursor.",
+            "No: the digits form the count and j is the motion; movement leaves the art unchanged.",
+        ],
         "source_ref": module["source_ref"], "difficulty": 1,
-        "answer_contract": {
-            "form": "decode",
-            "required_term_groups": [
-                ["operator", "verb"], ["motion", "object", "noun"],
-                ["standalone", "replace", "overwrite"],
-                ["ex", "range", "address"], ["substitute", "pattern", "replacement"],
-                ["flag", "global", "g"], ["enter", "execute"],
-            ],
-            "sample_answer": (
-                "3daw is count plus delete operator plus a word object; rO is standalone "
-                "replace/overwrite; the Ex statement has line 8, substitute, pattern -, "
-                "replacement =, global flag g, then Enter executes."
-            ),
-        },
+        "answer_contract": {"form": "multiple_choice"},
     }
 
 
@@ -4301,21 +4460,11 @@ def make_cards(module, catalog_prompts):
             card["prompt"] = (
                 f"Inspect the complete {module['title']} art or scenario below, then choose "
                 "the interpretation supported by the visible evidence and authoring principle.")
-            concept_ids = {
-                "M0": (1, 7, 2, 6, 9), "M1": (1, 3, 2, 6, 9),
-                "M2": (4, 10, 2, 6, 9), "M3": (4, 5, 1, 6, 9),
-                "M4": (1, 2, 3, 6, 9), "M5": (3, 10, 2, 6, 9),
-                "M6": (2, 3, 1, 6, 9), "M7": (3, 7, 2, 6, 9),
-                "M8": (1, 3, 2, 6, 9), "M9": (2, 5, 1, 6, 9),
-                "M10": (1, 2, 3, 6, 7), "M11": (1, 4, 3, 6, 8),
-                "M12": (1, 4, 3, 6, 8),
-                "M13": (1, 4, 3, 6, 8),
-                "M14": (1, 4, 3, 6, 8),
-                "M15": (1, 4, 3, 6, 9),
-                "M16": (1, 2, 3, 6, 9),
-                "M17": (1, 4, 3, 6, 9),
-                "M18": (1, 4, 3, 6, 8),
-            }[mid]
+            # At .03 only the two preceding guided edits are prerequisites.
+            # Later command/timing questions remain in .07 and the module
+            # check, after their guided bridges. This is deliberately small:
+            # more variants do not justify testing material before teaching it.
+            concept_ids = (1, 2)
             card["question_ids"] = [f"{mid}.Q{number:02d}" for number in concept_ids]
         elif ordinal == 7:
             card["prompt"] = (
@@ -4483,7 +4632,7 @@ def build():
                 })
     command_reviews = command_review_contract(cards)
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.24",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.25",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "modules": modules, "cards": cards, "questions": questions,
         "verified_method_coverage": verified_methods,

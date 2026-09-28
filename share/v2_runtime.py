@@ -1163,6 +1163,7 @@ def _write_session_lesson(cfg, cur, progress, card):
             header.extend("  " + _clip(line, 64) for line in paradigm.splitlines() if line.strip())
         header.extend([
             "BASIC HELP  o new line below · O above · Space waits for WhichKey · clean mode F1",
+            "COPY / PASTE  mouse-drag copies popup text · Cmd-V pastes",
             "READING THE RECIPE  <C-k>.M middle-dot digraph · <Esc> Escape",
             "SUBMIT / STUCK  :wq submits · :q! exits without submission",
         ])
@@ -1234,6 +1235,7 @@ def _write_session_lesson(cfg, cur, progress, card):
         "  :wq submits. :q! exits without submission. Retry restores this card's checkpoint.",
         "  The task brief is read-only. <C-w>w switches between the brief and art.",
         "  o opens a new line below; O opens one above.",
+        "  Mouse-drag copies popup text to the macOS clipboard; Cmd-V pastes.",
         "  Personal config keeps Hardtime and WhichKey (press Space and wait); clean mode uses F1.",
     ])
     _write_lines_atomic(lesson, header)
@@ -2224,6 +2226,11 @@ def run_concept(cfg, cur, progress, card):
         print("WHY: %s" % context["why"][1])
         print("BUYS: %s" % context["buys"])
         print("SOURCE: %s" % context["source"])
+    teaching = card.get("teaching_lines", [])
+    if teaching:
+        print("TEACH FIRST")
+        for line in teaching:
+            print("  %s" % line)
     if ultra:
         print("DO THIS %s: choose the answer whose ANIMATION and NEOVIM halves are both correct."
               % card["id"])

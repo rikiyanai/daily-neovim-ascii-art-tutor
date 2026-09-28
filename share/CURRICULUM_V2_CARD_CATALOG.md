@@ -189,7 +189,7 @@ reordered strip grows from the base upward.
 | M6.01 | G | Draw/inspect the finished object as the primary key pose and count its units. |
 | M6.02 | G | Copy the complete pose before any subtractive change. |
 | M6.03 | Q | Choose why copying then erasing can be easier than drawing an accretive build-up forward. |
-| M6.04 | G | Demonstrate destructive `J`, undo it, then reduce only the copied apex to a seed without losing a row. |
+| M6.04 | G | Clear only the copied apex row while preserving that empty row and every lower layer of the five-row frame. |
 | M6.05 | X | Copy the first reduction by counted yank and addressed `:t`, then clear the next upper unit with `D`. |
 | M6.06 | T | Move an unfamiliar finished five-row build after its reduced state to establish forward playback order. |
 | M6.07 | Q | Given authoring order and four playback orders, pick the sequence that visibly builds rather than vanishes. |

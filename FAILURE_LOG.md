@@ -3067,3 +3067,88 @@ bleeding into the next lesson. `r` remains the distinct exact-card action.
 remain curriculum/layout work. They are not converted to “pass” by the generic
 answer-format line. The prerequisite/clarity/placement audit must also be
 reconciled before question text is rewritten.
+
+## VD-21 · 2026-09-28 — three live prerequisite/contract gaps in rev .25 (same class as the primer failure)
+
+**Status:** OPEN. Verified against rev `.25` (174 cards / 326 Qs) in JSON (runtime) order.
+Related: VD-20's open 59 hidden-term-contract findings are distinct from item 2 below.
+
+1. **Primer still violates (other session's replacement not landed):** `M0.P0.P01`
+  (decode, before) asks to classify `` `3daw` `` / `` `rO` `` / `` `:8s/-/=/g<CR>` `` while
+  `d`-operator is first guided at `M1.DD` and `aw` at `M2.01`. The family order checker
+  cannot see it: the Q is tagged `grammar_family=vim-language-primer`, a family no card
+  teaches, so content escapes verification. Full JSON-order scan otherwise passes —
+  this is the only family-order violation in 326 questions.
+2. **All 19 why-contracts byte-identical:** every `form=why` question carries the same
+  `answer_contract` (term groups frame/rows/range/object + scope/cursor/registered/
+  unchanged; sample "The complete frame is the object; bounded scope keeps registered
+  cells unchanged.") and the same NEOVIM half ("Why was the demonstrated method safe
+  for this frame, and what scope error would the other task shape risk?"). Any module's
+  accepted answer passes any other module's why — grading cannot discriminate.
+  Animation halves differ (19 unique prompts), so the defect is the contract, not coverage.
+3. **Tag-masking class:** the order checker trusts `grammar_family` tags; backtick content
+  exceeding the tag is unchecked (item 1 proves it). Before-question backticks should be
+  scanned against first-guided positions the way VD-16 §D did for expected fields.
+Retracted (checked, not a gap): `M7.04.P01` — JSON order runs `M7.VIS` (guided visual)
+before `M7.04`; the flag was an ordinal-sort artifact. Decode-before on guided cards is
+the designed decode-the-shown-recipe pattern, not test-before-teach.
+
+
+## VD-22 · 2026-09-28 — primer replacement landed and verifies; why-contracts still identical
+
+**Status:** PARTIAL — item 1 of VD-21 closed, items 2–3 open. Rev `.25` (174/326).
+
+- **Closed:** `M0.P0.P01` no longer classifies `3daw`/`rO`/`:8s`. It now asks what
+  unfamiliar `5j` means after teaching `4j` — clean count-transfer with no untaught
+  family in backticks. Primer prerequisite violation resolved.
+- **Still open:** all 19 `form=why` contracts byte-identical (1 unique contract), same
+  shared NEOVIM half — grading still cannot discriminate across modules.
+- **Still open:** tag-masking (order checker trusts `grammar_family`; backtick content
+  unchecked). The fixed primer proves the class matters: the old tag
+  (`vim-language-primer`) hid the violation until a content read caught it.
+
+## VD-23 · 2026-09-28 — popup clipboard and prerequisite-first lesson order
+
+**Operator evidence:** the opening M0.P0 popup required a long free-text decode
+of `3daw`, `rO`, and `:8s/-/=/g<CR>` before any lesson had taught delete
+operators, text objects, replacement, Ex ranges, substitution, flags, or the
+expected answer shape. The operator also could not copy text from the popup.
+
+**Root causes:** M0.P0 carried an advanced survey disguised by the broad
+`vim-language-primer` metadata tag; guided paired questions were placed before
+the edit that was supposed to teach them; the installed popup route enabled
+OSC clipboard support but had no `pbcopy` copy-mode bindings and did not force
+mouse mode for an already-running tmux server.
+
+**Curriculum repair:** M0.P0 now teaches only `[count] + motion`, demonstrates
+`j` and `4j`, and asks one four-choice transfer to `5j`; the advanced commands
+are absent. First-use guided questions now occur after the visible recipe and
+the learner's guided edit. All M*.03 banks contain only Q01/Q02 from their two
+preceding guided cards, removing the 21 future-content presentations in the
+`.24` prerequisite audit. Compound decode contracts require every family in
+their recipe. The stale M6.04 prompt no longer orders a `J`/undo performance
+that its actual target and recipe had already removed.
+
+**Contract repair:** the 19 compare-method why questions now have 19 distinct,
+card-specific prompts, required term groups, and accepted examples. Visual-line
+`V` and `C`/change-to-end are recorded as real grammar families and receive the
+same later hidden changed-art review contract as other taught families. Tests
+scan command-looking backticks in every before-question against earlier guided
+performance rather than trusting the question's declared family tag.
+
+**Clipboard repair:** all three popup launch routes enable `mouse` and
+`set-clipboard`, and bind copy-mode-vi `y`, `Enter`, and mouse-drag completion
+to `copy-pipe-and-cancel pbcopy`. The popup title and lesson brief state
+`drag copies` / `Cmd-V pastes`.
+
+**Evidence:** `share/test_v2.py` passes 174/174 executable cards and 135/135
+primary edit recipes under isolated Neovim. M0.P0 headed proof passes at
+80×24, 100×36, and 188×49. The full real-user-config popup passes at 80×24,
+100×36, and 188×49; the 80×24 route also asserts live mouse/clipboard options
+and the three `pbcopy` bindings. The `.24` audit snapshot plus resolution note
+is preserved at `share/audits/lesson-prerequisite-clarity-matrix.md`.
+
+**Still open:** VD-20's 141 compact-layout risks and 59 hidden accepted-variant
+visibility findings require per-question layout/contract work. The standalone
+animation lesson pack is authored and rights-audited but not yet wired into the
+live generator.

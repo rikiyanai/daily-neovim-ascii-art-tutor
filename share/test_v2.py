@@ -25,6 +25,10 @@ generator_spec = importlib.util.spec_from_file_location(
 generator = importlib.util.module_from_spec(generator_spec)
 generator_spec.loader.exec_module(generator)
 
+keys_spec = importlib.util.spec_from_file_location("v2_keys", HERE / "v2_keys.py")
+v2_keys = importlib.util.module_from_spec(keys_spec)
+keys_spec.loader.exec_module(v2_keys)
+
 gate_spec = importlib.util.spec_from_loader(
     "legacy_gate", importlib.machinery.SourceFileLoader(
         "legacy_gate", str(HERE.parent / "bin" / "vim-daily-gate")))
@@ -105,6 +109,53 @@ assert {question["form"] for question in cur["questions"]} == {
 assert all(card.get("paired_question_ids") for card in cur["cards"])
 assert all(qid in question_by_id
            for card in cur["cards"] for qid in card["paired_question_ids"])
+
+# A generic why contract let the same stock sentence pass all 19 comparison
+# cards. Every comparison must instead ask about—and grade—the two methods and
+# animation scope on that exact card.
+why_questions = [question for question in cur["questions"] if question["form"] == "why"]
+assert len(why_questions) == 19
+assert len({question["prompt"] for question in why_questions}) == 19
+assert len({json.dumps(question["answer_contract"], sort_keys=True)
+            for question in why_questions}) == 19
+for question in why_questions:
+    right, missing = v2._term_group_result(
+        question["answer_contract"]["sample_answer"],
+        question["answer_contract"]["required_term_groups"])
+    assert right and not missing, (question["id"], missing)
+
+# Metadata tags cannot hide a prerequisite failure. Scan command-looking text
+# quoted by every before-question and require its parsed key families to have
+# appeared in earlier visible guided performance (the primer explicitly owns
+# only counted j). This catches the old M0.P0 3daw/rO/:s interrogation even if
+# somebody labels it merely "vim-language-primer" again.
+def normalized_key_family(family):
+    family = family.replace(":[range]", ":")
+    return "r{char}" if family == "r" else family
+
+
+taught_quoted_families = {"[count]j"}
+single_key_commands = set("hjklwWeEbB0$^G{};,xJDu~%") | {"r"}
+for card in cur["cards"]:
+    for question_id in card.get("question_placement", {}).get("before", []):
+        question = question_by_id[question_id]
+        for quoted in re.findall(r"`([^`]+)`", question.get("prompt", "")):
+            key_like = (quoted.startswith((":", "/", "?")) or "<" in quoted
+                        or bool(re.match(r"\d", quoted)) or quoted in single_key_commands)
+            if not key_like or quoted.startswith("["):
+                continue
+            # `<C-r>a` is register insertion inside the Replace-mode sentence
+            # taught on M14.01; parsing it as a standalone Normal command would
+            # misread the trailing register name as `a` Insert mode.
+            families = ({"R{text}<Esc>"} if quoted == "<C-r>a" else
+                        {normalized_key_family(family)
+                         for family, _meaning in v2_keys.families(quoted)})
+            unknown = families - taught_quoted_families
+            assert not unknown, (card["id"], question_id, quoted, sorted(unknown))
+    if card.get("grammar_stage") == "guided" and card.get("expected"):
+        taught_quoted_families.update(
+            normalized_key_family(family)
+            for family, _meaning in v2_keys.families(card["expected"]))
 assert [card["id"] for card in cur["cards"] if card["module_id"] == "M0"] == [
     "M0.P0", "M0.01", "M0.02", "M0.O", "M0.03", "M0.04",
     "M0.T", "M0.05", "M0.SL", "M0.06", "M0.07", "M0.08"]
@@ -138,7 +189,7 @@ assert all("ANIMATION:" in q["compact_prompt"] and "NEOVIM:" in q["compact_promp
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == 190
+            for q in mc_questions}) == len(mc_questions) == 191
 assert sum("│" in q["animation_prompt"] for q in mc_questions) >= 55
 assert all("Not yet" not in feedback and "one or both halves" not in feedback.lower()
            for q in mc_questions for feedback in q["feedback"])
@@ -165,12 +216,35 @@ assert all(len(c.get("question_ids", [])) == 10
 assert all("key-hidden" in c["prompt"] and c["expected"] not in c["prompt"]
            and all(why not in c["prompt"] for _keys, why in c["recipe"])
            for c in cur["cards"] if c["kind"] == "module_check")
+assert all(c.get("question_ids", []) == [c["module_id"] + ".Q01",
+                                          c["module_id"] + ".Q02"]
+           for c in cur["cards"] if c["kind"] == "concept" and c["id"].endswith(".03"))
 assert all(len(c.get("question_ids", [])) == 5
-           for c in cur["cards"] if c["kind"] == "concept" and c["id"] != "M0.P0")
+           for c in cur["cards"] if c["kind"] == "concept" and c["id"].endswith(".07"))
 assert card_by_id["M0.P0"]["question_ids"] == ["M0.P0.P01"]
-m3_concept = next(c for c in cur["cards"] if c["id"] == "M3.03")
-assert "M3.Q04" in m3_concept["question_ids"]
-assert "ci(" in next(q for q in cur["questions"] if q["id"] == "M3.Q04")["prompt"]
+primer_question = question_by_id["M0.P0.P01"]
+assert primer_question["form"] == "multiple_choice"
+assert "5j" in primer_question["prompt"]
+assert not any(token in primer_question["prompt"] for token in ("3daw", "rO", ":8s/"))
+assert any("4j" in line and "down four" in line
+           for line in card_by_id["M0.P0"]["teaching_lines"])
+for guided in [c for c in cur["cards"] if c.get("grammar_stage") == "guided"]:
+    paired = question_by_id[guided["paired_question_ids"][0]]
+    assert paired["placement"] == "after", guided["id"]
+    assert paired["form"] != "typed_keys", guided["id"]
+# Concept cards before the later guided bridges may only ask about their two
+# preceding guided edits. Later material stays available in .07/check cards.
+future_before_guidance = {
+    "M0.Q06", "M0.Q07", "M0.Q09", "M1.Q03", "M1.Q09", "M2.Q09",
+    "M3.Q04", "M3.Q06", "M3.Q09", "M6.Q03", "M6.Q06", "M6.Q09",
+    "M7.Q03", "M7.Q06", "M7.Q09", "M11.Q04", "M11.Q08", "M12.Q04",
+    "M13.Q04", "M13.Q06", "M14.Q08",
+}
+early_concept_questions = {
+    qid for card in cur["cards"] if card["kind"] == "concept" and card["id"].endswith(".03")
+    for qid in card.get("question_ids", [])
+}
+assert not (future_before_guidance & early_concept_questions)
 assert all("roadmap_contract" in c and "catalog_contract" not in c for c in cur["cards"])
 edit_signatures = [(tuple(c["start"]), tuple(c["target"]))
                    for c in cur["cards"] if c.get("start")]
@@ -304,7 +378,7 @@ for attempt_count in range(5):
                   "module_id": "M0"} for _ in range(attempt_count)]
     variant_questions.append(v2._question_for_card(
         cur, v2.project(cur, simulated), concept_variant)["id"])
-assert len(set(variant_questions)) == 5
+assert variant_questions == ["M0.Q01", "M0.Q02", "M0.Q01", "M0.Q02", "M0.Q01"]
 
 # A typo at a multiple-choice prompt is neither evidence nor a crash. It must
 # reprompt until a valid choice (or EOF) without re-rendering/shuffling.
@@ -337,8 +411,8 @@ assert right and chosen == output_prediction["correct_choice"]
 # Typed-key questions are graded by their effect in an isolated Neovim, not
 # by string equality. Both valid paths pass; a different resulting glyph does
 # not. Question evidence alone never awards card XP.
-typed_question = question_by_id["M0.01.P01"]
-for equivalent in ("j0f.ro", "jf.ro"):
+typed_question = question_by_id["M0.06.P01"]
+for equivalent in (typed_question["answer_contract"]["sample_answer"],):
     right, evidence, _message = v2._safe_typed_effect(
         typed_question["answer_contract"], equivalent)
     assert right and evidence["result_lines_sha256"] == evidence["target_lines_sha256"]
@@ -358,7 +432,7 @@ assert "ONE WORKING ANSWER" not in wrong_output.getvalue()
 # Free-text forms explain their response shape before input. Blank input is a
 # recoverable UI mistake, not a failed curriculum attempt, and a real wrong
 # answer shows one accepted answer after the grammar breakdown.
-decode_question = question_by_id["M0.P0.P01"]
+decode_question = question_by_id["M0.02.P01"]
 decode_answers = iter(["", "operator"])
 decode_output = io.StringIO()
 with contextlib.redirect_stdout(decode_output):
@@ -377,7 +451,7 @@ assert decode_question["answer_contract"]["sample_answer"] not in decode_output.
 held_correction = io.StringIO()
 with contextlib.redirect_stdout(held_correction):
     v2._post_feedback_ultra(
-        card_by_id["M0.01"],
+        card_by_id["M0.06"],
         {"type": "paired_question", "question": typed_question,
          "answer": "j0f.rx", "right": False},
         False,

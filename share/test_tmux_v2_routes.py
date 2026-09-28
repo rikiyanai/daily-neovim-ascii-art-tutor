@@ -190,12 +190,17 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 wait_signal(inner, question)
                 prompt = " ".join(capture(outer, pane).split())
                 assert "DO THIS" in prompt and "answer (a-d)" in prompt, prompt
-                assert "ANIMATION" in prompt and "NEOVIM" in prompt and "BOTH" in prompt, prompt
+                assert "ANIMATION" in prompt and "NEOVIM" in prompt and "both" in prompt.lower(), prompt
 
             if route == "concept":
                 question_id = CARDS[card_id]["question_ids"][
                     failed_attempts % len(CARDS[card_id]["question_ids"])]
-                assert card_id in prompt and "complete" in prompt.lower(), prompt
+                assert card_id in prompt, prompt
+                if card_id == "M0.P0":
+                    assert "TEACH FIRST" in prompt and "4j" in prompt and "5j" in prompt, prompt
+                    assert all(token not in prompt for token in ("3daw", "rO", ":8s/")), prompt
+                else:
+                    assert "complete" in prompt.lower(), prompt
                 if question_id.endswith("Q07"):
                     assert "FRAME 1" in prompt and "FRAME 5" in prompt, prompt
                 if choice_order:
@@ -351,6 +356,11 @@ if "--only-check" in sys.argv:
              artifact_card="M0.08")
     raise SystemExit(0)
 
+if "--only-primer" in sys.argv:
+    exercise("grammar primer", passed=0, route="concept", card_id="M0.P0")
+    raise SystemExit(0)
+
+exercise("grammar primer", passed=0, route="concept", card_id="M0.P0")
 exercise("conceptual check", passed=4, route="concept", card_id="M0.03",
          choice_order=(2, 3, 0, 1))
 exercise("conceptual changed-stem retry", passed=4, route="concept", card_id="M0.03",

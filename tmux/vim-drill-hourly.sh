@@ -19,6 +19,14 @@ command -v tmux >/dev/null 2>&1 || exit 0
 session="$(tmux list-clients -F '#{client_session}' 2>/dev/null | head -1)"
 [ -n "$session" ] || exit 0
 
+if command -v pbcopy >/dev/null 2>&1; then
+  tmux set-option -g mouse on
+  tmux set-option -g set-clipboard on
+  tmux bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel 'pbcopy'
+  tmux bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel 'pbcopy'
+  tmux bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel 'pbcopy'
+fi
+
 tmux display-popup -e VIM_DAILY_POPUP=1 -t "$session" -E -w 90% -h 85% \
-  -T " vim drill - :q! then n to close " \
+  -T " vim drill · drag copies · Cmd-V pastes · :wq submits " \
   "$gate --if-due"

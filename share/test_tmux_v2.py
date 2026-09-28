@@ -104,6 +104,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         "VIM_DAILY_TMUX_FEEDBACK_SIGNAL": feedback,
         "VIM_DAILY_TMUX_POST_SIGNAL": post,
         "VIM_DAILY_TMUX_FINISHED_SIGNAL": done,
+        "VIM_DAILY_TEST_ORDERED_CHOICES": "1",
     }
     if CLEAN_MODE:
         lesson_env["VIM_DAILY_CLEAN"] = "1"
@@ -111,7 +112,8 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
 
     # The grammar primer now precedes the first editor card. Seed only that
     # card so this acceptance test can keep exercising the full live Neovim
-    # surface while the paired typed-key question still runs in this popup.
+    # surface. M0.01's transfer question deliberately follows the guided edit:
+    # no learner is interrogated about a command before seeing and using it.
     tutor_state = state / "vim-daily"
     tutor_state.mkdir(parents=True)
     (tutor_state / "events-v2.jsonl").write_text(json.dumps({
@@ -176,22 +178,6 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
                           "-F", "#{pane_id}", capture_output=True).stdout.strip()
 
         try:
-            tmux(inner_socket, "wait-for", "-L", question, timeout=20)
-            tmux(inner_socket, "wait-for", "-U", question)
-        except subprocess.TimeoutExpired as exc:
-            screen = capture_outer(outer_socket, outer_pane)
-            raise AssertionError("paired typed-key question did not render:\n" + screen) from exc
-        question_screen = capture_outer(outer_socket, outer_pane)
-        question_flat = " ".join(question_screen.split())
-        if not all(text in question_flat for text in (
-                "ANIMATION", "NEOVIM", "START", "TARGET", "ANSWER FORMAT",
-                "OTHER EXAMPLE")):
-            raise AssertionError("paired typed-key prompt is incomplete:\n" + question_screen)
-        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l",
-             M0_FIRST_QUESTION["answer_contract"]["sample_answer"])
-        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
-
-        try:
             tmux(inner_socket, "wait-for", "-L", ready, timeout=20)
             tmux(inner_socket, "wait-for", "-U", ready)
         except subprocess.TimeoutExpired as exc:
@@ -201,8 +187,21 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             ) from exc
 
         screen = capture_outer(outer_socket, outer_pane)
+        tmux_options = "\n".join([
+            tmux(inner_socket, "show-options", "-g", option,
+                 capture_output=True).stdout.strip()
+            for option in ("mouse", "set-clipboard")
+        ])
+        if "mouse on" not in tmux_options or "set-clipboard on" not in tmux_options:
+            raise AssertionError("popup did not enable mouse/clipboard integration: " + tmux_options)
+        copy_bindings = tmux(
+            inner_socket, "list-keys", "-T", "copy-mode-vi",
+            capture_output=True).stdout
+        for binding in (" y ", " MouseDragEnd1Pane "):
+            if binding not in copy_bindings or "copy-pipe-and-cancel pbcopy" not in copy_bindings:
+                raise AssertionError("popup copy mode is not wired to macOS clipboard:\n" + copy_bindings)
         required = [
-            "vim drill · :wq submit · Enter advances/closes",
+            "vim drill · drag copies · Cmd-V pastes · :wq submits",
             "NEOVIM × ASCII ANIMATION",
             "M0.01",
             "DO THIS",
@@ -223,8 +222,6 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             raise AssertionError(
                 "automatic popup capture missing %r:\n%s" % (missing, screen)
             )
-        if not (state / "vim-daily" / "last-prompt").exists():
-            raise AssertionError("the submitted paired question did not record attempt evidence")
         if "--show-capture" in sys.argv:
             print("--- AUTOMATIC CLIENT-ATTACHED POPUP pane=%s ---" % outer_pane)
             print(screen.rstrip())
@@ -453,6 +450,23 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", M0_FIRST["expected"])
         tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", ":wq")
         tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        try:
+            tmux(inner_socket, "wait-for", "-L", question, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", question)
+        except subprocess.TimeoutExpired as exc:
+            stuck = capture_outer(outer_socket, outer_pane)
+            raise AssertionError(
+                "guided edit did not lead to its after-question:\n" + stuck
+            ) from exc
+        question_screen = capture_outer(outer_socket, outer_pane)
+        question_flat = " ".join(question_screen.split())
+        if not all(text in question_flat for text in (
+                "ANIMATION", "NEOVIM", "a)", "b)", "c)", "d)")):
+            raise AssertionError("guided after-question is incomplete:\n" + question_screen)
+        tmux(outer_socket, "send-keys", "-t", outer_pane,
+             "abcd"[M0_FIRST_QUESTION["correct_choice"]], "Enter")
+        if not (state / "vim-daily" / "last-prompt").exists():
+            raise AssertionError("the submitted paired question did not record attempt evidence")
         try:
             tmux(inner_socket, "wait-for", "-L", feedback, timeout=20)
             tmux(inner_socket, "wait-for", "-U", feedback)
