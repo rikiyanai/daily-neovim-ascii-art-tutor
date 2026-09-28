@@ -842,6 +842,7 @@ def progress_banner(counts, done_today):
 # an explicit request to continue with the next lesson in the same popup.
 _OFFER_NEXT = False
 _NEXT_REQUESTED = False
+_RETRY_REQUESTED = False
 
 
 def hold_open():
@@ -851,11 +852,11 @@ def hold_open():
     without this the completion line and the keystroke table would flash past
     and vanish. The retry prompt already blocks; these are the exits that do not.
     """
-    global _NEXT_REQUESTED
+    global _NEXT_REQUESTED, _RETRY_REQUESTED
     if not os.environ.get("VIM_DAILY_POPUP"):
         return
 
-    prompt = ("\n%spress Enter to close  ·  n then Enter = next lesson now%s "
+    prompt = ("\n%sEnter = close  ·  r = repeat this lesson  ·  n = next lesson%s "
               if _OFFER_NEXT else "\n%spress Enter to close%s ")
     try:
         answer = input(prompt % (DIM, OFF))
@@ -864,6 +865,14 @@ def hold_open():
     # VD-13 defect 6: a motivated learner may continue in the same popup.
     if _OFFER_NEXT and answer.strip().lower() in ("n", "next"):
         _NEXT_REQUESTED = True
+    elif _OFFER_NEXT and answer.strip().lower() in ("r", "retry", "repeat"):
+        _RETRY_REQUESTED = True
+
+
+def clear_result_route():
+    """Start a same-popup route without residue from a wrapped held prompt."""
+    if sys.stdout.isatty():
+        print("\033[2J\033[H", end="")
 
 
 def signal_post_rendered():
@@ -1020,15 +1029,43 @@ def main(argv):
             post_page_break=post_page_break,
             post_rendered=signal_post_rendered,
             question_rendered=signal_question_rendered)
-        global _OFFER_NEXT, _NEXT_REQUESTED
+        global _OFFER_NEXT, _NEXT_REQUESTED, _RETRY_REQUESTED
         _OFFER_NEXT = mode in ("run", "--force", "--if-due")
         result = v2.run(cfg, argv, force=(mode == "--force"))
         # VD-13 defect 6: "n" at the closing prompt starts the next due lesson
         # in the same popup. It is the learner's explicit request, so it uses
         # the on-demand (--force) route, like prefix+V; Enter still closes.
-        while _OFFER_NEXT and _NEXT_REQUESTED and result is not None:
+        practice_run = False
+        while _OFFER_NEXT and (_NEXT_REQUESTED or _RETRY_REQUESTED) and result is not None:
+            retry = _RETRY_REQUESTED
             _NEXT_REQUESTED = False
-            result = v2.run(cfg, ["--force"], force=True)
+            _RETRY_REQUESTED = False
+            if retry:
+                card_id = getattr(v2, "LAST_RUN_CARD_ID", None)
+                kind = getattr(v2, "LAST_RUN_KIND", None)
+                if not card_id:
+                    print("No lesson is available to repeat.")
+                    break
+                if practice_run or result == 0:
+                    repeat_mode = "--practice-review" if kind == "review" else "--practice-card"
+                    result = v2.run(cfg, [repeat_mode, card_id], force=True)
+                    practice_run = True
+                else:
+                    # A failed ordinary card remains the module's current card;
+                    # a failed review remains selected by the remediation queue.
+                    repeat_args = ["--force"] if kind == "review" else ["--card", card_id]
+                    result = v2.run(cfg, repeat_args, force=True)
+                    practice_run = False
+            else:
+                if result != 0 and not practice_run:
+                    clear_result_route()
+                    print("The current lesson is not passed, so Next cannot skip it.")
+                    print("Use r to repeat this lesson, or Enter to close.")
+                    hold_open()
+                    continue
+                clear_result_route()
+                result = v2.run(cfg, ["--continue"], force=False)
+                practice_run = False
         if result is not None:
             finished_signal = os.environ.get("VIM_DAILY_TMUX_FINISHED_SIGNAL")
             # The client-attached hook probes with --due-quiet before opening

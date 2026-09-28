@@ -3002,3 +3002,68 @@ through real Neovim; this prevents answer-key padding from satisfying coverage.
 **Still open:** headed popup proof for this new curriculum slice and the wider
 master-habit inventory (H7 tooling and commands not yet taught) remain outside
 this source/data subtask.
+
+## VD-20 · 2026-09-28 17:55 — primer had no answer contract; held result omitted repeat
+
+**Operator evidence:** the live `M0.P0.P01` decode question was submitted blank
+at 17:55:06 (`events-v2.jsonl`, event
+`20260928T175506458787-0400-0eb924da`). The popup asked the learner to classify
+`3daw`, `rO`, and `:8s/-/=/g<CR>` but rendered only `your answer:`: it showed no
+response shape and no different worked example. Blank Enter was recorded as a
+failed question/card and scheduled remediation. On the held result page the
+only controls were close and `n`; there was no `r` repeat control. At compact
+size the long result control wrapped through the popup border, matching the
+operator's garbled capture.
+
+**Runtime repair:** every non-choice form now renders an explicit `ANSWER
+FORMAT` plus a short `OTHER EXAMPLE` before input. Blank input re-prompts and
+does not become evidence. A genuine wrong answer renders the grammar breakdown
+and the authored `sample_answer` as `ONE ACCEPTED ANSWER` (or `ONE WORKING
+ANSWER` for effect-graded typed keys). This applies to all typed-key, decode,
+complete, and why questions rather than only M0.P0.
+
+**Result controls:** the held prompt is now one compact line:
+`Enter = close · r = repeat this lesson · n = next lesson`. `r` on a failed
+ordinary card reopens that exact current card so a later pass can advance it;
+failed reviews remain on the review/remediation route. `r` after a pass uses an
+isolated practice artifact and suppresses event, XP, mastery, daily, and streak
+credit; it cannot silently mean “next”. The existing `n` implementation and
+launcher loop are preserved.
+
+**Evidence:** `share/test_v2.py` covers blank re-prompting, pre-answer format,
+post-error accepted examples, distinct `r`/`n` state, and non-crediting practice
+events/artifacts. `share/test_tmux_v2.py` now derives module totals from the live
+curriculum and proves the answer format, all three held controls, exact-card
+repeat, and unchanged practice progress. The real user-config popup passes at
+80×24, 100×36, and 188×49 on the 174-card curriculum.
+
+**Still open:** two exhaustive independent audits are running: (1) every live
+card/question for visible answer usability and all result routes; (2) every
+card/question under the stricter gate “answerable from previous teaching alone,
+clear request/acceptance contract, and pedagogically correct placement.” Their
+reports must be reconciled before any claim that all lessons are clean.
+
+### VD-20 audit reconciliation · all 174 cards / 326 questions
+
+The completed learner-facing audit is preserved verbatim in
+`share/audits/VD-20_EXHAUSTIVE_QUESTION_UX_AUDIT.md`. It found 141 compact
+80×24 rendering risks, 59 decode/why questions whose accepted synonym groups
+are not visible, 19 hidden transfer questions whose exact sample answer was
+printed on the transient pre-clear path, and incorrect `n` routing: after a
+failure it reopened the same card through `--force`, while after a pass it
+bypassed the ordinary spaced-review selector. It also reproduced stale wrapped
+prompt pixels after `n` in an 80×24 popup.
+
+The runtime correction now keeps an exact or accepted sample off the transient
+question-input path and places it on the held replay page after evaluation.
+Same-popup `n` no longer uses `--force`: it cannot skip an unpassed current
+lesson, and after a pass it uses the normal card/review selector while enforcing
+the daily cap. Because `n` is an explicit continuation inside the already-open
+popup, it waives only the hourly re-prompt cooldown. Every new same-popup route
+clears the terminal before rendering, preventing the prior wrapped prompt from
+bleeding into the next lesson. `r` remains the distinct exact-card action.
+
+**Open, not waived:** the 141 compact risks and 59 hidden-term-contract findings
+remain curriculum/layout work. They are not converted to “pass” by the generic
+answer-format line. The prerequisite/clarity/placement audit must also be
+reconciled before question text is rewritten.

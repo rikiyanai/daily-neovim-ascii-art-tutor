@@ -29,6 +29,8 @@ CURRICULUM = json.loads((ROOT / "share" / "curriculum-v2.json").read_text(encodi
 M0_FIRST = next(card for card in CURRICULUM["cards"] if card["id"] == "M0.01")
 M0_FIRST_QUESTION = next(question for question in CURRICULUM["questions"]
                          if question["id"] == "M0.01.P01")
+M0_TOTAL = len(next(module for module in CURRICULUM["modules"]
+                    if module["id"] == "M0")["card_ids"])
 
 
 def run(*args, **kwargs):
@@ -181,7 +183,9 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             raise AssertionError("paired typed-key question did not render:\n" + screen) from exc
         question_screen = capture_outer(outer_socket, outer_pane)
         question_flat = " ".join(question_screen.split())
-        if not all(text in question_flat for text in ("ANIMATION", "NEOVIM", "START", "TARGET")):
+        if not all(text in question_flat for text in (
+                "ANIMATION", "NEOVIM", "START", "TARGET", "ANSWER FORMAT",
+                "OTHER EXAMPLE")):
             raise AssertionError("paired typed-key prompt is incomplete:\n" + question_screen)
         tmux(outer_socket, "send-keys", "-t", outer_pane, "-l",
              M0_FIRST_QUESTION["answer_contract"]["sample_answer"])
@@ -203,7 +207,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             "M0.01",
             "DO THIS",
             "NORMAL",
-            "PROGRESS M0 1/11 learning",
+            "PROGRESS M0 1/%d learning" % M0_TOTAL,
             "XP 10",
             "TARGET",
         ]
@@ -418,7 +422,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         failed_progress_screen = capture_outer(outer_socket, outer_pane)
         failed_progress_flat = " ".join(failed_progress_screen.split())
         failed_progress_required = [
-            "PROGRESS UNCHANGED", "SKILL TREE / MODULE PROGRESS", "M0", "1/11",
+            "PROGRESS UNCHANGED", "SKILL TREE / MODULE PROGRESS", "M0", "1/%d" % M0_TOTAL,
             "streak: 1 day", "next: M0.01",
         ]
         missing = [text for text in failed_progress_required if text not in failed_progress_flat]
@@ -498,7 +502,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         progress_screen = capture_outer(outer_socket, outer_pane)
         progress_flat = " ".join(progress_screen.split())
         progress_required = [
-            "PROGRESS AWARDED", "SKILL TREE / MODULE PROGRESS", "M0", "2/11",
+            "PROGRESS AWARDED", "SKILL TREE / MODULE PROGRESS", "M0", "2/%d" % M0_TOTAL,
             "streak: 1 day", "next: M0.02",
         ]
         missing = [text for text in progress_required if text not in progress_flat]
@@ -519,6 +523,52 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         held_after = capture_outer(outer_socket, outer_pane)
         if "PROGRESS AWARDED" not in held_before or "PROGRESS AWARDED" not in held_after:
             raise AssertionError("progress page did not remain visibly held before explicit close")
+        held_flat = " ".join(held_after.split())
+        for control in ("r = repeat this lesson",
+                        "n = next lesson",
+                        "Enter = close"):
+            if control not in held_flat:
+                raise AssertionError("held result omitted %r:\n%s" % (control, held_after))
+
+        # `r` repeats this passed lesson as isolated practice. It must reopen
+        # the same card, accept the same edit, and preserve awarded progress.
+        tmux(inner_socket, "wait-for", "-L", ready)
+        tmux(inner_socket, "wait-for", "-L", feedback)
+        tmux(inner_socket, "wait-for", "-L", post)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "r", "Enter")
+        try:
+            tmux(inner_socket, "wait-for", "-L", ready, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", ready)
+        except subprocess.TimeoutExpired as exc:
+            stuck = capture_outer(outer_socket, outer_pane)
+            raise AssertionError("repeat control did not reopen the same lesson:\n" + stuck) from exc
+        repeat_screen = capture_outer(outer_socket, outer_pane)
+        if "M0.01" not in " ".join(repeat_screen.split()):
+            raise AssertionError("repeat control opened a different card:\n" + repeat_screen)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", M0_FIRST["expected"])
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", ":wq")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        try:
+            tmux(inner_socket, "wait-for", "-L", feedback, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", feedback)
+        except subprocess.TimeoutExpired as exc:
+            stuck = capture_outer(outer_socket, outer_pane)
+            raise AssertionError("repeated lesson did not render feedback:\n" + stuck) from exc
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        try:
+            tmux(inner_socket, "wait-for", "-L", post, timeout=20)
+            tmux(inner_socket, "wait-for", "-U", post)
+        except subprocess.TimeoutExpired as exc:
+            stuck = capture_outer(outer_socket, outer_pane)
+            raise AssertionError("repeated lesson did not render practice progress:\n" + stuck) from exc
+        practice_screen = capture_outer(outer_socket, outer_pane)
+        practice_flat = " ".join(practice_screen.split())
+        if "PRACTICE COMPLETE · PROGRESS UNCHANGED" not in practice_flat:
+            raise AssertionError("repeat awarded progress instead of practice:\n" + practice_screen)
+        if not (("XP 20" in practice_flat and "today 2/12" in practice_flat)
+                or ("XP: 20" in practice_flat and "today: 2/12 lessons" in practice_flat)):
+            raise AssertionError("repeat changed XP or daily credit:\n" + practice_screen)
+
         tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
         try:
             tmux(inner_socket, "wait-for", "-L", done, timeout=20)

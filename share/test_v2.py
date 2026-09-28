@@ -351,6 +351,40 @@ with contextlib.redirect_stdout(wrong_output):
         typed_question, input_fn=lambda _prompt: "j0f.rx", shuffle=False)
 assert not right and answer == "j0f.rx"
 assert "GRAMMAR BREAKDOWN" in wrong_output.getvalue()
+assert "ANSWER FORMAT" in wrong_output.getvalue()
+assert "OTHER EXAMPLE" in wrong_output.getvalue()
+assert "ONE WORKING ANSWER" not in wrong_output.getvalue()
+
+# Free-text forms explain their response shape before input. Blank input is a
+# recoverable UI mistake, not a failed curriculum attempt, and a real wrong
+# answer shows one accepted answer after the grammar breakdown.
+decode_question = question_by_id["M0.P0.P01"]
+decode_answers = iter(["", "operator"])
+decode_output = io.StringIO()
+with contextlib.redirect_stdout(decode_output):
+    right, answer = v2.ask_authored_question(
+        decode_question, input_fn=lambda _prompt: next(decode_answers), shuffle=False)
+assert not right and answer == "operator"
+assert "Blank input did not count as an attempt" in decode_output.getvalue()
+assert "ANSWER FORMAT" in decode_output.getvalue()
+assert "OTHER EXAMPLE" in decode_output.getvalue()
+assert "ONE ACCEPTED ANSWER" not in decode_output.getvalue()
+assert decode_question["answer_contract"]["sample_answer"] not in decode_output.getvalue()
+
+# Exact/accepted answers belong on the held correction page, not in transient
+# pre-clear output. This prevents a hidden transfer from leaking its recipe
+# before evaluation while still leaving a durable worked correction.
+held_correction = io.StringIO()
+with contextlib.redirect_stdout(held_correction):
+    v2._post_feedback_ultra(
+        card_by_id["M0.01"],
+        {"type": "paired_question", "question": typed_question,
+         "answer": "j0f.rx", "right": False},
+        False,
+        {"source": "test"},
+        False, None, "", "")
+assert "ONE WORKING ANSWER" in held_correction.getvalue()
+assert typed_question["answer_contract"]["sample_answer"] in held_correction.getvalue()
 question_only = v2.project(cur, [{
     "type": "question", "result": "pass", "card_id": "M0.01",
     "module_id": "M0", "question_id": typed_question["id"],
@@ -373,6 +407,45 @@ with tempfile.TemporaryDirectory() as tmp:
                           "card_id": "M0.03", "module_id": "M0",
                           "question_id": "M0.Q01"})
     assert Path(cfg.stamp).exists()
+
+# Result-page repeat after a pass runs in an isolated practice artifact and
+# cannot duplicate ledger, XP, daily, or streak credit.
+with tempfile.TemporaryDirectory() as tmp:
+    cfg = v2.RuntimeConfig(state=tmp, share=str(HERE), editor="nvim", max_tries=1,
+                           target=12, cooldown=3600, stamp=str(Path(tmp) / "stamp"),
+                           run_editor=lambda *_: None, decode_keylog=lambda _: [],
+                           hold_open=lambda: None, colours=("", "", "", "", "", ""),
+                           practice=True)
+    row = v2.append_event(cfg, {"type": "card", "result": "pass",
+                                "card_id": "M0.01", "module_id": "M0"})
+    assert row["practice"] is True
+    assert not Path(tmp, "events-v2.jsonl").exists()
+    v2._legacy_credit(cfg, "M0.01")
+    v2._legacy_attempt(cfg, "M0.01")
+    assert not list(Path(tmp).glob("*.log"))
+    practice_path = v2._artifact_path(cfg, card_by_id["M0.01"])
+    assert "sessions/practice" in str(practice_path)
+
+# The held result control visibly offers all three routes. `r` and `n` are
+# distinct state transitions; Enter sets neither.
+old_popup = os.environ.get("VIM_DAILY_POPUP")
+os.environ["VIM_DAILY_POPUP"] = "1"
+prompts = []
+try:
+    legacy_gate._OFFER_NEXT = True
+    legacy_gate._NEXT_REQUESTED = False
+    legacy_gate._RETRY_REQUESTED = False
+    legacy_gate.input = lambda prompt: prompts.append(prompt) or "r"
+    legacy_gate.hold_open()
+    assert legacy_gate._RETRY_REQUESTED and not legacy_gate._NEXT_REQUESTED
+    assert "r = repeat this lesson" in prompts[-1]
+    assert "n = next lesson" in prompts[-1]
+finally:
+    legacy_gate.__dict__.pop("input", None)
+    if old_popup is None:
+        os.environ.pop("VIM_DAILY_POPUP", None)
+    else:
+        os.environ["VIM_DAILY_POPUP"] = old_popup
 
 # The user's already-credited one-row-era M0.02 artifact is upgraded only when
 # M0.04 starts. Both historical two-line outcomes are recognized, checkpointed,

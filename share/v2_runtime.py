@@ -43,6 +43,13 @@ class RuntimeConfig:
     post_rendered: object | None = None
     question_rendered: object | None = None
     question_answer: object | None = None
+    practice: bool = False
+
+
+# The launcher reads this after a held result so `r` can repeat the exact
+# lesson route rather than accidentally selecting the next card.
+LAST_RUN_CARD_ID = None
+LAST_RUN_KIND = None
 
 
 def load_curriculum(share):
@@ -333,6 +340,9 @@ def append_event(cfg, event):
     row.setdefault("event_id", "%s-%08x" % (
         dt.datetime.now().astimezone().strftime("%Y%m%dT%H%M%S%f%z"), random.getrandbits(32)))
     row.setdefault("at", dt.datetime.now().astimezone().isoformat())
+    if getattr(cfg, "practice", False):
+        row["practice"] = True
+        return row
     data = (json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n").encode("utf-8")
     fd = os.open(paths["events"], os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
     try:
@@ -714,23 +724,19 @@ def _question_answer_guidance(form):
     """
     if form == "typed_keys":
         return [
-            "ANSWER FORMAT  type only the Vim keys; write special keys as <Esc> or <CR>.",
-            "EXAMPLE (different problem)  `go down 2 rows, replace x with O` → `2jfxrO`",
+            "ANSWER FORMAT: keys only. OTHER EXAMPLE: `2jfxrO` (<CR>=Enter).",
         ]
     if form == "decode":
         return [
-            "ANSWER FORMAT  one plain-language sentence naming each command part and its effect.",
-            "EXAMPLE (different command)  `2dw` = count 2 + delete operator + word motion; delete two words.",
+            "ANSWER FORMAT: parts + effect. OTHER EXAMPLE: `2dw` = 2+delete+word.",
         ]
     if form == "complete":
         return [
-            "ANSWER FORMAT  type only the missing key(s); `<CR>` means Enter.",
-            "EXAMPLE (different command)  to execute `:3s/a/b/g`, answer `<CR>`.",
+            "ANSWER FORMAT: missing keys only. OTHER EXAMPLE: execute `:3s/a/b/g` with `<CR>`.",
         ]
     if form == "why":
         return [
-            "ANSWER FORMAT  `Use X because …; avoid Y because …` in one sentence.",
-            "EXAMPLE (different problem)  Use `r` because it preserves row width; avoid `x` because it shifts cells.",
+            "ANSWER FORMAT: `Use X because …; avoid Y because …`. OTHER EXAMPLE: r keeps width; x shifts.",
         ]
     return ["ANSWER FORMAT  answer the question in one plain-language sentence."]
 
@@ -754,7 +760,6 @@ def ask_authored_question(q, *, input_fn=input, shuffle=True, rendered=None,
         prompt = "  keys (Vim notation such as <Esc> or <CR>): "
     else:
         prompt = "  your answer: "
-    print()
     for line in _question_answer_guidance(form):
         print("  %s" % line)
     if rendered:
@@ -796,11 +801,6 @@ def ask_authored_question(q, *, input_fn=input, shuffle=True, rendered=None,
     print("  %s" % message)
     if not right:
         _print_grammar_breakdown(q, missing)
-        sample = contract.get("sample_answer")
-        if sample:
-            label = "ONE WORKING ANSWER" if form == "typed_keys" else "ONE ACCEPTED ANSWER"
-            print("  %s" % label)
-            print("    %s" % sample)
     return right, answer
 
 
@@ -897,9 +897,12 @@ def _schedule_remediation(cfg, card, family, changed_variant, reason):
         "remediation_id": "%s-%s" % (family, card["id"]),
         "changed_variant": changed_variant, "reason": reason,
     })
-    print("REMEDIATION SCHEDULED  %s · %s" % (
-        row["remediation_id"], row["name"]))
-    print("NEXT CHANGED VARIANT  %s" % changed_variant)
+    if getattr(cfg, "practice", False):
+        print("PRACTICE RESULT  no remediation or progress event was recorded")
+    else:
+        print("REMEDIATION SCHEDULED  %s · %s" % (
+            row["remediation_id"], row["name"]))
+        print("NEXT CHANGED VARIANT  %s" % changed_variant)
     return row
 
 
@@ -909,7 +912,10 @@ def _next_due(cur, stage):
 
 
 def _artifact_path(cfg, card):
-    base = _paths(cfg)["projects"] / card["project_id"]
+    if getattr(cfg, "practice", False):
+        base = _paths(cfg)["sessions"] / "practice" / card["project_id"] / card["id"]
+    else:
+        base = _paths(cfg)["projects"] / card["project_id"]
     if card.get("artifact") == "transfer":
         return base / ("transfer-%s.txt" % card["id"])
     return base / "strip.txt"
@@ -1318,6 +1324,8 @@ def _write_compare(card, path):
 
 def _legacy_credit(cfg, card_id):
     """Keep the existing streak/cap ledger working without granting v1 mastery."""
+    if getattr(cfg, "practice", False):
+        return
     now = _now()
     path = Path(cfg.state) / (now.date().isoformat() + ".log")
     row = "completed_at=%s\tdrill=%s\tskill=v2\tconcept=project\tid=%s\tattempts=1\n" % (
@@ -1339,6 +1347,8 @@ def _legacy_attempt(cfg, card_id):
     mastery readers. ``_legacy_today`` deliberately includes ``attempt`` rows,
     because effort counts toward the daily 12 even when mastery/XP does not.
     """
+    if getattr(cfg, "practice", False):
+        return
     now = _now()
     path = Path(cfg.state) / (now.date().isoformat() + ".log")
     row = ("completed_at=%s\tdrill=%s\tskill=v2\tconcept=project\tid=%s"
@@ -1798,6 +1808,11 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
             "correct" if replay.get("right") else "needs work"))
         print("you: %s" % _clip(replay.get("answer", "(none)"), 64))
         _print_grammar_breakdown(q)
+        sample = q.get("answer_contract", {}).get("sample_answer")
+        if sample:
+            label = ("ONE WORKING ANSWER" if q.get("form") == "typed_keys"
+                     else "ONE ACCEPTED ANSWER")
+            print("%s  %s" % (label, _clip(sample, 64)))
     elif replay and replay.get("type") in ("concept", "review"):
         q, chosen = replay["question"], replay["chosen"]
         if q.get("choices"):
@@ -1809,6 +1824,9 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
             print("%sCONCEPT REPLAY%s  %s" % (bold, off, q.get("form", "question")))
             print("you: %s" % _clip(replay.get("answer", chosen), 64))
             _print_grammar_breakdown(q)
+            sample = q.get("answer_contract", {}).get("sample_answer")
+            if sample:
+                print("ONE ACCEPTED ANSWER  %s" % _clip(sample, 64))
         edit = replay.get("edit_replay")
         if edit:
             print("%sEDIT REPLAY%s  %s" % (
@@ -1997,6 +2015,11 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
             q.get("placement", "paired"), q.get("placement_reason", "")))
         print("  you wrote: %s" % replay.get("answer", "(none)"))
         _print_grammar_breakdown(q)
+        sample = q.get("answer_contract", {}).get("sample_answer")
+        if sample:
+            label = ("ONE WORKING ANSWER" if q.get("form") == "typed_keys"
+                     else "ONE ACCEPTED ANSWER")
+            print("  %s: %s" % (label, sample))
     elif replay and replay.get("type") in ("concept", "review"):
         q = replay["question"]
         chosen = replay["chosen"]
@@ -2010,6 +2033,9 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
         else:
             print("  you wrote: %s" % replay.get("answer", chosen))
             _print_grammar_breakdown(q)
+            sample = q.get("answer_contract", {}).get("sample_answer")
+            if sample:
+                print("  ONE ACCEPTED ANSWER: %s" % sample)
         edit = replay.get("edit_replay")
         if edit:
             print("\n%sCHANGED-ART EDIT REPLAY%s" % (bold, off))
@@ -2081,7 +2107,10 @@ def _post_progress(cfg, cur, card, progress, *, completed=True):
     """Render held page two: progression only, without feedback scrolling away."""
     bold, _dim, off, green, _red, _yellow = cfg.colours
     _clear_if_tty()
-    label = "PROGRESS AWARDED" if completed else "PROGRESS UNCHANGED"
+    if getattr(cfg, "practice", False):
+        label = "PRACTICE COMPLETE · PROGRESS UNCHANGED"
+    else:
+        label = "PROGRESS AWARDED" if completed else "PROGRESS UNCHANGED"
     colour = green + bold if completed else bold
     ultra = (__import__("sys").stdout.isatty()
              and shutil.get_terminal_size((80, 24)).lines < progress_full_rows(cur))
@@ -2154,7 +2183,9 @@ def _complete(cfg, cur, card, *, question_id=None, extra=None, replay=None):
     append_event(cfg, event)
     _legacy_credit(cfg, card["id"])
     streak, best_streak, all_time = _legacy_streak(cfg.state)
-    if streak:
+    if getattr(cfg, "practice", False):
+        print("PRACTICE COMPLETE  ·  no duplicate XP, mastery, daily credit, or streak credit")
+    elif streak:
         bold, _dim, off, green, _red, _yellow = cfg.colours
         flame = " 🔥" if streak >= 3 else ""
         print("%s%sStreak extended to %d day%s.%s  best %d · %d drill%s all time%s" % (
@@ -2340,6 +2371,11 @@ def run_edit(cfg, cur, progress, card):
             known_starts = [[line.rstrip() for line in variant["start"]] for variant in variants]
             if existing in known_starts:
                 _write_lines_atomic(path, card["start"])
+    if getattr(cfg, "practice", False):
+        # A repeat is a fresh rehearsal.  Never reuse the passed target (which
+        # would skip the editor through recovery), and never touch the learner's
+        # real project artifact.
+        _write_lines_atomic(path, card["start"])
     pair_passed, pair_replay = run_paired_questions(cfg, cur, progress, card, "before")
     if pair_passed is None:
         return 0
@@ -2902,11 +2938,16 @@ def preview_project(cfg, cur, module_id, speed=0.35):
 
 
 def run(cfg, argv, *, force=False):
+    global LAST_RUN_CARD_ID, LAST_RUN_KIND
+    LAST_RUN_CARD_ID = None
+    LAST_RUN_KIND = None
     cur = load_curriculum(cfg.share)
     events = read_events(cfg)
     progress = project(cur, events)
     save_projection(cfg, progress)
     mode = argv[0] if argv else "run"
+    continuation = mode == "--continue"
+    cfg.practice = mode in ("--practice-card", "--practice-review")
     if mode in ("--tree", "--status"):
         print_tree(cur, progress, cfg)
         return 0
@@ -2919,26 +2960,38 @@ def run(cfg, argv, *, force=False):
             print("%s  %-16s %-22s %s" % ("✓" if card["id"] in passed else "·", card["id"], card["kind"], card["title"]))
         return 0
     card = None
-    if mode == "--card":
+    practice_review = None
+    if mode in ("--card", "--practice-card"):
         wanted = argv[1] if len(argv) > 1 else ""
         card = next((c for c in cur["cards"] if c["id"] == wanted), None)
         if not card:
             print("no such v2 card: %s" % wanted)
             return 1
-        state = progress["modules"][card["module_id"]]["state"]
-        if state == "locked":
-            print("%s is locked by its module prerequisites" % wanted)
+        if mode == "--card":
+            state = progress["modules"][card["module_id"]]["state"]
+            if state == "locked":
+                print("%s is locked by its module prerequisites" % wanted)
+                return 1
+            if wanted in set(progress["passed_cards"]):
+                print("%s is already complete; use the result-page repeat control for uncredited practice" % wanted)
+                return 1
+            module = _module_for_card(cur, card)
+            module_next = next((cid for cid in module["card_ids"]
+                                if cid not in set(progress["passed_cards"])), None)
+            if wanted != module_next:
+                print("%s is not the current card for %s; complete %s first" % (
+                    wanted, module["id"], module_next or "the module"))
+                return 1
+        force = True
+    elif mode == "--practice-review":
+        wanted = argv[1] if len(argv) > 1 else ""
+        card = next((c for c in cur["cards"] if c["id"] == wanted), None)
+        if not card or not _review_variants(card):
+            print("no changed-art review bank for: %s" % wanted)
             return 1
-        if wanted in set(progress["passed_cards"]):
-            print("%s is already complete; replay cannot award progress or daily credit" % wanted)
-            return 1
-        module = _module_for_card(cur, card)
-        module_next = next((cid for cid in module["card_ids"]
-                            if cid not in set(progress["passed_cards"])), None)
-        if wanted != module_next:
-            print("%s is not the current card for %s; complete %s first" % (
-                wanted, module["id"], module_next or "the module"))
-            return 1
+        practice_review = (wanted, {
+            "module_id": card["module_id"], "stage": 0, "question_id": None,
+        })
         force = True
     elif mode == "--project":
         wanted = argv[1] if len(argv) > 1 else None
@@ -2959,12 +3012,14 @@ def run(cfg, argv, *, force=False):
             print("preview speed must be seconds per frame")
             return 1
         return preview_project(cfg, cur, wanted, speed)
-    elif mode not in ("run", "--force", "--if-due", "--due-quiet"):
+    elif mode not in ("run", "--force", "--if-due", "--due-quiet", "--continue"):
         return None
 
-    explicit_force = force or mode == "--force" or mode == "--card"
+    explicit_force = force or mode in ("--force", "--card", "--practice-card", "--practice-review")
     if not explicit_force:
-        if os.environ.get("VIM_DAILY_SKIP") or os.environ.get("VIM_DAILY_ACTIVE") or os.environ.get("NVIM"):
+        if (not continuation and
+                (os.environ.get("VIM_DAILY_SKIP") or os.environ.get("VIM_DAILY_ACTIVE")
+                 or os.environ.get("NVIM"))):
             return 1 if mode == "--due-quiet" else 0
         today = _now().date().isoformat()
         done = sum(1 for e in events if e.get("type") in ("card", "review") and e.get("result") == "pass" and str(e.get("at", "")).startswith(today))
@@ -2972,7 +3027,10 @@ def run(cfg, argv, *, force=False):
             since = _now().timestamp() - os.stat(cfg.stamp).st_mtime
         except OSError:
             since = 999999
-        if done >= cfg.target or since < cfg.cooldown:
+        # `--continue` is an explicit request made inside the already-open
+        # popup. It preserves the daily cap and normal review/card scheduler;
+        # only the hourly re-prompt cooldown is waived for this same session.
+        if done >= cfg.target or (not continuation and since < cfg.cooldown):
             if mode == "--due-quiet":
                 return 1
             if mode != "--if-due":
@@ -2993,13 +3051,25 @@ def run(cfg, argv, *, force=False):
         cfg.hold_open()
         return 1
     try:
-        review_due_now = should_run_review(events, review, candidate, explicit_force)
+        # A held result may leave wrapped prompt fragments in a compact tmux
+        # popup. Every newly selected route starts on a clean terminal page.
+        _clear_if_tty()
+        if practice_review:
+            LAST_RUN_CARD_ID = practice_review[0]
+            LAST_RUN_KIND = "review"
+            return run_review(cfg, cur, progress, practice_review[0], practice_review[1])
+        review_due_now = (False if cfg.practice else
+                          should_run_review(events, review, candidate, explicit_force))
         if review_due_now:
+            LAST_RUN_CARD_ID = review[0]
+            LAST_RUN_KIND = "review"
             return run_review(cfg, cur, progress, review[0], review[1])
         card = candidate
         if not card:
             print_tree(cur, progress, cfg)
             return 0
+        LAST_RUN_CARD_ID = card["id"]
+        LAST_RUN_KIND = card["kind"]
         if card["kind"] == "concept":
             return run_concept(cfg, cur, progress, card)
         return run_edit(cfg, cur, progress, card)
