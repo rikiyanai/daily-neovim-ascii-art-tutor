@@ -2554,3 +2554,33 @@ Operator decision required before any generator/runtime change: (1) §D moves/ad
 (2) §E new cards/questions, (3) §F M0 reorder, (4) §G mechanics, (5) label/content repairs
 (M5→S3/S6+A1 or new S5 content; M6→A5 or new S6 content; M7→A3/A4 or new S7 content),
 (6) M13.04 `r_` typo verification. Showing this entry for review now.
+
+### VD-16 reconciliation delta against VD-15 and the partition reports · 2026-09-28
+
+The second audit confirms the already logged grammar/pairing/review defects; the
+following are the non-duplicate corrections that change the decision surface:
+
+- **Stage ownership is a label/content problem, not just missing metadata.**
+  M5 is not S5 content (it is a seam/S3-S6 plus A1-copy slice), M6 is not S6
+  content (it is A5 `:t`/`:m`/`D`), and M7 is not S7 content (it is A3/A4
+  holds/timing). No module owns the complete S2, S6, or A2 finish-line stage;
+  §H therefore needs relabel-versus-rebuild decisions.
+- **H7 is wholly unexercised in current executable paths.** `:diffthis`,
+  `scrollbind`, and `:set list` are each zero-occurrence file-wide, so this is
+  stronger than a missing review link or an unowned comparison card.
+- **The negative inventory is now explicit.** Required-but-never-shown items
+  include `:m`, `<C-v>`, macros, `B`, `}`, `<C-k>`, `u`, `virtualedit`, and
+  `N|`; no current executable expected/variant/method path uses `gR`, `gv`,
+  `ga`, `zp`, `dap`, undo-tree navigation (`g-`, `g+`, `:earlier`), or
+  lowercase `w`. Legacy prose and attachments do not count as use.
+- **M9.04 has a concrete anti-overwrite repair.** Its hidden-first `x+i`
+  path (`5GfOxi=<Esc>`) should be replaced in the proposal by
+  `5GfOr=`; the existing x/i sequencing gap remains, but this repair preserves
+  the fixed cell rather than deleting and reinserting it.
+- **Correction to the `:t` slice wording:** `:t` is shown-guided at M6.02 and
+  reused shown-guided at M7.01/M7.02. It is late and unpaired—not absent;
+  M0.05 and the earlier hidden uses remain ordering violations.
+- **M13.04 review variant 2 is intentional, not a typo.** Its start contains
+  `O` at the old pulse location; `2Wr_` clears that cell, while the target has
+  `_` there and puts `!` at the new edge cells. No generator change is warranted
+  from the earlier `r_` suspicion.
