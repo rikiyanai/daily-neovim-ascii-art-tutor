@@ -92,10 +92,10 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["paradigm"] == concept["paradigm"]
 
 assert len(cur["modules"]) == 19
-assert len(cur["cards"]) == 155
-assert len(cur["questions"]) == 307
-assert len({card["title"] for card in cur["cards"]}) == 155
-assert len({card["prompt"] for card in cur["cards"]}) == 155
+assert len(cur["cards"]) == 174
+assert len(cur["questions"]) == 326
+assert len({card["title"] for card in cur["cards"]}) == 174
+assert len({card["prompt"] for card in cur["cards"]}) == 174
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
 mc_questions = [question for question in cur["questions"]
@@ -107,7 +107,7 @@ assert all(qid in question_by_id
            for card in cur["cards"] for qid in card["paired_question_ids"])
 assert [card["id"] for card in cur["cards"] if card["module_id"] == "M0"] == [
     "M0.P0", "M0.01", "M0.02", "M0.O", "M0.03", "M0.04",
-    "M0.T", "M0.05", "M0.06", "M0.07", "M0.08"]
+    "M0.T", "M0.05", "M0.SL", "M0.06", "M0.07", "M0.08"]
 # M0.04 must not demand substitution before it has been shown. M0.02 is the
 # guided introduction; M0.04 names the family but keeps its exact line/keys
 # hidden as retrieval practice.
@@ -118,7 +118,7 @@ assert any(":{start},{end}s/old/new/g" in line and "g means all matches" in line
 assert card_by_id["M0.04"]["show_recipe"] is False
 assert any(":{start},{end}s/old/new/g" in line
            for line in card_by_id["M0.04"]["key_vocabulary"])
-assert "using ONE method" in card_by_id["M0.05"]["prompt"]
+assert "USE ONE METHOD" in card_by_id["M0.05"]["prompt"]
 assert {method["evidence"]["kind"] for method in
         card_by_id["M0.05"]["method_alternatives"]} == {
             "linewise_yank_put", "ex_copy"}
@@ -157,8 +157,9 @@ assert all(all(module.get(field) for field in
 for question in [q for q in cur["questions"] if q["id"].endswith("Q01") and q["module_id"] != "M10"]:
     assert "BEFORE" in question["prompt"] and "AFTER" in question["prompt"]
     assert question["prompt"].count("│") >= 6, question["id"]
-assert all([c["ordinal"] for c in cur["cards"] if c["module_id"] == m["id"]] == list(range(1, 9))
-           for m in cur["modules"] if m["id"] != "M0")
+assert all([c["ordinal"] for c in cur["cards"]
+            if c["module_id"] == m["id"] and re.fullmatch(r"M\d+\.\d\d", c["id"])]
+           == list(range(1, 9)) for m in cur["modules"])
 assert all(len(c.get("question_ids", [])) == 10
            for c in cur["cards"] if c["kind"] == "module_check")
 assert all("key-hidden" in c["prompt"] and c["expected"] not in c["prompt"]
@@ -213,6 +214,22 @@ assert [row["source_card_id"] for row in verified_reviews] == [
 assert all(row["method_family"] and row["changed_art_variants"] >= 2
            and row["evidence"] == "source-linked changed-art review bank"
            for row in verified_reviews)
+# Command-level spacing is stricter than card-level review counts: every
+# family first shown in a visible recipe must return later on changed art with
+# its exact keys hidden.  The generator and runtime derive the same contract;
+# this assertion makes a missing family fail the focused suite.
+command_reviews = cur["verified_command_review_coverage"]
+assert command_reviews and all(
+    row["grammar_family"] and row["guided_card_id"] and row["review_card_id"]
+    and row["changed_art_variants"] >= 2 and row["keys_hidden"] is True
+    and row["evidence"] == "runtime-validated source-linked changed-art retrieval"
+    for row in command_reviews)
+assert {row["grammar_family"] for row in command_reviews} >= {
+    "ex-substitute-line", "ex-substitute-range", "char-find-repeat",
+    "paragraph-next", "put-before", "visual-characterwise", "block-append",
+}
+assert all(card_by_id[row["review_card_id"]].get("show_recipe") is False
+           for row in command_reviews)
 key_paths = "\n".join(card.get("expected", "") for card in cur["cards"])
 for padding in ("jwbewbwro", "6GJu04lr.", "13Gma2G'aj", "Go<Esc>I "):
     assert padding not in key_paths
@@ -486,7 +503,7 @@ assert p["modules"]["M1"]["state"] == "available"
 assert p["modules"]["M2"]["state"] == "available"
 assert p["modules"]["M3"]["state"] == "locked"
 assert v2.next_card(cur, p)["id"] == "M1.01"
-assert p["xp"] == 110 and "first-module" in p["badges"]
+assert p["xp"] == 120 and "first-module" in p["badges"]
 almost = v2.project(cur, events[:-1])
 assert almost["modules"]["M0"]["state"] == "check_ready"
 with contextlib.redirect_stdout(io.StringIO()):
@@ -582,7 +599,7 @@ with tempfile.TemporaryDirectory() as tmp:
         assert first["title"] in text and first["prompt"] in text
         assert "DO THIS" in text
         assert "TARGET" in text and "COMMAND RECIPE" in text
-        assert "PROGRESS  M0 0/11 available" in text and "XP 0" in text
+        assert "PROGRESS  M0 0/12 available" in text and "XP 0" in text
         assert "WHY THIS EXISTS" in text
         assert first_module["meaning"] in text
         assert first_module["principle"] in text
@@ -631,7 +648,7 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "Streak extended to 1 day." in rendered
     assert "best 1" in rendered and "1 drill all time" in rendered
     assert "SKILL TREE / MODULE PROGRESS" in rendered
-    assert "M0  Spark loop" in rendered and "1/11" in rendered
+    assert "M0  Spark loop" in rendered and "1/12" in rendered
     assert "XP: 10" in rendered and "today: 1/12 lessons" in rendered
     assert "next: M0.P0" in rendered
     assert v2.project(cur, v2.read_events(cfg))["passed_cards"] == ["M0.01"]
@@ -889,12 +906,16 @@ with tempfile.TemporaryDirectory() as tmp:
             assert all(keys in text for keys, _why in card["recipe"]), cid
         else:
             assert "COMMAND RECIPE" not in text and "HINT\n" in text
-            assert card["hint"] in text, cid
+            displayed_hint = card["hint"]
+            if "choose the smallest normal-mode operation" in displayed_hint:
+                displayed_hint = "use the commands explained under HOW THE KEYS YOU NEED WORK"
+            assert displayed_hint in text, cid
             assert card["expected"] not in text, (cid, card["expected"])
             for method in card.get("method_alternatives", []):
                 assert method["keys"] not in text, (cid, method["keys"])
 
 for card in [c for c in cur["cards"] if c["kind"] == "compare_methods"]:
+    assert "USE ONE METHOD" in card["prompt"] and "Do not perform both" in card["prompt"], card["id"]
     for method in card["method_alternatives"]:
         with tempfile.TemporaryDirectory() as tmp:
             art = Path(tmp) / "compare.txt"
@@ -952,8 +973,8 @@ for source in review_sources:
                 ["nvim", "-u", "NONE", "-i", "NONE", "+1",
                  "+normal! " + review_card.get("cursor", "^"), "-s", str(script), str(art)],
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            got = art.read_text(encoding="utf-8").splitlines()
-            assert result.returncode == 0 and got == review_card["target"], (
+            got = [line.rstrip() for line in art.read_text(encoding="utf-8").splitlines()]
+            assert result.returncode == 0 and got == [line.rstrip() for line in review_card["target"]], (
                 source_id, stage, got, review_card["target"])
             replay = {"actual_tokens": tokenize(review_card["expected"])}
             assert v2._required_method_error(
@@ -1262,8 +1283,12 @@ for mutator in (
     except ValueError:
         pass
 
-print("\n155/155 executable lessons present; %d/%d primary edit recipes passable (config=%s); "
-      "38 conceptual/check lessons, 38 changed-art transfer variants, "
-      "38 compare paths, and graph/questions/state valid" % (
-          len(edit_cards) - len(failures), len(edit_cards), "real" if use_real else "none"))
+print("\n%d/%d executable lessons present; %d/%d primary edit recipes passable (config=%s); "
+      "%d conceptual/check lessons, %d changed-art transfer variants, "
+      "%d compare paths, and graph/questions/state valid" % (
+          len(cur["cards"]), len(cur["cards"]), len(edit_cards) - len(failures), len(edit_cards),
+          "real" if use_real else "none",
+          len([c for c in cur["cards"] if c["kind"] in ("concept", "module_check")]),
+          len(review_sources),
+          len([c for c in cur["cards"] if c["kind"] == "compare_methods"])))
 raise SystemExit(1 if failures else 0)

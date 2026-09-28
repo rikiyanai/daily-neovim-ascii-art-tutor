@@ -2769,3 +2769,236 @@ substitution) still need their inserted guided microcards and a generator gate
 that proves explanation → interpretation/completion → shown performance →
 hidden retrieval → changed-art review. This entry does not mark that inventory
 complete.
+
+### VD-13 fix (Claude, operator: "fix it all here, do not ping codex") · 2026-09-28 17:15–17:35
+
+**Operator report:** M0.06 transfer failed at 17:12. The operator "needs to be
+taught 'f'": the ledger showed `jforO` as one word. After the failure there was
+no retry ("This transfer attempt stops here").
+
+**Changes:**
+- **New `share/v2_keys.py`: a key-by-key explainer.**
+  - `explain()` splits a recipe into the commands Vim executes: count,
+    register, operator + motion/text object, Visual-mode operators, inserts,
+    `r`/`R`, `f`/`t`, macros, and Ex range + command + args + flags. Each
+    command gets a plain meaning.
+  - `teach_lines()` names the command *families* a card needs without its
+    exact answer.
+  - Round-trip checked on all 154 expected, method and variant key strings.
+    Every family used has teaching text.
+- **Lesson brief (`_write_session_lesson`).**
+  - Guided cards show "THE RECIPE, KEY BY KEY".
+  - Hidden-recipe cards show "HOW THE KEYS YOU NEED WORK (the exact answer
+    stays hidden)": a grammar line plus one line per family, e.g.
+    `f{char} jump to the next {char} on this line`,
+    `r{char} replace the ONE character…`, `:s/old/new/g …`.
+  - The compact header now has the progress line on a line of its own.
+- **Failure/success page (`_post_feedback_ultra`).**
+  - "THE ANSWER, KEY BY KEY" appears under DO / AVOID, for example:
+    `j = down one line`,
+    `fo = jump forward to the next 'o' on this line`,
+    `rO = replace the character under the cursor with 'O'`,
+    `:s/-/=/g<CR> = on the current line, substitute '-' with '=' …`.
+    Alternative methods are explained too.
+  - In a tight popup it packs into one paragraph, as part of the
+    measure-and-shrink fit.
+- **Concept failures (`_print_grammar_breakdown`).** Every command quoted in the
+  question (e.g. `3daw`, `rO`, `:8s/-/=/g`) is decoded key by key under
+  "THOSE COMMANDS, KEY BY KEY".
+- **Transfer retry.** The "transfer attempt stops here" return was removed. A
+  failed transfer now reaches the same "retry? [Y/n]" prompt as other edits,
+  and its remediation stays scheduled.
+- **Ledger hygiene (`_without_brief_navigation`).** Keys typed in the brief
+  pane after `<C-w>w`/`<C-w>h` are no longer counted as art edits. The old
+  filter handled only `<C-w>k…<C-w>j`, so `/KEYS WORTH KEEPING` showed up in the
+  ledger.
+- **Crashes introduced by the concurrent revision-`.22` M0.P0 grammar primer.**
+  Opening M0.P0 raised `AttributeError: 'NoneType'…` in
+  `ask_authored_question`, because the card has only `paired_question_ids` and
+  `_question_for_card` did not fall back to them. The progress page then raised
+  `ValueError: int('P0')` in `_module_card_map` and in the compact module map.
+  Both are fixed; non-numeric ids render as `P0`, `O`, `T`.
+- **The compact module map** prints `today N/12` on its own line, so it is no
+  longer split by wrapping.
+- **`test_tmux_v2.py`** searches for the source sections separately at 80×24,
+  where the brief pane is ~12 rows.
+
+**Evidence:**
+- Isolated tmux at 188×49 on a copy of the real state, with the real config:
+  - M0.P0 opened;
+  - a wrong answer showed the per-command decode;
+  - `n` retried with a new stem;
+  - no crash.
+- `_key_teaching`/`_answer_breakdown` output was inspected for M0.05 and M0.06.
+- `test_tmux_v2.py` passes at 80×24, 100×36 and 188×49 (real user config).
+- `test_v2.py` was still running when this entry was written; see the next
+  line.
+
+**Not verified:**
+- The failed-transfer retry through a real M0.06 popup: the state gate now
+  requires M0.P0 first. It was checked by code path only.
+- The route matrix.
+- Operator confirmation.
+- **Also fixed (VD-13):** typed-key answers were `.strip()`ped, so a correct
+  answer ending in `r` + Space (e.g. M5.01/M5.06 `4G05lr `) was graded wrong.
+  Typed-key answers now keep spaces; only the line ending is removed
+  (`ask_authored_question`). Rerunning the headed M5.06 transfer route alone
+  passed at 188×49.
+- **Verification status at 17:36:**
+  - `test_tmux_v2.py` passes at 80×24, 100×36 and 188×49.
+  - The full route matrix and `test_v2.py` are **not verified**. Another
+    session rewrote `gen_curriculum_v2.py`, `curriculum-v2.json`,
+    `v2_runtime.py` and `test_v2.py` between 17:35:13 and 17:36:02. At that
+    point `test_v2.py` stopped at "generated artifact drifted from
+    gen_curriculum_v2.py": `build()` gives 169 cards / 321 questions, while the
+    JSON holds 170 / 322.
+  - A route run failed at M1.06 because the curriculum changed underneath it.
+  - An earlier `test_v2.py` run hung on stdin for 16+ minutes; it was killed.
+    A leftover `test_v2.py --real` from another session (PID 95612) has been
+    running for about 15 hours.
+
+## VD-17 · 2026-09-28 — curriculum moved under the audit; 1,908 Stone Story frame sheets found outside archive and tutor
+
+**Status:** OPEN — recorded, no code changed here.
+
+- **Drift:** VD-16 evidence is pinned to revision `.22` (152 cards / 190 Qs). Live tree
+  is now revision `.23` (169 cards / 321 Qs, `share/curriculum-v2.json` + generator
+  rewritten 17:35–17:41 by another session; `build()` vs JSON mismatch 169/321 vs
+  170/322 noted at VD-13 fix tail). VD-16 per-card rows need a `.23` re-run before any
+  claim built on them is used for generator work.
+- **Found, unarchived, unvendored:** `~/Downloads/stone-story-consolidated/` — 4,202 files,
+  17 MB, **0 rows** in `ascii-art-archive/MANIFEST.tsv`: 1,908 `resNN.txt` animation
+  frame sheets (16,741 nonblank art lines) with `.png` renders + 386 `manifest.txt`
+  (Foes 22 / Pets 576 / Weapons 226 / Cosmetics 521 / Hats 86 / UI 96 / Games 212 /
+  community+cAutomation 31 / steam-guides 138). Official + community StoneScript sources.
+- **Found in-archive but unvendored** (`share/art.json` holds 49 pieces, all plates 01–06
+  extracts + 5 downloads): `01-sacrificial-pit-layers.txt` (1,122-line layered scene —
+  the S6 content the curriculum lacks), `ssrpg Sapling & Ramparts.txt` (355 lines game
+  sprites), tutorial-HTML extras (worm-walk frames, dome build, brick-ground rows, logo
+  variants — mined 160 unique art lines from `collections/downloads/ASCII-art Tutorial.html`).
+- **License gate stands:** archive rows are `license=unknown/redistribute=unresolved`;
+  nothing above may be vendored or published until cleared. Next step when authorized:
+  archive `stone-story-consolidated` (hash-index), then intake selected sheets via
+  `intake_art.py` with provenance blocks.
+
+
+### VD-13 audit 3 · 2026-09-28 17:45 — the same gaps checked on every lesson (revision `.23`)
+
+**Operator:** "this was just a single example; similar pedagogical gaps
+persist in the other lessons."
+
+**Scope.** All 169 cards (130 edit, 76 with hidden keys) were checked with the
+`share/v2_keys.py` family parser. This is an inferred parser, spot-checked,
+with a round-trip over all key strings.
+
+**Findings:**
+
+| Check | Result |
+|---|---|
+| Hidden-key cards requiring a family that no earlier guided card showed | 10, down from 46 at `.19`: M0.06 `:s///g`; M7.04 `v`; M8.05 ranged `:s`; M11.05, M13.05 `:s///g`; M12.04 `;` `,`; M12.05 `;`; M14.05 `}` `P`; M14.08 `}`; M15.05 block `$A` |
+| …of those with a "before" paired question | 4 |
+| Hidden-key cards with the generic "choose the smallest normal-mode operation" hint | 8 |
+| Compare-methods cards whose prompt says "by A and by B" but grades one buffer | 9 |
+| Edit cards with at least one paired question | 130/130 (39 typed_keys, 34 decode, 19 predict_art, 19 why, 19 complete; 111 before, 19 after) |
+
+**Runtime fixes (independent of the generator, so future cards get them too):**
+- `_key_teaching(card, cur=…)` computes the families that earlier guided
+  lessons displayed.
+- Any family needed for the first time is shown under "FIRST TIME YOU NEED
+  THESE (no earlier lesson showed them)", as `NEW <family teaching>` plus a
+  worked example on neutral text (`v2_keys.EXAMPLES`). For instance: `on
+  a-b-c: :s/-/=/g makes a=b=c`, or `} jumps to the blank line after this
+  frame`.
+- 15 hidden-key cards now show this. The runtime counts `[count]`/range
+  variants separately, so it flags more than the audit's 10.
+- A generic hint is replaced by "use the commands explained under HOW THE KEYS
+  YOU NEED WORK".
+- The compact brief on comparison cards says "USE ONE METHOD — either one
+  passes; both are compared after you pass". The full brief already says
+  "CHALLENGE — Make the outcome with one method".
+
+**Evidence:**
+- `_key_teaching` output was inspected for M0.06 and M14.05.
+- `test_tmux_v2.py` passes at 80×24, 100×36 and 188×49 (real user config).
+
+**Still open (curriculum authoring, not runtime):**
+- The 10 cards should get a guided (keys shown) card, or a before-question for
+  the family, earlier in their module.
+- The 9 compare prompts should be reworded in the generator.
+- Seeing a command once is not mastery. Spaced recall of every family (the
+  goal "practised everything a master uses") has not been measured per family.
+
+## VD-18 · 2026-09-28 — missing ANIMATION frame paths, verified frame-vs-part (license gate waived by operator)
+
+**Status:** OPEN. Operator waived the redistribute gate for logging (not for publishing).
+**Method:** `resNN.txt` blocks are script splits in file order (full sprite + part layers),
+NOT frames — proven by Dog res01 (body) vs res02–05 (eye/leg parts) and FlowerFoes res01
+(whole) vs res03 (fragment). Animation-grade = set holding ≥2 DISTINCT full-pose blocks
+(≥4 nonblank lines, sha-distinct). 282 dirs hold res sheets; 158 are singleton/part-only
+(excluded below, they are standalone items); **86 sets / 885 sheets qualify**.
+Full per-file list: `share/audits/animation-frame-paths.txt` (972 lines). Base for all
+paths: `~/Downloads/stone-story-consolidated/`. Archive rows: 0. Tutor use: 0.
+
+Missing animation sets (set [full-pose sheets]): Mech [49], Skully/pet [37], Panda [28],
+Dragon/pet [28], Knight [27], SillyGoose [26], LegsTurkey [23], TowerDefense [21],
+Cranius [21], SpearThrowing [18], BurgerRush [18], FoesNoMore [18], Mushroom/pet [18],
+Snowman [17], CaveParty [17], CultGroup [15], Calculator/UI [15], SpringBloom [13],
+FrogBog [12], WhackaMole [11], StoneasaurGame [11], Dog [11], FaceHUD [11], Bunny [10],
+Snake/pet [10], Bolesh [10], AcronianGuardian [10], Crab [9], FrogJump [8], Stonehead [8],
+plus 56 sets of 2–7 sheets each, enumerated by name in `share/audits/animation-frame-paths.txt`.
+Also unvendored (in-archive): `01-sacrificial-pit-layers.txt` (1,122 lines),
+`ssrpg Sapling & Ramparts.txt` (355), tutorial-HTML worm-walk row groups + dome build +
+brick-ground rows + logo variants (160 unique art lines mined, page order = frame order).
+
+## VD-19 · 2026-09-28 — command-family prerequisites and spaced retrieval are now generator contracts
+
+**Scope:** curriculum source/data/tests only; `bin/vim-daily-gate` was not
+edited. This entry follows VD-13 audit 3 and preserves the live 169-card
+guided-bridge work.
+
+**Curriculum changes:**
+
+- Added five visible guided prerequisite cards, raising the generated course
+  to **174 cards / 326 questions**: M0.SL teaches current-line `:s///g`;
+  M7.VIS teaches characterwise `v`; M12.FIND teaches `f` plus `;` and `,`;
+  M14.PARA teaches `}` and `P` on blank-line-separated frames; M15.BA teaches
+  blockwise `$A` append.
+- Split substitution grammar into `ex-substitute-line` and
+  `ex-substitute-range`; hidden cards cannot claim that a ranged substitution
+  taught the implicit-current-line form (or the reverse).
+- Hidden-first validation now preserves fractional guided bridge stages instead
+  of recategorising them as interpretation cards. The generated
+  `verified_grammar_sequence` records the exact earlier guided card for every
+  hidden family, including the ten VD-13 audit targets.
+- All compare-method source prompts now begin with the card id and
+  **USE ONE METHOD**, explicitly saying not to perform both and that method
+  evidence is compared only after that one path reaches the target.
+- Added card-specific changed-art review banks to M3.04 (text object), M3.08
+  (digraph), M7.04 (characterwise Visual), and M8.04 (open-line authoring), so
+  late first-use families return with keys hidden instead of relying on a
+  worked-example string.
+
+**New command-level contract:**
+
+`verified_command_review_coverage` is generated and independently re-derived
+by `share/v2_runtime.py`. For every family first shown by a guided recipe, the
+contract requires a later hidden card (`show_recipe=false`) with at least two
+source-linked changed-art variants. It records the guided card, review card,
+variant count, `keys_hidden=true`, and runtime evidence. The current contract
+covers 28 families, including line/range `:s`, `;/,`, `}`, `P`, `v`, and block
+append. `share/test_v2.py` asserts the contract and executes every review bank
+through real Neovim; this prevents answer-key padding from satisfying coverage.
+
+**Evidence:**
+
+- `python3 share/gen_curriculum_v2.py` → 19 modules, 174 cards, 326 questions.
+- `python3 share/test_v2.py` → **174/174 executable lessons**, **135/135
+  primary edit recipes**, all transfer/compare/review paths pass with isolated
+  Neovim; output reports 54 changed-art review/transfer sources and 19 compare
+  paths.
+- Generated artifact and source are checked equal by the focused suite; runtime
+  schema validation rejects a missing or stale command-review contract.
+
+**Still open:** headed popup proof for this new curriculum slice and the wider
+master-habit inventory (H7 tooling and commands not yet taught) remain outside
+this source/data subtask.

@@ -968,10 +968,9 @@ MODULES = [
                  "|     |", "| =O= |", "|_____|"],
                 ["|  o  |", "|     |", "|_____|",
                  "|     |", "| === |", "|_____|"],
-                "5GfOxi=<Esc>",
+                "5GfOr=",
                 [["5GfO", "reach the squash scaffold's temporary centre"],
-                 ["x", "delete the round centre without shifting the ground row"],
-                 ["i=<Esc>", "complete a three-cell horizontal squash silhouette"]],
+                 ["r=", "overwrite that one cell so the three-cell squash stays registered"]],
             ),
             step(
                 ["|  o  |", "|     |", "|_____|",
@@ -3259,6 +3258,11 @@ FAMILY_DEFS = {
         "grammar": "count + yy copies whole rows; p/P puts the linewise object below/above",
         "terms": [["yank", "copy"], ["line", "row", "frame"], ["put", "paste"]],
     },
+    "linewise-delete": {
+        "class": "operator",
+        "grammar": "count + dd deletes whole rows; D is d$ and deletes from the cursor to row end",
+        "terms": [["delete", "operator"], ["line", "row", "end"], ["count", "scope"]],
+    },
     "normal-open-line": {
         "class": "standalone_normal",
         "grammar": "o/O opens one row below/above and enters Insert; <Esc> returns to Normal",
@@ -3268,6 +3272,16 @@ FAMILY_DEFS = {
         "class": "ex",
         "grammar": ["address/range", "s command", "pattern", "replacement", "flags", "<CR> execution"],
         "terms": [["range", "address", "line"], ["substitute", "replace"], ["pattern"], ["flag", "global", "g"], ["enter", "execute"]],
+    },
+    "ex-substitute-line": {
+        "class": "ex",
+        "grammar": "current-line address + s command + pattern + replacement + flags + <CR>",
+        "terms": [["current line", "line"], ["substitute", "replace"], ["pattern"], ["replacement"], ["flag", "global", "g"], ["enter", "execute"]],
+    },
+    "ex-substitute-range": {
+        "class": "ex",
+        "grammar": "explicit line range + s command + pattern + replacement + flags + <CR>",
+        "terms": [["range", "address", "lines"], ["substitute", "replace"], ["pattern"], ["replacement"], ["flag", "global", "g"], ["enter", "execute"]],
     },
     "ex-copy": {
         "class": "ex",
@@ -3294,6 +3308,31 @@ FAMILY_DEFS = {
         "grammar": ". repeats the last change; n/N and ;/, repeat searches or character finds",
         "terms": [["repeat", "dot", "next"], ["change", "search", "find"]],
     },
+    "char-find-repeat": {
+        "class": "standalone_normal",
+        "grammar": "f/t landmark + ; repeat in the same direction or , repeat in reverse",
+        "terms": [["find", "landmark", "f", "t"], ["semicolon", ";", "repeat"], ["comma", ",", "backwards"]],
+    },
+    "paragraph-next": {
+        "class": "standalone_normal",
+        "grammar": "} moves to the next blank-line-separated paragraph/frame",
+        "terms": [["paragraph", "frame", "blank line"], ["next", "forward", "}"], ["boundary", "scope"]],
+    },
+    "put-before": {
+        "class": "standalone_normal",
+        "grammar": "P puts the yanked object before the cursor or above the current line",
+        "terms": [["put", "paste", "P"], ["before", "above"], ["register", "yank", "copy"]],
+    },
+    "visual-characterwise": {
+        "class": "visual",
+        "grammar": "v starts a characterwise selection; a Visual operator acts only on selected cells",
+        "terms": [["visual", "v", "selection"], ["character", "cell"], ["scope", "operator"]],
+    },
+    "block-append": {
+        "class": "visual",
+        "grammar": "Ctrl-v block + $A appends the typed glyph at the end of every selected row",
+        "terms": [["block", "Ctrl-v", "column"], ["end", "$", "A", "append"], ["each row", "scope"]],
+    },
     "register": {
         "class": "standalone_normal",
         "grammar": "\"{register} selects storage; yank fills it and p/P or <C-r>{register} retrieves it",
@@ -3303,6 +3342,36 @@ FAMILY_DEFS = {
         "class": "standalone_normal",
         "grammar": "q{register} records bounded edits; q stops; @{register} replays at a homologous anchor",
         "terms": [["record", "macro"], ["register"], ["replay", "repeat"]],
+    },
+    "global-normal": {
+        "class": "ex",
+        "grammar": ["global selector", "matching pattern", "normal! command", "bounded Normal payload", "<CR> execution"],
+        "terms": [["global", ":g", "selector"], ["pattern", "match"], ["normal", "payload"], ["enter", "execute"]],
+    },
+    "digraph": {
+        "class": "standalone_normal",
+        "grammar": "in Insert/Replace entry, <C-k> plus a two-character digraph inserts one Unicode glyph",
+        "terms": [["digraph", "unicode"], ["ctrl-k", "<c-k>"], ["glyph", "character"]],
+    },
+    "virtual-column": {
+        "class": "ex",
+        "grammar": ":set virtualedit=all permits N| to address an empty fixed-width column past row end",
+        "terms": [["virtualedit", "empty"], ["column", "n|", "exact"], ["padding", "registered"]],
+    },
+    "undo-redo": {
+        "class": "standalone_normal",
+        "grammar": "u undoes one change; <C-r> redoes it so recovery can be inspected without retyping",
+        "terms": [["undo", "u"], ["redo", "ctrl-r", "<c-r>"], ["change", "restore"]],
+    },
+    "word-boundary": {
+        "class": "standalone_normal",
+        "grammar": "W/B move by WORD starts; E lands at a WORD end; counts scale the boundary motion",
+        "terms": [["word", "boundary"], ["start", "end"], ["forward", "backward"], ["count", "scope"]],
+    },
+    "expression-substitute": {
+        "class": "ex",
+        "grammar": ["address/range", "s command", "pattern", "\\= expression replacement", "<CR> execution"],
+        "terms": [["range", "address"], ["substitute", "pattern"], ["expression", "\\="], ["getline", "validation"], ["enter", "execute"]],
     },
     "replace-mode": {
         "class": "standalone_normal",
@@ -3347,31 +3416,60 @@ MASTER_COVERAGE = {
 
 def infer_grammar_families(card):
     """Classify commands from executable syntax, with no scan of art prose."""
-    keys = card.get("expected", "")
-    normal_keys = re.sub(r":[^<]*(?:<CR>|$)", "", keys)
+    # Comparison cards have three accepted executable routes: the primary
+    # recipe and the two named alternatives.  Coverage must inspect all of
+    # them, otherwise a hidden alternative can smuggle in an unintroduced
+    # grammar (notably characterwise Visual mode).
+    keys = " ".join([card.get("expected", "")] + [
+        method.get("keys", "") for method in card.get("method_alternatives", [])
+    ])
+    # Only strip a real command-line sentence.  A literal `:` may be the
+    # landmark searched by f:/;/, in an otherwise normal-mode recipe.
+    normal_keys = re.sub(r":[^<]*<CR>", "", keys)
     plain_normal = re.sub(r"<[^>]+>", "", normal_keys)
     families = []
     def add(name):
         if name not in families:
             families.append(name)
-    if re.search(r":[^<]*(?:s[/@]|substitute)", keys): add("ex-substitute")
+    substitute_commands = re.findall(r":([^<\r\n]*?)(?:s|substitute)(?=[/@])", keys)
+    if substitute_commands:
+        # A current-row :s and an addressed :range s are distinct teaching
+        # families: seeing :1,3s does not teach the learner what an omitted
+        # range means, and vice versa.
+        if any(command.strip() for command in substitute_commands):
+            add("ex-substitute-range")
+        else:
+            add("ex-substitute-line")
+    if "\\=" in keys: add("expression-substitute")
     if re.search(r":[^<]*(?:t|co(?:py)?)(?:\$|\d)", keys): add("ex-copy")
     if re.search(r":[^<]*(?:m|move)(?:\$|\d)", keys): add("ex-move")
+    if re.search(r":(?:%|\d+(?:,\d+)?)?g[/@]", keys): add("global-normal")
     if re.search(r"(?:\d+)?yy|yap", keys): add("linewise-yank-put")
     if "<C-v>" in keys or re.search(r"(?:^|<Esc>)V", keys): add("visual-scope")
-    if re.search(r"(?:daw|ci\(|dd|D|C)", plain_normal): add("operator-motion-object")
+    if "<C-v>" in keys and re.search(r"\$A", keys): add("block-append")
+    if re.search(r"(?:^|[^A-Za-z])v(?:[^A-Za-z]|$)", plain_normal): add("visual-characterwise")
+    if re.search(r"(?:\d+)?dd|D", plain_normal): add("linewise-delete")
+    if re.search(r"(?:daw|ci\()", plain_normal): add("operator-motion-object")
     if re.search(r"r.", plain_normal): add("normal-replace")
     if re.search(r"(?:^|[0-9G])(?:o|O)", plain_normal): add("normal-open-line")
     if "qq" in plain_normal or re.search(r"@\w", plain_normal): add("macro")
-    if re.search(r"(?<![fFtTr/])\.", plain_normal):
+    if re.search(r"(?:j|k|n|N|;|,)\.", plain_normal):
         add("repeat")
+    if ";" in plain_normal or "," in plain_normal:
+        add("char-find-repeat")
     if re.search(r'"[a-z0-9]', keys) or "<C-r>" in keys: add("register")
+    if "u<C-r>" in keys: add("undo-redo")
+    if "<C-k>" in keys: add("digraph")
+    if "virtualedit" in keys or re.search(r"\d+\|", plain_normal): add("virtual-column")
+    if re.search(r"[WBE]", plain_normal): add("word-boundary")
     if "R" in plain_normal: add("replace-mode")
     if re.search(r"/[^<]+", plain_normal) or re.search(r"[ftFT].", plain_normal):
         add("search-landmark")
-    if re.search(r":[^<]+<CR>", keys) and not any(
-            name.startswith("ex-") for name in families):
+    if (re.search(r":[^<]+<CR>", keys) and "virtual-column" not in families
+            and not any(name.startswith("ex-") for name in families)):
         add("ex-command")
+    if "P" in plain_normal: add("put-before")
+    if "}" in plain_normal: add("paragraph-next")
     if re.search(r"(?:gg|G|\d+[hjkl|]|[wWeEbB$^0{}])", plain_normal): add("normal-motion")
     if not families and keys: add("normal-motion")
     return families
@@ -3401,7 +3499,27 @@ def paired_question(module, card):
         "paired_invariant": module["principle"], "source_ref": module["source_ref"],
         "difficulty": 1 + int(ordinal >= 4),
     }
-    if ordinal in (1, 6) or card["id"] in ("M0.O",):
+    is_bridge = not re.fullmatch(r"M\d+\.\d\d", card["id"]) and card["id"] not in {
+        "M0.O", "M0.T",
+    }
+    if is_bridge:
+        common.update({
+            "form": "decode", "placement": "before",
+            "placement_reason": (
+                "This inserted bridge makes the learner name the new command's scope before "
+                "its keys are exposed in guided performance."
+            ),
+            "prompt": (
+                "ANIMATION\n%s\n\nNEOVIM\nDecode `%s` in plain language. Name the command "
+                "parts and the exact animation scope they own."
+            ) % (card["prompt"], card["expected"]),
+            "answer_contract": {
+                "form": "decode", "display": card["expected"],
+                "required_term_groups": family["terms"],
+                "sample_answer": " ".join(group[0] for group in family["terms"]),
+            },
+        })
+    elif ordinal in (1, 6) or card["id"] in ("M0.O",):
         common.update({
             "form": "typed_keys", "placement": "before",
             "placement_reason": (
@@ -3587,6 +3705,288 @@ def m0_extra_cards(module):
     return primer, open_line, ex_copy
 
 
+def guided_bridge_cards(module):
+    """Visible microcards inserted before a command family is required hidden."""
+    habits, stages = MASTER_COVERAGE[module["id"]]
+
+    def bridge(suffix, title, prompt, start, target, expected, recipe, family,
+               ordinal, *, labels=False):
+        card_id = "%s.%s" % (module["id"], suffix)
+        card = {
+            "id": card_id, "module_id": module["id"], "ordinal": ordinal,
+            "kind": "guided_edit", "title": "%s · %s" % (module["title"], title),
+            "project_id": "grammar-" + card_id.lower().replace(".", "-"),
+            "artifact": "transfer", "variant_group": card_id + ".guided-bridge",
+            "skill": module["skill"], "source_ref": module["source_ref"],
+            "medium": "monospace", "node_ids": [module["node"]],
+            "master_habits": habits, "master_stages": stages,
+            "lesson_benefit": "perform %s visibly before a later key-hidden animation edit requires it" % family,
+            "prompt": prompt, "roadmap_contract": prompt,
+            "start": start, "target": target, "expected": expected,
+            "recipe": recipe, "cursor": "^", "show_target": True,
+            "show_recipe": True, "hint": "Work out the scope first; then follow the visible grammar once.",
+            "grammar_families": [family], "grammar_stage": "guided",
+            "key_vocabulary": _family_breakdown([family]),
+            "frame_rows": len(start), "frame_slices": [len(target)],
+        }
+        if labels:
+            card["labels"] = True
+        def changed(rows, marker):
+            # Perturb only the stable left registration rail.  Replacing the
+            # first bar anywhere can accidentally replace the cell that the
+            # lesson is meant to edit (for example M4.VB's top-centre x -> |).
+            # Keeping width and every command-addressed column unchanged also
+            # makes these genuine changed-art transfers rather than new paths.
+            return [marker + row[1:] if row.startswith("|") else row for row in rows]
+        card["review_variants"] = [{
+            "start": changed(start, marker), "target": changed(target, marker),
+            "expected": expected, "recipe": recipe,
+        } for marker in ("!", "+")]
+        card["review_source_card_id"] = card_id
+        card["review_method_family"] = family
+        return card
+
+    mid = module["id"]
+    rows = []
+    if mid == "M0":
+        rows.append(("M0.06", bridge(
+            "SL", "Scope a substitute to the current line",
+            "On one changed frame, replace every small core on the current line with one line-scoped substitute; leave the two contour rows alone.",
+            ["| /---\\ |", "| o o   |", "| \\---/ |"],
+            ["| /---\\ |", "| O O   |", "| \\---/ |"],
+            "2G:s/o/O/g<CR>",
+            [["2G", "land on the row whose repeated material changes"],
+             [":s/o/O/g<CR>", "use the current row as the implicit address and replace every o there"]],
+            "ex-substitute-line", 5.5)))
+    elif mid == "M1":
+        rows.append(("M1.04", bridge(
+            "DD", "Delete one complete redundant frame",
+            "Remove only the second three-row contour frame; keep the first frame registered.",
+            [" /---\\ ", "|  o  |", " \\---/ ", " /---\\ ", "|  O  |", " \\---/ "],
+            [" /---\\ ", "|  o  |", " \\---/ "], "4G3dd",
+            [["4G", "land on the first row of the redundant frame"],
+             ["3dd", "count three whole rows and delete them linewise"]],
+            "linewise-delete", 3.5)))
+    elif mid == "M3":
+        rows.extend([
+            ("M3.04", bridge(
+                "CI", "Change inside the eye object",
+                "Change only the glyph inside the parenthesized eye; keep both delimiters and the silhouette.",
+                [" /---\\ ", "| (.) |", " \\---/ "],
+                [" /---\\ ", "| (O) |", " \\---/ "], "2G0f(ci(O<Esc>",
+                [["2G0f(", "land on the eye delimiter"],
+                 ["ci(", "change the text object inside parentheses"],
+                 ["O<Esc>", "type the new pupil and return to Normal"]],
+                "operator-motion-object", 3.25)),
+            ("M3.06", bridge(
+                "REG", "Copy a complete pose through a named register",
+                "Store the complete three-row pose in register a, put it below, then change only the copied eye.",
+                [" /---\\ ", "|  o  |", " \\---/ "],
+                [" /---\\ ", "|  o  |", " \\---/ ", " /---\\ ", "|  O  |", " \\---/ "],
+                "ggV2j\"ayG\"ap5G0forO",
+                [["ggV2j", "select the complete pose linewise"],
+                 ["\"ay", "yank the selection into register a"],
+                 ["G\"ap", "put that register after the file"],
+                 ["5G0forO", "change only the copied eye"]],
+                "register", 5.5)),
+            ("M3.08", bridge(
+                "DI", "Enter one Unicode accent by digraph",
+                "Replace the pose core with a middle dot using the digraph entry, without shifting its row.",
+                [" /---\\ ", "|  O  |", " \\---/ "],
+                [" /---\\ ", "|  ·  |", " \\---/ "], "2G0fOr<C-k>.M",
+                [["2G0fO", "land on the one-cell core"],
+                 ["r<C-k>.M", "replace it with the .M middle-dot digraph"]],
+                "digraph", 7.5)),
+        ])
+    elif mid == "M4":
+        rows.append(("M4.04", bridge(
+            "VB", "Replace one registered column as a block",
+            "Select the aligned centre column across all three tween rows and replace it without shifting neighbours.",
+            [" /x\\ ", "| x |", " \\x/ "], [" /|\\ ", "| | |", " \\|/ "],
+            "gg02l<C-v>2jr|",
+            [["gg02l", "land on the top centre cell"],
+             ["<C-v>2j", "select that exact column through three rows"],
+             ["r|", "replace every selected cell in place"]],
+            "visual-scope", 3.5)))
+    elif mid == "M6":
+        rows.extend([
+            ("M6.04", bridge(
+                "D", "Erase a layer tail without deleting its row",
+                "Remove the temporary layer tail after the left anchor; keep the three-row build and its anchor.",
+                [" /---\\ ", "|====| tail", " \\---/ "],
+                [" /---\\ ", "|", " \\---/ "], "2G0lD",
+                [["2G0l", "land just after the preserved anchor"],
+                 ["D", "delete from the cursor through the end of this row"]],
+                "linewise-delete", 3.5, labels=True)),
+            ("M6.06", bridge(
+                "MOVE", "Move a complete build range",
+                "Move the first complete three-row build after the second; do not copy or split either build.",
+                [" /---\\ ", "|  o  |", " \\---/ ", " /===\\ ", "|  O  |", " \\===/ "],
+                [" /===\\ ", "|  O  |", " \\===/ ", " /---\\ ", "|  o  |", " \\---/ "],
+                ":1,3m$<CR>",
+                [[":1,3", "source range: the first complete build"],
+                 ["m$", "move it after the final row"], ["<CR>", "execute the Ex sentence"]],
+                "ex-move", 5.5)),
+        ])
+    elif mid == "M7":
+        rows.extend([
+            ("M7.04", bridge(
+                "DOT", "Repeat one tween-cell change",
+                "Change the same registered dash to equals on three homologous rows by making one change and repeating it.",
+                ["| - |", "| - |", "| - |"], ["| = |", "| = |", "| = |"],
+                "gg0f-r=j.j.",
+                [["gg0f-r=", "make the first one-cell change"],
+                 ["j.", "move to the homologous row and repeat that change twice"]],
+                "repeat", 3.5)),
+            ("M7.04", bridge(
+                "MAC", "Record a bounded landmark macro",
+                "Record one colon-to-dot texture change plus the move to the next row, then replay it across four rows.",
+                ["| : |", "| : |", "| : |", "| : |"],
+                ["| . |", "| . |", "| . |", "| . |"], "ggqaf:r.qj0@aj0@aj0@a",
+                [["qa", "start recording into register a"],
+                 ["f:r.", "change one landmark while recording"],
+                 ["qj0@aj0@aj0@a", "stop, reset each row anchor, and replay on three more rows"]],
+                "macro", 4.5)),
+            ("M7.05", bridge(
+                "GLOBAL", "Apply one bounded Normal payload to matching rows",
+                "On every row containing a lowercase core, replace that core with a star; leave the uppercase hold unchanged.",
+                ["| o |", "| O |", "| o |"], ["| * |", "| O |", "| * |"],
+                ":g/o/normal! for*<CR>",
+                [[":g/o/", "select only rows whose pattern contains lowercase o"],
+                 ["normal! for*", "run the bounded find-and-replace payload on each match"],
+                 ["<CR>", "execute the global command"]],
+                "global-normal", 4.75)),
+            ("M7.04", bridge(
+                "VIS", "Select a character band in Visual mode",
+                "Select the three-cell material band characterwise, then replace the selection in place so the row width and rails stay registered.",
+                ["| --- |", "| --- |", "| --- |"],
+                ["| --- |", "| === |", "| --- |"],
+                "2G0f-v2lr=",
+                [["2G0f-", "land on the first dash of the acting band"],
+                 ["v2l", "select exactly the three character cells"],
+                 ["r=", "replace the selected cells without shifting the row"]],
+                "visual-characterwise", 4.75)),
+        ])
+    elif mid == "M12":
+        rows.append(("M12.04", bridge(
+            "FIND", "Repeat a character find in both directions",
+            "Use one forward character find, repeat it forward once, then reverse the find and brighten the two selected landmarks.",
+            ["| /---\\ |", "| : : : |", "| \\---/ |"],
+            ["| /---\\ |", "| ! ! : |", "| \\---/ |"],
+            "2G0f:;r!,r!",
+            [["2G0f:", "find the first colon landmark"],
+             [";", "repeat the character find forward"],
+             ["r!", "replace that second landmark in place"],
+             [",", "repeat the find in the reverse direction"],
+             ["r!", "replace the earlier landmark in place"]],
+            "char-find-repeat", 3.5)))
+    elif mid == "M14":
+        para = bridge(
+            "PARA", "Cross a frame boundary and put above it",
+            "Yank the first blank-line-separated frame, cross the boundary with }, and put the stored frame above the next frame.",
+            ["| /^\\  |", "| |o|   |", "| \\_/   |", "",
+             "| /^\\  |", "| |+|   |", "| \\_/   |", ""],
+            ["| /^\\  |", "| |o|   |", "| \\_/   |", "",
+             "| /^\\  |", "| |o|   |", "| \\_/   |", "",
+             "| /^\\  |", "| |+|   |", "| \\_/   |", ""],
+            "ggyapgg}jP",
+            [["ggyap", "yank one complete blank-line-separated frame object"],
+             ["gg}", "jump from the first frame to the next paragraph boundary"],
+             ["jP", "place the stored frame above the next frame"]],
+            "paragraph-next", 4.5)
+        para["grammar_families"].append("put-before")
+        para["key_vocabulary"] = _family_breakdown(para["grammar_families"])
+        para["frame_rows"] = module.get("frame_rows")
+        rows.append(("M14.05", para))
+    elif mid == "M15":
+        rows.append(("M15.05", bridge(
+            "BA", "Append one glyph to a selected column block",
+            "Select the final three-row block and append one occluding edge at the true end of each row without redrawing the rows.",
+            ["|..::..::..|", "| []__[]__[]|", "|\\________/|",
+             "|..........|", "|  []__[]__[]|", "|\\________/|"],
+            ["|..::..::..|", "| []__[]__[]|", "|\\________/|",
+             "|..........||", "|  []__[]__[]||", "|\\________/||"],
+            "4G0<C-v>2j$A|<Esc>",
+            [["4G0", "land on the first row of the selected final frame"],
+             ["<C-v>2j", "select one rectangular block through the three rows"],
+             ["$A|<Esc>", "append the edge at every selected row end and return to Normal"]],
+            "block-append", 4.5)))
+    elif mid == "M11":
+        rows.extend([
+            ("M11.04", bridge(
+                "UR", "Inspect undo and redo on one fixed cell",
+                "Replace the middle glyph, undo once, then redo once so the final registered cell is the replacement.",
+                [" /---\\ ", "|  .  |", " \\---/ "],
+                [" /---\\ ", "|  !  |", " \\---/ "], "2G0f.r!u<C-r>",
+                [["2G0f.r!", "replace the one-cell core"], ["u", "undo that change"],
+                 ["<C-r>", "redo it without retyping"]],
+                "undo-redo", 3.5)),
+            ("M11.08", bridge(
+                "VE", "Address an empty registered column",
+                "Place one right edge at exact column 9 on each short row, padding empty cells without drifting the cores.",
+                ["| o |", "| o |", "| o |"], ["| o |   |", "| o |   |", "| o |   |"],
+                ":set virtualedit=all<CR>gg9|i|<Esc>2G9|i|<Esc>3G9|i|<Esc>",
+                [[":set virtualedit=all<CR>", "allow cursor addresses past physical row ends"],
+                 ["N|", "land on an exact one-based column"],
+                 ["i|<Esc>", "insert the registered edge and return to Normal"]],
+                "virtual-column", 7.5)),
+        ])
+    elif mid == "M13":
+        rows.append(("M13.04", bridge(
+            "BE", "Traverse texture by WORD boundaries",
+            "Use WORD starts and ends to retouch three bounded texture clusters on the middle row.",
+            ["| aa bb cc |", "| aa bb cc |", "| aa bb cc |"],
+            ["| a! +b ?c |", "| aa bb cc |", "| aa bb cc |"],
+            "gg0WEr!2Wr?Br+",
+            [["W/E", "move to a WORD start, then its end"],
+             ["2W", "count two WORD starts forward"],
+             ["B", "move back one WORD start before the final replacement"]],
+            "word-boundary", 3.5, labels=True)))
+    elif mid == "M18":
+        rows.append(("M18.05", bridge(
+            "EXPR", "Use an expression only for validation metadata",
+            "Update the CHECK digit from frame metadata while leaving the animation row untouched.",
+            ["CHECK 1", "|  o  |", "CHECK 0"],
+            ["CHECK 1", "|  o  |", "CHECK 1"],
+            ":3s/0/\\=getline(1)[-1:]/<CR>",
+            [[":3s/0/", "on CHECK row 3, replace the zero"],
+             ["\\=getline(1)[-1:]", "evaluate a validation-only replacement from row 1"],
+             ["<CR>", "execute without generating any art row"]],
+            "expression-substitute", 4.5, labels=True)))
+    return rows
+
+
+def command_review_contract(cards):
+    """Prove every visibly taught command family returns as hidden changed art."""
+    first_guided = {}
+    for index, card in enumerate(cards):
+        if card.get("grammar_stage") != "guided" or not card.get("expected"):
+            continue
+        for family in card.get("grammar_families", []):
+            first_guided.setdefault(family, (index, card["id"]))
+    rows = []
+    for family, (guided_index, guided_card_id) in first_guided.items():
+        review = next((card for card in cards[guided_index + 1:]
+                       if card.get("grammar_stage") == "hidden"
+                       and family in card.get("grammar_families", [])
+                       and (card.get("review_variants") or card.get("kind") == "transfer")
+                       and card.get("show_recipe") is False), None)
+        if review is None:
+            raise ValueError(
+                "%s: taught family %s never returns as hidden changed art" %
+                (guided_card_id, family))
+        variants = review.get("review_variants") or review.get("variants") or []
+        rows.append({
+            "grammar_family": family,
+            "guided_card_id": guided_card_id,
+            "review_card_id": review["id"],
+            "changed_art_variants": len(variants),
+            "keys_hidden": True,
+            "evidence": "runtime-validated source-linked changed-art retrieval",
+        })
+    return rows
+
+
 def primer_question(module):
     return {
         "id": "M0.P0.P01", "card_id": "M0.P0", "module_id": "M0",
@@ -3765,6 +4165,50 @@ def duplicate(pair, role, reason, playback, duration_frames=None):
     return row
 
 
+# A command family is not spaced practice merely because its token appears in
+# an answer key.  These four late hidden cards are deliberately assigned a
+# second changed-art bank so the newly visible prerequisite (digraph, text
+# object, characterwise Visual, and open-line authoring) returns as retrieval
+# rather than as a one-time worked example.  The perturbation is on a stable
+# non-acting cell in the first frame; the same cell is changed in start and
+# target, so the authored key path still has to produce the animation edit.
+REVIEW_PERTURB_ROWS = {
+    "M3.04": 0,   # head rail; ci( acts on line 8
+    "M3.08": 0,   # first pose rail; digraph acts on line 14
+    "M7.04": 2,   # left contour of the first held frame; v acts on its dashes
+    "M8.04": 0,   # first pose; o appends rows after the existing strip
+}
+
+
+def attach_command_review_variants(card):
+    """Attach two changed-art, key-hidden reviews for a late first-use card."""
+    row_index = REVIEW_PERTURB_ROWS.get(card["id"])
+    if row_index is None or card.get("review_variants") or card.get("kind") == "transfer":
+        return
+    start = list(card.get("start", []))
+    target = list(card.get("target", []))
+    if row_index >= len(start) or row_index >= len(target):
+        raise ValueError("review perturbation row outside %s" % card["id"])
+    row = start[row_index]
+    positions = [index for index, char in enumerate(row) if not char.isspace()]
+    if not positions:
+        raise ValueError("review perturbation row has no stable art in %s" % card["id"])
+    position = positions[0]
+    if start[row_index][position] != target[row_index][position]:
+        raise ValueError("review perturbation would alter acting cell in %s" % card["id"])
+    variants = []
+    for marker in ("!", "+"):
+        changed_start, changed_target = list(start), list(target)
+        changed_start[row_index] = changed_start[row_index][:position] + marker + changed_start[row_index][position + 1:]
+        changed_target[row_index] = changed_target[row_index][:position] + marker + changed_target[row_index][position + 1:]
+        variants.append({
+            "start": changed_start, "target": changed_target,
+            "expected": card["expected"], "recipe": card.get("recipe", []),
+            "cursor": card.get("cursor", "^"),
+        })
+    card["review_variants"] = variants
+
+
 # Adjacent identical frames must be intentional and machine-readable. A
 # scaffold is an authoring state that later cards must change; it is not a hold.
 DUPLICATE_META = {
@@ -3792,6 +4236,7 @@ DUPLICATE_META = {
     "M10.08": [duplicate((3, 4), "hold", "retain the verified proportional impact hold", True, 2)],
     "M11.02": [duplicate((1, 2), "scaffold", "working copy for the slack-tension redraw", False)],
     "M14.02": [duplicate((1, 2), "scaffold", "working paragraph-frame copy for the second palette variant", False)],
+    "M14.PARA": [duplicate((1, 2), "scaffold", "working paragraph-frame copy used to make } and P visible", False)],
     "M14.05": [duplicate((2, 3), "scaffold", "working paragraph-frame copy reserved for the return variant", False)],
     "M15.02": [duplicate((1, 2), "scaffold", "working material-frame copy for offset and lightening", False)],
     "M17.02": [duplicate((3, 4), "scaffold", "working copy of the third shell for a fourth distinct pose", False)],
@@ -3834,6 +4279,13 @@ def make_cards(module, catalog_prompts):
             card["hint"] = action_hint(module, card)
             if ordinal == 5:
                 card["method_alternatives"] = card.pop("alternatives")
+                labels = [method["label"] for method in card["method_alternatives"]]
+                card["prompt"] = (
+                    "%s · USE ONE METHOD — choose one accepted path: %s. Do not perform both. "
+                    "Complete the target with the one method you selected; the tutor compares "
+                    "the method evidence only after that single path passes."
+                    % (card_id, " or ".join(labels))
+                )
             if card["artifact"] == "project":
                 migration_starts = module.get("migration_starts", {}).get(ordinal, [])
                 if migration_starts:
@@ -3885,6 +4337,7 @@ def make_cards(module, catalog_prompts):
             card["animation"] = animation
         if card_id in DUPLICATE_META:
             card["duplicate_frames"] = DUPLICATE_META[card_id]
+        attach_command_review_variants(card)
         if card.get("review_variants") or card.get("kind") == "transfer":
             card["review_source_card_id"] = card_id
             if card.get("method_requirement"):
@@ -3899,10 +4352,15 @@ def make_cards(module, catalog_prompts):
         card["master_stages"] = stages
         if card.get("expected"):
             card["grammar_families"] = infer_grammar_families(card)
-            card["grammar_stage"] = (
-                "guided" if ordinal in (1, 2) else
-                "hidden" if ordinal in (4, 5, 6, 8) else "interpretation"
-            )
+            # Inserted bridge cards declare their own guided stage even when
+            # their fractional ordinal sits beside a hidden card.  Do not
+            # recategorise those visible prerequisite performances by the
+            # eight-card phase table.
+            if not card.get("grammar_stage"):
+                card["grammar_stage"] = (
+                    "guided" if ordinal in (1, 2) else
+                    "hidden" if ordinal in (4, 5, 6, 8) else "interpretation"
+                )
             card.setdefault("key_vocabulary", _family_breakdown(card["grammar_families"]))
         else:
             card["grammar_families"] = ["paired-animation-neovim-diagnosis"]
@@ -3920,6 +4378,18 @@ def build():
             primer, open_line, ex_copy = m0_extra_cards(module)
             module_cards = [primer, module_cards[0], module_cards[1], open_line,
                             module_cards[2], module_cards[3], ex_copy] + module_cards[4:]
+        bridge_rows = guided_bridge_cards(module)
+        if bridge_rows:
+            by_before = {}
+            for before, bridge_card in bridge_rows:
+                if bridge_card["id"] in DUPLICATE_META:
+                    bridge_card["duplicate_frames"] = DUPLICATE_META[bridge_card["id"]]
+                by_before.setdefault(before, []).append(bridge_card)
+            expanded = []
+            for existing in module_cards:
+                expanded.extend(by_before.get(existing["id"], []))
+                expanded.append(existing)
+            module_cards = expanded
         modules.append({
             "id": module["id"], "title": module["title"], "node": module["node"],
             "project_id": module["project"], "skill": module["skill"],
@@ -3978,6 +4448,8 @@ def build():
         })
     verified_methods = []
     verified_reviews = []
+    verified_sequence = []
+    first_guided = {}
     for card in cards:
         if card.get("method_requirement"):
             exact = bool(card["method_requirement"].get("exact_any_of"))
@@ -4000,12 +4472,24 @@ def build():
                 "changed_art_variants": len(variants),
                 "evidence": "source-linked changed-art review bank",
             })
+        if card.get("grammar_stage") == "guided":
+            for family in card.get("grammar_families", []):
+                first_guided.setdefault(family, card["id"])
+        elif card.get("grammar_stage") == "hidden":
+            for family in card.get("grammar_families", []):
+                verified_sequence.append({
+                    "hidden_card_id": card["id"], "grammar_family": family,
+                    "prior_guided_card_id": first_guided.get(family),
+                })
+    command_reviews = command_review_contract(cards)
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.22",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.24",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "modules": modules, "cards": cards, "questions": questions,
         "verified_method_coverage": verified_methods,
         "verified_review_coverage": verified_reviews,
+        "verified_grammar_sequence": verified_sequence,
+        "verified_command_review_coverage": command_reviews,
     }
 
 
@@ -4043,6 +4527,32 @@ def validate(cur):
         ids = [row["id"] for row in rows]
         if len(ids) != len(set(ids)): errors.append(f"duplicate {label} ids")
     qids = {q["id"] for q in questions}
+    first_guided = {}
+    expected_sequence = []
+    for card in cards:
+        if card.get("grammar_stage") == "guided":
+            for family in card.get("grammar_families", []):
+                first_guided.setdefault(family, card["id"])
+        elif card.get("grammar_stage") == "hidden":
+            for family in card.get("grammar_families", []):
+                prior = first_guided.get(family)
+                expected_sequence.append({
+                    "hidden_card_id": card["id"], "grammar_family": family,
+                    "prior_guided_card_id": prior,
+                })
+                if not prior:
+                    errors.append(
+                        f"{card['id']}: hidden {family} has no earlier guided performance")
+    if cur.get("verified_grammar_sequence") != expected_sequence:
+        errors.append("verified grammar sequence does not match card order")
+    try:
+        expected_command_reviews = command_review_contract(cards)
+    except ValueError as exc:
+        errors.append(str(exc))
+        expected_command_reviews = []
+    if cur.get("verified_command_review_coverage") != expected_command_reviews:
+        errors.append(
+            "verified command review coverage must match each guided family and its later hidden retrieval")
     for q in questions:
         if not q.get("source_ref"): errors.append(f"{q['id']}: missing source reference")
         if ("ANIMATION\n" not in q.get("prompt", "")
@@ -4101,8 +4611,10 @@ def validate(cur):
         own = [c for c in cards if c["module_id"] == module["id"]]
         if module["card_ids"] != [c["id"] for c in own]:
             errors.append(f"{module['id']}: card_ids do not match owned cards")
-        if module["id"] != "M0" and [c["ordinal"] for c in own] != list(range(1, 9)):
-            errors.append(f"{module['id']}: card sequence is not 1..8")
+        original_ordinals = [c["ordinal"] for c in own
+                             if re.fullmatch(r"M\d+\.\d\d", c["id"])]
+        if original_ordinals != list(range(1, 9)):
+            errors.append(f"{module['id']}: original card sequence is not 1..8")
         project_steps = [c for c in own if c.get("artifact") == "project"]
         for before, after in zip(project_steps, project_steps[1:]):
             if before["target"] != after["start"]:
@@ -4129,7 +4641,7 @@ def validate(cur):
         elif not card.get("paired_question_ids"):
             errors.append(f"{card['id']}: every card needs a paired question")
         if card.get("start"):
-            frame_rows = module_map[card["module_id"]].get("frame_rows")
+            frame_rows = card.get("frame_rows", module_map[card["module_id"]].get("frame_rows"))
             check_visual(card["id"], "start", card["start"], frame_rows)
             check_visual(card["id"], "target", card["target"], frame_rows)
         for qid in card.get("question_ids", []):
@@ -4139,7 +4651,7 @@ def validate(cur):
                 errors.append(f"{card['id']}: missing executable recipe")
         if card.get("frame_slices") and sum(card["frame_slices"]) != len(card["target"]):
             errors.append(f"{card['id']}: frame slices do not cover target rows")
-        frame_rows = module_map[card["module_id"]].get("frame_rows")
+        frame_rows = card.get("frame_rows", module_map[card["module_id"]].get("frame_rows"))
         if frame_rows and card.get("target"):
             frames = [card["target"][index:index + frame_rows]
                       for index in range(0, len(card["target"]), frame_rows)]
@@ -4191,7 +4703,7 @@ def validate(cur):
                    for variant in review_variants):
                 errors.append(f"{card['id']}: incomplete card-specific review variant")
             for index, variant in enumerate(review_variants, 1):
-                frame_rows = module_map[card["module_id"]].get("frame_rows")
+                frame_rows = card.get("frame_rows", module_map[card["module_id"]].get("frame_rows"))
                 check_visual(card["id"], f"review variant {index} start",
                              variant.get("start", []), frame_rows)
                 check_visual(card["id"], f"review variant {index} target",

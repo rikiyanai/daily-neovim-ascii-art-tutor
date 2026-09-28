@@ -90,6 +90,8 @@ def validate_curriculum(cur):
         if any(p not in seen_modules for p in module.get("prerequisites", [])):
             raise ValueError("invalid or cyclic prerequisite at %s" % module["id"])
         seen_modules.add(module["id"])
+    first_guided = {}
+    expected_sequence = []
     for card in cur["cards"]:
         if card.get("module_id") not in module_set:
             raise ValueError("card %s refers to an unknown module" % card["id"])
@@ -149,7 +151,7 @@ def validate_curriculum(cur):
                 raise ValueError("card %s lacks explicit review source/family linkage" % card["id"])
         elif card.get("review_source_card_id") or card.get("review_method_family"):
             raise ValueError("card %s declares review linkage without changed art" % card["id"])
-        frame_rows = module_map[card["module_id"]].get("frame_rows")
+        frame_rows = card.get("frame_rows", module_map[card["module_id"]].get("frame_rows"))
         if frame_rows and card.get("target"):
             frames = [card["target"][index:index + frame_rows]
                       for index in range(0, len(card["target"]), frame_rows)]
@@ -172,6 +174,51 @@ def validate_curriculum(cur):
                 raise ValueError("card %s has incomplete animation metadata" % card["id"])
             if card["animation"].get("role") == "hold" and not card["animation"].get("hold_reason"):
                 raise ValueError("card %s has a hold without a reason" % card["id"])
+        if card.get("grammar_stage") == "guided":
+            for family in card.get("grammar_families", []):
+                first_guided.setdefault(family, card["id"])
+        elif card.get("grammar_stage") == "hidden":
+            for family in card.get("grammar_families", []):
+                prior = first_guided.get(family)
+                if not prior:
+                    raise ValueError("card %s hides %s before guided performance" % (
+                        card["id"], family))
+                expected_sequence.append({
+                    "hidden_card_id": card["id"], "grammar_family": family,
+                    "prior_guided_card_id": prior,
+                })
+    if cur.get("verified_grammar_sequence") != expected_sequence:
+        raise ValueError("verified grammar sequence does not match card order")
+    # A family is not covered by an answer-key token alone.  It must return
+    # later as a key-hidden card with source-linked changed art, so the spaced
+    # review contract proves retrieval rather than mere exposure.
+    first_guided = {}
+    command_review_rows = []
+    for index, card in enumerate(cur["cards"]):
+        if card.get("grammar_stage") != "guided" or not card.get("expected"):
+            continue
+        for family in card.get("grammar_families", []):
+            first_guided.setdefault(family, (index, card["id"]))
+    for family, (guided_index, guided_id) in first_guided.items():
+        review = next((candidate for candidate in cur["cards"][guided_index + 1:]
+                       if candidate.get("grammar_stage") == "hidden"
+                       and family in candidate.get("grammar_families", [])
+                       and (candidate.get("review_variants")
+                            or candidate.get("kind") == "transfer")
+                       and candidate.get("show_recipe") is False), None)
+        if review is None:
+            raise ValueError("%s has no hidden changed-art review for %s" % (guided_id, family))
+        variants = review.get("review_variants") or review.get("variants") or []
+        command_review_rows.append({
+            "grammar_family": family,
+            "guided_card_id": guided_id,
+            "review_card_id": review["id"],
+            "changed_art_variants": len(variants),
+            "keys_hidden": True,
+            "evidence": "runtime-validated source-linked changed-art retrieval",
+        })
+    if cur.get("verified_command_review_coverage") != command_review_rows:
+        raise ValueError("verified command review coverage does not match hidden changed-art retrieval")
     choice_forms = {"multiple_choice", "predict_art"}
     text_forms = {"typed_keys", "decode", "complete", "why"}
     for q in cur["questions"]:
@@ -659,6 +706,35 @@ def _print_grammar_breakdown(q, missing=None):
         print("  Reconsider: %s" % "; ".join(" / ".join(group) for group in missing))
 
 
+def _question_answer_guidance(form):
+    """Show the response shape before free text is graded.
+
+    Examples deliberately use a different command/problem, so they teach the
+    interface without giving away the authored answer under examination.
+    """
+    if form == "typed_keys":
+        return [
+            "ANSWER FORMAT  type only the Vim keys; write special keys as <Esc> or <CR>.",
+            "EXAMPLE (different problem)  `go down 2 rows, replace x with O` → `2jfxrO`",
+        ]
+    if form == "decode":
+        return [
+            "ANSWER FORMAT  one plain-language sentence naming each command part and its effect.",
+            "EXAMPLE (different command)  `2dw` = count 2 + delete operator + word motion; delete two words.",
+        ]
+    if form == "complete":
+        return [
+            "ANSWER FORMAT  type only the missing key(s); `<CR>` means Enter.",
+            "EXAMPLE (different command)  to execute `:3s/a/b/g`, answer `<CR>`.",
+        ]
+    if form == "why":
+        return [
+            "ANSWER FORMAT  `Use X because …; avoid Y because …` in one sentence.",
+            "EXAMPLE (different problem)  Use `r` because it preserves row width; avoid `x` because it shifts cells.",
+        ]
+    return ["ANSWER FORMAT  answer the question in one plain-language sentence."]
+
+
 def ask_authored_question(q, *, input_fn=input, shuffle=True, rendered=None,
                           evidence=None):
     """Ask one authored form; return (right, semantic answer)."""
@@ -678,13 +754,24 @@ def ask_authored_question(q, *, input_fn=input, shuffle=True, rendered=None,
         prompt = "  keys (Vim notation such as <Esc> or <CR>): "
     else:
         prompt = "  your answer: "
+    print()
+    for line in _question_answer_guidance(form):
+        print("  %s" % line)
     if rendered:
         rendered(q, [])
-    try:
-        answer = input_fn(prompt).strip()
-    except (EOFError, KeyboardInterrupt):
-        print()
-        return None, None
+    while True:
+        try:
+            raw_answer = input_fn(prompt)
+            # VD-13: typed keys are graded by effect, and a trailing space is a real
+            # key (`r ` erases a cell). .strip() turned `4G05lr ` into `4G05lr`.
+            answer = (raw_answer.rstrip("\r\n") if form == "typed_keys"
+                      else raw_answer.strip())
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return None, None
+        if answer:
+            break
+        print("  Blank input did not count as an attempt. Use the ANSWER FORMAT above, or Ctrl-c to leave.")
     if evidence is not None:
         evidence.update({"raw_answer": answer, "question_form": form,
                          "question_prompt_sha256": hashlib.sha256(
@@ -709,6 +796,11 @@ def ask_authored_question(q, *, input_fn=input, shuffle=True, rendered=None,
     print("  %s" % message)
     if not right:
         _print_grammar_breakdown(q, missing)
+        sample = contract.get("sample_answer")
+        if sample:
+            label = "ONE WORKING ANSWER" if form == "typed_keys" else "ONE ACCEPTED ANSWER"
+            print("  %s" % label)
+            print("    %s" % sample)
     return right, answer
 
 
@@ -892,19 +984,60 @@ def _card_key_strings(card):
     return [k for k in keys if k]
 
 
-def _key_teaching(card, width=None):
-    """VD-13: teach how the needed keys work; reveal the exact answer only when shown."""
+def _families_shown_before(cur, card):
+    """Command families whose exact keys an earlier guided lesson displayed."""
+    if not cur:
+        return None
+    K = _keys_module()
+    order = [cid for module in cur["modules"] for cid in module["card_ids"]]
+    cards = {c["id"]: c for c in cur["cards"]}
+    source = card.get("review_source_card_id") or card["id"]
+    shown = set()
+    for cid in order:
+        if cid == source:
+            break
+        other = cards.get(cid, {})
+        if other.get("show_recipe") and other.get("expected"):
+            shown.update(family for family, _m in K.families(other["expected"]))
+    return shown
+
+
+def _key_teaching(card, width=None, cur=None):
+    """VD-13: teach how the needed keys work; reveal the exact answer only when shown.
+
+    With the curriculum, a family that no earlier guided lesson displayed is
+    marked NEW and taught with a worked example on neutral text, so no lesson
+    silently demands a command the learner has never seen.
+    """
     strings = _card_key_strings(card)
     if not strings:
         return []
     K = _keys_module()
     clip = (lambda text: _clip(text, width)) if width else (lambda text: text)
+    shown_before = None if card.get("show_recipe") else _families_shown_before(cur, card)
+    trivial = {"j", "k", "h", "l", "[count]j", "[count]k", "[count]h", "[count]l"}
+    new_lines = []
+    if shown_before is not None:
+        for keys in strings[:1]:
+            for family, _meaning in K.families(keys):
+                if family in shown_before or family in trivial:
+                    continue
+                teach = K.FAMILY_TEACH.get(family.replace('"{reg}', "")) or \
+                    K.FAMILY_TEACH.get(family.replace('"{reg}', "").replace("[count]", ""))
+                example = K.example_for(family)
+                if teach and ("  NEW  " + teach) not in new_lines:
+                    new_lines.append("  NEW  " + teach)
+                    if example:
+                        new_lines.append("       example: " + example)
     if card.get("show_recipe"):
         lines = ["THE RECIPE, KEY BY KEY"]
         lines += ["  " + clip(line) for line in K.explain_lines(strings[0])]
         return lines
     lines = ["HOW THE KEYS YOU NEED WORK  (the exact answer stays hidden)",
              "  " + clip(K.GRAMMAR)]
+    if new_lines:
+        lines.append("FIRST TIME YOU NEED THESE  (no earlier lesson showed them)")
+        lines += [clip(line) for line in new_lines]
     seen = []
     for keys in strings:
         for line in K.teach_lines(keys):
@@ -974,6 +1107,9 @@ def _write_session_lesson(cfg, cur, progress, card):
     recipe = " → ".join(keys for keys, _why in card.get("recipe", []))
     hint = card.get("hint") or "; then ".join(
         why for _keys, why in card.get("recipe", []))
+    if "choose the smallest normal-mode operation" in hint:
+        # VD-13: a generic hint teaches nothing; point at the per-key teaching.
+        hint = "use the commands explained under HOW THE KEYS YOU NEED WORK"
     legacy_keys, legacy_sources, legacy_concepts = _legacy_teaching(card)
     key_vocabulary = list(card.get("key_vocabulary", []))
     for line in legacy_keys:
@@ -997,9 +1133,9 @@ def _write_session_lesson(cfg, cur, progress, card):
             header.append("RECIPE  " + recipe)
         else:
             header.append("EVIDENCE  exact command keys remain hidden")
-        header.extend(_key_teaching(card, width=66))
+        header.extend(_key_teaching(card, width=66, cur=cur))
         if card.get("method_alternatives"):
-            header.append("COMPARISON  appears after verification")
+            header.append("USE ONE METHOD  either one passes; both are compared after you pass")
         header.extend([
             "WHY THIS EXISTS",
             "Motion intent: " + _clip(context["module"]["meaning"], 57),
@@ -1046,7 +1182,7 @@ def _write_session_lesson(cfg, cur, progress, card):
         header.extend("  %-14s %s" % (keys, why) for keys, why in card["recipe"])
     else:
         header.extend(["HINT", "  " + hint, "  Exact keystrokes stay hidden until evaluation."])
-    header.extend(_key_teaching(card))
+    header.extend(_key_teaching(card, cur=cur))
     if not show_recipe and card.get("method_alternatives"):
         header.extend([
             "CHALLENGE",
