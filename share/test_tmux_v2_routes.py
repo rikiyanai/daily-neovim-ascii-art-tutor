@@ -21,8 +21,14 @@ HOOK = Path.home() / ".tmux" / "scripts" / "vim-drill-popup.sh"
 CUR = json.loads((ROOT / "share" / "curriculum-v2.json").read_text(encoding="utf-8"))
 CARDS = {card["id"]: card for card in CUR["cards"]}
 QUESTIONS = {question["id"]: question for question in CUR["questions"]}
+M0_CARD_IDS = next(module for module in CUR["modules"] if module["id"] == "M0")["card_ids"]
 COLUMNS = int(os.environ.get("VIM_DAILY_TEST_COLUMNS", "188"))
 ROWS = int(os.environ.get("VIM_DAILY_TEST_ROWS", "49"))
+
+
+def passed_before(card_id):
+    """Seed every earlier M0 card without freezing a stale numeric ordinal."""
+    return M0_CARD_IDS.index(card_id)
 
 
 def run(*args, **kwargs):
@@ -358,13 +364,13 @@ if "--only-m005" in sys.argv:
     # Reproduce the operator's valid-but-non-pristine interaction: look around,
     # correct a typo inside the addressed copy, then save and quit separately.
     # The exact target plus the semantic :{range}t{destination} command must pass.
-    exercise("M0.05 corrected method evidence", passed=7, route="compare",
+    exercise("M0.05 corrected method evidence", passed=passed_before("M0.05"), route="compare",
              card_id="M0.05", artifact_card="M0.05",
              key_sequence="jj:7,9t$<CR>:ew<BS><BS>wq<CR>")
     raise SystemExit(0)
 
 if "--only-check" in sys.argv:
-    exercise("five-question module check", passed=11, route="check", card_id="M0.08",
+    exercise("five-question module check", passed=passed_before("M0.08"), route="check", card_id="M0.08",
              artifact_card="M0.08")
     raise SystemExit(0)
 
@@ -373,16 +379,16 @@ if "--only-primer" in sys.argv:
     raise SystemExit(0)
 
 exercise("grammar primer", passed=0, route="concept", card_id="M0.P0")
-exercise("conceptual check", passed=4, route="concept", card_id="M0.03",
+exercise("conceptual check", passed=passed_before("M0.03"), route="concept", card_id="M0.03",
          choice_order=(2, 3, 0, 1))
-exercise("conceptual changed-stem retry", passed=4, route="concept", card_id="M0.03",
+exercise("conceptual changed-stem retry", passed=passed_before("M0.03"), route="concept", card_id="M0.03",
          failed_attempts=1, choice_order=(2, 3, 0, 1))
-exercise("guided full task and target", passed=1, route="guided", card_id="M0.01")
-exercise("independent retrieval", passed=5, route="independent", card_id="M0.04",
+exercise("guided full task and target", passed=passed_before("M0.01"), route="guided", card_id="M0.01")
+exercise("independent retrieval", passed=passed_before("M0.04"), route="independent", card_id="M0.04",
          artifact_card="M0.04")
-exercise("two executable methods", passed=7, route="compare", card_id="M0.05",
+exercise("two executable methods", passed=passed_before("M0.05"), route="compare", card_id="M0.05",
          artifact_card="M0.05")
-exercise("five-question module check", passed=11, route="check", card_id="M0.08",
+exercise("five-question module check", passed=passed_before("M0.08"), route="check", card_id="M0.08",
          artifact_card="M0.08")
 exercise("spaced review", passed=4, route="review", due_review=True)
 
