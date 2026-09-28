@@ -21,31 +21,41 @@ History
 Usage
   vim-daily-gate                 run a drill if one is due
   vim-daily-gate --if-due        same, but exit 0 silently when nothing is due
-  vim-daily-gate --force         run the next drill regardless of cap/cooldown
+  vim-daily-gate --force         run the next project card regardless of cap/cooldown
+  vim-daily-gate --card M0.01    run one available project card
+  vim-daily-gate --tree          skill tree, project progress, and next card
+  vim-daily-gate --project M0    print the persistent strip for one module
+  vim-daily-gate --preview M0    play/inspect the verified module strip
   vim-daily-gate --drill N|ID    run a specific drill
-  vim-daily-gate --list          list every drill, its tier and its skill
+  vim-daily-gate --list          list the 88 project cards
+  vim-daily-gate --legacy-list   list the original 46 recipe drills
   vim-daily-gate --due-quiet     exit 0 if a drill is due, 1 if not, no output
   vim-daily-gate --status        progress, streak and per-skill mastery
   vim-daily-gate --streak        one line: the current streak
   vim-daily-gate --concepts [N]  print the paradigm chapters (the "why")
-  vim-daily-gate --export-progress   progress as JSON on stdout
+  vim-daily-gate --quiz [CONCEPT] multiple-choice + key-order questions
 
 Environment
   VIM_DAILY_SKIP=1          bypass entirely for this shell
   VIM_DAILY_TARGET=12       drills per day
-  VIM_DAILY_COOLDOWN=3600   seconds between prompts (default: hourly)
+  VIM_DAILY_COOLDOWN=900    seconds between prompts (default: every 15 minutes)
   VIM_DAILY_MAX_TRIES=3     attempts before the gate lets you through anyway
-  VIM_DAILY_CURRICULUM      path to an alternate curriculum.json
+  VIM_DAILY_CURRICULUM      path to an alternate legacy curriculum.json
+  VIM_DAILY_CURRICULUM_V2   path to an alternate curriculum-v2.json
+  VIM_DAILY_CLEAN=1         opt into isolated Neovim with fallback tutor UI
+  VIM_DAILY_USE_USER_CONFIG=0 opt out of the personal config (same as clean)
 """
 
 import datetime as dt
 import difflib
+import importlib.util
 import json
 import os
 import random
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 HOME = os.path.expanduser("~")
 STATE = os.path.join(os.environ.get("XDG_STATE_HOME", os.path.join(HOME, ".local/state")), "vim-daily")
@@ -55,7 +65,7 @@ PROGRESS = os.path.join(STATE, "progress.json")
 STAMP = os.path.join(STATE, "last-prompt")
 
 TARGET = int(os.environ.get("VIM_DAILY_TARGET", "12"))
-COOLDOWN = int(os.environ.get("VIM_DAILY_COOLDOWN", "3600"))
+COOLDOWN = int(os.environ.get("VIM_DAILY_COOLDOWN", "900"))
 MAX_TRIES = int(os.environ.get("VIM_DAILY_MAX_TRIES", "3"))
 EDITOR = os.environ.get("EDITOR", "nvim")
 
@@ -186,7 +196,7 @@ def strip_save_tail(toks):
 def keystroke_table(typed, expected, width=34):
     """Two columns: what you did, next to what the recipe asked for."""
     a, b = strip_save_tail(typed), strip_save_tail(expected)
-    if not a:
+    if not a and not b:
         return ["  (no keystrokes recorded)"]
     rows = []
     for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
@@ -223,7 +233,11 @@ def day_log(day):
 
 
 def day_counts():
-    """{date: completions} for every day the gate has ever recorded."""
+    """{date: passes} for every day the gate has ever recorded.
+
+    Skip and let-through rows (result=*) are visible in the ledger and in
+    --export-progress, but they earn nothing: no cap credit, no streak.
+    """
     counts = {}
     if not os.path.isdir(STATE):
         return counts
@@ -233,7 +247,7 @@ def day_counts():
             continue
         try:
             with open(os.path.join(STATE, name)) as f:
-                n = sum(1 for line in f if line.strip())
+                n = sum(1 for line in f if line.strip() and "result=" not in line)
         except OSError:
             n = 0
         if n:
@@ -265,30 +279,42 @@ def streaks(counts, today=None):
 
 
 def load_progress(drills):
+    by_id = {d["id"] for d in drills}
+    p = None
     if os.path.exists(PROGRESS):
         try:
             with open(PROGRESS) as f:
-                return json.load(f)
+                p = json.load(f)
         except (OSError, ValueError):
-            pass
-    # First run: seed mastery from the logs the bash version already wrote,
-    # matching on the drill title it recorded.
-    p = {"schema": "vim-daily/progress@1", "drills": {}, "last_id": None}
-    by_title = {d["title"]: d["id"] for d in drills}
-    for name in sorted(os.listdir(STATE)) if os.path.isdir(STATE) else []:
-        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}\.log", name):
-            continue
-        with open(os.path.join(STATE, name)) as f:
-            for line in f:
-                fields = dict(kv.split("=", 1) for kv in line.rstrip("\n").split("\t") if "=" in kv)
-                did = by_title.get(fields.get("drill", ""))
-                if not did:
-                    continue
-                rec = p["drills"].setdefault(did, {"seen": 0, "passed": 0, "failed": 0, "last": None})
-                rec["passed"] += 1
-                rec["seen"] += 1
-                rec["last"] = fields.get("completed_at")
-                p["last_id"] = did
+            p = None
+    if p is None:
+        # First run: seed mastery from the logs the bash version already wrote,
+        # keyed on the stable drill id, falling back to the recorded title.
+        # Skip/let-through rows (result=*) never seeded a pass.
+        p = {"schema": "vim-daily/progress@1", "drills": {}, "last_id": None}
+        by_title = {d["title"]: d["id"] for d in drills}
+        for name in sorted(os.listdir(STATE)) if os.path.isdir(STATE) else []:
+            if not re.fullmatch(r"\d{4}-\d{2}-\d{2}\.log", name):
+                continue
+            with open(os.path.join(STATE, name)) as f:
+                for line in f:
+                    fields = dict(kv.split("=", 1) for kv in line.rstrip("\n").split("\t") if "=" in kv)
+                    if "result" in fields:
+                        continue
+                    did = fields.get("id") or by_title.get(fields.get("drill", ""))
+                    if did not in by_id:
+                        continue
+                    rec = p["drills"].setdefault(did, {"seen": 0, "passed": 0, "failed": 0, "last": None})
+                    rec["passed"] += 1
+                    rec["seen"] += 1
+                    rec["last"] = fields.get("completed_at")
+                    p["last_id"] = did
+    # Prune renames: ids the curriculum no longer ships (e.g. counted-insert).
+    for did in list(p.get("drills", {})):
+        if did not in by_id:
+            del p["drills"][did]
+    if p.get("last_id") not in by_id:
+        p["last_id"] = None
     return p
 
 
@@ -307,18 +333,150 @@ def unlocked(drills, tiers, total_drills):
 
 
 def pick_drill(drills, tiers, progress, total_drills):
-    """Weakest skill first: fewest passes, then least recently seen.
+    """Weakest skill first, failures weighted, recent drills excluded.
 
-    This replaces the bash version's `day-of-year % 7`, which meant the same
-    two drills every day regardless of what you were bad at.
+    Replaces the bash version's `day-of-year % 7`, which served the same two
+    drills every day regardless of what you were bad at.
     """
     pool = unlocked(drills, tiers, total_drills)
-    if len(pool) > 1 and progress.get("last_id"):
+    if len(pool) > 4:
+        # Exclude the 3 most recently seen drills plus the last one served,
+        # so back-to-back days stop feeling like repeats. Falls back to the
+        # full pool rather than an empty one.
+        drop = {progress.get("last_id")}
+        seen = sorted(
+            ((progress["drills"].get(d["id"], {}).get("last") or "", d["id"]) for d in pool),
+            reverse=True)
+        drop |= {did for last, did in seen[:3] if last}
+        pool = [d for d in pool if d["id"] not in drop] or pool
+    elif len(pool) > 1 and progress.get("last_id"):
         pool = [d for d in pool if d["id"] != progress["last_id"]] or pool
     def key(d):
         r = progress["drills"].get(d["id"], {})
-        return (r.get("passed", 0), r.get("last") or "", random.random())
+        # Struggle ranks first: failures offset passes. Never-tried (0/0)
+        # sorts above mastered, below anything you are failing at.
+        return (r.get("passed", 0) - r.get("failed", 0), r.get("last") or "", random.random())
     return sorted(pool, key=key)[0]
+
+
+def coverage(drills, progress):
+    """(drills passed at least once, total drills)."""
+    n = sum(1 for d in drills if progress["drills"].get(d["id"], {}).get("passed", 0) > 0)
+    return n, len(drills)
+
+
+def concept_mastery(drills, progress):
+    """{concept: {passed, total}}, in curriculum order of first appearance."""
+    out = {}
+    for d in drills:
+        cell = out.setdefault(d.get("concept", ""), {"passed": 0, "total": 0})
+        cell["total"] += 1
+        if progress["drills"].get(d["id"], {}).get("passed", 0) > 0:
+            cell["passed"] += 1
+    return out
+
+
+def weakest_concept(drills, progress):
+    best = None
+    for name, cell in concept_mastery(drills, progress).items():
+        if not cell["total"]:
+            continue
+        ratio = cell["passed"] / cell["total"]
+        if best is None or ratio < best[1]:
+            best = (name, ratio)
+    return best[0] if best else ""
+
+
+# =========================================================================
+# quiz - multiple-choice and key-order questions per concept
+# =========================================================================
+
+QUESTIONS = {
+    "grammar": [
+        {"type": "mc", "q": "What does dd mean?",
+         "choices": ["delete the current line", "delete one word",
+                     "duplicate the current line", "change the current line"],
+         "answer": 0,
+         "why": "A doubled operator acts on the whole line: dd deletes it."},
+        {"type": "keys", "q": "Delete the current line. What keys, in what order?",
+         "answer": "dd",
+         "why": "Verb doubled = linewise: dd."},
+        {"type": "mc", "q": "In d2w, what job does the 2 do?",
+         "choices": ["it is the verb", "it is the count: do it twice",
+                     "it is the noun", "it deletes line 2"],
+         "answer": 1,
+         "why": "[count] [verb] [noun]: d-2-w deletes two words."},
+        {"type": "mc", "q": "In yap, which key is the verb?",
+         "choices": ["y", "a", "p", "all three at once"],
+         "answer": 0,
+         "why": "y yanks (verb); ap names the noun: around this paragraph."},
+        {"type": "keys",
+         "q": "Cursor anywhere inside double quotes. Change the quoted text. Keys, in what order?",
+         "answer": 'ci"',
+         "why": 'c (verb) + i" (noun): change inside the quotes.'},
+        {"type": "mc", "q": "C is a contraction of which full sentence?",
+         "choices": ["c$", "cc", "cl", "ciw"],
+         "answer": 0,
+         "why": "C changes to end of line: exactly c$."},
+    ],
+    "modes": [
+        {"type": "mc", "q": "Single-letter commands like dd and yy live in which mode?",
+         "choices": ["Insert", "Normal", "Visual", "Command-line"],
+         "answer": 1,
+         "why": "Normal mode frees the whole alphabet for commands."},
+        {"type": "keys", "q": "You are in Insert mode. Get back to Normal mode. Keys?",
+         "answer": "<Esc>",
+         "why": "<Esc> returns to Normal mode."},
+    ],
+}
+
+
+def do_quiz(cur, progress, want):
+    if want not in QUESTIONS:
+        print("Quiz banks: %s" % ", ".join(sorted(QUESTIONS)))
+        for name in sorted(QUESTIONS):
+            print("  vim-drill --quiz %-8s (%d questions)" % (name, len(QUESTIONS[name])))
+        if want:
+            print("\nNo question bank for %r yet." % want)
+        return 0
+    if not sys.stdin.isatty():
+        return 0
+    bank = QUESTIONS[want]
+    title = cur["concepts"].get(want, {}).get("title", want)
+    print("%sQuiz: %s%s   (%d questions)" % (BOLD, title, OFF, len(bank)))
+    score = 0
+    for i, q in enumerate(bank, 1):
+        print("\n%d. %s" % (i, q["q"]))
+        if q["type"] == "mc":
+            for j, ch in enumerate(q["choices"]):
+                print("   %s) %s" % ("abcd"[j], ch))
+            try:
+                ans = input("   answer (a-%s): " % "abcd"[len(q["choices"]) - 1]).strip().lower()
+            except (EOFError, KeyboardInterrupt):
+                print()
+                return 0
+            right = ans == "abcd"[q["answer"]]
+            want_s = "abcd"[q["answer"]] + ") " + q["choices"][q["answer"]]
+        else:
+            try:
+                ans = input("   keys (recipe notation): ").strip()
+            except (EOFError, KeyboardInterrupt):
+                print()
+                return 0
+            right = ans == q["answer"] or ans.replace(" ", "") == q["answer"]
+            want_s = q["answer"]
+        if right:
+            score += 1
+            print("   %sright%s  %s" % (GREEN, OFF, q["why"]))
+        else:
+            print("   %snot quite: %s%s  %s" % (RED, want_s, OFF, q["why"]))
+    print("\n%sScore: %d/%d%s" % (BOLD, score, len(bank), OFF))
+    qr = progress.setdefault("quiz", {}).setdefault(want, {"best": 0, "last": None})
+    qr["best"] = max(qr.get("best", 0), score)
+    qr["total"] = len(bank)
+    qr["last"] = dt.datetime.now().astimezone().isoformat()
+    save_progress(progress)
+    return 0
 
 
 # =========================================================================
@@ -370,6 +528,11 @@ def write_lesson(path, drill, concept, progress_line):
         body.append("  %-14s %s" % (keys, desc))
     body += ["", "=== KEYS WORTH KEEPING " + "=" * 49]
     body += ["  " + l for l in drill.get("keys", [])]
+    body += ["", "=== READING THE RECIPE " + "=" * 50]
+    body += [
+        "  <CR> is the Enter key.  :wq<CR> means type :wq, then Enter.",
+        "  <Esc> is Escape.  <BS> is Backspace.  <C-v> means hold Ctrl, press v.",
+    ]
     body += [
         "",
         "Auto-pairing is off in this buffer, so what you type is what you get.",
@@ -404,21 +567,31 @@ def matches(region, target):
     return [l.rstrip() for l in region] == [l.rstrip() for l in target]
 
 
-def reset_region(path, drill):
+def reset_region(path, drill, concept=None, progress_line=""):
+    """Restore the editable region; rebuild the whole lesson if needed.
+
+    When the marker line itself is gone there is no region to restore, so the
+    full lesson is rewritten from the drill definition (concept required).
+    Returns True when the lesson is usable again.
+    """
     with open(path) as f:
         lines = f.read().split("\n")
     if MARKER not in lines:
-        return
+        if concept is None:
+            return False
+        write_lesson(path, drill, concept, progress_line)
+        return True
     head = lines[:lines.index(MARKER) + 1]
     with open(path, "w") as f:
         f.write("\n".join(head + region_lines(drill)) + "\n")
+    return True
 
 
 def show_diff(region, target):
     print("\n%sNot matching yet.%s" % (BOLD, OFF))
     if region is None:
         print("  The %s marker line is gone, so there is nothing to check." % "edit-below")
-        print("  Press r at the prompt to reset the drill.")
+        print("  Retrying rebuilds the whole lesson, marker included.")
         return
     n = max(len(region), len(target))
     for i in range(n):
@@ -451,12 +624,14 @@ def show_diff(region, target):
 # editor
 # =========================================================================
 
-NOPAIRS = ("pcall(function() vim.b.minipairs_disable = true end) "
+NOPAIRS = ("vim.bo.autoindent=false;vim.bo.smartindent=false;vim.bo.cindent=false;"
+           "vim.bo.indentexpr='';"
+           "pcall(function() vim.b.minipairs_disable = true end) "
            "pcall(function() vim.b.autopairs_enabled = false end) "
            "pcall(function() vim.b.delimitMate_autoclose = 0 end)")
 
 
-def run_editor(path, start_line, cursor, keylog):
+def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=None):
     """Open the lesson with the cursor parked on the edit and keystrokes logged.
 
     Auto-pairing is disabled FOR THIS BUFFER ONLY. This is a precaution, not a
@@ -471,8 +646,147 @@ def run_editor(path, start_line, cursor, keylog):
     env = dict(os.environ, VIM_DAILY_ACTIVE="1")
     base = os.path.basename(EDITOR)
     if base == "nvim":
-        cmd = [EDITOR, "+lua " + NOPAIRS, "+%d" % start_line, "+normal! " + cursor,
-               "-w", keylog, path]
+        cmd = [EDITOR]
+        use_user_config = (os.environ.get("VIM_DAILY_CLEAN") != "1"
+                           and os.environ.get("VIM_DAILY_USE_USER_CONFIG") != "0")
+        if not use_user_config:
+            cmd += ["--clean", "-i", "NONE"]
+        cmd.append("+lua " + NOPAIRS)
+        # The isolated editor still needs to look and behave like a tutor, not
+        # an empty `--clean` buffer. Keep the task and current mode visible in
+        # the editing window and make the legacy-style cheat sheet available.
+        task_label = (task or "Edit the art to match TARGET").replace("%", "%%")
+        hint_label = (hint or "Use F1 for movement and editing help").replace("%", "%%")
+        ui_lua = (
+            "vim.o.laststatus=3;vim.o.showmode=false;"
+            "_G.VimDailyMode=function() local m=vim.fn.mode(1);local t={n='NORMAL',no='OPERATOR',i='INSERT',"
+            "ic='INSERT',ix='INSERT',v='VISUAL',V='VISUAL LINE',[string.char(22)]='VISUAL BLOCK',"
+            "R='REPLACE',Rv='VIRTUAL REPLACE',c='COMMAND',cv='EX',t='TERMINAL'};"
+            "return t[m] or t[m:sub(1,1)] or m:upper() end;"
+            "vim.g.vim_daily_statusline=' TUTOR · %{v:lua.VimDailyMode()} · ART · F1 HELP · :WQ SUBMIT ';"
+            "vim.o.statusline=vim.g.vim_daily_statusline;"
+            "local aw=vim.api.nvim_get_current_win();vim.g.vim_daily_art_win=aw;"
+            "vim.g.vim_daily_taskbar=" + json.dumps(
+                " DO THIS · o NEW LINE BELOW · F1 HELP · %<" + task_label[:42]
+                + ("…" if len(task_label) > 42 else ""),
+                ensure_ascii=False) + ";vim.wo[aw].winbar=vim.g.vim_daily_taskbar;"
+            "_G.VimDailyToggleHelp=function() local hw=vim.g.vim_daily_help_win;"
+            "if hw and vim.api.nvim_win_is_valid(hw) then vim.api.nvim_win_close(hw,true);"
+            "if vim.api.nvim_win_is_valid(aw) then vim.api.nvim_set_current_win(aw) end;return end;"
+            "if vim.api.nvim_win_is_valid(aw) then vim.api.nvim_set_current_win(aw) end;"
+            "local ls={'CHEAT SHEET · F1 closes','Esc  NORMAL mode','i/a  insert before/after','o  NEW LINE BELOW',"
+            "'O  new line above · A end of line','v/V/C-v  select chars/lines/block','h j k l  move · 0 ^ $  line',"
+            "'w b e  words · f/t  find · gg/G first/last','{count}{motion} repeats efficiently',"
+            "'yy  copy line · p/P put below/above','r/R replace · u undo · C-r redo',"
+            "':s/old/new/g line · :%s file','Ctrl-w w  switch task/art',':wq submit · :q! leave'," +
+            json.dumps("HINT: " + hint_label[:76], ensure_ascii=False) + "};"
+            "local hb=vim.api.nvim_create_buf(false,true);local hh=math.min(#ls,math.max(6,vim.o.lines-5));"
+            "local ww=math.min(40,math.max(24,vim.o.columns-4));local rr=math.max(0,vim.o.lines-hh-3);"
+            "hw=vim.api.nvim_open_win(hb,true,{relative='editor',row=rr,col=0,width=ww,height=hh,"
+            "style='minimal',border='single',title=' CHEAT SHEET · F1 closes '});vim.g.vim_daily_help_win=hw;"
+            "vim.bo[hb].buftype='nofile';vim.bo[hb].bufhidden='wipe';vim.bo[hb].swapfile=false;"
+            "vim.bo[hb].modifiable=true;vim.api.nvim_buf_set_lines(hb,0,-1,false,ls);vim.bo[hb].modifiable=false;"
+            "vim.wo[hw].number=false;vim.wo[hw].relativenumber=false;vim.wo[hw].signcolumn='no';vim.wo[hw].wrap=true;"
+            "vim.wo[hw].winfixwidth=true;end;"
+            "vim.keymap.set({'n','v'},'<F1>',_G.VimDailyToggleHelp,{silent=true});"
+            "vim.keymap.set('i','<F1>','<Esc><Cmd>lua VimDailyToggleHelp()<CR>',{silent=true});"
+            "_G.VimDailyInstallFallbackCoach=function() if vim.g.vim_daily_fallback_coach then return end;"
+            "vim.g.vim_daily_fallback_coach=true;vim.g.vim_daily_motion_key='';"
+            "vim.g.vim_daily_motion_count=0;vim.g.vim_daily_motion_time=0;"
+            "_G.VimDailyMotion=function(k) local now=vim.uv.hrtime();"
+            "if vim.g.vim_daily_motion_key==k and now-vim.g.vim_daily_motion_time<1000000000 then "
+            "vim.g.vim_daily_motion_count=vim.g.vim_daily_motion_count+1 else "
+            "vim.g.vim_daily_motion_key=k;vim.g.vim_daily_motion_count=1 end;vim.g.vim_daily_motion_time=now;"
+            "if vim.g.vim_daily_motion_count>3 then vim.schedule(function() if vim.api.nvim_win_is_valid(aw) then "
+            "local advice=(k=='k' and '[count]k or CTRL-U') or (k=='j' and '[count]j or CTRL-D') or "
+            "(k=='h' and 'b/B/ge/gE/F/T/0') or 'w/W/e/E/f/t/$';"
+            "vim.wo[aw].winbar=' HARDTIME · '..k..' BLOCKED · use '..advice;"
+            "vim.defer_fn(function() if vim.api.nvim_win_is_valid(aw) then vim.wo[aw].winbar=vim.g.vim_daily_taskbar end end,3000) end end);"
+            "return '<Ignore>' end;return k end;"
+            "for _,k in ipairs({'h','j','k','l'}) do local motion=k;vim.keymap.set('n',k,function() return _G.VimDailyMotion(motion) end,"
+            "{expr=true,noremap=true,silent=true}) end;end"
+        )
+        if not use_user_config:
+            # Clean mode owns the fallback chrome because no personal theme,
+            # lualine, WhichKey, or Hardtime is available there.
+            cmd.append("+lua " + ui_lua)
+            cmd.append("+lua VimDailyInstallFallbackCoach()")
+        if use_user_config:
+            # VD-12: LazyVim renders trailing spaces as `-` (listchars trail)
+            # and leading spaces as `│` indent guides. Both are real art glyphs,
+            # so `  \|/  ` displayed as `│ \|/--`. Turn them off for every tutor
+            # window (art and brief) after plugins load; the user's other
+            # settings are left alone. LazyVim's bufferline appears after
+            # startup and, with splitkeep=screen, scrolled line 1 (the lesson
+            # header, or the first art row) out of view; vd_top restores the
+            # top whenever the cursor still fits on screen.
+            art_lua = (
+                "local artb=vim.api.nvim_get_current_buf();"
+                "local function vd_plain() for _,w in ipairs(vim.api.nvim_list_wins()) do "
+                "local b=vim.api.nvim_win_get_buf(w);vim.wo[w].list=false;"
+                "vim.b[b].snacks_indent=false;vim.b[b].miniindentscope_disable=true;"
+                "if b==artb then vim.bo[b].autoindent=false;vim.bo[b].smartindent=false;"
+                "vim.bo[b].cindent=false;vim.bo[b].indentexpr='' end;"
+                "pcall(function() vim.b[b].indent_blankline_enabled=false end) end;"
+                "pcall(function() require('snacks').indent.disable() end) end;"
+                "local function vd_top() for _,w in ipairs(vim.api.nvim_list_wins()) do "
+                "if vim.api.nvim_win_get_config(w).relative=='' then "
+                "local c=vim.api.nvim_win_get_cursor(w)[1];"
+                "if c<=vim.api.nvim_win_get_height(w) then vim.api.nvim_win_call(w,function() "
+                "vim.fn.winrestview({topline=1}) end) end end end end;"
+                "vd_plain();vim.defer_fn(vd_plain,200);vim.defer_fn(vd_plain,600);"
+                "vim.defer_fn(vd_top,250);vim.defer_fn(vd_top,700);"
+                "vim.api.nvim_create_autocmd({'BufWinEnter','WinEnter'},{callback=vd_plain});"
+                "vim.api.nvim_create_autocmd('WinResized',{callback=function() vim.schedule(vd_top) end})"
+            )
+            cmd.append("+lua " + art_lua)
+        if brief:
+            # VD-09: keep instructions in a separate read-only buffer. The art
+            # stays current, so gg/G, counts, ranges, and :t/:m address art only.
+            brief_lua = (
+                "local ls=vim.fn.readfile(%s);local aw=vim.api.nvim_get_current_win();"
+                "local ab=vim.api.nvim_get_current_buf();"
+                "local wide=vim.o.columns>=120;"
+                "local mh=(vim.o.lines<28) and math.max(10,math.floor(vim.o.lines*0.65)) or math.max(8,math.floor(vim.o.lines*0.55));"
+                "if wide then local mw=math.min(84,math.max(58,math.floor(vim.o.columns*0.48)));"
+                "vim.cmd('topleft '..mw..'vnew') else "
+                "vim.cmd('aboveleft '..math.min(math.max(#ls+2,8),mh)..'new') end;"
+                "local hw=vim.api.nvim_get_current_win();local hb=vim.api.nvim_get_current_buf();"
+                "vim.bo[hb].buftype='nofile';vim.bo[hb].bufhidden='wipe';vim.bo[hb].swapfile=false;"
+                "vim.api.nvim_buf_set_lines(hb,0,-1,false,ls);vim.bo[hb].modifiable=false;"
+                "vim.wo[hw].number=false;vim.wo[hw].relativenumber=false;vim.wo[hw].signcolumn='no';"
+                "vim.wo[hw].foldcolumn='0';if wide then vim.wo[hw].winfixwidth=true else vim.wo[hw].winfixheight=true end;"
+                "vim.wo[hw].wrap=true;vim.wo[hw].linebreak=true;"
+                "vim.wo[hw].winbar=' TASK · TARGET · HINT · CTRL-W W SWITCHES PANE ';"
+                "vim.g.vim_daily_brief_win=hw;"
+                "vim.api.nvim_set_current_win(aw);vim.wo[aw].wrap=false;"
+                "vim.api.nvim_create_autocmd('BufWinLeave',{buffer=ab,once=true,callback=function()"
+                "vim.schedule(function() if vim.api.nvim_win_is_valid(hw) then vim.cmd('qa!') end end) end})"
+            ) % json.dumps(brief)
+            cmd.append("+lua " + brief_lua)
+        ready_signal = os.environ.get("VIM_DAILY_TMUX_READY_SIGNAL")
+        if ready_signal and os.environ.get("TMUX") and use_user_config:
+            # Do not announce readiness until LazyVim has fired VeryLazy and
+            # its event handlers (including Flash and user mappings) have had
+            # a redraw window. If the personal config does not use lazy.nvim,
+            # there is no VeryLazy contract to wait for.
+            signal_lua = (
+                "do local sent=false;local function signal() if sent then return end;sent=true;"
+                "vim.defer_fn(function() vim.fn.system({'tmux','wait-for','-U',%s}) end,300) end;"
+                "if vim.g.did_very_lazy then signal() elseif package.loaded['lazy'] then "
+                "vim.api.nvim_create_autocmd('User',{pattern='VeryLazy',once=true,callback=signal}) "
+                "else signal() end end" % json.dumps(ready_signal)
+            )
+            cmd.append("+lua " + signal_lua)
+        elif ready_signal and os.environ.get("TMUX"):
+            # Live tmux regression tests wait on this event instead of racing
+            # the isolated editor startup.
+            signal_lua = (
+                "vim.defer_fn(function() vim.fn.system({'tmux','wait-for','-U',%s}) end,100)"
+                % json.dumps(ready_signal)
+            )
+            cmd.append("+lua " + signal_lua)
+        cmd += ["+%d" % start_line, "+normal! " + cursor, "-w", keylog, path]
     elif base in ("vim", "vi", "view", "gvim", "mvim"):
         cmd = [EDITOR, "+silent! let b:delimitMate_autoclose = 0", "+%d" % start_line,
                "+normal! " + cursor, "-w", keylog, path]
@@ -486,8 +800,25 @@ def run_editor(path, start_line, cursor, keylog):
 # =========================================================================
 
 def load_curriculum():
-    with open(CURRICULUM) as f:
+    path = CURRICULUM
+    if not os.path.exists(path) and not os.environ.get("VIM_DAILY_CURRICULUM"):
+        path = str(Path(__file__).resolve().parent.parent / "share" / "curriculum.json")
+    with open(path) as f:
         return json.load(f)
+
+
+def load_v2_runtime():
+    """Load the project curriculum from the installed share symlink."""
+    path = os.path.join(SHARE, "v2_runtime.py")
+    if not os.path.exists(path):
+        path = str(Path(__file__).resolve().parent.parent / "share" / "v2_runtime.py")
+    spec = importlib.util.spec_from_file_location("vim_daily_v2_runtime", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("cannot load v2 runtime: %s" % path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
 
 
 def seconds_since_prompt():
@@ -516,19 +847,57 @@ def hold_open():
     """
     if not os.environ.get("VIM_DAILY_POPUP"):
         return
+
     try:
         input("\n%spress Enter to close%s " % (DIM, OFF))
     except (EOFError, KeyboardInterrupt):
         pass
 
 
-def record_completion(drill, attempts, counts):
+def signal_post_rendered():
+    """Tell headed regression tests that the complete debrief is visible."""
+    post_signal = os.environ.get("VIM_DAILY_TMUX_POST_SIGNAL")
+    if post_signal and os.environ.get("TMUX"):
+        subprocess.call(["tmux", "wait-for", "-U", post_signal],
+                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def signal_feedback_rendered():
+    """Tell headed regression tests that held feedback page one is visible."""
+    feedback_signal = os.environ.get("VIM_DAILY_TMUX_FEEDBACK_SIGNAL")
+    if feedback_signal and os.environ.get("TMUX"):
+        subprocess.call(["tmux", "wait-for", "-U", feedback_signal],
+                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def signal_question_rendered(_question, _order):
+    """Tell headed tests that a complete multiple-choice prompt is visible."""
+    question_signal = os.environ.get("VIM_DAILY_TMUX_QUESTION_SIGNAL")
+    if question_signal and os.environ.get("TMUX"):
+        subprocess.call(["tmux", "wait-for", "-U", question_signal],
+                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def post_page_break():
+    """Keep replay/teaching feedback visible before replacing it with progress."""
+    if not os.environ.get("VIM_DAILY_POPUP"):
+        return
+    try:
+        input("\n%spress Enter for skill-tree progress%s " % (DIM, OFF))
+    except (EOFError, KeyboardInterrupt):
+        pass
+
+
+def record_completion(drill, attempts, counts, result=None):
     os.makedirs(STATE, exist_ok=True)
     today = dt.date.today().isoformat()
+    row = ("completed_at=%s\tdrill=%s\tskill=%s\tconcept=%s\tid=%s\tattempts=%d" % (
+        dt.datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z"),
+        drill["title"], drill["skill"], drill.get("concept", ""), drill["id"], attempts))
+    if result is not None:
+        row += "\tresult=%s" % result
     with open(day_log(today), "a") as f:
-        f.write("completed_at=%s\tdrill=%s\tskill=%s\tconcept=%s\tid=%s\tattempts=%d\n" % (
-            dt.datetime.now().astimezone().strftime("%Y-%m-%dT%H:%M:%S%z"),
-            drill["title"], drill["skill"], drill.get("concept", ""), drill["id"], attempts))
+        f.write(row + "\n")
 
 
 def do_drill(drill, cur, progress, counts, done_today):
@@ -586,20 +955,23 @@ def do_drill(drill, cur, progress, counts, done_today):
 
         if tries >= MAX_TRIES:
             print("\nLetting you through after %d attempts. Retry later with: vim-drill" % tries)
+            record_completion(drill, tries, counts, result="let-through")
             hold_open()
             return 0
         try:
-            ans = input("\nTry again, or reset the lines and retry? [Y/n/r] ").strip().lower()
+            ans = input("\nRetry with fresh lines? [Y/n/k = keep my mess] ").strip().lower()
         except (EOFError, KeyboardInterrupt):
             print()
             return 0
         if ans in ("n", "no", "q"):
+            record_completion(drill, tries, counts, result="skip")
             print("Skipped. Retry later with: vim-drill")
             hold_open()
             return 0
-        if ans in ("r", "reset"):
-            reset_region(lesson, drill)
+        if ans in ("", "y", "yes", "r", "reset"):
+            reset_region(lesson, drill, concept, "Concept: " + concept["title"])
             print("Lines reset.")
+        # k / keep: retry from the buffer exactly as you left it.
 
 
 def is_due(done_today):
@@ -614,6 +986,45 @@ def is_due(done_today):
 
 def main(argv):
     os.makedirs(STATE, exist_ok=True)
+    mode = argv[0] if argv else "run"
+
+    # VD-09: V2 is the normal hourly route. The original 46 exact-recipe drills stay
+    # available through --drill and --legacy-* while existing progress remains
+    # untouched in progress.json and the dated logs.
+    v2_modes = {"run", "--force", "--if-due", "--due-quiet", "--status", "--tree",
+                "--list", "--export-progress", "--card", "--project", "--preview"}
+    if mode in v2_modes:
+        v2 = load_v2_runtime()
+        v2_share = SHARE
+        if not os.path.exists(os.path.join(v2_share, "curriculum-v2.json")):
+            v2_share = str(Path(__file__).resolve().parent.parent / "share")
+        cfg = v2.RuntimeConfig(
+            state=STATE, share=v2_share, editor=EDITOR, max_tries=MAX_TRIES,
+            target=TARGET, cooldown=COOLDOWN, stamp=STAMP, run_editor=run_editor,
+            decode_keylog=decode_keylog, hold_open=hold_open,
+            colours=(BOLD, DIM, OFF, GREEN, RED, YELLOW),
+            keystroke_table=keystroke_table, tokenize=tokenize,
+            feedback_rendered=signal_feedback_rendered,
+            post_page_break=post_page_break,
+            post_rendered=signal_post_rendered,
+            question_rendered=signal_question_rendered)
+        result = v2.run(cfg, argv, force=(mode == "--force"))
+        if result is not None:
+            finished_signal = os.environ.get("VIM_DAILY_TMUX_FINISHED_SIGNAL")
+            # The client-attached hook probes with --due-quiet before opening
+            # the popup. Test completion signals belong to the interactive
+            # lesson, never to that probe.
+            if finished_signal and mode != "--due-quiet" and os.environ.get("TMUX"):
+                subprocess.call(["tmux", "wait-for", "-U", finished_signal],
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return result
+
+    legacy_aliases = {"--legacy-list": "--list", "--legacy-status": "--status",
+                      "--legacy-export-progress": "--export-progress"}
+    if mode in legacy_aliases:
+        argv = [legacy_aliases[mode]] + argv[1:]
+        mode = argv[0]
+
     cur = load_curriculum()
     drills, tiers = cur["drills"], cur.get("tiers", {})
     progress = load_progress(drills)
@@ -621,8 +1032,6 @@ def main(argv):
     today = dt.date.today()
     done_today = counts.get(today, 0)
     _, _, _, total = streaks(counts)
-
-    mode = argv[0] if argv else "run"
 
     if mode == "--list":
         for i, d in enumerate(drills):
@@ -648,24 +1057,39 @@ def main(argv):
 
     if mode == "--export-progress":
         c, b, days, tot = streaks(counts)
+        npass, ntotal = coverage(drills, progress)
         json.dump({"schema": "vim-daily/export@1", "date": today.isoformat(),
                    "today": done_today, "target": TARGET, "streak": c, "longest_streak": b,
                    "active_days": days, "total_completed": tot,
+                   "coverage": {"passed": npass, "total": ntotal},
+                   "concepts": concept_mastery(drills, progress),
+                   "quiz": progress.get("quiz", {}),
                    "drills": progress["drills"]}, sys.stdout, indent=1)
         print()
         return 0
+
+    if mode == "--quiz":
+        want = argv[1] if len(argv) > 1 else ""
+        return do_quiz(cur, progress, want)
 
     if mode == "--status":
         c, b, days, tot = streaks(counts)
         print("%svim drills%s  %s" % (BOLD, OFF, progress_banner(counts, done_today)))
         print("active days: %d   cadence: every %ds, cap %d/day" % (days, COOLDOWN, TARGET))
         print("since last prompt: %ds" % seconds_since_prompt())
+        npass, ntotal = coverage(drills, progress)
+        print("coverage: %d/%d drills passed at least once (%d%%)  weakest concept: %s" % (
+            npass, ntotal, (100 * npass // ntotal) if ntotal else 0,
+            weakest_concept(drills, progress)))
         print("\n%-26s %-34s %s" % ("DRILL", "SKILL", "passed/failed"))
         for d in drills:
             r = progress["drills"].get(d["id"], {})
             mark = "" if d in unlocked(drills, tiers, total) else " (locked)"
             print("%-26s %-34s %d/%d%s" % (d["title"], d["skill"],
                                            r.get("passed", 0), r.get("failed", 0), mark))
+        print("\n%-22s %s" % ("CONCEPT", "mastered"))
+        for name, cell in concept_mastery(drills, progress).items():
+            print("%-22s %d/%d" % (name, cell["passed"], cell["total"]))
         last14 = [today - dt.timedelta(days=i) for i in range(13, -1, -1)]
         print("\nlast 14 days  " + "".join("█" if counts.get(d) else "·" for d in last14))
         return 0

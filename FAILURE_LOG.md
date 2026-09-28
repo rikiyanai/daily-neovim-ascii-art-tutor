@@ -2584,3 +2584,100 @@ following are the non-duplicate corrections that change the decision surface:
   `O` at the old pulse location; `2Wr_` clears that cell, while the target has
   `_` there and puts `!` at the new edge cells. No generator change is warranted
   from the earlier `r_` suspicion.
+
+### VD-13 · 2026-09-28 — M0.05 failed correct work: exact-log method check; M0.04/M0.05 attempt audit
+
+**Operator report:** "I've been failing the same lesson all day." That was M0.04
+(8 failures from 2026-09-28 00:55 to 14:16, then passed 14:34, revision `.21`),
+followed by M0.05 (9 failures from 14:34 to 16:37).
+
+**Attempt audit.** Saved checkpoints are compared with the card's target;
+`events-v2.jsonl` supplies the reasons.
+
+| When | Card | Saved result | Recorded reason |
+|---|---|---|---|
+| 00:55, 02:54, 11:56 (+2 dup copies) | M0.04 | start unchanged | target-mismatch |
+| 13:10 | M0.04 | frame pasted characterwise onto the end of row 6 | target-mismatch |
+| 14:16 | M0.04 | frame pasted one column right (after `o`, autoindent) | target-mismatch |
+| 14:34 | M0.04 | **pass** | — |
+| 15:08 | M0.05 | **exact target** | **missing-method-evidence** |
+| 15:55, 16:19:25, 16:19:42 (+2 at 14:34) | M0.05 | start unchanged | target-mismatch |
+| 16:36:53, 16:37:20 | M0.05 | **exact target** | **missing-method-evidence** |
+| 16:37:43 | M0.05 | only row 9 appended (keylog `:9t$<CR>:ew<BS><BS>wq<CR>`) | target-mismatch |
+
+**Defect 1 — correct work graded as failure (three times).**
+- `_method_family` (`share/v2_runtime.py:919`) credits a comparison method
+  only when the entire captured keystroke log, minus a literal `:wq<CR>` or
+  `ZZ` suffix, equals `7G3yyGp` or `:7,9t$<CR>` exactly.
+- Any other key fails an exact target: a look-around motion, an undo, a
+  hardtime-blocked press, `:w` then `:q`, or a corrected typo in `:wq` (the
+  operator's last log has `:ew<BS><BS>wq`).
+- The feedback then says "no edit keystrokes were captured", which is false:
+  the keys were captured.
+- Required fix: credit the method when its defining command occurs in the
+  log, together with the exact target. For example, `:{range}t` with a range
+  resolving to rows 7–9, or `3yy` or an equivalent yank followed by `p`.
+  Strip every save/quit form, including one with corrected typos. Replace the
+  false message with the reason.
+
+**Defect 2 — the prompt asks for two methods but grades one buffer.** "Create
+a deliberate whole-frame flare hold by counted yank/put *and* by addressed
+`:t`". Only one copy fits the target. The page does not say to do one of them.
+
+**Defect 3 — the keys are unknown and untaught.** `:t` and line ranges are
+never shown on a guided card before M0.05 (VD-12 audit 2 row M0.05). The
+operator's last attempt `:9t$` shows the range grammar was missing (it needed
+`7,9`). Five M0.05 saves and three M0.04 saves are unchanged starts: the
+learner did not know what to type.
+
+**Defect 4 — per-attempt keystrokes are not kept.** `keys-M0.05.log` is
+overwritten on every attempt, so the keys behind the three exact-target
+failures cannot be audited. Only the final attempt's log survives.
+
+**Defect 5 — encouragement surface regressed.**
+- Legacy `progress_banner` showed `N/12 today · streak N days 🔥` (the
+  flame appears from 3 days), best streak, and all-time total, in bold.
+  Legacy also printed "Streak extended to N days" on a pass.
+- v2 `_progress_line` shows plain XP, level and streak, with no flame, no
+  best streak and no extension message.
+
+**Fix attempt 1 · Codex · 2026-09-28:**
+- M0.05 now declares semantic evidence for either one valid method: a
+  three-line linewise yank followed later by `p`/`P`, or an executed addressed
+  `:7,9t$`/`:7,9copy$`. `_method_family` searches for that defining operation
+  inside the attempt instead of requiring the whole keylog to equal a pristine
+  recipe. Exact target equality remains mandatory.
+- Ex evidence reconstructs the command after `<BS>`, `<C-h>`, `<C-u>`, or
+  `<C-w>` corrections. Save/quit commands are removed wherever they occur,
+  including `:wq`, `:w` + `:q`, `:write` + `:quit`, `:x`, `ZZ`, and `ZQ`.
+- Unrecognized input now distinguishes an empty capture from captured-but-
+  unrecognized keys and prints the latter truthfully. If the buffer is exact
+  but method evidence is missing, the failure headline now says the target
+  matched instead of falsely calling it a target mismatch.
+- M0.05 now says to use **ONE** method; success still displays both approaches
+  for comparison.
+- Every v2 edit attempt receives a numbered durable keylog such as
+  `keys-M0.05-attempt-0001.log`; pass/fail events retain its path and SHA-256.
+- V2 progress restores the bold streak line, flame at three days, best streak,
+  all-time total, and `Streak extended to N days.` pass message.
+- Evidence: `python3 share/test_v2.py` passes all 114/114 primary edits and new
+  M0.05 integration cases with extra motions, corrected Ex typing, split
+  save/quit, both taught methods, and retained keylog hashes. `python3
+  share/test_v2.py --real` also passes 114/114 under the operator's real Neovim
+  config. The installed client-attached headed route reproduces extra `jj`,
+  `:7,9t$`, and corrected `:ew<BS><BS>wq`, and passes with numbered keylog
+  evidence at 80x24, 100x36, and 188x49.
+
+**Status:** blocking defect fixed and verified; the broader grammar-first
+curriculum implementation remains in progress.
+- **Defect 6 — no optional "next lesson" (operator, 2026-09-28).** Every exit
+  ends in `hold_open()` → "press Enter to close" (`bin/vim-daily-gate:841`,
+  called from ten places in `share/v2_runtime.py`). A motivated learner cannot
+  continue in the same popup. Required behaviour:
+  - After any result (pass, fail, concept), offer `n` = next due lesson,
+    `r` = retry this one, Enter = close.
+  - `n` counts toward the daily cap and the cooldown as usual.
+  - It never forces continuation.
+  - The legacy route had `vim-drill` for another drill, but no in-popup
+    continue either.
+  Queued to Codex.
