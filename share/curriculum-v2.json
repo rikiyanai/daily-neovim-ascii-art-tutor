@@ -39,6 +39,9 @@
     "M0.06",
     "M0.07",
     "M0.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL01"
    ]
   },
   {
@@ -133,6 +136,9 @@
     "M3.07",
     "M3.DI",
     "M3.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL10"
    ]
   },
   {
@@ -165,6 +171,9 @@
     "M4.06",
     "M4.07",
     "M4.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL02"
    ]
   },
   {
@@ -196,6 +205,9 @@
     "M5.06",
     "M5.07",
     "M5.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL06"
    ]
   },
   {
@@ -228,6 +240,9 @@
     "M6.06",
     "M6.07",
     "M6.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL07"
    ]
   },
   {
@@ -262,6 +277,9 @@
     "M7.06",
     "M7.07",
     "M7.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL04"
    ]
   },
   {
@@ -293,6 +311,9 @@
     "M8.06",
     "M8.07",
     "M8.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL08"
    ]
   },
   {
@@ -324,6 +345,9 @@
     "M9.06",
     "M9.07",
     "M9.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL03"
    ]
   },
   {
@@ -386,6 +410,9 @@
     "M11.07",
     "M11.VE",
     "M11.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL11"
    ]
   },
   {
@@ -482,6 +509,9 @@
     "M14.06",
     "M14.07",
     "M14.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL09"
    ]
   },
   {
@@ -545,6 +575,9 @@
     "M16.06",
     "M16.07",
     "M16.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL12"
    ]
   },
   {
@@ -608,6 +641,9 @@
     "M18.06",
     "M18.07",
     "M18.08"
+   ],
+   "animation_pack_lesson_ids": [
+    "AL05"
    ]
   }
  ],
@@ -825,6 +861,13 @@
      "buys": "One glyph, one key, no mode change.",
      "source": "skill §4.6 rule 5: a joint glyph sits differently in its cell. `.` sits too low, `'` sits too high, `:` sits in the middle."
     }
+   ],
+   "animation_pack_lesson_ids": [
+    "AL01"
+   ],
+   "animation_pack_question_ids": [
+    "AL01-Q1",
+    "AL01-Q2"
    ]
   },
   {
@@ -1653,7 +1696,14 @@
      "M0.06.P01": "The learner must work out a real edit on a scratch copy before the recipe or transfer attempt can become performance evidence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL01"
+   ],
+   "animation_pack_question_ids": [
+    "AL01-Q1",
+    "AL01-Q2"
+   ]
   },
   {
    "id": "M0.07",
@@ -3533,6 +3583,13 @@
      "buys": "i = inner, a = around. One mnemonic, a hundred commands.",
      "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Line style This is the lamp's body row."
     }
+   ],
+   "animation_pack_lesson_ids": [
+    "AL10"
+   ],
+   "animation_pack_question_ids": [
+    "AL10-Q1",
+    "AL10-Q2"
    ]
   },
   {
@@ -4544,6 +4601,13 @@
      "buys": "Select first, then act, for when you cannot name the motion.",
      "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06, apex rows of pyramid frames 1 to 5"
     }
+   ],
+   "animation_pack_lesson_ids": [
+    "AL10"
+   ],
+   "animation_pack_question_ids": [
+    "AL10-Q1",
+    "AL10-Q2"
    ]
   },
   {
@@ -5081,6 +5145,13 @@
      "buys": "The shorthand verbs: each is a contraction of a whole sentence.",
      "source": "skill §4.4: `,` and `.` runs give the shallowest gradient available."
     }
+   ],
+   "animation_pack_lesson_ids": [
+    "AL02"
+   ],
+   "animation_pack_question_ids": [
+    "AL02-Q1",
+    "AL02-Q2"
    ]
   },
   {
@@ -5820,7 +5891,14 @@
      "M4.06.P01": "The learner must work out a real edit on a scratch copy before the recipe or transfer attempt can become performance evidence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL02"
+   ],
+   "animation_pack_question_ids": [
+    "AL02-Q1",
+    "AL02-Q2"
+   ]
   },
   {
    "id": "M4.07",
@@ -6194,6 +6272,13 @@
      "buys": "Depth, from one character. This is the highest-value edit in the whole method.",
      "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 9, two forms sharing a seam glyph skill §3: a glyph shared between two objects creates a false connection. Replace it with a partial-coverage glyph placed away from the seam."
     }
+   ],
+   "animation_pack_lesson_ids": [
+    "AL06"
+   ],
+   "animation_pack_question_ids": [
+    "AL06-Q1",
+    "AL06-Q2"
    ]
   },
   {
@@ -6740,7 +6825,14 @@
      "M5.06.P01": "The learner must work out a real edit on a scratch copy before the recipe or transfer attempt can become performance evidence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL06"
+   ],
+   "animation_pack_question_ids": [
+    "AL06-Q1",
+    "AL06-Q2"
+   ]
   },
   {
    "id": "M5.07",
@@ -7006,7 +7098,14 @@
      "M6.01.P01": "The learner first sees and types the new command in the guided edit; this short choice then checks the resulting scope without demanding a second key sequence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL07"
+   ],
+   "animation_pack_question_ids": [
+    "AL07-Q1",
+    "AL07-Q2"
+   ]
   },
   {
    "id": "M6.02",
@@ -8098,6 +8197,13 @@
      "buys": "Re-sorting frames is one idiom, not a rewrite.",
      "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06, apex rows of pyramid frames 1 to 5 skill §10: authoring order and playback order are independent; re-sort the frames afterwards."
     }
+   ],
+   "animation_pack_lesson_ids": [
+    "AL07"
+   ],
+   "animation_pack_question_ids": [
+    "AL07-Q1",
+    "AL07-Q2"
    ]
   },
   {
@@ -8246,6 +8352,13 @@
      "buys": "A hold in animation is a repeated frame, and two keystrokes here.",
      "source": "user download ~/Downloads/centipede.txt (2026-09-21), signature tag jgs stripped"
     }
+   ],
+   "animation_pack_lesson_ids": [
+    "AL04"
+   ],
+   "animation_pack_question_ids": [
+    "AL04-Q1",
+    "AL04-Q2"
    ]
   },
   {
@@ -9722,6 +9835,13 @@
      "buys": "Travelling by landmark instead of counting cells.",
      "source": "skill §8: a shading band alternates two glyphs, which makes it a row of landmarks."
     }
+   ],
+   "animation_pack_lesson_ids": [
+    "AL04"
+   ],
+   "animation_pack_question_ids": [
+    "AL04-Q1",
+    "AL04-Q2"
    ]
   },
   {
@@ -10026,7 +10146,14 @@
      "M8.01.P01": "The learner first sees and types the new command in the guided edit; this short choice then checks the resulting scope without demanding a second key sequence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL08"
+   ],
+   "animation_pack_question_ids": [
+    "AL08-Q1",
+    "AL08-Q2"
+   ]
   },
   {
    "id": "M8.02",
@@ -10653,7 +10780,14 @@
      "M8.06.P01": "The learner must work out a real edit on a scratch copy before the recipe or transfer attempt can become performance evidence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL08"
+   ],
+   "animation_pack_question_ids": [
+    "AL08-Q1",
+    "AL08-Q2"
+   ]
   },
   {
    "id": "M8.07",
@@ -10916,7 +11050,14 @@
      "M9.01.P01": "The learner first sees and types the new command in the guided edit; this short choice then checks the resulting scope without demanding a second key sequence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL03"
+   ],
+   "animation_pack_question_ids": [
+    "AL03-Q1",
+    "AL03-Q2"
+   ]
   },
   {
    "id": "M9.02",
@@ -11421,7 +11562,14 @@
      "M9.06.P01": "The learner must work out a real edit on a scratch copy before the recipe or transfer attempt can become performance evidence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL03"
+   ],
+   "animation_pack_question_ids": [
+    "AL03-Q1",
+    "AL03-Q2"
+   ]
   },
   {
    "id": "M9.07",
@@ -12386,7 +12534,14 @@
      "M11.01.P01": "The learner first sees and types the new command in the guided edit; this short choice then checks the resulting scope without demanding a second key sequence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL11"
+   ],
+   "animation_pack_question_ids": [
+    "AL11-Q1",
+    "AL11-Q2"
+   ]
   },
   {
    "id": "M11.02",
@@ -13187,7 +13342,14 @@
      "M11.06.P01": "The learner must work out a real edit on a scratch copy before the recipe or transfer attempt can become performance evidence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL11"
+   ],
+   "animation_pack_question_ids": [
+    "AL11-Q1",
+    "AL11-Q2"
+   ]
   },
   {
    "id": "M11.07",
@@ -15870,7 +16032,14 @@
      "M14.01.P01": "The learner first sees and types the new command in the guided edit; this short choice then checks the resulting scope without demanding a second key sequence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL09"
+   ],
+   "animation_pack_question_ids": [
+    "AL09-Q1",
+    "AL09-Q2"
+   ]
   },
   {
    "id": "M14.02",
@@ -16789,7 +16958,14 @@
      "M14.06.P01": "The learner must work out a real edit on a scratch copy before the recipe or transfer attempt can become performance evidence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL09"
+   ],
+   "animation_pack_question_ids": [
+    "AL09-Q1",
+    "AL09-Q2"
+   ]
   },
   {
    "id": "M14.07",
@@ -18385,7 +18561,14 @@
      "M16.01.P01": "The learner first sees and types the new command in the guided edit; this short choice then checks the resulting scope without demanding a second key sequence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL12"
+   ],
+   "animation_pack_question_ids": [
+    "AL12-Q1",
+    "AL12-Q2"
+   ]
   },
   {
    "id": "M16.02",
@@ -19168,7 +19351,14 @@
      "M16.06.P01": "The learner must work out a real edit on a scratch copy before the recipe or transfer attempt can become performance evidence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL12"
+   ],
+   "animation_pack_question_ids": [
+    "AL12-Q1",
+    "AL12-Q2"
+   ]
   },
   {
    "id": "M16.07",
@@ -20747,6 +20937,13 @@
      "buys": "Mirroring by hand, which is the only way that preserves the style.",
      "source": "skill §4.7 drills 6-7: mirror art by retyping the row backwards with each glyph swapped for its mirror. Never use a software flip."
     }
+   ],
+   "animation_pack_lesson_ids": [
+    "AL05"
+   ],
+   "animation_pack_question_ids": [
+    "AL05-Q1",
+    "AL05-Q2"
    ]
   },
   {
@@ -21539,7 +21736,14 @@
      "M18.06.P01": "The learner must work out a real edit on a scratch copy before the recipe or transfer attempt can become performance evidence."
     }
    },
-   "pairing_exception": null
+   "pairing_exception": null,
+   "animation_pack_lesson_ids": [
+    "AL05"
+   ],
+   "animation_pack_question_ids": [
+    "AL05-Q1",
+    "AL05-Q2"
+   ]
   },
   {
    "id": "M18.07",
@@ -36434,6 +36638,1913 @@
    }
   }
  ],
+ "animation_lesson_pack": [
+  {
+   "id": "AL01",
+   "title": "Register the object before changing it",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "Layer/frame ordering is documented as a general technique in the archived tutorial plate `/Users/r/Projects/ascii-art-archive/collections/y9-2-articles/2026-09-07-stone-story-video-transcripts-media/o5v-NS9o4yc/ascii-tutorial-page/01-sacrificial-pit-layers.txt:1-1122`. The exact plate is blocked; this exercise is unrelated geometry.",
+   "master_habits": [
+    "H2",
+    "H3",
+    "H8"
+   ],
+   "master_stages": [
+    "S0",
+    "S3",
+    "A0"
+   ],
+   "do_this": "DO THIS — Create a four-row, seven-column beacon. The `|` in row 4 is the ground anchor; the frame must remain 7 columns wide.",
+   "target": "TARGET — Pass only if the copy has the new material, the original is unchanged, and both objects have identical bounds.",
+   "hint": "HINT — Hint 1 names the object size (four lines). Hint 2 names “replace the two material cells in the copy”; no key sequence is shown.",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      "  /\\  ",
+      " /==\\ ",
+      "| .. |",
+      "  ||  "
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; place the cursor on row 1 and select exactly four lines.",
+      "Use `4yy` then `p` to copy the frame as one object.",
+      "On the copied row 3, use `f.` then `r:` twice; verify four rows and seven columns before previewing.",
+      "Compare the original and copy with the cursor on their anchor columns."
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: linewise object, exact row/column landmark, overwrite, fixed box.",
+      "Hint 1 names the object size (four lines). Hint 2 names “replace the two material cells in the copy”; no key sequence is shown.",
+      "Pass only if the copy has the new material, the original is unchanged, and both objects have identical bounds."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; place the cursor on row 1 and select exactly four lines.",
+    "Use `4yy` then `p` to copy the frame as one object.",
+    "On the copied row 3, use `f.` then `r:` twice; verify four rows and seven columns before previewing.",
+    "Compare the original and copy with the cursor on their anchor columns."
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: linewise object, exact row/column landmark, overwrite, fixed box.",
+    "Hint 1 names the object size (four lines). Hint 2 names “replace the two material cells in the copy”; no key sequence is shown.",
+    "Pass only if the copy has the new material, the original is unchanged, and both objects have identical bounds."
+   ],
+   "questions": [
+    {
+     "id": "AL01-Q1",
+     "title": "What is the anchor?",
+     "placement": "before",
+     "animation_prompt": "Which visible cell must stay in the same column when the frame is copied?",
+     "animation_answer": "The `|` ground anchor in row 4, column 3.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`row, column, reason`.",
+     "paired_answer_format": "ANIMATION: `row, column, reason`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "S0 fixed-width grid and H2 exact-cell landing are taught in the pack preamble; the prompt names the candidate and coordinate.",
+     "clarity_check": "clear — it asks for one cell and one reason, not a drawing.",
+     "placement_rationale": "before copying, so the learner has a registration test.",
+     "explicit_answer": "ANIMATION: The `|` ground anchor in row 4, column 3. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL01-Q2",
+     "title": "Is this a frame or a cell edit?",
+     "placement": "after",
+     "animation_prompt": "Which operation should be repeated as one object if the beacon gains a third timing variant: the four-row copy or the row-3 replacement?",
+     "animation_answer": "Copy the four-row frame first; the row-3 replacement is the later local variation.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`object first: frame | cell; explanation`.",
+     "paired_answer_format": "ANIMATION: `object first: frame | cell; explanation`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "the guided sequence has just demonstrated both scopes.",
+     "clarity_check": "clear — the two choices are named and the requested format is explicit.",
+     "placement_rationale": "after seeing the two scopes, not before.",
+     "explicit_answer": "ANIMATION: Copy the four-row frame first; the row-3 replacement is the later local variation. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL01-V1",
+      "description": "New variant 1 — a six-column bell (`/--\\\\`, `|oo|`, `\\\\__/'`)"
+     },
+     {
+      "id": "AL01-V2",
+      "description": "New variant 2 — an eight-column signal (`<++>`, `|  |`, `|  |`, `__||__`) with a nominated anchor column"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M0.01",
+    "hidden_card_id": "M0.06",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [],
+    "guided_families": [
+     "normal-replace",
+     "search-landmark",
+     "normal-motion"
+    ],
+    "hidden_families": [
+     "ex-substitute-line",
+     "normal-replace",
+     "search-landmark"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M0.01",
+    "hidden_card_id": "M0.06"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  },
+  {
+   "id": "AL02",
+   "title": "Extremes and the readable breakdown",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "The corpus contains many long pose sets, including `/Users/r/Downloads/stone-story-consolidated/official-Cosmetics/Mech` (52 sheets, 49 distinct poses) and `official-Cosmetics/Knight` (34/27), recorded at `share/audits/animation-frame-paths.txt:101-187`. Only the general idea of multiple poses is used.",
+   "master_habits": [
+    "H1",
+    "H2",
+    "H4"
+   ],
+   "master_stages": [
+    "S1",
+    "S4",
+    "A1"
+   ],
+   "do_this": "DO THIS — Author two extremes of a five-row kite around a fixed `+` pivot in column 5, then a breakdown halfway between them. Every frame is 11 columns wide.",
+   "target": "TARGET — Pass requires both extremes to remain intact, the breakdown to be unique, and the pivot column to match in all three frames.",
+   "hint": "HINT — Hint 1: “copy a complete five-row object”; hint 2: “change the four cells adjacent to the fixed pivot”; no key sequence is revealed.",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      "   /\\      ",
+      "  /  \\     ",
+      "--  +  --  ",
+      "  \\  /     ",
+      "   \\/      "
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; mark the `+` pivot with `mK` and verify the two extreme frames before authoring any middle.",
+      "Use a complete-frame copy (`5yy`, `p`) and overwrite the changed slope cells with `r` rather than opening new rows.",
+      "On the copied extreme, use `V` plus `:t$` to create a breakdown scaffold; redraw only the four cells adjacent to the pivot.",
+      "Preview extremes → breakdown → extreme and note whether the motion reads as one-column spacing."
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: extreme, pivot, breakdown, exact column, overwrite, spacing.",
+      "Hint 1: “copy a complete five-row object”; hint 2: “change the four cells adjacent to the fixed pivot”; no key sequence is revealed.",
+      "Pass requires both extremes to remain intact, the breakdown to be unique, and the pivot column to match in all three frames."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; mark the `+` pivot with `mK` and verify the two extreme frames before authoring any middle.",
+    "Use a complete-frame copy (`5yy`, `p`) and overwrite the changed slope cells with `r` rather than opening new rows.",
+    "On the copied extreme, use `V` plus `:t$` to create a breakdown scaffold; redraw only the four cells adjacent to the pivot.",
+    "Preview extremes → breakdown → extreme and note whether the motion reads as one-column spacing."
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: extreme, pivot, breakdown, exact column, overwrite, spacing.",
+    "Hint 1: “copy a complete five-row object”; hint 2: “change the four cells adjacent to the fixed pivot”; no key sequence is revealed.",
+    "Pass requires both extremes to remain intact, the breakdown to be unique, and the pivot column to match in all three frames."
+   ],
+   "questions": [
+    {
+     "id": "AL02-Q1",
+     "title": "Which pose is the breakdown?",
+     "placement": "before",
+     "animation_prompt": "If A points left and B points right, which pose should sit between them: a second copy of A, a midpoint scaffold, or a new unrelated pose?",
+     "animation_answer": "A midpoint scaffold that preserves the pivot and moves the top point about halfway from A to B.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`choice + one invariant`.",
+     "paired_answer_format": "ANIMATION: `choice + one invariant`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL01 taught copy-as-object and named invariants; this question adds the terms extreme and breakdown before the hidden edit.",
+     "clarity_check": "clear — choices and the invariant requested are explicit.",
+     "placement_rationale": "vocabulary is needed before the learner authors the breakdown.",
+     "explicit_answer": "ANIMATION: A midpoint scaffold that preserves the pivot and moves the top point about halfway from A to B. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL02-Q2",
+     "title": "Which cells are safe to overwrite?",
+     "placement": "after",
+     "animation_prompt": "In this kite, which region may change while preserving registration: the four cells beside the pivot or the pivot and ground columns too?",
+     "animation_answer": "Only the four cells beside the pivot; pivot and ground stay fixed.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`region + reason`.",
+     "paired_answer_format": "ANIMATION: `region + reason`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "the guided pivot/column contract and hidden pass check.",
+     "clarity_check": "clear — the competing regions are named.",
+     "placement_rationale": "after execution lets the learner diagnose the artifact.",
+     "explicit_answer": "ANIMATION: Only the four cells beside the pivot; pivot and ground stay fixed. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL02-V1",
+      "description": "New variant 1 — a 9-column folded ribbon with a fixed `^` at column 4,"
+     },
+     {
+      "id": "AL02-V2",
+      "description": "New variant 2 — a 13-column sail with a fixed `o` at column 7. Each supplies two extremes and asks for one breakdown; no old glyphs are reused"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M4.01",
+    "hidden_card_id": "M4.06",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [
+     "AL01"
+    ],
+    "guided_families": [
+     "normal-replace",
+     "change-to-end",
+     "search-landmark",
+     "normal-motion"
+    ],
+    "hidden_families": [
+     "ex-copy",
+     "change-to-end",
+     "normal-motion"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M4.01",
+    "hidden_card_id": "M4.06"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  },
+  {
+   "id": "AL03",
+   "title": "Bisect the change with onion-skin comparison",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "The audit's tutorial evidence records midpoint and partial merge methods in the archived authoring references; the lesson uses only the general operation and a new ring.",
+   "master_habits": [
+    "H2",
+    "H3",
+    "H7"
+   ],
+   "master_stages": [
+    "A2"
+   ],
+   "do_this": "DO THIS — Frames are four rows by nine columns. A ring opens from a dot to a four-cell horizontal oval. Author the in-between that changes one dimension at a time.",
+   "target": "TARGET — Pass requires an in-between that is visibly closer to both neighbors than a copied extreme and keeps the center column registered.",
+   "hint": "HINT — Hint 1 says “compare source and target”; hint 2 says “add side walls before completing the span.”",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      "    .    ",
+      "   /|\\   ",
+      "    |    ",
+      "   / \\   "
+     ],
+     [
+      "  .---.  ",
+      " /     \\ ",
+      "|       |",
+      " \\     / "
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; duplicate the four-row source as a frame object.",
+      "Open a vertical split with `:vnew`, place source and target side by side, and keep their cursor rows aligned; use `:diffthis` only for comparison.",
+      "In the copy, edit the center row first, then the top/bottom corners; do not change the center column.",
+      "Close the comparison split only after naming the first visible difference."
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: side-by-side comparison, onion skin, midpoint, unchanged anchor, one dimension at a time.",
+      "Hint 1 says “compare source and target”; hint 2 says “add side walls before completing the span.”",
+      "Pass requires an in-between that is visibly closer to both neighbors than a copied extreme and keeps the center column registered."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; duplicate the four-row source as a frame object.",
+    "Open a vertical split with `:vnew`, place source and target side by side, and keep their cursor rows aligned; use `:diffthis` only for comparison.",
+    "In the copy, edit the center row first, then the top/bottom corners; do not change the center column.",
+    "Close the comparison split only after naming the first visible difference."
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: side-by-side comparison, onion skin, midpoint, unchanged anchor, one dimension at a time.",
+    "Hint 1 says “compare source and target”; hint 2 says “add side walls before completing the span.”",
+    "Pass requires an in-between that is visibly closer to both neighbors than a copied extreme and keeps the center column registered."
+   ],
+   "questions": [
+    {
+     "id": "AL03-Q1",
+     "title": "What should the onion-skin reveal?",
+     "placement": "before",
+     "animation_prompt": "When the dot becomes an oval, which evidence should you compare before choosing a cell: only the target, or target plus the unchanged center line?",
+     "animation_answer": "Target plus unchanged center line; the center line is the registration anchor.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`comparison evidence + anchor`.",
+     "paired_answer_format": "ANIMATION: `comparison evidence + anchor`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL01–AL02 taught target visibility, anchors, and changed regions; “onion skin” is defined in the stem.",
+     "clarity_check": "clear — the two comparison choices and anchor are explicit.",
+     "placement_rationale": "before the midpoint so comparison guides the decision.",
+     "explicit_answer": "ANIMATION: Target plus unchanged center line; the center line is the registration anchor. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL03-Q2",
+     "title": "Why is a copied extreme a failed in-between?",
+     "placement": "after",
+     "animation_prompt": "What evidence distinguishes a real in-between from simply duplicating one extreme in this ring: changed spacing, fixed center, or an unrelated subject?",
+     "animation_answer": "Changed spacing while the center stays fixed.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`evidence + invariant`.",
+     "paired_answer_format": "ANIMATION: `evidence + invariant`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "the guided side-by-side comparison and hidden pass rule.",
+     "clarity_check": "clear — it asks for two observable properties.",
+     "placement_rationale": "after seeing the comparison makes diagnosis concrete.",
+     "explicit_answer": "ANIMATION: Changed spacing while the center stays fixed. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL03-V1",
+      "description": "New variant 1 — a 7-column three-stage fan"
+     },
+     {
+      "id": "AL03-V2",
+      "description": "New variant 2 — a 10-column two-stage window. Each requires a side-by-side comparison and one midpoint; neither reuses the ring"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M9.01",
+    "hidden_card_id": "M9.06",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [
+     "AL01",
+     "AL02"
+    ],
+    "guided_families": [
+     "normal-replace",
+     "search-landmark"
+    ],
+    "hidden_families": [
+     "normal-replace",
+     "search-landmark"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M9.01",
+    "hidden_card_id": "M9.06"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  },
+  {
+   "id": "AL04",
+   "title": "Spacing, holds, and a repeatable stagger",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "The tutorial archive's animation notes distinguish holds from dead duplicates; the lesson tests that distinction with original beads.",
+   "master_habits": [
+    "H3",
+    "H5",
+    "H7"
+   ],
+   "master_stages": [
+    "A3",
+    "A4"
+   ],
+   "do_this": "DO THIS — Use a six-column, three-row bead with a stationary rail. The bead travels rightward in four frames; hold frame 2 for two beats and offset the trailing tail by one column.",
+   "target": "TARGET — Pass requires four distinct positions, a declared hold, and no rail drift.",
+   "hint": "HINT — Hint 1: name the rail and the beat chart; hint 2: “repeat the one-cell tail edit on the matching hold.”",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      "o--| ",
+      "---| ",
+      "---| "
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; copy the three-row object with `3yy`, `p`, and move only the `o` one cell right in the copy.",
+      "Create the hold by addressed `:copy` of the whole frame, then use `.` to apply the same tail-cell edit to the second held frame.",
+      "Mark timing in a comment outside the art object: `beats 1,2,2,1`.",
+      "Preview at slow speed and decide whether the hold reads as intentional."
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: spacing, hold, tail lag, repeatable local edit, stationary rail.",
+      "Hint 1: name the rail and the beat chart; hint 2: “repeat the one-cell tail edit on the matching hold.”",
+      "Pass requires four distinct positions, a declared hold, and no rail drift."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; copy the three-row object with `3yy`, `p`, and move only the `o` one cell right in the copy.",
+    "Create the hold by addressed `:copy` of the whole frame, then use `.` to apply the same tail-cell edit to the second held frame.",
+    "Mark timing in a comment outside the art object: `beats 1,2,2,1`.",
+    "Preview at slow speed and decide whether the hold reads as intentional."
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: spacing, hold, tail lag, repeatable local edit, stationary rail.",
+    "Hint 1: name the rail and the beat chart; hint 2: “repeat the one-cell tail edit on the matching hold.”",
+    "Pass requires four distinct positions, a declared hold, and no rail drift."
+   ],
+   "questions": [
+    {
+     "id": "AL04-Q1",
+     "title": "Hold or dead duplicate?",
+     "placement": "before",
+     "animation_prompt": "When two adjacent bead frames are identical, what makes the duplicate a deliberate hold rather than a mistake: a timing plan or a larger glyph?",
+     "animation_answer": "A timing plan that assigns the duplicate a beat.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`choice + test`.",
+     "paired_answer_format": "ANIMATION: `choice + test`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL02–AL03 taught distinct poses and comparison; this question defines timing evidence before a hold is authored.",
+     "clarity_check": "clear — both choices and the test are named.",
+     "placement_rationale": "before repetition prevents accidental duplicates.",
+     "explicit_answer": "ANIMATION: A timing plan that assigns the duplicate a beat. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL04-Q2",
+     "title": "What can repeat at scale?",
+     "placement": "after",
+     "animation_prompt": "Which edit is safe to repeat on the matching hold: the one-cell tail change, or the entire frame including the rail?",
+     "animation_answer": "The one-cell tail change, bounded to the matching frame; the rail is an invariant.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`edit + scope + invariant`.",
+     "paired_answer_format": "ANIMATION: `edit + scope + invariant`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "guided `.` use and the hidden rail pass rule.",
+     "clarity_check": "clear — action, scope, and invariant are explicit.",
+     "placement_rationale": "after repeating lets the learner inspect blast radius.",
+     "explicit_answer": "ANIMATION: The one-cell tail change, bounded to the matching frame; the rail is an invariant. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL04-V1",
+      "description": "New variant 1 — a drifting flag with a fixed pole"
+     },
+     {
+      "id": "AL04-V2",
+      "description": "New variant 2 — a sliding seed with a fixed soil line. Each uses a different beat chart and asks for one held frame plus one trailing part"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M7.01",
+    "hidden_card_id": "M7.06",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [
+     "AL01",
+     "AL02",
+     "AL03"
+    ],
+    "guided_families": [
+     "ex-copy"
+    ],
+    "hidden_families": [
+     "normal-replace",
+     "repeat",
+     "search-landmark",
+     "normal-motion"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M7.01",
+    "hidden_card_id": "M7.06"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  },
+  {
+   "id": "AL05",
+   "title": "Arc, overshoot, and settle",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "The local audit prioritizes long pose families because they support spacing and arc analysis; no individual pose is reused.",
+   "master_habits": [
+    "H2",
+    "H7",
+    "H9"
+   ],
+   "master_stages": [
+    "S4",
+    "A4"
+   ],
+   "do_this": "DO THIS — Animate a four-row pebble from left perch to right perch in a nine-column box. The center row is the baseline. Use a high arc, an overshoot one cell beyond the right perch, then a settle back to the perch.",
+   "target": "TARGET — Pass requires a monotonic arc to the apex, a visible overshoot, and a settle frame with a stated timing purpose.",
+   "hint": "HINT — Hint 1 names the five temporal roles; hint 2 names “one-cell past the landing, then return.” Exact keys stay hidden.",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      "o      o",
+      "         ",
+      "---------"
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; make three full-frame copies for high point, overshoot, and settle before editing any local cell.",
+      "Use a named mark on each landing row, `mL` and `mR`; use `f+` and `r` for the nominated landing cells.",
+      "Preview source → high → right → overshoot → settle. Undo the first variant with `u`, make a second arc, and keep the one whose spacing reads best.",
+      "Record why the overshoot is intentional and why the final settle is not a dead duplicate."
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: arc, spacing, overshoot, settle, landing mark, safe variant.",
+      "Hint 1 names the five temporal roles; hint 2 names “one-cell past the landing, then return.” Exact keys stay hidden.",
+      "Pass requires a monotonic arc to the apex, a visible overshoot, and a settle frame with a stated timing purpose."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; make three full-frame copies for high point, overshoot, and settle before editing any local cell.",
+    "Use a named mark on each landing row, `mL` and `mR`; use `f+` and `r` for the nominated landing cells.",
+    "Preview source → high → right → overshoot → settle. Undo the first variant with `u`, make a second arc, and keep the one whose spacing reads best.",
+    "Record why the overshoot is intentional and why the final settle is not a dead duplicate."
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: arc, spacing, overshoot, settle, landing mark, safe variant.",
+    "Hint 1 names the five temporal roles; hint 2 names “one-cell past the landing, then return.” Exact keys stay hidden.",
+    "Pass requires a monotonic arc to the apex, a visible overshoot, and a settle frame with a stated timing purpose."
+   ],
+   "questions": [
+    {
+     "id": "AL05-Q1",
+     "title": "Where does overshoot belong?",
+     "placement": "before",
+     "animation_prompt": "In a landing sequence, should overshoot happen before the target landing, after it, or replace the starting extreme?",
+     "animation_answer": "After the target landing and before the settle return.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`position + reason`.",
+     "paired_answer_format": "ANIMATION: `position + reason`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL04 established ordered timing and holds; this lesson defines overshoot and settle in the stem.",
+     "clarity_check": "clear — temporal alternatives are explicit.",
+     "placement_rationale": "the learner needs the order before authoring.",
+     "explicit_answer": "ANIMATION: After the target landing and before the settle return. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL05-Q2",
+     "title": "Which variant survives?",
+     "placement": "after",
+     "animation_prompt": "Which arc should be kept: the one with a readable apex and landing spacing, or the one with more glyph changes but a broken anchor?",
+     "animation_answer": "Readable apex/landing spacing with the anchor intact.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`variant criterion + invariant`.",
+     "paired_answer_format": "ANIMATION: `variant criterion + invariant`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "H7 comparison and H9 safe exploration were practiced in AL03–AL04 and the guided undo cycle.",
+     "clarity_check": "clear — criteria and invariant are named.",
+     "placement_rationale": "after comparison, because the answer depends on observed motion rather than a memorized label.",
+     "explicit_answer": "ANIMATION: Readable apex/landing spacing with the anchor intact. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL05-V1",
+      "description": "New variant 1 — a five-row falling leaf with a fixed stem"
+     },
+     {
+      "id": "AL05-V2",
+      "description": "New variant 2 — a four-row swinging weight with fixed suspension. Each requires a distinct arc, overshoot, and settle, then a safe undo/keep decision"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M18.01",
+    "hidden_card_id": "M18.06",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [
+     "AL01",
+     "AL02",
+     "AL03",
+     "AL04"
+    ],
+    "guided_families": [
+     "change-to-end",
+     "search-landmark",
+     "normal-motion"
+    ],
+    "hidden_families": [
+     "change-to-end",
+     "search-landmark",
+     "normal-motion"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M18.01",
+    "hidden_card_id": "M18.06"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  },
+  {
+   "id": "AL06",
+   "title": "Layer offset, drag, and follow-through",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "The archived pit material documents back-to-front layers and separately moving sub-details; the exact 1,122-line plate is blocked. This lesson uses a new flag-and-pole scene.",
+   "master_habits": [
+    "H3",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S6",
+    "A4"
+   ],
+   "do_this": "DO THIS — Keep a three-row pole layer fixed while a two-row pennant layer lags one frame behind the pole and its loose tip follows through after the pole stops.",
+   "target": "TARGET — Pass requires the pole column unchanged, a visible drag, a follow-through tip, and a preserved separator at contact.",
+   "hint": "HINT — Hint 1 names the moving layer; hint 2 says “offset the tip after the pole stops.”",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      "   |\\   ",
+      "---| \\  ",
+      "   |  \\ "
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; select the pole as one three-row layer and the pennant as a separate two-row layer, leaving a blank separator row in the strip.",
+      "Copy the pennant layer with `2yy`, put it after the pole layer, then use a Visual-block selection to shift only its registered columns.",
+      "Add a one-frame drag by offsetting the tip, not the pole; use `.` for the matching tip cell in the follow-through frame.",
+      "Preview back layer → pole → pennant and inspect the seam at contact."
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: layer object, back-to-front order, seam, drag, follow-through, column scope.",
+      "Hint 1 names the moving layer; hint 2 says “offset the tip after the pole stops.”",
+      "Pass requires the pole column unchanged, a visible drag, a follow-through tip, and a preserved separator at contact."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; select the pole as one three-row layer and the pennant as a separate two-row layer, leaving a blank separator row in the strip.",
+    "Copy the pennant layer with `2yy`, put it after the pole layer, then use a Visual-block selection to shift only its registered columns.",
+    "Add a one-frame drag by offsetting the tip, not the pole; use `.` for the matching tip cell in the follow-through frame.",
+    "Preview back layer → pole → pennant and inspect the seam at contact."
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: layer object, back-to-front order, seam, drag, follow-through, column scope.",
+    "Hint 1 names the moving layer; hint 2 says “offset the tip after the pole stops.”",
+    "Pass requires the pole column unchanged, a visible drag, a follow-through tip, and a preserved separator at contact."
+   ],
+   "questions": [
+    {
+     "id": "AL06-Q1",
+     "title": "Which part may lag?",
+     "placement": "before",
+     "animation_prompt": "To show drag while preserving the pole's registration, which part may change first: the pennant tip or the pole column?",
+     "animation_answer": "The pennant tip; the pole column remains fixed.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`part + invariant`.",
+     "paired_answer_format": "ANIMATION: `part + invariant`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL01's frame/layer object and AL02's fixed pivot provide scope and invariant vocabulary.",
+     "clarity_check": "clear — two parts and one invariant are named.",
+     "placement_rationale": "before selecting a column prevents a destructive scope.",
+     "explicit_answer": "ANIMATION: The pennant tip; the pole column remains fixed. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL06-Q2",
+     "title": "Where does the seam go?",
+     "placement": "after",
+     "animation_prompt": "At the pole/pennant contact, what keeps layers readable: a blank separator column or merging both glyphs into one stroke?",
+     "animation_answer": "A blank separator column, unless the plan explicitly calls for a contact overlap.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`choice + depth reason`.",
+     "paired_answer_format": "ANIMATION: `choice + depth reason`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "hidden pass rule and guided seam inspection.",
+     "clarity_check": "clear — the alternatives and requested reason are explicit.",
+     "placement_rationale": "after the edit, because the learner can inspect the resulting contact.",
+     "explicit_answer": "ANIMATION: A blank separator column, unless the plan explicitly calls for a contact overlap. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL06-V1",
+      "description": "New variant 1 — a wheel with a loose spoke layer"
+     },
+     {
+      "id": "AL06-V2",
+      "description": "New variant 2 — a hinged sign with a trailing chain layer. Both require column-scoped drag and a seam decision"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M5.01",
+    "hidden_card_id": "M5.06",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [
+     "AL01",
+     "AL02",
+     "AL03",
+     "AL04",
+     "AL05"
+    ],
+    "guided_families": [
+     "normal-replace",
+     "normal-motion"
+    ],
+    "hidden_families": [
+     "normal-replace",
+     "normal-motion"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M5.01",
+    "hidden_card_id": "M5.06"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  },
+  {
+   "id": "AL07",
+   "title": "Close the loop without a seam pop",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "The tutorial archive discusses preview, padding, and loop settle in its animation sections; the pack applies those decisions to a new four-frame rotating tile.",
+   "master_habits": [
+    "H1",
+    "H3",
+    "H8",
+    "H9"
+   ],
+   "master_stages": [
+    "S2",
+    "A6",
+    "A7"
+   ],
+   "do_this": "DO THIS — Build four equal 5×7 frames of a hollow tile turning a quarter-step. Frame 4 must settle into frame 1 without a one-column jump. The pivot is `+` at row 3, column 4.",
+   "target": "TARGET — Pass requires equal frame widths, no trailing spaces, a readable reverse, and no seam pop at the loop boundary.",
+   "hint": "HINT — Hint 1 names the pivot and frame size; hint 2 says “compare last to first, then remove the cell that jumps.”",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      " .---. ",
+      "| + | ",
+      " '---' ",
+      "  |   "
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; duplicate the complete 5×7 object into four frame blocks.",
+      "Change one edge at a time with overwrite commands; keep the pivot and frame bounds fixed.",
+      "Use `:set virtualedit=onemore` only if inspecting a trailing cell, then remove the option before the final check.",
+      "Compare frame 4 to frame 1, delete accidental trailing spaces, and replay forward then reverse. Use `u` to explore one seam variant safely."
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: loop seam, equal bounds, hand mirror, reverse reuse, trailing whitespace, safe undo.",
+      "Hint 1 names the pivot and frame size; hint 2 says “compare last to first, then remove the cell that jumps.”",
+      "Pass requires equal frame widths, no trailing spaces, a readable reverse, and no seam pop at the loop boundary."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; duplicate the complete 5×7 object into four frame blocks.",
+    "Change one edge at a time with overwrite commands; keep the pivot and frame bounds fixed.",
+    "Use `:set virtualedit=onemore` only if inspecting a trailing cell, then remove the option before the final check.",
+    "Compare frame 4 to frame 1, delete accidental trailing spaces, and replay forward then reverse. Use `u` to explore one seam variant safely."
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: loop seam, equal bounds, hand mirror, reverse reuse, trailing whitespace, safe undo.",
+    "Hint 1 names the pivot and frame size; hint 2 says “compare last to first, then remove the cell that jumps.”",
+    "Pass requires equal frame widths, no trailing spaces, a readable reverse, and no seam pop at the loop boundary."
+   ],
+   "questions": [
+    {
+     "id": "AL07-Q1",
+     "title": "What must match at the seam?",
+     "placement": "before",
+     "animation_prompt": "Which comparison catches a loop pop first: frame 4 versus frame 1 at the pivot and bounds, or frame 2 versus an unrelated drawing?",
+     "animation_answer": "Frame 4 versus frame 1 at the pivot and bounds.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`comparison pair + two checks`.",
+     "paired_answer_format": "ANIMATION: `comparison pair + two checks`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL01 fixed bounds, AL03 introduced side-by-side comparison, and AL05 introduced safe variant choice.",
+     "clarity_check": "clear — the pair and checks are specified.",
+     "placement_rationale": "before cleanup gives a concrete seam test.",
+     "explicit_answer": "ANIMATION: Frame 4 versus frame 1 at the pivot and bounds. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL07-Q2",
+     "title": "Why remove trailing spaces?",
+     "placement": "after",
+     "animation_prompt": "What does removing trailing spaces protect here: equal visible frame width and deterministic comparison, or a new animation pose?",
+     "animation_answer": "Equal visible frame width and deterministic comparison.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`purpose + affected contract`.",
+     "paired_answer_format": "ANIMATION: `purpose + affected contract`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "H8 and the guided cleanup just demonstrated.",
+     "clarity_check": "clear — one purpose and one contract are requested.",
+     "placement_rationale": "after cleanup ties the housekeeping to the observed seam.",
+     "explicit_answer": "ANIMATION: Equal visible frame width and deterministic comparison. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL07-V1",
+      "description": "New variant 1 — a 6×9 rotating diamond with a fixed center"
+     },
+     {
+      "id": "AL07-V2",
+      "description": "New variant 2 — a 4×8 folding tab with a fixed hinge. Each requires forward/reverse playback and last/first comparison"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M6.01",
+    "hidden_card_id": "M6.08",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [
+     "AL01",
+     "AL02",
+     "AL03",
+     "AL04",
+     "AL05",
+     "AL06"
+    ],
+    "guided_families": [
+     "normal-replace",
+     "normal-motion"
+    ],
+    "hidden_families": [
+     "ex-move"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M6.01",
+    "hidden_card_id": "M6.08"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  },
+  {
+   "id": "AL08",
+   "title": "Column repair, padding, and readable ground",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "The archived tutorial describes repeated ground/material patterns and subtraction; its HTML and inline brick material are blocked. This lesson creates a new rail and shadow vocabulary.",
+   "master_habits": [
+    "H1",
+    "H4",
+    "H8"
+   ],
+   "master_stages": [
+    "S0",
+    "S7",
+    "A5"
+   ],
+   "do_this": "DO THIS — Make a four-row, 12-column ground strip. A three-column shadow advances one column per frame; the top row is a fixed rail, and every frame is padded to 12 columns.",
+   "target": "TARGET — Pass requires fixed rail/bottom, equal 12-column frames, and one moving shadow.",
+   "hint": "HINT — Hint 1 names the shadow columns; hint 2 says “copy the frame, then apply a bounded material edit.”",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      "------------",
+      "..  ..  ..  ",
+      "  ___      ",
+      "____________"
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; select the shadow column with Visual block mode and replace it in place; verify the fixed rail/bottom columns.",
+      "Duplicate the complete frame with `:t$`; use a bounded range substitution for the shadow material, never `%`.",
+      "Run the cleanup conceptually equivalent to `:%s/\\\\s\\\\+$//e` only on a copy; then pad every frame to 12 columns with explicit spaces in the art contract.",
+      "Preview the ground at two speeds and reject any shadow that reads as a new object rather than a moving value."
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: Visual block, column scope, bounded range, trailing whitespace, pad, ground material.",
+      "Hint 1 names the shadow columns; hint 2 says “copy the frame, then apply a bounded material edit.”",
+      "Pass requires fixed rail/bottom, equal 12-column frames, and one moving shadow."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; select the shadow column with Visual block mode and replace it in place; verify the fixed rail/bottom columns.",
+    "Duplicate the complete frame with `:t$`; use a bounded range substitution for the shadow material, never `%`.",
+    "Run the cleanup conceptually equivalent to `:%s/\\\\s\\\\+$//e` only on a copy; then pad every frame to 12 columns with explicit spaces in the art contract.",
+    "Preview the ground at two speeds and reject any shadow that reads as a new object rather than a moving value."
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: Visual block, column scope, bounded range, trailing whitespace, pad, ground material.",
+    "Hint 1 names the shadow columns; hint 2 says “copy the frame, then apply a bounded material edit.”",
+    "Pass requires fixed rail/bottom, equal 12-column frames, and one moving shadow."
+   ],
+   "questions": [
+    {
+     "id": "AL08-Q1",
+     "title": "Which scope is safe?",
+     "placement": "before",
+     "animation_prompt": "To move only the shadow, is the safe scope its selected columns or the entire file with a global substitute?",
+     "animation_answer": "The selected shadow columns in the nominated frame range.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`scope + blast-radius reason`.",
+     "paired_answer_format": "ANIMATION: `scope + blast-radius reason`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL06 taught column-scoped layer edits; AL04 taught bounded repeat.",
+     "clarity_check": "clear — safe and unsafe scopes are named.",
+     "placement_rationale": "before the first command prevents a whole-strip edit.",
+     "explicit_answer": "ANIMATION: The selected shadow columns in the nominated frame range. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL08-Q2",
+     "title": "What does padding preserve?",
+     "placement": "after",
+     "animation_prompt": "Why pad all frames to 12 columns: to preserve registration/comparison, or to make the shadow taller?",
+     "animation_answer": "To preserve registration and deterministic comparison.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`purpose + invariant`.",
+     "paired_answer_format": "ANIMATION: `purpose + invariant`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL01 bounds and AL07 seam cleanup.",
+     "clarity_check": "clear — two alternatives and one invariant are explicit.",
+     "placement_rationale": "after cleanup connects spacing to artifact correctness.",
+     "explicit_answer": "ANIMATION: To preserve registration and deterministic comparison. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL08-V1",
+      "description": "New variant 1 — a 10-column waterline with a two-cell glint"
+     },
+     {
+      "id": "AL08-V2",
+      "description": "New variant 2 — a 14-column stone floor with a diagonal shade. Each requires column-scoped movement, pad, and cleanup without changing the ground material"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M8.01",
+    "hidden_card_id": "M8.06",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [
+     "AL01",
+     "AL02",
+     "AL03",
+     "AL04",
+     "AL05",
+     "AL06",
+     "AL07"
+    ],
+    "guided_families": [
+     "normal-replace",
+     "normal-motion"
+    ],
+    "hidden_families": [
+     "normal-replace",
+     "normal-motion"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M8.01",
+    "hidden_card_id": "M8.06"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  },
+  {
+   "id": "AL09",
+   "title": "Build a palette and compare material variants",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "The tutorial archive teaches that a material's glyph set should remain coherent; its exact glyph table is not adopted. The pack uses named registers as a Neovim exercise.",
+   "master_habits": [
+    "H5",
+    "H6",
+    "H9"
+   ],
+   "master_stages": [
+    "S5"
+   ],
+   "do_this": "DO THIS — Create a three-row, nine-column reed using a palette of `.` (dust), `:` (mid), and `#` (dark). The silhouette stays fixed while two material variants swap only internal cells.",
+   "target": "TARGET — Pass requires a stable palette, unchanged silhouette, and a written reason for the selected variant.",
+   "hint": "HINT — Hint 1 names three material roles; hint 2 says “retrieve the named glyph, then replace only an internal cell.”",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      "  ||   ",
+      " /##\\  ",
+      "..::.."
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; place `. : #` in named registers using `\"add`, `\"amm`, and `\"adk` (or record an equivalent palette table if the operator's maps differ).",
+      "Copy the complete frame into two variants; use `<C-r>a`, `<C-r>m`, and `<C-r>k` only inside nominated cells.",
+      "Compare both variants side by side and undo a noisy substitution before selecting one.",
+      "Record the chosen material contract: “dust, mid, dark; no unplanned mix.”"
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: named register, palette contract, internal material, variant, safe undo.",
+      "Hint 1 names three material roles; hint 2 says “retrieve the named glyph, then replace only an internal cell.”",
+      "Pass requires a stable palette, unchanged silhouette, and a written reason for the selected variant."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; place `. : #` in named registers using `\"add`, `\"amm`, and `\"adk` (or record an equivalent palette table if the operator's maps differ).",
+    "Copy the complete frame into two variants; use `<C-r>a`, `<C-r>m`, and `<C-r>k` only inside nominated cells.",
+    "Compare both variants side by side and undo a noisy substitution before selecting one.",
+    "Record the chosen material contract: “dust, mid, dark; no unplanned mix.”"
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: named register, palette contract, internal material, variant, safe undo.",
+    "Hint 1 names three material roles; hint 2 says “retrieve the named glyph, then replace only an internal cell.”",
+    "Pass requires a stable palette, unchanged silhouette, and a written reason for the selected variant."
+   ],
+   "questions": [
+    {
+     "id": "AL09-Q1",
+     "title": "What belongs in the palette?",
+     "placement": "before",
+     "animation_prompt": "Which palette is coherent for this reed: three named density roles used consistently, or every visually interesting glyph available?",
+     "animation_answer": "Three named density roles used consistently.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`choice + three roles`.",
+     "paired_answer_format": "ANIMATION: `choice + three roles`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL08 taught material consistency and bounded region; this lesson names the register mechanism before use.",
+     "clarity_check": "clear — choice and role count are explicit.",
+     "placement_rationale": "before storing registers, so the learner knows what to name.",
+     "explicit_answer": "ANIMATION: Three named density roles used consistently. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL09-Q2",
+     "title": "Which variant is safe to keep?",
+     "placement": "after",
+     "animation_prompt": "Which variant is safer: one with a coherent palette and unchanged silhouette, or one with more symbols but an altered outline?",
+     "animation_answer": "Coherent palette with unchanged silhouette.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`variant criterion + invariant`.",
+     "paired_answer_format": "ANIMATION: `variant criterion + invariant`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "H7 comparison from AL03 and H9 safe selection from AL05.",
+     "clarity_check": "clear — the criteria and invariant are named.",
+     "placement_rationale": "after seeing both variants, because it requires judgment.",
+     "explicit_answer": "ANIMATION: Coherent palette with unchanged silhouette. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL09-V1",
+      "description": "New variant 1 — a four-row lantern using `·`, `+`, `*`,"
+     },
+     {
+      "id": "AL09-V2",
+      "description": "New variant 2 — a six-row woven gate using `.` `:` `=`. Each requires a named palette and one safely selected internal-material variant"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M14.01",
+    "hidden_card_id": "M14.06",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [
+     "AL01",
+     "AL02",
+     "AL03",
+     "AL04",
+     "AL05",
+     "AL06",
+     "AL07",
+     "AL08"
+    ],
+    "guided_families": [
+     "register",
+     "replace-mode",
+     "search-landmark",
+     "normal-motion"
+    ],
+    "hidden_families": [
+     "register",
+     "replace-mode",
+     "search-landmark",
+     "normal-motion"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M14.01",
+    "hidden_card_id": "M14.06"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  },
+  {
+   "id": "AL10",
+   "title": "Hand-mirror an asymmetric action",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "The tutorial archive warns that manual mirroring matters because glyphs are not symmetric. The source's characters are not copied.",
+   "master_habits": [
+    "H2",
+    "H3",
+    "H4"
+   ],
+   "master_stages": [
+    "S2",
+    "A6"
+   ],
+   "do_this": "DO THIS — Create a five-row, 11-column scoop action with an asymmetric `>` latch. Reverse the action by hand so the latch becomes `<`, the arm order reverses, and the center body remains registered.",
+   "target": "TARGET — Pass requires reversed directional meaning, unchanged center column, and no accidental row insertion.",
+   "hint": "HINT — Hint 1 names the latch and arm order; hint 2 says “rewrite each directional glyph by hand around the fixed center.”",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      "   ___>   ",
+      "  /   \\   ",
+      " |  o  |  ",
+      "  \\___/   ",
+      "    |     "
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; copy the complete five-row frame before making a reverse.",
+      "Use a Visual block selection to inspect columns, then hand-replace each directional glyph; do not use a grid flip or external transform.",
+      "Search for the center `o` and verify its column in both frames.",
+      "Preview forward/reverse and mark any latch pop for a safe variant pass."
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: hand mirror, asymmetric glyph, registration cell, column scope, reverse reuse.",
+      "Hint 1 names the latch and arm order; hint 2 says “rewrite each directional glyph by hand around the fixed center.”",
+      "Pass requires reversed directional meaning, unchanged center column, and no accidental row insertion."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; copy the complete five-row frame before making a reverse.",
+    "Use a Visual block selection to inspect columns, then hand-replace each directional glyph; do not use a grid flip or external transform.",
+    "Search for the center `o` and verify its column in both frames.",
+    "Preview forward/reverse and mark any latch pop for a safe variant pass."
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: hand mirror, asymmetric glyph, registration cell, column scope, reverse reuse.",
+    "Hint 1 names the latch and arm order; hint 2 says “rewrite each directional glyph by hand around the fixed center.”",
+    "Pass requires reversed directional meaning, unchanged center column, and no accidental row insertion."
+   ],
+   "questions": [
+    {
+     "id": "AL10-Q1",
+     "title": "Why not flip the grid?",
+     "placement": "before",
+     "animation_prompt": "Why is a manual mirror required for the scoop: directional glyphs carry meaning, or because the frame must become taller?",
+     "animation_answer": "Directional glyphs carry meaning and are not symmetric under a blind grid flip.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`reason + affected glyph class`.",
+     "paired_answer_format": "ANIMATION: `reason + affected glyph class`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL01 fixed objects and AL06 columns; the lesson defines asymmetric glyphs before asking.",
+     "clarity_check": "clear — reason and class are requested.",
+     "placement_rationale": "before the operation prevents an invalid shortcut.",
+     "explicit_answer": "ANIMATION: Directional glyphs carry meaning and are not symmetric under a blind grid flip. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL10-Q2",
+     "title": "What must not move?",
+     "placement": "after",
+     "animation_prompt": "Which landmark proves the mirror stayed registered: the center `o` column or the outer latch column?",
+     "animation_answer": "The center `o` column; the latch is intentionally reversed.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`landmark + intentional change`.",
+     "paired_answer_format": "ANIMATION: `landmark + intentional change`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "guided mirror and hidden pass contract.",
+     "clarity_check": "clear — one invariant and one changed feature are named.",
+     "placement_rationale": "after authoring lets the learner verify the artifact.",
+     "explicit_answer": "ANIMATION: The center `o` column; the latch is intentionally reversed. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL10-V1",
+      "description": "New variant 1 — a left/right hooked lever with a fixed rivet"
+     },
+     {
+      "id": "AL10-V2",
+      "description": "New variant 2 — a five-row wing fold with a fixed shoulder. Each requires hand reversal of asymmetric glyphs"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M3.01",
+    "hidden_card_id": "M3.06",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [
+     "AL01",
+     "AL02",
+     "AL03",
+     "AL04",
+     "AL05",
+     "AL06",
+     "AL07",
+     "AL08",
+     "AL09"
+    ],
+    "guided_families": [
+     "normal-replace",
+     "search-landmark",
+     "normal-motion"
+    ],
+    "hidden_families": [
+     "visual-scope",
+     "normal-replace",
+     "register",
+     "search-landmark",
+     "normal-motion"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M3.01",
+    "hidden_card_id": "M3.06"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  },
+  {
+   "id": "AL11",
+   "title": "Subtract, reorder, and retain frame objects",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "Archived tutorial notes describe subtractive authoring and reordering playback. The exact tutorial build plate is blocked.",
+   "master_habits": [
+    "H3",
+    "H5",
+    "H8",
+    "H9"
+   ],
+   "master_stages": [
+    "S3",
+    "A5"
+   ],
+   "do_this": "DO THIS — Start with a finished six-row, nine-column tower. Make a three-frame build by copying the complete tower and clearing one upper band per frame; then reorder the frames so playback grows upward.",
+   "target": "TARGET — Pass requires a visibly growing playback order, equal frame heights, and no lost separator or instruction text.",
+   "hint": "HINT — Hint 1 says “preserve six rows”; hint 2 says “move complete ranges, not individual art rows.”",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      "   /\\\\   ",
+      "  /##\\\\  ",
+      " /####\\\\ ",
+      " | || |  ",
+      " | || |  ",
+      "_||||||_"
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; select all six lines and save the object in a named register.",
+      "Make two full-frame copies. On each copy, use blockwise selection plus overwrite to clear only the next upper band.",
+      "Use `:m` on complete frame ranges to put the seed first and the finished tower last; inspect blank separators after moving.",
+      "Undo one wrong ordering, redo it, and run the equal-height/padding check."
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: subtractive edit, clear-not-delete, frame object, range move, playback order, separator.",
+      "Hint 1 says “preserve six rows”; hint 2 says “move complete ranges, not individual art rows.”",
+      "Pass requires a visibly growing playback order, equal frame heights, and no lost separator or instruction text."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; select all six lines and save the object in a named register.",
+    "Make two full-frame copies. On each copy, use blockwise selection plus overwrite to clear only the next upper band.",
+    "Use `:m` on complete frame ranges to put the seed first and the finished tower last; inspect blank separators after moving.",
+    "Undo one wrong ordering, redo it, and run the equal-height/padding check."
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: subtractive edit, clear-not-delete, frame object, range move, playback order, separator.",
+    "Hint 1 says “preserve six rows”; hint 2 says “move complete ranges, not individual art rows.”",
+    "Pass requires a visibly growing playback order, equal frame heights, and no lost separator or instruction text."
+   ],
+   "questions": [
+    {
+     "id": "AL11-Q1",
+     "title": "Clear or delete?",
+     "placement": "before",
+     "animation_prompt": "To preserve fixed-height frames, should an upper band be overwritten with spaces or deleted with `dd`?",
+     "animation_answer": "Overwritten with spaces; deleting a row changes the object.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`operation + frame-height reason`.",
+     "paired_answer_format": "ANIMATION: `operation + frame-height reason`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL01 fixed object bounds and AL08 separated cleanup from structural edits.",
+     "clarity_check": "clear — operations and consequence are explicit.",
+     "placement_rationale": "before the destructive temptation.",
+     "explicit_answer": "ANIMATION: Overwritten with spaces; deleting a row changes the object. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL11-Q2",
+     "title": "Which order plays as a build?",
+     "placement": "after",
+     "animation_prompt": "Which order reads as growth: seed → partial → finished, or finished → partial → seed?",
+     "animation_answer": "Seed → partial → finished.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`order + visual effect`.",
+     "paired_answer_format": "ANIMATION: `order + visual effect`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "guided subtractive frames and A5 vocabulary.",
+     "clarity_check": "clear — the two orders and requested effect are stated.",
+     "placement_rationale": "after moving ranges makes playback evidence available.",
+     "explicit_answer": "ANIMATION: Seed → partial → finished. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL11-V1",
+      "description": "New variant 1 — a five-row bridge assembled by removing planks"
+     },
+     {
+      "id": "AL11-V2",
+      "description": "New variant 2 — a seven-row spiral assembled by clearing rings. Each requires complete-object copies, clear-not-delete edits, and a reordered build"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M11.01",
+    "hidden_card_id": "M11.06",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [
+     "AL01",
+     "AL02",
+     "AL03",
+     "AL04",
+     "AL05",
+     "AL06",
+     "AL07",
+     "AL08",
+     "AL09",
+     "AL10"
+    ],
+    "guided_families": [
+     "replace-mode",
+     "normal-motion"
+    ],
+    "hidden_families": [
+     "replace-mode",
+     "normal-motion"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M11.01",
+    "hidden_card_id": "M11.06"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  },
+  {
+   "id": "AL12",
+   "title": "Original capstone: a 4+4+2 registered loop",
+   "domains": [
+    "ascii_animation",
+    "neovim"
+   ],
+   "source": "share/animation_lesson_pack.md",
+   "source_evidence": "The source audit identifies long animation sets as useful evidence for a capstone's need for timing, holds, layers, and review. The archived tutorial's walk-cycle discussion is a method reference only. This capstone is an original “signal seed” and shares no source silhouette.",
+   "master_habits": [
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "H5",
+    "H6",
+    "H7",
+    "H8",
+    "H9"
+   ],
+   "master_stages": [
+    "S0",
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5",
+    "S6",
+    "S7",
+    "A0",
+    "A1",
+    "A2",
+    "A3",
+    "A4",
+    "A5",
+    "A6",
+    "A7"
+   ],
+   "do_this": "DO THIS — Plan and author a 10-frame signal-seed loop in a 9×13 fixed box. Timing is **4+4+2**: four beats on the rising contact, four on the falling contact, and two on the settle. The anchor is the bottom `+` in column 7. The shot must include: two extremes, one breakdown, at least one in-between, a moving hold, an arc, a one-cell overshoot/settle, a dragged side mark, a layer seam, and a loop comparison.",
+   "target": "TARGET — Pass requires an original 10-frame loop, readable 4+4+2 timing, fixed box, no dead duplicate, and a written diagnosis of any remaining jitter.",
+   "hint": "HINT — Hint 1 names only the next decision; hint 2 names the required anchor or layer scope; exact command keys remain hidden.",
+   "ascii_exercise": {
+    "original": true,
+    "frames": [
+     [
+      "     .     ",
+      "    /|\\    ",
+      "   / | \\   ",
+      "  -- + --  ",
+      "     |     "
+     ]
+    ],
+    "fixed_width": true,
+    "registration": "Keep every frame in one equal-width, blank-line-delimited box."
+   },
+   "neovim_exercise": {
+    "guided": {
+     "key_hidden": false,
+     "steps": [
+      "`key-hidden: no`; write a one-line plan naming subject, 9×13 bounds, anchor, extremes, breakdown, timing, and loop test before touching the art.",
+      "Author two complete extreme objects, copy them into the strip, and add a breakdown/in-between by comparing both neighbors.",
+      "Add a four-beat hold, a one-cell overshoot, and two settle frames. Keep the anchor and seam column registered; use named registers for the chosen palette.",
+      "Make a second variant safely with `u`/redo, choose it by side-by-side comparison, then clean/pad all frames and preview forward/reverse.",
+      "Run a final ledger: frame objects, layer objects, columns, repeated edits, palette, comparison, cleanup, and variant rationale."
+     ]
+    },
+    "hidden": {
+     "key_hidden": true,
+     "keys": "withheld",
+     "steps": [
+      "`key-hidden: yes; keys: withheld`.",
+      "Vocabulary: plan → extremes → breakdown → in-between → hold → arc → overshoot/settle → drag → seam → pad → preview.",
+      "Hint 1 names only the next decision; hint 2 names the required anchor or layer scope; exact command keys remain hidden.",
+      "Pass requires an original 10-frame loop, readable 4+4+2 timing, fixed box, no dead duplicate, and a written diagnosis of any remaining jitter."
+     ]
+    }
+   },
+   "guided_sequence": [
+    "`key-hidden: no`; write a one-line plan naming subject, 9×13 bounds, anchor, extremes, breakdown, timing, and loop test before touching the art.",
+    "Author two complete extreme objects, copy them into the strip, and add a breakdown/in-between by comparing both neighbors.",
+    "Add a four-beat hold, a one-cell overshoot, and two settle frames. Keep the anchor and seam column registered; use named registers for the chosen palette.",
+    "Make a second variant safely with `u`/redo, choose it by side-by-side comparison, then clean/pad all frames and preview forward/reverse.",
+    "Run a final ledger: frame objects, layer objects, columns, repeated edits, palette, comparison, cleanup, and variant rationale."
+   ],
+   "hidden_sequence": [
+    "`key-hidden: yes; keys: withheld`.",
+    "Vocabulary: plan → extremes → breakdown → in-between → hold → arc → overshoot/settle → drag → seam → pad → preview.",
+    "Hint 1 names only the next decision; hint 2 names the required anchor or layer scope; exact command keys remain hidden.",
+    "Pass requires an original 10-frame loop, readable 4+4+2 timing, fixed box, no dead duplicate, and a written diagnosis of any remaining jitter."
+   ],
+   "questions": [
+    {
+     "id": "AL12-Q1",
+     "title": "Is the plan complete enough to start?",
+     "placement": "before",
+     "animation_prompt": "Which plan is actionable: “make a cool loop,” or “9×13 seed, bottom anchor, two extremes, one breakdown, 4+4+2 timing, and a loop check”?",
+     "animation_answer": "The second plan because it names bounds, anchor, poses, timing, and a test.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`choice + five named plan fields`.",
+     "paired_answer_format": "ANIMATION: `choice + five named plan fields`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "AL01–AL11 have taught each field separately; this is an explicit retrieval check before the original task.",
+     "clarity_check": "clear — choices and required fields are visible.",
+     "placement_rationale": "before drawing, because planning is the A0 gate.",
+     "explicit_answer": "ANIMATION: The second plan because it names bounds, anchor, poses, timing, and a test. NEOVIM: Use the before lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    },
+    {
+     "id": "AL12-Q2",
+     "title": "What proves mastery after preview?",
+     "placement": "after",
+     "animation_prompt": "Which evidence is sufficient: a matching final frame, or a changed-art review showing timing, registration, comparison, cleanup, and a safe variant?",
+     "animation_answer": "The changed-art review with timing, registration, comparison, cleanup, and safe-variant evidence; final pixels alone are not method proof.",
+     "neovim_prompt": "Name the Neovim edit scope that demonstrates the same animation decision, and state one invariant to preserve.",
+     "neovim_answer": "Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task.",
+     "answer_format": "`evidence bundle + why final pixels alone fail`.",
+     "paired_answer_format": "ANIMATION: `evidence bundle + why final pixels alone fail`.; NEOVIM: scope + invariant",
+     "prior_teaching_basis": "every earlier lesson separated artifact correctness from method/decision evidence; this question gathers the finish line.",
+     "clarity_check": "clear — alternatives, evidence fields, and explanation format are explicit.",
+     "placement_rationale": "after preview, because the learner can cite the actual ledger and changed variant.",
+     "explicit_answer": "ANIMATION: The changed-art review with timing, registration, comparison, cleanup, and safe-variant evidence; final pixels alone are not method proof. NEOVIM: Use the after lesson scope; preserve the fixed-width, registration, or timing invariant named by the task."
+    }
+   ],
+   "question_audit": {
+    "student_can_answer_from_prior_teaching": true,
+    "request_is_clear": true,
+    "placement_makes_sense": true
+   },
+   "changed_art_review": {
+    "hidden": true,
+    "variant_count": 2,
+    "variants": [
+     {
+      "id": "AL12-V1",
+      "description": "New variant 1 — (1) a 9×13 “signal seed” with a diagonal arc and side drag,"
+     },
+     {
+      "id": "AL12-V2",
+      "description": "New variant 2 — (2) a 9×13 “hinged glow” with a vertical arc and delayed top layer. Both require the same S/A and H coverage but different glyph choices, anchors, and timing"
+     }
+    ],
+    "source": "original pack art only; changed variants are authored at delivery time"
+   },
+   "earlier_guided_family_gate": {
+    "required": true,
+    "guided_card_id": "M16.01",
+    "hidden_card_id": "M16.06",
+    "hidden_after_guided": true,
+    "prior_pack_lessons": [
+     "AL01",
+     "AL02",
+     "AL03",
+     "AL04",
+     "AL05",
+     "AL06",
+     "AL07",
+     "AL08",
+     "AL09",
+     "AL10",
+     "AL11"
+    ],
+    "guided_families": [
+     "search-landmark",
+     "normal-motion"
+    ],
+    "hidden_families": [
+     "search-landmark",
+     "normal-motion"
+    ]
+   },
+   "delivery": {
+    "guided_card_id": "M16.01",
+    "hidden_card_id": "M16.06"
+   },
+   "rights_gate": {
+    "integration": "blocked",
+    "source_art_used": false,
+    "source_use": "research evidence and general technique only",
+    "original_art_only": true
+   }
+  }
+ ],
+ "animation_lesson_pack_contract": {
+  "source": "share/animation_lesson_pack.md",
+  "lesson_count": 12,
+  "question_count": 24,
+  "domains": [
+   "ascii_animation",
+   "neovim"
+  ],
+  "changed_art_variants_min": 2,
+  "rights": "integration blocked for unresolved source art; generated exercises are original",
+  "master_habits": [
+   "H1",
+   "H2",
+   "H3",
+   "H4",
+   "H5",
+   "H6",
+   "H7",
+   "H8",
+   "H9"
+  ],
+  "master_stages": [
+   "S0",
+   "S1",
+   "S2",
+   "S3",
+   "S4",
+   "S5",
+   "S6",
+   "S7",
+   "A0",
+   "A1",
+   "A2",
+   "A3",
+   "A4",
+   "A5",
+   "A6",
+   "A7"
+  ]
+ },
  "verified_method_coverage": [
   {
    "card_id": "M0.01",

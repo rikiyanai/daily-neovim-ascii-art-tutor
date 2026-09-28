@@ -17,6 +17,26 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "curriculum-v2.json"
 CATALOG = ROOT / "CURRICULUM_V2_CARD_CATALOG.md"
 LEGACY = ROOT / "curriculum.json"
+ANIMATION_PACK = ROOT / "animation_lesson_pack.md"
+
+# The standalone pack is deliberately attached to existing v2 cards instead
+# of becoming a second scheduler.  These links give the generated artifact a
+# real guided and key-hidden delivery route while keeping the source pack's
+# original-art and rights boundary intact.
+ANIMATION_PACK_DELIVERY = {
+    "AL01": ("M0.01", "M0.06"),
+    "AL02": ("M4.01", "M4.06"),
+    "AL03": ("M9.01", "M9.06"),
+    "AL04": ("M7.01", "M7.06"),
+    "AL05": ("M18.01", "M18.06"),
+    "AL06": ("M5.01", "M5.06"),
+    "AL07": ("M6.01", "M6.08"),
+    "AL08": ("M8.01", "M8.06"),
+    "AL09": ("M14.01", "M14.06"),
+    "AL10": ("M3.01", "M3.06"),
+    "AL11": ("M11.01", "M11.06"),
+    "AL12": ("M16.01", "M16.06"),
+}
 
 # Every original lesson is attached to the nearest v2 animation card. This is
 # teaching-content provenance, not mastery migration: v2 still grades its own
@@ -65,6 +85,262 @@ def load_catalog_prompts():
         extra = sorted(set(rows) - expected)
         raise SystemExit(f"catalog card mismatch: missing={missing} extra={extra}")
     return rows
+
+
+def _pack_sections(text):
+    """Return the authored AL01..AL12 sections without copying source art."""
+    matches = list(re.finditer(r"^## (AL\d{2}) — (.*?)$", text, re.MULTILINE))
+    sections = {}
+    for index, match in enumerate(matches):
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        sections[match.group(1)] = {
+            "title": match.group(2).strip(),
+            "text": text[match.start():end],
+        }
+    return sections
+
+
+def _pack_region(section, heading, next_headings):
+    """Extract one markdown heading region, retaining authored whitespace."""
+    start = section.find(heading)
+    if start < 0:
+        return ""
+    start += len(heading)
+    ends = [section.find(candidate, start) for candidate in next_headings]
+    ends = [end for end in ends if end >= 0]
+    return section[start:min(ends) if ends else len(section)]
+
+
+def _pack_bullets(region):
+    """Group markdown bullets and their indented continuation lines."""
+    items, current = [], None
+    for line in region.splitlines():
+        match = re.match(r"^\s*-\s+(.*)$", line)
+        if match:
+            current = match.group(1).strip()
+            items.append(current)
+        elif current and line.strip():
+            current += " " + line.strip()
+            items[-1] = current
+    return items
+
+
+def _pack_fields(region):
+    """Parse the labeled bullets used by pack questions."""
+    fields, current = {}, None
+    for line in region.splitlines():
+        match = re.match(r"^\s*-\s+([A-Za-z][A-Za-z -]+):\s*(.*)$", line)
+        if match:
+            current = match.group(1).strip().lower().replace(" ", "_")
+            fields[current] = match.group(2).strip()
+        elif current and line.strip():
+            fields[current] += " " + line.strip()
+    return fields
+
+
+def _pack_codes(map_text):
+    """Expand the pack's compact H/S/A ranges into auditable metadata."""
+    codes = []
+    for prefix in ("H", "S", "A"):
+        for match in re.finditer(
+                rf"\b{prefix}(\d)\s*[–-]\s*{prefix}?(\d)\b", map_text):
+            codes.extend(f"{prefix}{number}"
+                         for number in range(int(match.group(1)), int(match.group(2)) + 1))
+    for code in re.findall(r"\b[HSA]\d\b", map_text):
+        if code not in codes:
+            codes.append(code)
+    return codes
+
+
+def _pack_question_blocks(region):
+    matches = list(re.finditer(r"^#### (AL\d{2}-Q\d+) — (.*?)$", region, re.MULTILINE))
+    questions = []
+    for index, match in enumerate(matches):
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(region)
+        body = region[match.end():end]
+        fields = _pack_fields(body)
+        questions.append({"id": match.group(1), "title": match.group(2).strip(), **fields})
+    return questions
+
+
+def load_animation_lesson_pack():
+    """Compile the standalone authoring source into live curriculum metadata.
+
+    The parser intentionally reads only original exercises, lesson contracts,
+    and question prose.  The cited corpus paths remain evidence strings; no
+    corpus frame, tutorial plate, or derivative is imported into the output.
+    """
+    if not ANIMATION_PACK.exists():
+        raise SystemExit(f"missing animation lesson pack: {ANIMATION_PACK}")
+    text = ANIMATION_PACK.read_text(encoding="utf-8")
+    sections = _pack_sections(text)
+    expected_ids = [f"AL{number:02d}" for number in range(1, 13)]
+    if list(sections) != expected_ids:
+        raise SystemExit(f"animation pack lesson mismatch: {list(sections)}")
+
+    lessons = []
+    for lesson_id in expected_ids:
+        section = sections[lesson_id]["text"]
+        heading = sections[lesson_id]["title"]
+        map_match = re.search(r"^\*\*Map:\*\* (.*?)\s*$", section, re.MULTILINE)
+        if not map_match:
+            raise SystemExit(f"{lesson_id}: missing map")
+        map_text = map_match.group(1)
+        codes = _pack_codes(map_text)
+        habits = [code for code in codes if code.startswith("H")]
+        stages = [code for code in codes if code.startswith(("S", "A"))]
+        source_region = _pack_region(
+            section, "**Source evidence:**", ("### Original exercise",))
+        source_evidence = " ".join(line.strip() for line in source_region.splitlines()).strip()
+        original_region = _pack_region(
+            section, "### Original exercise",
+            ("### Guided sequence", "### Hidden sequence"))
+        code_frames = [frame.rstrip("\n").splitlines()
+                       for frame in re.findall(r"```(?:text)?\n(.*?)```", original_region, re.DOTALL)]
+        paragraphs = []
+        in_code = False
+        current = []
+        for line in original_region.splitlines():
+            if line.startswith("```"):
+                if in_code and current:
+                    current = []
+                in_code = not in_code
+                continue
+            if in_code:
+                continue
+            if line.strip():
+                current.append(line.strip())
+            elif current:
+                paragraphs.append(" ".join(current))
+                current = []
+        if current:
+            paragraphs.append(" ".join(current))
+        do_this_text = paragraphs[0] if paragraphs else heading
+        guided_region = _pack_region(
+            section, "### Guided sequence", ("### Hidden sequence",))
+        hidden_region = _pack_region(
+            section, "### Hidden sequence", ("### Questions",))
+        guided = _pack_bullets(guided_region)
+        hidden = _pack_bullets(hidden_region)
+        questions_region = _pack_region(
+            section, "### Questions", ("### Changed-art review",))
+        source_questions = _pack_question_blocks(questions_region)
+        if len(source_questions) != 2:
+            raise SystemExit(f"{lesson_id}: expected two authored questions")
+        questions = []
+        for source_question in source_questions:
+            placement_text = source_question.get("placement", "").lower()
+            placement = ("before" if placement_text.startswith("before") else
+                         "after" if placement_text.startswith("after") else "")
+            ask = source_question.get("ask", "")
+            expected = source_question.get("expected_answer", "")
+            answer_format = source_question.get("answer_format", "")
+            # The pack's animation decision is paired with a Neovim scope
+            # check.  Exact keys remain hidden for hidden work; the answer
+            # contract still names the required operation and invariant.
+            neovim_answer = (
+                f"Use the {placement} lesson scope; preserve the fixed-width, "
+                f"registration, or timing invariant named by the task."
+            )
+            questions.append({
+                "id": source_question["id"],
+                "title": source_question["title"],
+                "placement": placement,
+                "animation_prompt": ask,
+                "animation_answer": expected,
+                "neovim_prompt": (
+                    "Name the Neovim edit scope that demonstrates the same "
+                    "animation decision, and state one invariant to preserve."
+                ),
+                "neovim_answer": neovim_answer,
+                "answer_format": answer_format,
+                "paired_answer_format": (
+                    f"ANIMATION: {answer_format}; NEOVIM: scope + invariant"
+                ),
+                "prior_teaching_basis": source_question.get("prior_teaching_basis", ""),
+                "clarity_check": source_question.get("clarity_check", ""),
+                "placement_rationale": source_question.get("placement_rationale", ""),
+                "explicit_answer": f"ANIMATION: {expected} NEOVIM: {neovim_answer}",
+            })
+        review_region = _pack_region(
+            section, "### Changed-art review", ("### Question audit",))
+        review_items = _pack_bullets(review_region)
+        review_summary = " ".join(review_items).strip()
+        variant_source = review_items[0] if review_items else "Two original changed-art variants."
+        variant_source = re.sub(r"^Variants:\s*", "", variant_source)
+        variant_descriptions = re.split(
+            r"\s+and\s+(?=(?:an?|the)\s|\(\d)", variant_source, maxsplit=1)
+        if len(variant_descriptions) != 2:
+            variant_descriptions = [
+                "first original variant described by the lesson",
+                "second original variant described by the lesson",
+            ]
+        audit_region = _pack_region(
+            section, "### Question audit", ("### Rights gate",))
+        audit_text = audit_region.lower()
+        question_audit = {
+            "student_can_answer_from_prior_teaching": (
+                "student-can-answer-from-prior-teaching: yes" in audit_text),
+            "request_is_clear": "request-is-clear: yes" in audit_text,
+            "placement_makes_sense": "placement-makes-sense: yes" in audit_text,
+        }
+        hint = next((item for item in hidden if item.lower().startswith("hint")),
+                    "Use the named invariant before changing a cell.")
+        target = next((item for item in hidden if item.lower().startswith("pass")),
+                      "Preserve the declared fixed-width registration contract.")
+        guided_card, hidden_card = ANIMATION_PACK_DELIVERY[lesson_id]
+        lessons.append({
+            "id": lesson_id,
+            "title": heading,
+            "domains": ["ascii_animation", "neovim"],
+            "source": "share/animation_lesson_pack.md",
+            "source_evidence": source_evidence,
+            "master_habits": habits,
+            "master_stages": stages,
+            "do_this": f"DO THIS — {do_this_text}",
+            "target": f"TARGET — {target}",
+            "hint": f"HINT — {hint}",
+            "ascii_exercise": {
+                "original": True,
+                "frames": code_frames,
+                "fixed_width": True,
+                "registration": "Keep every frame in one equal-width, blank-line-delimited box.",
+            },
+            "neovim_exercise": {
+                "guided": {"key_hidden": False, "steps": guided},
+                "hidden": {"key_hidden": True, "keys": "withheld", "steps": hidden},
+            },
+            "guided_sequence": guided,
+            "hidden_sequence": hidden,
+            "questions": questions,
+            "question_audit": question_audit,
+            "changed_art_review": {
+                "hidden": True,
+                "variant_count": 2,
+                "variants": [
+                    {"id": f"{lesson_id}-V1",
+                     "description": f"New variant 1 — {variant_descriptions[0].strip(' .')}"},
+                    {"id": f"{lesson_id}-V2",
+                     "description": f"New variant 2 — {variant_descriptions[1].strip(' .')}"},
+                ],
+                "source": "original pack art only; changed variants are authored at delivery time",
+            },
+            "earlier_guided_family_gate": {
+                "required": True,
+                "guided_card_id": guided_card,
+                "hidden_card_id": hidden_card,
+                "hidden_after_guided": True,
+                "prior_pack_lessons": expected_ids[:expected_ids.index(lesson_id)],
+            },
+            "delivery": {"guided_card_id": guided_card, "hidden_card_id": hidden_card},
+            "rights_gate": {
+                "integration": "blocked",
+                "source_art_used": False,
+                "source_use": "research evidence and general technique only",
+                "original_art_only": True,
+            },
+        })
+    return lessons
 
 
 def step(start, target, expected, recipe, cursor="^", alternatives=None,
@@ -4631,10 +4907,39 @@ def build():
                     "prior_guided_card_id": first_guided.get(family),
                 })
     command_reviews = command_review_contract(cards)
+    animation_lessons = load_animation_lesson_pack()
+    output_module_map = {module["id"]: module for module in modules}
+    for lesson in animation_lessons:
+        guided_card_id = lesson["delivery"]["guided_card_id"]
+        hidden_card_id = lesson["delivery"]["hidden_card_id"]
+        guided_card = card_map[guided_card_id]
+        hidden_card = card_map[hidden_card_id]
+        lesson["earlier_guided_family_gate"]["guided_families"] = list(
+            guided_card.get("grammar_families", []))
+        lesson["earlier_guided_family_gate"]["hidden_families"] = list(
+            hidden_card.get("grammar_families", []))
+        pack_question_ids = [question["id"] for question in lesson["questions"]]
+        for card in (guided_card, hidden_card):
+            card.setdefault("animation_pack_lesson_ids", []).append(lesson["id"])
+            card.setdefault("animation_pack_question_ids", []).extend(pack_question_ids)
+        output_module_map[guided_card["module_id"]].setdefault(
+            "animation_pack_lesson_ids", []).append(lesson["id"])
     return {
         "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.25",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "modules": modules, "cards": cards, "questions": questions,
+        "animation_lesson_pack": animation_lessons,
+        "animation_lesson_pack_contract": {
+            "source": "share/animation_lesson_pack.md",
+            "lesson_count": len(animation_lessons),
+            "question_count": sum(len(lesson["questions"]) for lesson in animation_lessons),
+            "domains": ["ascii_animation", "neovim"],
+            "changed_art_variants_min": 2,
+            "rights": "integration blocked for unresolved source art; generated exercises are original",
+            "master_habits": [f"H{number}" for number in range(1, 10)],
+            "master_stages": [*(f"S{number}" for number in range(8)),
+                              *(f"A{number}" for number in range(8))],
+        },
         "verified_method_coverage": verified_methods,
         "verified_review_coverage": verified_reviews,
         "verified_grammar_sequence": verified_sequence,
@@ -4646,6 +4951,105 @@ def validate(cur):
     errors = []
     modules, cards, questions = cur["modules"], cur["cards"], cur["questions"]
     module_map = {module["id"]: module for module in modules}
+    animation_lessons = cur.get("animation_lesson_pack", [])
+    animation_contract = cur.get("animation_lesson_pack_contract", {})
+    expected_animation_ids = [f"AL{number:02d}" for number in range(1, 13)]
+    if [lesson.get("id") for lesson in animation_lessons] != expected_animation_ids:
+        errors.append("animation lesson pack must contain AL01..AL12 in authored order")
+    if animation_contract.get("lesson_count") != len(animation_lessons):
+        errors.append("animation lesson contract count does not match generated lessons")
+    if animation_contract.get("question_count") != 24:
+        errors.append("animation lesson pack must retain 24 paired questions")
+    animation_cards = {card["id"]: card for card in cards}
+    animation_card_order = {card["id"]: index for index, card in enumerate(cards)}
+    seen_animation_questions = set()
+    for index, lesson in enumerate(animation_lessons):
+        lesson_id = lesson.get("id", f"animation-{index}")
+        for field in ("title", "source", "source_evidence", "do_this", "target", "hint",
+                      "master_habits", "master_stages", "ascii_exercise",
+                      "neovim_exercise", "questions", "changed_art_review",
+                      "question_audit", "earlier_guided_family_gate", "rights_gate",
+                      "delivery"):
+            if not lesson.get(field):
+                errors.append(f"{lesson_id}: missing live animation lesson field {field}")
+        if set(lesson.get("domains", [])) != {"ascii_animation", "neovim"}:
+            errors.append(f"{lesson_id}: lesson must name both ASCII animation and Neovim")
+        for label, prefix in (("do_this", "DO THIS —"), ("target", "TARGET —"),
+                              ("hint", "HINT —")):
+            if not lesson.get(label, "").startswith(prefix):
+                errors.append(f"{lesson_id}: {label} must be an explicit learner contract")
+        ascii_exercise = lesson.get("ascii_exercise", {})
+        if not ascii_exercise.get("original") or not ascii_exercise.get("fixed_width"):
+            errors.append(f"{lesson_id}: generated art must be original and fixed-width")
+        if not ascii_exercise.get("frames"):
+            errors.append(f"{lesson_id}: generated lesson has no original art")
+        neovim = lesson.get("neovim_exercise", {})
+        if neovim.get("guided", {}).get("key_hidden") is not False:
+            errors.append(f"{lesson_id}: guided Neovim sequence must be visible")
+        if (neovim.get("hidden", {}).get("key_hidden") is not True
+                or neovim.get("hidden", {}).get("keys") != "withheld"):
+            errors.append(f"{lesson_id}: hidden Neovim sequence must withhold keys")
+        review = lesson.get("changed_art_review", {})
+        if not review.get("hidden") or review.get("variant_count", 0) < 2:
+            errors.append(f"{lesson_id}: changed-art review needs two hidden variants")
+        if lesson.get("question_audit") != {
+                "student_can_answer_from_prior_teaching": True,
+                "request_is_clear": True,
+                "placement_makes_sense": True}:
+            errors.append(f"{lesson_id}: question audit must affirm prior teaching, clarity, and placement")
+        rights = lesson.get("rights_gate", {})
+        if (rights.get("integration") != "blocked"
+                or rights.get("source_art_used") is not False
+                or rights.get("original_art_only") is not True):
+            errors.append(f"{lesson_id}: unresolved source-art boundary is not closed")
+        delivery = lesson.get("delivery", {})
+        guided_id, hidden_id = delivery.get("guided_card_id"), delivery.get("hidden_card_id")
+        if guided_id not in animation_cards or hidden_id not in animation_cards:
+            errors.append(f"{lesson_id}: delivery cards are missing")
+        else:
+            guided_card, hidden_card = animation_cards[guided_id], animation_cards[hidden_id]
+            if animation_card_order[guided_id] >= animation_card_order[hidden_id]:
+                errors.append(f"{lesson_id}: hidden delivery card precedes guided delivery")
+            if guided_card.get("grammar_stage") != "guided":
+                errors.append(f"{lesson_id}: guided delivery card is not a guided stage")
+            if hidden_card.get("grammar_stage") != "hidden":
+                errors.append(f"{lesson_id}: hidden delivery card is not a hidden stage")
+            question_ids = {question.get("id") for question in lesson.get("questions", [])}
+            for delivery_card in (guided_card, hidden_card):
+                if set(delivery_card.get("animation_pack_question_ids", [])) != question_ids:
+                    errors.append(f"{lesson_id}: paired questions are not attached to delivery cards")
+            gate = lesson.get("earlier_guided_family_gate", {})
+            if (gate.get("guided_card_id") != guided_id
+                    or gate.get("hidden_card_id") != hidden_id
+                    or gate.get("hidden_after_guided") is not True
+                    or not set(guided_card.get("grammar_families", []))
+                    <= set(gate.get("guided_families", []))):
+                errors.append(f"{lesson_id}: earlier-guided-family gate is incomplete")
+        lesson_questions = lesson.get("questions", [])
+        if len(lesson_questions) != 2:
+            errors.append(f"{lesson_id}: paired lesson questions must number two")
+        for question_row in lesson_questions:
+            question_id = question_row.get("id", "unknown")
+            if question_id in seen_animation_questions:
+                errors.append(f"{question_id}: duplicate animation question id")
+            seen_animation_questions.add(question_id)
+            for field in ("animation_prompt", "animation_answer", "neovim_prompt",
+                          "neovim_answer", "answer_format", "paired_answer_format",
+                          "prior_teaching_basis", "clarity_check", "placement_rationale"):
+                if not question_row.get(field):
+                    errors.append(f"{question_id}: missing paired answer field {field}")
+            if question_row.get("placement") not in ("before", "after"):
+                errors.append(f"{question_id}: placement must be before or after")
+            if not question_row.get("explicit_answer", "").startswith("ANIMATION:"):
+                errors.append(f"{question_id}: explicit paired answer is missing")
+    if len(seen_animation_questions) != 24:
+        errors.append("animation lesson question ids must number 24")
+    if {habit for lesson in animation_lessons for habit in lesson.get("master_habits", [])} != {
+            f"H{number}" for number in range(1, 10)}:
+        errors.append("animation lessons must cover H1-H9")
+    if {stage for lesson in animation_lessons for stage in lesson.get("master_stages", [])} != {
+            *(f"S{number}" for number in range(8)), *(f"A{number}" for number in range(8))}:
+        errors.append("animation lessons must cover S0-S7 and A0-A7")
     legacy_ids = [lesson["id"] for card in cards for lesson in card.get("legacy_lessons", [])]
     expected_legacy = set(LEGACY_CARD_MAP)
     if set(legacy_ids) != expected_legacy or len(legacy_ids) != len(expected_legacy):
