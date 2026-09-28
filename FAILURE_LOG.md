@@ -3237,3 +3237,107 @@ pastes`. The real user-config client-attached popup completed at 80×24,
 80×24, 100×36, and 188×49. The animation-pack integration test passes with 12
 live paired lessons and 24 paired questions. Python compilation, popup shell
 syntax checks, and `git diff --check` pass.
+
+## VD-26 · 2026-09-28 19:00 — master-habit/stage claims are metadata, not runtime mastery
+
+**Status:** PARTIAL. This supersedes the last sentence of VD-25: the 12 animation
+pack rows are not live scheduled lessons, so calling them “live paired
+lessons” was false.
+
+The authoritative finish line is the operator's nine-habit list and the
+S0–S7, A0–A7, then proportional-P order in
+`/Users/r/.codex/attachments/499fbe13-648c-423a-855d-39c9339aede0/pasted-text-1.txt`.
+A command counts only when the learner first sees and performs it, later must
+use it with keys hidden under a method check or keystroke limit, and retrieves
+it again on changed art in spaced review. Stills S0–S7 must precede animation.
+
+### Evidence that the current claim does not hold
+
+1. `animation_lesson_pack` contains 12 nested records and 24 nested questions,
+   but there are zero `AL*` ids in top-level `cards`, zero of the 24 `AL*-Q*`
+   ids in top-level `questions`, and `share/v2_runtime.py` never reads either
+   `animation_lesson_pack` or `animation_pack_*`. Generator lines 4976–4993
+   merely attach ids to existing M cards. The scheduler therefore cannot show,
+   grade, advance, or space any AL lesson or AL question.
+2. `MASTER_COVERAGE` at generator lines 3778–3797 stamps broad habit/stage
+   labels onto every card in a module. It does not derive those labels from a
+   graded method. For example M4 claims H7/frame comparison, while no expected
+   or accepted route anywhere contains `:diffthis` or `scrollbind`.
+3. `command_review_contract()` at lines 4447–4475 matches broad grammar-family
+   labels and `show_recipe=false`. It never requires the reviewed command to
+   appear in `method_requirement`. Ordinary exact-target grading accepts a
+   different route, so this does not meet the operator's “required unhinted”
+   rule despite the evidence string saying `runtime-validated`.
+4. Stage order is contradicted by the graph. Animation modules M1–M9 can unlock
+   before later still modules M11–M15. S5 is attached to M10/M14 and S7 to M15,
+   after the walk and bounce capstones in M8/M9.
+
+### Exact command gaps against the nine habits
+
+No executable path anywhere uses `gR`, `g_`, lowercase `w`, blockwise `I`,
+blockwise `c` as a taught operation, `gv`, Visual-selection `o`, `zp`/`zP`,
+`ga`, `:diffthis`, `scrollbind`, `:set list`, `cursorcolumn`, `colorcolumn`,
+trailing-whitespace cleanup `:%s/\\s\\+$//e`, `g-`, `g+`, `:earlier`, or
+`dap`. Counted `o<Esc>` appears only in a hidden answer, not guided first.
+Several present commands also lack required-method evidence: `r<Space>`, `P`,
+`:m`, blockwise `r`, `$A`, `:g/.../normal`, `<C-k>`, and `\\=`.
+
+This is not a wording defect. Completion requires executable guided →
+method-required hidden → changed-art spaced-review routes for those commands,
+truthful evidence derived from the method grader, a topological stage gate
+with S0–S7 before A0, and promotion of the AL material into top-level scheduled
+cards/questions (or removal of the live-integration claim until promotion).
+
+**Implemented foundation:** every module's hidden `.06` unfamiliar-art
+transfer now has an exact method requirement on both authored variants and is
+marked `required_before_mastery`. Runtime projection holds an otherwise
+complete module at `review_pending` until one changed-art `.06` spaced review
+passes with method evidence; only then can the module become `mastered` and
+unlock dependents. `required_mastery_review_coverage` is derived from those
+enforced cards rather than broad command labels. This closes the false
+target-only mastery award for the 19 existing transfer routes. The exact
+command gaps, stage ordering, and unscheduled AL pack listed above remain open.
+
+## VD-27 · 2026-09-28 19:04 — hidden `<C-u>` and open-response grading
+
+**Status:** CLOSED in curriculum revision `.27`; headed proof repeated
+after the repair.
+
+**Operator evidence:** the 19:04 ledger records M0.YP's edit as already passed,
+then records the paired decode answer `last line + copy block + last line +
+pase` as a failure. The answer described the actual `gg3yyGp` sequence, but the
+free-text grader required undisclosed term-group synonyms. This was not a Vim
+performance failure. Separately, `<C-u>` remained embedded in executable
+M1.04 and M8.04 authoring recipes and in generated question explanations even
+though no earlier card taught it.
+
+**Scope audit:** revision `.26` contained 328 questions: 191 multiple choice,
+41 decode, 39 predict-art, 19 why, 19 typed-key, and 19 complete. Thus 137
+questions still used a non-`multiple_choice` form. The two live `<C-u>` recipe
+paths used Insert-mode indent deletion as a workaround even though the lesson
+art buffer now enforces `noautoindent`, `nosmartindent`, `nocindent`, and an
+empty `indentexpr` after user plugins load.
+
+**Repair:** all 328 questions are now four-choice multiple choice. Decode,
+predict, why, typed-key, and completion remain as `learning_form` metadata, but
+they share the same explicit a/b/c/d interaction, four paired
+ANIMATION/NEOVIM choices, shuffled display order, and choice-specific feedback.
+Converted choices are grounded in the owning card: animation halves name the
+card and its module's documented defect, while Neovim distractors contradict
+the shown command, bounded target, or method comparison instead of reusing one
+generic wrong sentence.
+The old open-response contract is retained only as source audit metadata; it
+is never presented or graded. Hidden transfer checks moved from before to
+after the edit so their correct choice cannot reveal the required key path.
+Prompts no longer say “type keys” or “decode in plain language.” The post-card
+question replay now shows `you`, `correct`, and `why` for paired choices rather
+than looking for a free-text sample answer.
+
+M1.04 and M8.04 no longer contain `<C-u>`. Their `o` rows rely on the runtime's
+art-buffer no-indent invariant, and the isolated Neovim executor now applies
+the same invariant. The generated JSON contains zero `<C-u>` occurrences.
+
+**Evidence:** `share/test_v2.py` passes 176/176 executable cards and 137/137
+primary recipes; it asserts 328/328 multiple-choice questions, rejects any
+live `<C-u>`, rejects stale open-response instructions, and checks four choices
+plus four feedback messages on every question. `git diff --check` passes.

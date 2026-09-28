@@ -138,6 +138,11 @@ def validate_curriculum(cur):
                     not all(variant.get(field) for field in ("start", "target", "expected", "recipe"))
                     for variant in variants):
                 raise ValueError("transfer card %s has invalid/repeated variants" % card["id"])
+            for index, variant in enumerate(variants, 1):
+                if variant.get("method_requirement"):
+                    validate_method_rule(
+                        "card %s transfer variant %d" % (card["id"], index),
+                        variant["method_requirement"])
         review_variants = card.get("review_variants", [])
         if review_variants:
             starts = [tuple(variant.get("start", [])) for variant in review_variants]
@@ -158,6 +163,16 @@ def validate_curriculum(cur):
                 raise ValueError("card %s lacks explicit review source/family linkage" % card["id"])
         elif card.get("review_source_card_id") or card.get("review_method_family"):
             raise ValueError("card %s declares review linkage without changed art" % card["id"])
+        if card.get("required_before_mastery"):
+            variants = card.get("review_variants") or card.get("variants") or []
+            if (card.get("grammar_stage") != "hidden"
+                    or card.get("show_recipe") is not False
+                    or not card.get("method_requirement")
+                    or len(variants) < 2
+                    or any(not variant.get("method_requirement") for variant in variants)):
+                raise ValueError(
+                    "card %s cannot gate mastery without hidden method evidence and two enforced reviews" %
+                    card["id"])
         frame_rows = card.get("frame_rows", module_map[card["module_id"]].get("frame_rows"))
         if frame_rows and card.get("target"):
             frames = [card["target"][index:index + frame_rows]
@@ -222,25 +237,41 @@ def validate_curriculum(cur):
             "review_card_id": review["id"],
             "changed_art_variants": len(variants),
             "keys_hidden": True,
-            "evidence": "runtime-validated source-linked changed-art retrieval",
+            "evidence": "target-linked changed-art retrieval; method enforcement reported separately",
         })
     if cur.get("verified_command_review_coverage") != command_review_rows:
         raise ValueError("verified command review coverage does not match hidden changed-art retrieval")
-    choice_forms = {"multiple_choice", "predict_art"}
-    text_forms = {"typed_keys", "decode", "complete", "why"}
+    required_review_rows = [{
+        "module_id": card["module_id"],
+        "source_card_id": card["id"],
+        "method_label": card["method_requirement"]["label"],
+        "changed_art_variants": len(card.get("variants") or card.get("review_variants") or []),
+        "keys_hidden": card.get("show_recipe") is False,
+        "required_before_mastery": True,
+        "evidence": "method-required hidden transfer plus changed-art spaced review",
+    } for card in cur["cards"] if card.get("required_before_mastery")]
+    if cur.get("required_mastery_review_coverage") != required_review_rows:
+        raise ValueError("required mastery-review coverage does not match enforced cards")
+    for module in cur["modules"]:
+        expected = [card["id"] for card in cur["cards"]
+                    if card["module_id"] == module["id"]
+                    and card.get("required_before_mastery")]
+        if module.get("required_review_card_ids") != expected:
+            raise ValueError("module %s has stale required review ids" % module["id"])
     for q in cur["questions"]:
         form = q.get("form")
-        if form not in choice_forms | text_forms:
-            raise ValueError("question %s has unsupported form %r" % (q["id"], form))
+        if form != "multiple_choice":
+            raise ValueError(
+                "question %s must be four-choice multiple choice, got %r" %
+                (q["id"], form))
         for field in ("card_id", "grammar_family", "grammar_breakdown_id",
                       "paired_invariant", "placement", "placement_reason", "answer_contract"):
             if not q.get(field):
                 raise ValueError("question %s is missing paired field %s" % (q["id"], field))
-        if form in choice_forms:
-            if len(q.get("choices", [])) != 4 or len(q.get("feedback", [])) != 4:
-                raise ValueError("choice question %s must have four choices and feedback messages" % q["id"])
-            if not 0 <= q.get("correct_choice", -1) < len(q["choices"]):
-                raise ValueError("question %s has an invalid correct choice" % q["id"])
+        if len(q.get("choices", [])) != 4 or len(q.get("feedback", [])) != 4:
+            raise ValueError("choice question %s must have four choices and feedback messages" % q["id"])
+        if not 0 <= q.get("correct_choice", -1) < len(q["choices"]):
+            raise ValueError("question %s has an invalid correct choice" % q["id"])
         if q.get("module_id") not in module_set:
             raise ValueError("question %s refers to an unknown module" % q["id"])
         if not q.get("source_ref"):
@@ -413,10 +444,17 @@ def project(cur, events):
     modules = {}
     for module in cur["modules"]:
         done = sum(1 for cid in module["card_ids"] if cid in passed)
+        required_review_ids = module.get("required_review_card_ids", [])
+        reviews_done = sum(
+            1 for cid in required_review_ids
+            if any(key == cid and stage >= 1 for key, stage in earned_review_stages)
+        )
         prerequisites_met = all(modules[p]["state"] == "mastered"
                                 for p in module.get("prerequisites", []))
-        if done == len(module["card_ids"]):
+        if done == len(module["card_ids"]) and reviews_done == len(required_review_ids):
             state = "mastered"
+        elif done == len(module["card_ids"]):
+            state = "review_pending"
         elif not prerequisites_met:
             state = "locked"
         elif done == len(module["card_ids"]) - 1 and module["card_ids"][-1] not in passed:
@@ -425,7 +463,10 @@ def project(cur, events):
             state = "learning"
         else:
             state = "available"
-        modules[module["id"]] = {"state": state, "done": done, "total": len(module["card_ids"])}
+        modules[module["id"]] = {
+            "state": state, "done": done, "total": len(module["card_ids"]),
+            "reviews_done": reviews_done, "reviews_total": len(required_review_ids),
+        }
     out = {
         "schema": "vim-daily/progress@2", "revision": cur["revision"], "passed_cards": sorted(passed),
         "attempts": attempts, "question_attempts": question_attempts, "reviews": reviews,
@@ -1877,13 +1918,15 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
         print("%sQUESTION REPLAY%s  %s · %s" % (
             bold, off, q.get("form", "question"),
             "correct" if replay.get("right") else "needs work"))
-        print("you: %s" % _clip(replay.get("answer", "(none)"), 64))
-        _print_grammar_breakdown(q)
-        sample = q.get("answer_contract", {}).get("sample_answer")
-        if sample:
-            label = ("ONE WORKING ANSWER" if q.get("form") == "typed_keys"
-                     else "ONE ACCEPTED ANSWER")
-            print("%s  %s" % (label, _clip(sample, 64)))
+        chosen = replay.get("answer")
+        if q.get("choices") and isinstance(chosen, int):
+            correct = q["correct_choice"]
+            print("you:     %s" % _clip(q["choices"][chosen], 64))
+            print("correct: %s" % _clip(q["choices"][correct], 64))
+            print("why:     %s" % _clip(q["feedback"][correct], 64))
+        else:
+            print("you: %s" % _clip(chosen if chosen is not None else "(none)", 64))
+            _print_grammar_breakdown(q)
     elif replay and replay.get("type") in ("concept", "review"):
         q, chosen = replay["question"], replay["chosen"]
         if q.get("choices"):
@@ -2084,13 +2127,15 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
         print("  form:      %s" % q.get("form", "question"))
         print("  placement: %s — %s" % (
             q.get("placement", "paired"), q.get("placement_reason", "")))
-        print("  you wrote: %s" % replay.get("answer", "(none)"))
-        _print_grammar_breakdown(q)
-        sample = q.get("answer_contract", {}).get("sample_answer")
-        if sample:
-            label = ("ONE WORKING ANSWER" if q.get("form") == "typed_keys"
-                     else "ONE ACCEPTED ANSWER")
-            print("  %s: %s" % (label, sample))
+        chosen = replay.get("answer")
+        if q.get("choices") and isinstance(chosen, int):
+            correct = q["correct_choice"]
+            print("  you chose: %s" % q["choices"][chosen])
+            print("  correct:   %s" % q["choices"][correct])
+            print("  why:       %s" % q["feedback"][correct])
+        else:
+            print("  you wrote: %s" % (chosen if chosen is not None else "(none)"))
+            _print_grammar_breakdown(q)
     elif replay and replay.get("type") in ("concept", "review"):
         q = replay["question"]
         chosen = replay["chosen"]
@@ -2897,13 +2942,13 @@ def _module_card_map(cur, progress, module_id):
 def print_tree(cur, progress, cfg=None, *, compact=False):
     if compact:
         marks = {"locked": "·", "available": "○", "learning": "◐",
-                 "check_ready": "◆", "mastered": "✓"}
+                 "check_ready": "◆", "review_pending": "↻", "mastered": "✓"}
         nodes = []
         for module in cur["modules"]:
             cell = progress["modules"][module["id"]]
             nodes.append("%s%s %d/%d" % (
                 marks[cell["state"]], module["id"], cell["done"], cell["total"]))
-        print("STATE  ○ available · locked ◐ learning ◆ check-ready ✓ mastered")
+        print("STATE  ○ available · locked ◐ learning ◆ check-ready ↻ review-pending ✓ mastered")
         for start in range(0, len(nodes), 5):
             print(("TREE  " if start == 0 else "      ") + " | ".join(nodes[start:start + 5]))
         due = sum(1 for r in progress["reviews"].values() if _due(r.get("next_due")))
@@ -2928,9 +2973,9 @@ def print_tree(cur, progress, cfg=None, *, compact=False):
     for module in cur["modules"]:
         cell = progress["modules"][module["id"]]
         marks = {"locked": "·", "available": "○", "learning": "◐",
-                 "check_ready": "◆", "mastered": "✓"}
+                 "check_ready": "◆", "review_pending": "↻", "mastered": "✓"}
         requires = ",".join(module.get("prerequisites", [])) or "start"
-        print("%s %-3s %-26s %d/%d  %-9s [%s] requires %s" % (
+        print("%s %-3s %-26s %d/%d  %-14s [%s] requires %s" % (
             marks[cell["state"]], module["id"], module["title"], cell["done"], cell["total"],
             cell["state"], module["node"], requires))
     due = sum(1 for r in progress["reviews"].values() if _due(r.get("next_due")))

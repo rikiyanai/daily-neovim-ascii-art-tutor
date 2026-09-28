@@ -529,7 +529,7 @@ MODULES = [
                  "       ´", "    _.: ", "o_.-    "],
                 ["       ´", "    _.: ", "o_.-    ",
                  "´       ", " `-.:   ", "o_.-    "],
-                "4G3ddGo´<CR> `-.:<CR><C-u>o_.-<Esc>",
+                "4G3ddGo´<CR> `-.:<CR>o_.-<Esc>",
                 [["4G3ddGo", "remove only the copied frame and open its replacement"],
                  ["´ / `-.: / o_.-", "hand-author the opposite contour while keeping the o anchor fixed"]],
             ),
@@ -1168,7 +1168,7 @@ MODULES = [
                 ["  o/     ", " /|      ", "  |      ", " / \\     ", "/_  \\    ",
                  "  o\\     ", " /|\\     ", "  |      ", "  |\\     ", " /  \\_   ",
                  " \\o      ", "  |\\     ", "  |      ", " /|      ", "/  _\\    "],
-                "Go<C-u> \\o<Esc>o<C-u>  |\\<Esc>o<C-u>  |<Esc>o<C-u> /|<Esc>o<C-u>/  _\\<Esc>",
+                "Go \\o<Esc>o  |\\<Esc>o  |<Esc>o /|<Esc>o/  _\\<Esc>",
                 [["G then o", "append each complete row of the opposite-contact pose directly"],
                  ["five bounded rows", "keep the torso column registered without padding the key path with unrelated I/A commands"]],
             ),
@@ -3233,7 +3233,7 @@ QUESTION_ANSWERS = {
         ("the added underscore marks the leading foot's stable contact with the ground", "G0lr_ reaches the contact cell and replaces it without moving the rest of the foot"),
         ("the passing pose needs the complete registered body as its scaffold before limbs change", "gg5yyGp copies all five rows of the contact pose"),
         ("torso drift breaks registration even if the foot contact itself changes correctly", "use C only on the copied moving rows named by 6G, 7G, 9G, and 10G"),
-        ("secondary arm motion may lag the primary foot contact to avoid every part arriving together", "o<C-u> creates each bounded new row; the recipe then types that row directly without filler I/A operations"),
+        ("secondary arm motion may lag the primary foot contact to avoid every part arriving together", "o creates each bounded new row; the art buffer disables automatic indentation, so each row starts at column one"),
         ("a scoped pattern is useful only when it cannot also match the next pose's head or leg diagonals", ":1,5s@o/@o\\@ confines the arm change to the complete first pose"),
         ("the offset transfer still needs one planted-foot cell while its torso remains registered", "derive the l motion from the visible target cell, then r_ changes only that contact"),
         ("contact and passing poses alternate while the raised arm lags rather than flipping at contact", ":6,10t$ copies the first passing scaffold before lines 16, 17, 19, and 20 are mirrored"),
@@ -3870,6 +3870,144 @@ def _family_breakdown(families):
     return rows
 
 
+def _multiple_choice_pair(question, card, module):
+    """Turn every card-owned check into an explicit four-choice pair.
+
+    The earlier free-text contracts rejected reasonable paraphrases and made
+    the answer format guesswork.  We retain the pedagogical intent as
+    ``learning_form`` metadata, but the learner always sees four paired
+    animation/Neovim choices with mistake-specific feedback.
+    """
+    old_form = question["form"]
+    if old_form == "multiple_choice":
+        return question
+
+    original_contract = question.get("answer_contract", {})
+    if old_form in ("predict_art",) and question.get("choices"):
+        neovim_correct = question["choices"][question["correct_choice"]]
+        neovim_wrong = next(
+            choice for index, choice in enumerate(question["choices"])
+            if index != question["correct_choice"])
+    elif old_form == "typed_keys":
+        neovim_correct = (
+            f"`{card['expected']}` is one bounded path whose effect matches TARGET exactly"
+        )
+        neovim_wrong = (
+            f"for {card['id']}, navigation alone is equivalent to `{card['expected']}` "
+            "because the final art is not graded"
+        )
+        # Showing a concrete valid sequence before a key-hidden transfer would
+        # reveal the answer.  Ask the choice check after the learner performs
+        # the edit instead.
+        question["placement"] = "after"
+        question["placement_reason"] = (
+            "The key-hidden transfer comes first; afterward, four explicit choices "
+            "check the command path and animation scope without free-text grading."
+        )
+    elif old_form == "decode":
+        breakdown = "; ".join(question.get("grammar_breakdown", []))
+        shown = original_contract.get("display", card.get("expected", "the shown command"))
+        neovim_correct = f"`{shown}` follows this grammar: {breakdown}"
+        neovim_wrong = (
+            f"`{shown}` is an indivisible shortcut, so its count, action, motion, "
+            "and scope do not need decoding"
+        )
+    elif old_form == "why":
+        neovim_correct = original_contract.get(
+            "sample_answer", "the bounded method preserves the named animation scope")
+        neovim_wrong = (
+            f"cursor position and range scope cannot affect {card['title']}; "
+            "either demonstrated method is always safe"
+        )
+    else:
+        neovim_correct = "the missing grammar part is `%s`" % original_contract.get(
+            "sample_answer", "the stated motion or object")
+        neovim_wrong = (
+            f"the missing grammar part for {card['id']} is an unrelated "
+            "project-wide command"
+        )
+
+    animation_correct = (
+        f"{card['title']} makes only its named change while every cell outside "
+        "the stated scope stays registered"
+    )
+    animation_wrong = (
+        f"{card['title']} accepts the module's named defect: {module['defect']}"
+    )
+
+    def paired(animation, neovim):
+        return f"ANIMATION: {animation} | NEOVIM: {neovim}"
+
+    records = [
+        (animation_correct, neovim_correct, None),
+        (animation_correct, neovim_wrong,
+         f"The animation reading is right for {card['id']}, but the Neovim half ignores the bounded command path. {neovim_correct}."),
+        (animation_wrong, neovim_correct,
+         f"The Neovim reading is right for {card['id']}, but shifted or project-wide art breaks this card's registration contract."),
+        (animation_wrong, neovim_wrong,
+         f"Both halves break {card['id']}: preserve the named animation scope and use the bounded Neovim reading. {neovim_correct}."),
+    ]
+    # Do not let a stable answer position become a second grading shortcut.
+    shift = sum(ord(char) for char in question["id"]) % 4
+    records = records[shift:] + records[:shift]
+    choices = [paired(animation, neovim) for animation, neovim, _ in records]
+    correct_choice = next(index for index, record in enumerate(records) if record[2] is None)
+    feedback = [
+        (f"Correct for {card['id']}: {animation_correct}; {neovim_correct}."
+         if error is None else error)
+        for _animation, _neovim, error in records
+    ]
+    compact_choices = [
+        "A: %s · V: %s" % (
+            textwrap.shorten(animation, width=29, placeholder="…"),
+            textwrap.shorten(neovim, width=29, placeholder="…"),
+        )
+        for animation, neovim, _ in records
+    ]
+    old_neovim_prompt = question["prompt"].split("\n\nNEOVIM\n", 1)[-1]
+    neovim_prompt = {
+        "typed_keys": (
+            "After the hidden edit, which option identifies one bounded command path "
+            "that reaches TARGET exactly?"
+        ),
+        "decode": (
+            "Which explanation correctly decomposes the command you just used and "
+            "keeps its animation scope bounded?"
+        ),
+        "why": (
+            "Which explanation correctly compares the demonstrated methods and their "
+            "animation-registration risk?"
+        ),
+        "complete": (
+            "Which option correctly completes the reusable Vim grammar?"
+        ),
+    }.get(old_form, old_neovim_prompt)
+    question.update({
+        "form": "multiple_choice",
+        "learning_form": old_form,
+        "prompt": (
+            f"ANIMATION\n{card['prompt']}\n\nNEOVIM\n{neovim_prompt}\n\n"
+            "Choose the option whose ANIMATION and NEOVIM halves are BOTH correct."
+        ),
+        "choices": choices,
+        "correct_choice": correct_choice,
+        "feedback": feedback,
+        "animation_prompt": card["prompt"],
+        "animation_answer": animation_correct,
+        "neovim_prompt": neovim_prompt,
+        "neovim_answer": neovim_correct,
+        "compact_prompt": (
+            "ANIMATION: %s\nNEOVIM: %s\nChoose the option whose A and V halves are BOTH correct."
+            % (textwrap.shorten(card["prompt"], width=64, placeholder="…"),
+               textwrap.shorten(neovim_prompt, width=64, placeholder="…"))
+        ),
+        "compact_choices": compact_choices,
+        "source_answer_contract": original_contract,
+        "answer_contract": {"form": "multiple_choice", "answer_mode": "choice"},
+    })
+    return question
+
+
 def paired_question(module, card):
     """One card-owned non-template question grounded in this exact art edit."""
     families = card["grammar_families"]
@@ -4034,7 +4172,7 @@ def paired_question(module, card):
                 "sample_answer": "<CR>" if ex else "motion or text object",
             },
         })
-    return common
+    return _multiple_choice_pair(common, card, module)
 
 
 def m0_extra_cards(module):
@@ -4470,7 +4608,7 @@ def command_review_contract(cards):
             "review_card_id": review["id"],
             "changed_art_variants": len(variants),
             "keys_hidden": True,
-            "evidence": "runtime-validated source-linked changed-art retrieval",
+            "evidence": "target-linked changed-art retrieval; method enforcement reported separately",
         })
     return rows
 
@@ -4773,6 +4911,18 @@ def make_cards(module, catalog_prompts):
             card["artifact"] = "transfer" if ordinal == 6 else "project"
             if ordinal == 6:
                 card["variants"] = [module["transfer"], module["transfer_alt"]]
+                # An unseen transfer is the module's first honest method
+                # retrieval. Reaching the target by an unrelated route must
+                # not create mastery evidence, and a later changed-art variant
+                # must be retrieved before the module is mastered.
+                card.setdefault("method_requirement", require_method(
+                    "perform the unfamiliar-art transfer with its taught command path",
+                    exact_any_of=[card["expected"]]))
+                for variant in card["variants"]:
+                    variant.setdefault("method_requirement", require_method(
+                        "repeat the taught transfer method on changed art",
+                        exact_any_of=[variant["expected"]]))
+                card["required_before_mastery"] = True
             # Every edit needs a visible result to aim at. Retrieval cards hide
             # the exact keystrokes, not the target or the action-level hint.
             card["show_target"] = True
@@ -4894,6 +5044,10 @@ def build():
             "medium": module.get("medium", "monospace"),
             "prerequisites": PREREQUISITES[module["id"]],
             "card_ids": [card["id"] for card in module_cards],
+            "required_review_card_ids": [
+                card["id"] for card in module_cards
+                if card.get("required_before_mastery")
+            ],
         })
         cards.extend(module_cards)
         questions.extend(question(module, n) for n in range(1, 11))
@@ -4974,6 +5128,15 @@ def build():
                     "prior_guided_card_id": first_guided.get(family),
                 })
     command_reviews = command_review_contract(cards)
+    required_mastery_reviews = [{
+        "module_id": card["module_id"],
+        "source_card_id": card["id"],
+        "method_label": card["method_requirement"]["label"],
+        "changed_art_variants": len(card.get("variants") or card.get("review_variants") or []),
+        "keys_hidden": card.get("show_recipe") is False,
+        "required_before_mastery": True,
+        "evidence": "method-required hidden transfer plus changed-art spaced review",
+    } for card in cards if card.get("required_before_mastery")]
     animation_lessons = load_animation_lesson_pack()
     output_module_map = {module["id"]: module for module in modules}
     for lesson in animation_lessons:
@@ -4992,7 +5155,7 @@ def build():
         output_module_map[guided_card["module_id"]].setdefault(
             "animation_pack_lesson_ids", []).append(lesson["id"])
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.26",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.27",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "modules": modules, "cards": cards, "questions": questions,
         "animation_lesson_pack": animation_lessons,
@@ -5011,6 +5174,7 @@ def build():
         "verified_review_coverage": verified_reviews,
         "verified_grammar_sequence": verified_sequence,
         "verified_command_review_coverage": command_reviews,
+        "required_mastery_review_coverage": required_mastery_reviews,
     }
 
 
@@ -5181,15 +5345,28 @@ def validate(cur):
     if cur.get("verified_command_review_coverage") != expected_command_reviews:
         errors.append(
             "verified command review coverage must match each guided family and its later hidden retrieval")
+    expected_required_reviews = [{
+        "module_id": card["module_id"],
+        "source_card_id": card["id"],
+        "method_label": card["method_requirement"]["label"],
+        "changed_art_variants": len(card.get("variants") or card.get("review_variants") or []),
+        "keys_hidden": card.get("show_recipe") is False,
+        "required_before_mastery": True,
+        "evidence": "method-required hidden transfer plus changed-art spaced review",
+    } for card in cards if card.get("required_before_mastery")]
+    if cur.get("required_mastery_review_coverage") != expected_required_reviews:
+        errors.append("required mastery-review coverage does not match enforced transfer reviews")
     for q in questions:
         if not q.get("source_ref"): errors.append(f"{q['id']}: missing source reference")
+        if q.get("form") != "multiple_choice":
+            errors.append(f"{q['id']}: every learner question must be four-choice multiple choice")
         if ("ANIMATION\n" not in q.get("prompt", "")
                 or "NEOVIM\n" not in q.get("prompt", "")):
             errors.append(f"{q['id']}: prompt does not visibly pair animation and Neovim")
         for field in ("card_id", "form", "grammar_family", "grammar_breakdown_id",
                       "paired_invariant", "placement", "placement_reason", "answer_contract"):
             if not q.get(field): errors.append(f"{q['id']}: missing paired-question field {field}")
-        if q.get("form") in ("multiple_choice", "predict_art") and q.get("choices"):
+        if q.get("form") == "multiple_choice" and q.get("choices"):
             if len(q["choices"]) != 4 or len(q["feedback"]) != 4:
                 errors.append(f"{q['id']}: choice form requires four choices and feedback messages")
             if not 0 <= q.get("correct_choice", -1) < len(q["choices"]):
@@ -5268,6 +5445,15 @@ def validate(cur):
                 errors.append(f"{card['id']}: pairing exception lacks a written reason")
         elif not card.get("paired_question_ids"):
             errors.append(f"{card['id']}: every card needs a paired question")
+        if card.get("required_before_mastery"):
+            variants = card.get("review_variants") or card.get("variants") or []
+            if (card.get("grammar_stage") != "hidden"
+                    or card.get("show_recipe") is not False
+                    or not card.get("method_requirement")
+                    or len(variants) < 2
+                    or any(not variant.get("method_requirement") for variant in variants)):
+                errors.append(
+                    f"{card['id']}: required mastery review needs hidden method evidence and two enforced variants")
         if card.get("start"):
             frame_rows = card.get("frame_rows", module_map[card["module_id"]].get("frame_rows"))
             check_visual(card["id"], "start", card["start"], frame_rows,

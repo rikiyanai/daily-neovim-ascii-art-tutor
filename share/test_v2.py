@@ -104,8 +104,16 @@ card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
 mc_questions = [question for question in cur["questions"]
                 if question["form"] == "multiple_choice"]
-assert {question["form"] for question in cur["questions"]} == {
-    "multiple_choice", "typed_keys", "decode", "complete", "predict_art", "why"}
+assert {question["form"] for question in cur["questions"]} == {"multiple_choice"}
+assert len(mc_questions) == len(cur["questions"]) == 328
+assert not any(
+    phrase in question["prompt"]
+    for question in cur["questions"]
+    for phrase in (
+        "Type any safe key sequence", "Decode it in plain language",
+        "your answer:", "keys (Vim notation",
+    )
+)
 assert all(card.get("paired_question_ids") for card in cur["cards"])
 assert all(qid in question_by_id
            for card in cur["cards"] for qid in card["paired_question_ids"])
@@ -113,15 +121,16 @@ assert all(qid in question_by_id
 # A generic why contract let the same stock sentence pass all 19 comparison
 # cards. Every comparison must instead ask about—and grade—the two methods and
 # animation scope on that exact card.
-why_questions = [question for question in cur["questions"] if question["form"] == "why"]
+why_questions = [question for question in cur["questions"]
+                 if question.get("learning_form") == "why"]
 assert len(why_questions) == 19
 assert len({question["prompt"] for question in why_questions}) == 19
-assert len({json.dumps(question["answer_contract"], sort_keys=True)
+assert len({json.dumps(question["source_answer_contract"], sort_keys=True)
             for question in why_questions}) == 19
 for question in why_questions:
     right, missing = v2._term_group_result(
-        question["answer_contract"]["sample_answer"],
-        question["answer_contract"]["required_term_groups"])
+        question["source_answer_contract"]["sample_answer"],
+        question["source_answer_contract"]["required_term_groups"])
     assert right and not missing, (question["id"], missing)
 
 # Metadata tags cannot hide a prerequisite failure. Scan command-looking text
@@ -166,6 +175,7 @@ assert card_by_id["M0.YP"]["expected"] == "gg3yyGp"
 assert card_by_id["M0.YP"]["show_recipe"] is True
 assert card_by_id["M0.O"]["expected"] == "Go  /|\\<Esc>"
 assert "<C-u>" not in card_by_id["M0.O"]["expected"]
+assert "<C-u>" not in json.dumps(cur, ensure_ascii=False)
 assert len(card_by_id["M0.O"]["start"]) == 5
 assert len(card_by_id["M0.O"]["target"]) == 6
 assert card_by_id["M0.O"]["incomplete_start_frame"]["missing_rows"] == 1
@@ -205,10 +215,16 @@ assert all("ANIMATION:" in q["compact_prompt"] and "NEOVIM:" in q["compact_promp
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == len(mc_questions) == 191
+            for q in mc_questions}) == len(mc_questions) == 328
 assert sum("│" in q["animation_prompt"] for q in mc_questions) >= 55
 assert all("Not yet" not in feedback and "one or both halves" not in feedback.lower()
            for q in mc_questions for feedback in q["feedback"])
+for question in [q for q in mc_questions if q.get("learning_form")]:
+    card = card_by_id[question["card_id"]]
+    module = next(module for module in cur["modules"]
+                  if module["id"] == question["module_id"])
+    assert any(card["title"] in choice for choice in question["choices"])
+    assert any(module["defect"] in choice for choice in question["choices"])
 for q in mc_questions:
     animation_halves = [choice.split(" | NEOVIM: ", 1)[0] for choice in q["choices"]]
     neovim_halves = [choice.split(" | NEOVIM: ", 1)[1] for choice in q["choices"]]
@@ -247,7 +263,7 @@ assert any("4j" in line and "down four" in line
 for guided in [c for c in cur["cards"] if c.get("grammar_stage") == "guided"]:
     paired = question_by_id[guided["paired_question_ids"][0]]
     assert paired["placement"] == "after", guided["id"]
-    assert paired["form"] != "typed_keys", guided["id"]
+    assert paired["form"] == "multiple_choice", guided["id"]
 # Concept cards before the later guided bridges may only ask about their two
 # preceding guided edits. Later material stays available in .07/check cards.
 future_before_guidance = {
@@ -304,15 +320,14 @@ assert [row["source_card_id"] for row in verified_reviews] == [
 assert all(row["method_family"] and row["changed_art_variants"] >= 2
            and row["evidence"] == "source-linked changed-art review bank"
            for row in verified_reviews)
-# Command-level spacing is stricter than card-level review counts: every
-# family first shown in a visible recipe must return later on changed art with
-# its exact keys hidden.  The generator and runtime derive the same contract;
-# this assertion makes a missing family fail the focused suite.
+# This legacy family-level index proves only a later key-hidden changed target.
+# Required performed-method and pre-mastery evidence is the separate contract
+# below; do not infer it from broad grammar-family labels.
 command_reviews = cur["verified_command_review_coverage"]
 assert command_reviews and all(
     row["grammar_family"] and row["guided_card_id"] and row["review_card_id"]
     and row["changed_art_variants"] >= 2 and row["keys_hidden"] is True
-    and row["evidence"] == "runtime-validated source-linked changed-art retrieval"
+    and row["evidence"] == "target-linked changed-art retrieval; method enforcement reported separately"
     for row in command_reviews)
 assert {row["grammar_family"] for row in command_reviews} >= {
     "ex-substitute-line", "ex-substitute-range", "char-find-repeat",
@@ -320,6 +335,17 @@ assert {row["grammar_family"] for row in command_reviews} >= {
 }
 assert all(card_by_id[row["review_card_id"]].get("show_recipe") is False
            for row in command_reviews)
+required_reviews = cur["required_mastery_review_coverage"]
+assert len(required_reviews) == len(cur["modules"]) == 19
+assert {row["source_card_id"] for row in required_reviews} == {
+    "%s.06" % module["id"] for module in cur["modules"]}
+assert all(row["changed_art_variants"] >= 2 and row["keys_hidden"] is True
+           and row["required_before_mastery"] is True
+           and row["evidence"] ==
+           "method-required hidden transfer plus changed-art spaced review"
+           for row in required_reviews)
+assert all(module["required_review_card_ids"] == [module["id"] + ".06"]
+           for module in cur["modules"])
 key_paths = "\n".join(card.get("expected", "") for card in cur["cards"])
 for padding in ("jwbewbwro", "6GJu04lr.", "13Gma2G'aj", "Go<Esc>I "):
     assert padding not in key_paths
@@ -424,57 +450,46 @@ with contextlib.redirect_stdout(io.StringIO()):
         shuffle=False)
 assert right and chosen == output_prediction["correct_choice"]
 
-# Typed-key questions are graded by their effect in an isolated Neovim, not
-# by string equality. Both valid paths pass; a different resulting glyph does
-# not. Question evidence alone never awards card XP.
+# The former typed-key question keeps its pedagogical origin as metadata, but
+# the live learner interaction is now an explicit four-choice check after the
+# hidden edit.  The old semantic contract remains audit evidence only.
 typed_question = question_by_id["M0.06.P01"]
-for equivalent in (typed_question["answer_contract"]["sample_answer"],):
-    right, evidence, _message = v2._safe_typed_effect(
-        typed_question["answer_contract"], equivalent)
-    assert right and evidence["result_lines_sha256"] == evidence["target_lines_sha256"]
-wrong, _evidence, _message = v2._safe_typed_effect(
-    typed_question["answer_contract"], "j0f.rx")
-assert not wrong
-wrong_output = io.StringIO()
-with contextlib.redirect_stdout(wrong_output):
-    right, answer = v2.ask_authored_question(
-        typed_question, input_fn=lambda _prompt: "j0f.rx", shuffle=False)
-assert not right and answer == "j0f.rx"
-assert "GRAMMAR BREAKDOWN" in wrong_output.getvalue()
-assert "ANSWER FORMAT" in wrong_output.getvalue()
-assert "OTHER EXAMPLE" in wrong_output.getvalue()
-assert "ONE WORKING ANSWER" not in wrong_output.getvalue()
+assert typed_question["form"] == "multiple_choice"
+assert typed_question["learning_form"] == "typed_keys"
+assert typed_question["placement"] == "after"
+assert len(typed_question["choices"]) == 4
+source_contract = typed_question["source_answer_contract"]
+right, evidence, _message = v2._safe_typed_effect(
+    source_contract, source_contract["sample_answer"])
+assert right and evidence["result_lines_sha256"] == evidence["target_lines_sha256"]
 
-# Free-text forms explain their response shape before input. Blank input is a
-# recoverable UI mistake, not a failed curriculum attempt, and a real wrong
-# answer shows one accepted answer after the grammar breakdown.
+# The former decode prompt cannot reject a valid paraphrase now: it displays
+# four choices and accepts only a/b/c/d. Blank input is corrected in-place and
+# does not become a failed curriculum attempt.
 decode_question = question_by_id["M0.02.P01"]
-decode_answers = iter(["", "operator"])
+assert decode_question["form"] == "multiple_choice"
+assert decode_question["learning_form"] == "decode"
+decode_answers = iter(["", "abcd"[decode_question["correct_choice"]]])
 decode_output = io.StringIO()
 with contextlib.redirect_stdout(decode_output):
     right, answer = v2.ask_authored_question(
         decode_question, input_fn=lambda _prompt: next(decode_answers), shuffle=False)
-assert not right and answer == "operator"
-assert "Blank input did not count as an attempt" in decode_output.getvalue()
-assert "ANSWER FORMAT" in decode_output.getvalue()
-assert "OTHER EXAMPLE" in decode_output.getvalue()
-assert "ONE ACCEPTED ANSWER" not in decode_output.getvalue()
-assert decode_question["answer_contract"]["sample_answer"] not in decode_output.getvalue()
+assert right and answer == decode_question["correct_choice"]
+assert "answer with a, b, c, d; this did not count as an attempt" in decode_output.getvalue()
 
-# Exact/accepted answers belong on the held correction page, not in transient
-# pre-clear output. This prevents a hidden transfer from leaking its recipe
-# before evaluation while still leaving a durable worked correction.
+# Held correction pages identify the selected and correct choices; they do not
+# revert to a free-text "one working answer" contract.
 held_correction = io.StringIO()
 with contextlib.redirect_stdout(held_correction):
     v2._post_feedback_ultra(
         card_by_id["M0.06"],
         {"type": "paired_question", "question": typed_question,
-         "answer": "j0f.rx", "right": False},
+         "answer": (typed_question["correct_choice"] + 1) % 4, "right": False},
         False,
         {"source": "test"},
         False, None, "", "")
-assert "ONE WORKING ANSWER" in held_correction.getvalue()
-assert typed_question["answer_contract"]["sample_answer"] in held_correction.getvalue()
+assert "ONE WORKING ANSWER" not in held_correction.getvalue()
+assert "correct:" in held_correction.getvalue()
 question_only = v2.project(cur, [{
     "type": "question", "result": "pass", "card_id": "M0.01",
     "module_id": "M0", "question_id": typed_question["id"],
@@ -689,13 +704,23 @@ events = [{"type": "card", "result": "pass", "card_id": card_id,
           for card_id in next(module for module in cur["modules"]
                               if module["id"] == "M0")["card_ids"]]
 p = v2.project(cur, events)
+assert p["modules"]["M0"]["state"] == "review_pending"
+assert p["modules"]["M0"]["reviews_done"] == 0
+assert p["modules"]["M0"]["reviews_total"] == 1
+assert p["modules"]["M1"]["state"] == "locked"
+events.append({
+    "type": "review", "result": "pass", "review_key": "M0.06",
+    "review_stage": 1, "module_id": "M0", "at": "2026-09-27T05:00:00+00:00",
+})
+p = v2.project(cur, events)
 assert p["modules"]["M0"]["state"] == "mastered"
+assert p["modules"]["M0"]["reviews_done"] == 1
 assert p["modules"]["M1"]["state"] == "available"
 assert p["modules"]["M2"]["state"] == "available"
 assert p["modules"]["M3"]["state"] == "locked"
 assert v2.next_card(cur, p)["id"] == "M1.01"
-assert p["xp"] == len(events) * 10 and "first-module" in p["badges"]
-almost = v2.project(cur, events[:-1])
+assert p["xp"] == (len(events) - 1) * 10 + 3 and "first-module" in p["badges"]
+almost = v2.project(cur, events[:-2])
 assert almost["modules"]["M0"]["state"] == "check_ready"
 with contextlib.redirect_stdout(io.StringIO()):
     v2.print_tree(cur, almost, compact=True)
@@ -1064,7 +1089,8 @@ for card in edit_cards:
         cmd = ["nvim"]
         if not use_real:
             cmd += ["-u", "NONE", "-i", "NONE"]
-        cmd += ["+1", "+normal! " + card.get("cursor", "^"), "-s", str(script), str(art)]
+        cmd += ["+set noautoindent nosmartindent nocindent indentexpr=", "+1",
+                "+normal! " + card.get("cursor", "^"), "-s", str(script), str(art)]
         result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         got = [line.rstrip() for line in art.read_text(encoding="utf-8").splitlines()]
         want = [line.rstrip() for line in card["target"]]
@@ -1116,7 +1142,8 @@ for card in [c for c in cur["cards"] if c["kind"] == "compare_methods"]:
             cmd = ["nvim"]
             if not use_real:
                 cmd += ["-u", "NONE", "-i", "NONE"]
-            cmd += ["+1", "+normal! " + card.get("cursor", "^"), "-s", str(script), str(art)]
+            cmd += ["+set noautoindent nosmartindent nocindent indentexpr=", "+1",
+                    "+normal! " + card.get("cursor", "^"), "-s", str(script), str(art)]
             result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             got = [line.rstrip() for line in art.read_text(encoding="utf-8").splitlines()]
             want = [line.rstrip() for line in card["target"]]
@@ -1135,7 +1162,8 @@ for card in [c for c in cur["cards"] if c["kind"] == "transfer"]:
             script = Path(tmp) / "keys.bin"
             script.write_bytes(to_bytes(variant["expected"] + ":wq<CR>"))
             result = subprocess.run(
-                ["nvim", "-u", "NONE", "-i", "NONE", "+1",
+                ["nvim", "-u", "NONE", "-i", "NONE",
+                 "+set noautoindent nosmartindent nocindent indentexpr=", "+1",
                  "+normal! " + variant.get("cursor", "^"), "-s", str(script), str(art)],
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             assert result.returncode == 0
@@ -1161,7 +1189,8 @@ for source in review_sources:
             script = Path(tmp) / "keys.bin"
             script.write_bytes(to_bytes(review_card["expected"] + ":wq<CR>"))
             result = subprocess.run(
-                ["nvim", "-u", "NONE", "-i", "NONE", "+1",
+                ["nvim", "-u", "NONE", "-i", "NONE",
+                 "+set noautoindent nosmartindent nocindent indentexpr=", "+1",
                  "+normal! " + review_card.get("cursor", "^"), "-s", str(script), str(art)],
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             got = [line.rstrip() for line in art.read_text(encoding="utf-8").splitlines()]
