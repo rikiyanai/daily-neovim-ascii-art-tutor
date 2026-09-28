@@ -4065,28 +4065,94 @@ def m0_extra_cards(module):
             "j = down one row; 4j = down four rows",
         ],
     })
-    open_line = dict(base, **{
-        "id": "M0.O", "ordinal": 2.5, "kind": "guided_edit",
-        "title": "Spark loop · Open rows without indentation drift",
-        "project_id": "m0-open-line-lab", "artifact": "transfer",
-        "variant_group": "M0.open-line", "lesson_benefit": (
-            "learn o/O and mode exit before a hidden card can require newly authored rows"
+    yank_put = dict(base, **{
+        "id": "M0.YP", "ordinal": 1.5, "kind": "guided_edit",
+        "title": "Spark loop · Copy one complete frame with yy/p",
+        "project_id": "m0-yank-put-lab", "artifact": "transfer",
+        "variant_group": "M0.yank-put", "lesson_benefit": (
+            "copy a complete fixed-width frame without retyping any of its rows"
         ),
         "prompt": (
-            "Create the second three-row spark below the first with open-line entry; keep every "
-            "ray in its original column and return to Normal mode."
+            "Copy the complete three-row spark once below itself. Do not redraw the rays "
+            "character by character."
         ),
         "start": ["  \\|/", "-- o --", "  /|\\"],
-        "target": ["  \\|/", "-- o --", "  /|\\", "  \\|/", "-- O --", "  /|\\"],
-        "expected": "Go<C-u>  \\|/<Esc>o<C-u>-- O --<Esc>o  /|\\<Esc>",
-        "recipe": [["G", "start from the last existing row"],
-                   ["o<C-u>…<Esc>", "open below, clear inherited indent, type the registered row, and return to Normal"]],
+        "target": ["  \\|/", "-- o --", "  /|\\",
+                   "  \\|/", "-- o --", "  /|\\"],
+        "expected": "gg3yyGp",
+        "recipe": [["gg", "go to the first row"],
+                   ["3yy", "copy three whole rows into Vim's yank register"],
+                   ["G", "go to the last existing row"],
+                   ["p", "put the copied whole rows below it"]],
         "cursor": "^", "show_target": True, "show_recipe": True,
         "hint": (
-            "o opens below and enters Insert; O opens above. <C-u> clears inherited indent; "
-            "the tutor also disables indentation only in the art buffer so columns survive."
+            "Vim's copy sentence is [count]yy; a linewise p creates new rows below, so "
+            "you do not need Insert mode or literal retyping."
+        ),
+        "frame_slices": [3, 3],
+        "grammar_families": ["linewise-yank-put", "normal-motion"],
+        "grammar_stage": "guided",
+        "duplicate_frames": [{
+            "frames": [1, 2], "role": "scaffold",
+            "reason": "an exact whole-frame copy used to learn linewise yank and put",
+            "playback": False,
+        }],
+    })
+    open_line = dict(base, **{
+        "id": "M0.O", "ordinal": 1.75, "kind": "guided_edit",
+        "title": "Spark loop · Open one missing row",
+        "project_id": "m0-open-line-lab", "artifact": "transfer",
+        "variant_group": "M0.open-line", "lesson_benefit": (
+            "open one registered row below the cursor and return to Normal mode"
+        ),
+        "prompt": (
+            "Finish the second spark by adding only its missing lower-ray row. The first five "
+            "rows are already correct; do not retype them."
+        ),
+        "start": ["  \\|/", "-- o --", "  /|\\", "  \\|/", "-- O --"],
+        "target": ["  \\|/", "-- o --", "  /|\\", "  \\|/", "-- O --", "  /|\\"],
+        "expected": "Go  /|\\<Esc>",
+        "recipe": [["G", "go to the last existing row"],
+                   ["o", "open one new row below and enter Insert mode"],
+                   ["  /|\\", "type the missing registered lower-ray row exactly"],
+                   ["<Esc>", "leave Insert mode and return to Normal"]],
+        "cursor": "^", "show_target": True, "show_recipe": True,
+        "hint": (
+            "Use G to reach the last supplied row, then o once. The art buffer disables "
+            "automatic indentation, so type the two leading spaces shown in TARGET yourself."
         ),
         "frame_slices": [3, 3], "grammar_families": ["normal-open-line"],
+        "grammar_stage": "guided",
+        "accepted_legacy_starts": [["  \\|/", "-- o --", "  /|\\"]],
+        "incomplete_start_frame": {
+            "frame": 2, "missing_rows": 1,
+            "reason": "the single learner action is to open the missing lower-ray row",
+        },
+    })
+    addressed_substitute = dict(base, **{
+        "id": "M0.SR", "ordinal": 1.9, "kind": "guided_edit",
+        "title": "Spark loop · Address one row and substitute",
+        "project_id": "m0-addressed-substitute-lab", "artifact": "transfer",
+        "variant_group": "M0.addressed-substitute", "lesson_benefit": (
+            "read an Ex substitute as address + command + old/new arguments + flag + Enter"
+        ),
+        "prompt": (
+            "On row 2 only, replace every small core o with O. Keep both ray rows unchanged."
+        ),
+        "start": ["  \\|/", "-- o --", "  /|\\"],
+        "target": ["  \\|/", "-- O --", "  /|\\"],
+        "expected": ":2s/o/O/g<CR>",
+        "recipe": [[":2", "address row 2 only"],
+                   ["s", "start the substitute command"],
+                   ["/o/O/", "name the old glyph and its replacement"],
+                   ["g", "replace every match on that addressed row"],
+                   ["<CR>", "execute the complete Ex statement"]],
+        "cursor": "^", "show_target": True, "show_recipe": True,
+        "hint": (
+            "Read :2s/o/O/g as address + command + old/new arguments + all-matches flag; "
+            "press Enter only after the full sentence is assembled."
+        ),
+        "frame_slices": [3], "grammar_families": ["ex-substitute-range"],
         "grammar_stage": "guided",
     })
     ex_copy = dict(base, **{
@@ -4118,10 +4184,10 @@ def m0_extra_cards(module):
             "playback": False,
         }],
     })
-    for card in (primer, open_line, ex_copy):
+    for card in (primer, yank_put, open_line, addressed_substitute, ex_copy):
         card["roadmap_contract"] = card["prompt"]
         card.setdefault("key_vocabulary", _family_breakdown(card["grammar_families"]))
-    return primer, open_line, ex_copy
+    return primer, yank_put, open_line, addressed_substitute, ex_copy
 
 
 def guided_bridge_cards(module):
@@ -4800,9 +4866,10 @@ def build():
     for module in MODULES:
         module_cards = make_cards(module, catalog_prompts)
         if module["id"] == "M0":
-            primer, open_line, ex_copy = m0_extra_cards(module)
-            module_cards = [primer, module_cards[0], module_cards[1], open_line,
-                            module_cards[2], module_cards[3], ex_copy] + module_cards[4:]
+            primer, yank_put, open_line, addressed_substitute, ex_copy = m0_extra_cards(module)
+            module_cards = [primer, module_cards[0], yank_put, open_line,
+                            addressed_substitute, module_cards[1], module_cards[2],
+                            module_cards[3], ex_copy] + module_cards[4:]
         bridge_rows = guided_bridge_cards(module)
         if bridge_rows:
             by_before = {}
@@ -4925,7 +4992,7 @@ def build():
         output_module_map[guided_card["module_id"]].setdefault(
             "animation_pack_lesson_ids", []).append(lesson["id"])
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.25",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.26",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "modules": modules, "cards": cards, "questions": questions,
         "animation_lesson_pack": animation_lessons,
@@ -5055,7 +5122,7 @@ def validate(cur):
     if set(legacy_ids) != expected_legacy or len(legacy_ids) != len(expected_legacy):
         errors.append("legacy lesson teaching payloads must attach exactly once: %r" % legacy_ids)
 
-    def check_visual(card_id, label, rows, frame_rows=None):
+    def check_visual(card_id, label, rows, frame_rows=None, incomplete_last=None):
         """Reject the one-glyph/toy stimuli that prompted the 2026-09-27 audit."""
         if not rows:
             errors.append(f"{card_id}: {label} is empty")
@@ -5063,6 +5130,14 @@ def validate(cur):
         frames = ([rows[index:index + frame_rows] for index in range(0, len(rows), frame_rows)]
                   if frame_rows else [rows])
         for index, frame in enumerate(frames, 1):
+            if (incomplete_last and index == len(frames)
+                    and incomplete_last.get("frame") == index
+                    and incomplete_last.get("missing_rows") == frame_rows - len(frame)
+                    and incomplete_last.get("reason")):
+                # A guided missing-row exercise intentionally begins with one
+                # partial final pose.  The finished target is still checked as
+                # full multi-row art below.
+                continue
             nonblank = [row for row in frame if row.strip()]
             ink = sum(sum(not char.isspace() for char in row) for row in frame)
             width = max((len(row.rstrip()) for row in frame), default=0)
@@ -5195,7 +5270,8 @@ def validate(cur):
             errors.append(f"{card['id']}: every card needs a paired question")
         if card.get("start"):
             frame_rows = card.get("frame_rows", module_map[card["module_id"]].get("frame_rows"))
-            check_visual(card["id"], "start", card["start"], frame_rows)
+            check_visual(card["id"], "start", card["start"], frame_rows,
+                         card.get("incomplete_start_frame"))
             check_visual(card["id"], "target", card["target"], frame_rows)
         for qid in card.get("question_ids", []):
             if qid not in qids: errors.append(f"{card['id']}: missing question {qid}")

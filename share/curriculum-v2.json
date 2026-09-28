@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-28.25",
+ "revision": "2026-09-28.26",
  "review_intervals_hours": [
   4,
   24,
@@ -29,8 +29,10 @@
    "card_ids": [
     "M0.P0",
     "M0.01",
-    "M0.02",
+    "M0.YP",
     "M0.O",
+    "M0.SR",
+    "M0.02",
     "M0.03",
     "M0.04",
     "M0.T",
@@ -871,6 +873,294 @@
    ]
   },
   {
+   "module_id": "M0",
+   "skill": "modes, whole-frame copying, and readable change",
+   "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
+   "medium": "monospace",
+   "node_ids": [
+    "A0/V0"
+   ],
+   "master_habits": [
+    "H1",
+    "H3"
+   ],
+   "master_stages": [
+    "S0",
+    "A0"
+   ],
+   "id": "M0.YP",
+   "ordinal": 1.5,
+   "kind": "guided_edit",
+   "title": "Spark loop · Copy one complete frame with yy/p",
+   "project_id": "m0-yank-put-lab",
+   "artifact": "transfer",
+   "variant_group": "M0.yank-put",
+   "lesson_benefit": "copy a complete fixed-width frame without retyping any of its rows",
+   "prompt": "Copy the complete three-row spark once below itself. Do not redraw the rays character by character.",
+   "start": [
+    "  \\|/",
+    "-- o --",
+    "  /|\\"
+   ],
+   "target": [
+    "  \\|/",
+    "-- o --",
+    "  /|\\",
+    "  \\|/",
+    "-- o --",
+    "  /|\\"
+   ],
+   "expected": "gg3yyGp",
+   "recipe": [
+    [
+     "gg",
+     "go to the first row"
+    ],
+    [
+     "3yy",
+     "copy three whole rows into Vim's yank register"
+    ],
+    [
+     "G",
+     "go to the last existing row"
+    ],
+    [
+     "p",
+     "put the copied whole rows below it"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "Vim's copy sentence is [count]yy; a linewise p creates new rows below, so you do not need Insert mode or literal retyping.",
+   "frame_slices": [
+    3,
+    3
+   ],
+   "grammar_families": [
+    "linewise-yank-put",
+    "normal-motion"
+   ],
+   "grammar_stage": "guided",
+   "duplicate_frames": [
+    {
+     "frames": [
+      1,
+      2
+     ],
+     "role": "scaffold",
+     "reason": "an exact whole-frame copy used to learn linewise yank and put",
+     "playback": false
+    }
+   ],
+   "roadmap_contract": "Copy the complete three-row spark once below itself. Do not redraw the rays character by character.",
+   "key_vocabulary": [
+    "count + yy copies whole rows; p/P puts the linewise object below/above",
+    "motion or landmark command + optional count; movement alone must not change art"
+   ],
+   "paired_question_ids": [
+    "M0.YP.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M0.YP.P01"
+    ],
+    "rationale": {
+     "M0.YP.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "module_id": "M0",
+   "skill": "modes, whole-frame copying, and readable change",
+   "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
+   "medium": "monospace",
+   "node_ids": [
+    "A0/V0"
+   ],
+   "master_habits": [
+    "H1",
+    "H3"
+   ],
+   "master_stages": [
+    "S0",
+    "A0"
+   ],
+   "id": "M0.O",
+   "ordinal": 1.75,
+   "kind": "guided_edit",
+   "title": "Spark loop · Open one missing row",
+   "project_id": "m0-open-line-lab",
+   "artifact": "transfer",
+   "variant_group": "M0.open-line",
+   "lesson_benefit": "open one registered row below the cursor and return to Normal mode",
+   "prompt": "Finish the second spark by adding only its missing lower-ray row. The first five rows are already correct; do not retype them.",
+   "start": [
+    "  \\|/",
+    "-- o --",
+    "  /|\\",
+    "  \\|/",
+    "-- O --"
+   ],
+   "target": [
+    "  \\|/",
+    "-- o --",
+    "  /|\\",
+    "  \\|/",
+    "-- O --",
+    "  /|\\"
+   ],
+   "expected": "Go  /|\\<Esc>",
+   "recipe": [
+    [
+     "G",
+     "go to the last existing row"
+    ],
+    [
+     "o",
+     "open one new row below and enter Insert mode"
+    ],
+    [
+     "  /|\\",
+     "type the missing registered lower-ray row exactly"
+    ],
+    [
+     "<Esc>",
+     "leave Insert mode and return to Normal"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "Use G to reach the last supplied row, then o once. The art buffer disables automatic indentation, so type the two leading spaces shown in TARGET yourself.",
+   "frame_slices": [
+    3,
+    3
+   ],
+   "grammar_families": [
+    "normal-open-line"
+   ],
+   "grammar_stage": "guided",
+   "accepted_legacy_starts": [
+    [
+     "  \\|/",
+     "-- o --",
+     "  /|\\"
+    ]
+   ],
+   "incomplete_start_frame": {
+    "frame": 2,
+    "missing_rows": 1,
+    "reason": "the single learner action is to open the missing lower-ray row"
+   },
+   "roadmap_contract": "Finish the second spark by adding only its missing lower-ray row. The first five rows are already correct; do not retype them.",
+   "key_vocabulary": [
+    "o/O opens one row below/above and enters Insert; <Esc> returns to Normal"
+   ],
+   "paired_question_ids": [
+    "M0.O.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M0.O.P01"
+    ],
+    "rationale": {
+     "M0.O.P01": "The learner first sees and types the new command in the guided edit; this short choice then checks the resulting scope without demanding a second key sequence."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "module_id": "M0",
+   "skill": "modes, whole-frame copying, and readable change",
+   "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
+   "medium": "monospace",
+   "node_ids": [
+    "A0/V0"
+   ],
+   "master_habits": [
+    "H1",
+    "H3"
+   ],
+   "master_stages": [
+    "S0",
+    "A0"
+   ],
+   "id": "M0.SR",
+   "ordinal": 1.9,
+   "kind": "guided_edit",
+   "title": "Spark loop · Address one row and substitute",
+   "project_id": "m0-addressed-substitute-lab",
+   "artifact": "transfer",
+   "variant_group": "M0.addressed-substitute",
+   "lesson_benefit": "read an Ex substitute as address + command + old/new arguments + flag + Enter",
+   "prompt": "On row 2 only, replace every small core o with O. Keep both ray rows unchanged.",
+   "start": [
+    "  \\|/",
+    "-- o --",
+    "  /|\\"
+   ],
+   "target": [
+    "  \\|/",
+    "-- O --",
+    "  /|\\"
+   ],
+   "expected": ":2s/o/O/g<CR>",
+   "recipe": [
+    [
+     ":2",
+     "address row 2 only"
+    ],
+    [
+     "s",
+     "start the substitute command"
+    ],
+    [
+     "/o/O/",
+     "name the old glyph and its replacement"
+    ],
+    [
+     "g",
+     "replace every match on that addressed row"
+    ],
+    [
+     "<CR>",
+     "execute the complete Ex statement"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "Read :2s/o/O/g as address + command + old/new arguments + all-matches flag; press Enter only after the full sentence is assembled.",
+   "frame_slices": [
+    3
+   ],
+   "grammar_families": [
+    "ex-substitute-range"
+   ],
+   "grammar_stage": "guided",
+   "roadmap_contract": "On row 2 only, replace every small core o with O. Keep both ray rows unchanged.",
+   "key_vocabulary": [
+    "explicit line range + s command + pattern + replacement + flags + <CR>"
+   ],
+   "paired_question_ids": [
+    "M0.SR.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M0.SR.P01"
+    ],
+    "rationale": {
+     "M0.SR.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
    "id": "M0.02",
    "module_id": "M0",
    "ordinal": 2,
@@ -997,85 +1287,6 @@
      "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 2 skill §10: a hold is a repeated frame."
     }
    ]
-  },
-  {
-   "module_id": "M0",
-   "skill": "modes, whole-frame copying, and readable change",
-   "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
-   "medium": "monospace",
-   "node_ids": [
-    "A0/V0"
-   ],
-   "master_habits": [
-    "H1",
-    "H3"
-   ],
-   "master_stages": [
-    "S0",
-    "A0"
-   ],
-   "id": "M0.O",
-   "ordinal": 2.5,
-   "kind": "guided_edit",
-   "title": "Spark loop · Open rows without indentation drift",
-   "project_id": "m0-open-line-lab",
-   "artifact": "transfer",
-   "variant_group": "M0.open-line",
-   "lesson_benefit": "learn o/O and mode exit before a hidden card can require newly authored rows",
-   "prompt": "Create the second three-row spark below the first with open-line entry; keep every ray in its original column and return to Normal mode.",
-   "start": [
-    "  \\|/",
-    "-- o --",
-    "  /|\\"
-   ],
-   "target": [
-    "  \\|/",
-    "-- o --",
-    "  /|\\",
-    "  \\|/",
-    "-- O --",
-    "  /|\\"
-   ],
-   "expected": "Go<C-u>  \\|/<Esc>o<C-u>-- O --<Esc>o  /|\\<Esc>",
-   "recipe": [
-    [
-     "G",
-     "start from the last existing row"
-    ],
-    [
-     "o<C-u>…<Esc>",
-     "open below, clear inherited indent, type the registered row, and return to Normal"
-    ]
-   ],
-   "cursor": "^",
-   "show_target": true,
-   "show_recipe": true,
-   "hint": "o opens below and enters Insert; O opens above. <C-u> clears inherited indent; the tutor also disables indentation only in the art buffer so columns survive.",
-   "frame_slices": [
-    3,
-    3
-   ],
-   "grammar_families": [
-    "normal-open-line"
-   ],
-   "grammar_stage": "guided",
-   "roadmap_contract": "Create the second three-row spark below the first with open-line entry; keep every ray in its original column and return to Normal mode.",
-   "key_vocabulary": [
-    "o/O opens one row below/above and enters Insert; <Esc> returns to Normal"
-   ],
-   "paired_question_ids": [
-    "M0.O.P01"
-   ],
-   "question_placement": {
-    "before": [],
-    "after": [
-     "M0.O.P01"
-    ],
-    "rationale": {
-     "M0.O.P01": "The learner first sees and types the new command in the guided edit; this short choice then checks the resulting scope without demanding a second key sequence."
-    }
-   },
-   "pairing_exception": null
   },
   {
    "id": "M0.03",
@@ -31228,6 +31439,137 @@
    }
   },
   {
+   "id": "M0.YP.P01",
+   "card_id": "M0.YP",
+   "module_id": "M0",
+   "grammar_family": "linewise-yank-put",
+   "grammar_breakdown_id": "linewise-yank-put",
+   "grammar_breakdown": [
+    "count + yy copies whole rows; p/P puts the linewise object below/above",
+    "motion or landmark command + optional count; movement alone must not change art"
+   ],
+   "paired_invariant": "test the smallest readable multi-row subject before adding frames",
+   "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
+   "difficulty": 1,
+   "form": "decode",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nCopy the complete three-row spark once below itself. Do not redraw the rays character by character.\n\nNEOVIM\nYou just used `gg3yyGp`. Decode it in plain language. Name every command part and the exact animation scope it owned.",
+   "answer_contract": {
+    "form": "decode",
+    "display": "gg3yyGp",
+    "required_term_groups": [
+     [
+      "yank",
+      "copy"
+     ],
+     [
+      "line",
+      "row",
+      "frame"
+     ],
+     [
+      "put",
+      "paste"
+     ],
+     [
+      "motion",
+      "move",
+      "cursor"
+     ],
+     [
+      "landmark",
+      "row",
+      "column",
+      "cell"
+     ]
+    ],
+    "sample_answer": "yank line put motion landmark"
+   }
+  },
+  {
+   "id": "M0.O.P01",
+   "card_id": "M0.O",
+   "module_id": "M0",
+   "grammar_family": "normal-open-line",
+   "grammar_breakdown_id": "normal-open-line",
+   "grammar_breakdown": [
+    "o/O opens one row below/above and enters Insert; <Esc> returns to Normal"
+   ],
+   "paired_invariant": "test the smallest readable multi-row subject before adding frames",
+   "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
+   "difficulty": 1,
+   "form": "predict_art",
+   "placement": "after",
+   "placement_reason": "The learner first sees and types the new command in the guided edit; this short choice then checks the resulting scope without demanding a second key sequence.",
+   "prompt": "ANIMATION\nFinish the second spark by adding only its missing lower-ray row. The first five rows are already correct; do not retype them.\n\nNEOVIM\nYou just completed the guided command. Which summary correctly describes what it did?",
+   "choices": [
+    "It made the stated bounded edit while preserving every registered cell outside that scope.",
+    "It only moved the cursor; no requested art cell changed.",
+    "It inserted extra cells and shifted the rest of the fixed-width row.",
+    "It rewrote every similar glyph in the project, including unrelated frames."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: go to the last existing row; open one new row below and enter Insert mode; type the missing registered lower-ray row exactly; leave Insert mode and return to Normal.",
+    "The guided result required an art change, not navigation alone.",
+    "Shifting the row would violate fixed-width registration.",
+    "The command was bounded to the stated subject; project-wide scope was not requested."
+   ],
+   "answer_contract": {
+    "form": "predict_art",
+    "answer_mode": "choice"
+   }
+  },
+  {
+   "id": "M0.SR.P01",
+   "card_id": "M0.SR",
+   "module_id": "M0",
+   "grammar_family": "ex-substitute-range",
+   "grammar_breakdown_id": "ex-substitute-range",
+   "grammar_breakdown": [
+    "explicit line range + s command + pattern + replacement + flags + <CR>"
+   ],
+   "paired_invariant": "test the smallest readable multi-row subject before adding frames",
+   "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
+   "difficulty": 1,
+   "form": "decode",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nOn row 2 only, replace every small core o with O. Keep both ray rows unchanged.\n\nNEOVIM\nYou just used `:2s/o/O/g<CR>`. Decode it in plain language. Name every command part and the exact animation scope it owned.",
+   "answer_contract": {
+    "form": "decode",
+    "display": ":2s/o/O/g<CR>",
+    "required_term_groups": [
+     [
+      "range",
+      "address",
+      "lines"
+     ],
+     [
+      "substitute",
+      "replace"
+     ],
+     [
+      "pattern"
+     ],
+     [
+      "replacement"
+     ],
+     [
+      "flag",
+      "global",
+      "g"
+     ],
+     [
+      "enter",
+      "execute"
+     ]
+    ],
+    "sample_answer": "range substitute pattern replacement flag enter"
+   }
+  },
+  {
    "id": "M0.02.P01",
    "card_id": "M0.02",
    "module_id": "M0",
@@ -31299,40 +31641,6 @@
      ]
     ],
     "sample_answer": "range substitute pattern replacement flag enter yank line put motion landmark"
-   }
-  },
-  {
-   "id": "M0.O.P01",
-   "card_id": "M0.O",
-   "module_id": "M0",
-   "grammar_family": "normal-open-line",
-   "grammar_breakdown_id": "normal-open-line",
-   "grammar_breakdown": [
-    "o/O opens one row below/above and enters Insert; <Esc> returns to Normal"
-   ],
-   "paired_invariant": "test the smallest readable multi-row subject before adding frames",
-   "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
-   "difficulty": 1,
-   "form": "predict_art",
-   "placement": "after",
-   "placement_reason": "The learner first sees and types the new command in the guided edit; this short choice then checks the resulting scope without demanding a second key sequence.",
-   "prompt": "ANIMATION\nCreate the second three-row spark below the first with open-line entry; keep every ray in its original column and return to Normal mode.\n\nNEOVIM\nYou just completed the guided command. Which summary correctly describes what it did?",
-   "choices": [
-    "It made the stated bounded edit while preserving every registered cell outside that scope.",
-    "It only moved the cursor; no requested art cell changed.",
-    "It inserted extra cells and shifted the rest of the fixed-width row.",
-    "It rewrote every similar glyph in the project, including unrelated frames."
-   ],
-   "correct_choice": 0,
-   "feedback": [
-    "Correct: start from the last existing row; open below, clear inherited indent, type the registered row, and return to Normal.",
-    "The guided result required an art change, not navigation alone.",
-    "Shifting the row would violate fixed-width registration.",
-    "The command was bounded to the stated subject; project-wide scope was not requested."
-   ],
-   "answer_contract": {
-    "form": "predict_art",
-    "answer_mode": "choice"
    }
   },
   {
@@ -39391,12 +39699,12 @@
   {
    "hidden_card_id": "M0.04",
    "grammar_family": "ex-substitute-range",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.SR"
   },
   {
    "hidden_card_id": "M0.04",
    "grammar_family": "linewise-yank-put",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.YP"
   },
   {
    "hidden_card_id": "M0.04",
@@ -39411,7 +39719,7 @@
   {
    "hidden_card_id": "M0.05",
    "grammar_family": "linewise-yank-put",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.YP"
   },
   {
    "hidden_card_id": "M0.05",
@@ -39471,7 +39779,7 @@
   {
    "hidden_card_id": "M1.05",
    "grammar_family": "ex-substitute-range",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.SR"
   },
   {
    "hidden_card_id": "M1.05",
@@ -39541,7 +39849,7 @@
   {
    "hidden_card_id": "M2.05",
    "grammar_family": "ex-substitute-range",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.SR"
   },
   {
    "hidden_card_id": "M2.05",
@@ -39606,7 +39914,7 @@
   {
    "hidden_card_id": "M3.05",
    "grammar_family": "linewise-yank-put",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.YP"
   },
   {
    "hidden_card_id": "M3.05",
@@ -39691,7 +39999,7 @@
   {
    "hidden_card_id": "M4.05",
    "grammar_family": "linewise-yank-put",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.YP"
   },
   {
    "hidden_card_id": "M4.05",
@@ -39746,7 +40054,7 @@
   {
    "hidden_card_id": "M5.05",
    "grammar_family": "linewise-yank-put",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.YP"
   },
   {
    "hidden_card_id": "M5.05",
@@ -39801,7 +40109,7 @@
   {
    "hidden_card_id": "M6.05",
    "grammar_family": "linewise-yank-put",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.YP"
   },
   {
    "hidden_card_id": "M6.05",
@@ -39851,7 +40159,7 @@
   {
    "hidden_card_id": "M7.05",
    "grammar_family": "ex-substitute-range",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.SR"
   },
   {
    "hidden_card_id": "M7.05",
@@ -39931,7 +40239,7 @@
   {
    "hidden_card_id": "M8.05",
    "grammar_family": "ex-substitute-range",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.SR"
   },
   {
    "hidden_card_id": "M8.05",
@@ -40061,7 +40369,7 @@
   {
    "hidden_card_id": "M10.05",
    "grammar_family": "linewise-yank-put",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.YP"
   },
   {
    "hidden_card_id": "M10.05",
@@ -40151,7 +40459,7 @@
   {
    "hidden_card_id": "M12.04",
    "grammar_family": "linewise-yank-put",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.YP"
   },
   {
    "hidden_card_id": "M12.04",
@@ -40241,7 +40549,7 @@
   {
    "hidden_card_id": "M13.04",
    "grammar_family": "linewise-yank-put",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.YP"
   },
   {
    "hidden_card_id": "M13.04",
@@ -40351,7 +40659,7 @@
   {
    "hidden_card_id": "M14.05",
    "grammar_family": "linewise-yank-put",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.YP"
   },
   {
    "hidden_card_id": "M14.05",
@@ -40416,7 +40724,7 @@
   {
    "hidden_card_id": "M15.04",
    "grammar_family": "ex-substitute-range",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.SR"
   },
   {
    "hidden_card_id": "M15.04",
@@ -40426,7 +40734,7 @@
   {
    "hidden_card_id": "M15.05",
    "grammar_family": "ex-substitute-range",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.SR"
   },
   {
    "hidden_card_id": "M15.05",
@@ -40621,7 +40929,7 @@
   {
    "hidden_card_id": "M18.05",
    "grammar_family": "ex-substitute-range",
-   "prior_guided_card_id": "M0.02"
+   "prior_guided_card_id": "M0.SR"
   },
   {
    "hidden_card_id": "M18.05",
@@ -40690,16 +40998,8 @@
    "evidence": "runtime-validated source-linked changed-art retrieval"
   },
   {
-   "grammar_family": "ex-substitute-range",
-   "guided_card_id": "M0.02",
-   "review_card_id": "M15.04",
-   "changed_art_variants": 2,
-   "keys_hidden": true,
-   "evidence": "runtime-validated source-linked changed-art retrieval"
-  },
-  {
    "grammar_family": "linewise-yank-put",
-   "guided_card_id": "M0.02",
+   "guided_card_id": "M0.YP",
    "review_card_id": "M12.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
@@ -40709,6 +41009,14 @@
    "grammar_family": "normal-open-line",
    "guided_card_id": "M0.O",
    "review_card_id": "M8.04",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "evidence": "runtime-validated source-linked changed-art retrieval"
+  },
+  {
+   "grammar_family": "ex-substitute-range",
+   "guided_card_id": "M0.SR",
+   "review_card_id": "M15.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "evidence": "runtime-validated source-linked changed-art retrieval"

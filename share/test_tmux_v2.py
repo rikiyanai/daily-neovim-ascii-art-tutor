@@ -29,8 +29,10 @@ CURRICULUM = json.loads((ROOT / "share" / "curriculum-v2.json").read_text(encodi
 M0_FIRST = next(card for card in CURRICULUM["cards"] if card["id"] == "M0.01")
 M0_FIRST_QUESTION = next(question for question in CURRICULUM["questions"]
                          if question["id"] == "M0.01.P01")
-M0_TOTAL = len(next(module for module in CURRICULUM["modules"]
-                    if module["id"] == "M0")["card_ids"])
+M0_CARD_IDS = next(module for module in CURRICULUM["modules"]
+                   if module["id"] == "M0")["card_ids"]
+M0_TOTAL = len(M0_CARD_IDS)
+M0_AFTER_FIRST = M0_CARD_IDS[M0_CARD_IDS.index("M0.01") + 1]
 
 
 def run(*args, **kwargs):
@@ -156,7 +158,8 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         # the lesson below is the same installed client-attached hook used by
         # the real tmux configuration.
         run("tmux", "-L", inner_socket, "-f", "/dev/null", "new-session", "-d",
-            "-s", inner_session, "-x", str(COLUMNS), "-y", str(ROWS))
+            "-s", inner_session, "-x", str(COLUMNS), "-y", str(ROWS),
+            "/bin/zsh", "-f")
         for key, value in lesson_env.items():
             tmux(inner_socket, "set-environment", "-g", key, value)
         tmux(inner_socket, "set-hook", "-g", "client-attached",
@@ -517,7 +520,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         progress_flat = " ".join(progress_screen.split())
         progress_required = [
             "PROGRESS AWARDED", "SKILL TREE / MODULE PROGRESS", "M0", "2/%d" % M0_TOTAL,
-            "streak: 1 day", "next: M0.02",
+            "streak: 1 day", "next: %s" % M0_AFTER_FIRST,
         ]
         missing = [text for text in progress_required if text not in progress_flat]
         if not (("XP 20" in progress_flat and "today 2/12" in progress_flat)

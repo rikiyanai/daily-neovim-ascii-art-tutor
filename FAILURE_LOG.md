@@ -3179,9 +3179,8 @@ accepted synonym before grading.
 
 ## VD-25 · 2026-09-28 18:28 — M0.O is an obsolete typing wall, not an `o` micro-lesson
 
-**Status:** OPEN while the live animation-pack generator integration is in
-flight; source correction and migration proof are required immediately after
-that ownership window closes.
+**Status:** CLOSED in curriculum revision `.26`; the operator still needs to
+see the repaired sequence in a real scheduled popup.
 
 The operator passed the repaired M0.P0 at 18:27:37, then failed M0.O twice at
 18:28:46 and 18:28:54. The durable first keylog is
@@ -3206,3 +3205,35 @@ the missing lower-ray row (`Go  /|\\<Esc>`). The recipe must separately name
 start as a migration source so the operator's restored artifact upgrades
 without deletion or a manual repair. Add a generator test bounding M0.O's
 literal typing burden and a real headed retry proof.
+
+**Implemented at 18:54:** M0 is now ordered `P0 → 01 → YP → O → SR → 02`.
+`M0.YP` visibly teaches `gg`, counted linewise `3yy`, `G`, and `p` on a full
+three-row frame. Repaired `M0.O` supplies five correct rows and requires only
+`Go  /|\\<Esc>`; the obsolete `<C-u>` workaround is gone. `M0.SR` visibly
+teaches `:2s/o/O/g<CR>` as address + command + old/new arguments + flag +
+Enter. Only after those three micro-performances does the old combined M0.02
+appear. This grows M0 from 12 to 14 cards and the course from 174 to 176 cards.
+
+The operator's three-row M0.O artifact is an explicit
+`accepted_legacy_starts` value. Runtime proof checks that it is checkpointed as
+`M0.O-pre-curriculum-migration-1.txt`, upgraded to the five-row scaffold, and
+then completed without deleting user work.
+
+**Compact-popup finding and repair:** the first 80×24 headed run showed that a
+six-row target consumed the visible brief before `HINT` and `RECIPE`. Equal-
+height animation frames now render side by side in compact briefs without
+collapsing fixed-width spaces. `DO THIS`, `HINT`, all target rows, `RECIPE`, and
+the Normal-mode statusline are simultaneously visible at 80×24.
+
+**Clipboard evidence:** the installed gate and popup hook are symlinks to this
+checkout. The live tmux server reports `mouse on` and `set-clipboard on`;
+copy-mode-vi `y`, `Enter`, and `MouseDragEnd1Pane` all execute
+`copy-pipe-and-cancel pbcopy`. The popup title states `drag copies · Cmd-V
+pastes`. The real user-config client-attached popup completed at 80×24,
+100×36, and 188×49 while asserting those live options and bindings.
+
+**Verification:** `share/test_v2.py` passes all 176 executable cards and all
+137 primary edit recipes. Focused headed runs of M0.YP, M0.O, and M0.SR pass at
+80×24, 100×36, and 188×49. The animation-pack integration test passes with 12
+live paired lessons and 24 paired questions. Python compilation, popup shell
+syntax checks, and `git diff --check` pass.

@@ -96,10 +96,10 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["paradigm"] == concept["paradigm"]
 
 assert len(cur["modules"]) == 19
-assert len(cur["cards"]) == 174
-assert len(cur["questions"]) == 326
-assert len({card["title"] for card in cur["cards"]}) == 174
-assert len({card["prompt"] for card in cur["cards"]}) == 174
+assert len(cur["cards"]) == 176
+assert len(cur["questions"]) == 328
+assert len({card["title"] for card in cur["cards"]}) == 176
+assert len({card["prompt"] for card in cur["cards"]}) == 176
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
 mc_questions = [question for question in cur["questions"]
@@ -157,8 +157,24 @@ for card in cur["cards"]:
             normalized_key_family(family)
             for family, _meaning in v2_keys.families(card["expected"]))
 assert [card["id"] for card in cur["cards"] if card["module_id"] == "M0"] == [
-    "M0.P0", "M0.01", "M0.02", "M0.O", "M0.03", "M0.04",
+    "M0.P0", "M0.01", "M0.YP", "M0.O", "M0.SR", "M0.02", "M0.03", "M0.04",
     "M0.T", "M0.05", "M0.SL", "M0.06", "M0.07", "M0.08"]
+# The beginner must perform each concrete prerequisite visibly before the old
+# combined card or any hidden retrieval can demand it.  M0.O is intentionally
+# one open-line action, not a second-frame typing test.
+assert card_by_id["M0.YP"]["expected"] == "gg3yyGp"
+assert card_by_id["M0.YP"]["show_recipe"] is True
+assert card_by_id["M0.O"]["expected"] == "Go  /|\\<Esc>"
+assert "<C-u>" not in card_by_id["M0.O"]["expected"]
+assert len(card_by_id["M0.O"]["start"]) == 5
+assert len(card_by_id["M0.O"]["target"]) == 6
+assert card_by_id["M0.O"]["incomplete_start_frame"]["missing_rows"] == 1
+assert ["  \\|/", "-- o --", "  /|\\"] in card_by_id["M0.O"]["accepted_legacy_starts"]
+assert card_by_id["M0.SR"]["expected"] == ":2s/o/O/g<CR>"
+assert card_by_id["M0.SR"]["show_recipe"] is True
+compact_m0o = v2._compact_target_lines(card_by_id["M0.O"])
+assert len(compact_m0o) == 3
+assert all(line.count("│") == 2 for line in compact_m0o)
 # M0.04 must not demand substitution before it has been shown. M0.02 is the
 # guided introduction; M0.04 names the family but keeps its exact line/keys
 # hidden as retrieval practice.
@@ -548,6 +564,34 @@ with tempfile.TemporaryDirectory() as tmp:
     assert (artifact.parent / "checkpoints" / "M0.04-pre-curriculum-migration-2.txt").exists()
     assert artifact.read_text(encoding="utf-8").splitlines() == migration_card["target"]
 
+# The operator's failed pre-.26 M0.O artifact contains the old three-row
+# starting frame.  Opening the repaired card must checkpoint and upgrade it to
+# the new five-row scaffold before the one-row exercise runs.
+with tempfile.TemporaryDirectory() as tmp:
+    migration_card = card_by_id["M0.O"]
+    old_start = migration_card["accepted_legacy_starts"][0]
+    observed_start = []
+
+    def finish_open_line_migration(path, *_args):
+        observed_start.extend(Path(path).read_text(encoding="utf-8").splitlines())
+        Path(path).write_text("\n".join(migration_card["target"]) + "\n", encoding="utf-8")
+
+    cfg = v2.RuntimeConfig(state=tmp, share=str(HERE), editor="nvim", max_tries=1,
+                           target=12, cooldown=3600, stamp=str(Path(tmp) / "stamp"),
+                           run_editor=finish_open_line_migration, decode_keylog=lambda _: [],
+                           hold_open=lambda: None, colours=("", "", "", "", "", ""),
+                           question_answer=answer_question)
+    artifact = v2._artifact_path(cfg, migration_card)
+    artifact.parent.mkdir(parents=True, exist_ok=True)
+    artifact.write_text("\n".join(old_start) + "\n", encoding="utf-8")
+    with contextlib.redirect_stdout(io.StringIO()):
+        assert v2.run_edit(cfg, cur, v2.project(cur, []), migration_card) == 0
+    assert observed_start == migration_card["start"]
+    migration_events = [event for event in v2.read_events(cfg)
+                        if event.get("type") == "curriculum_migration"]
+    assert len(migration_events) == 1
+    assert (artifact.parent / "checkpoints" / "M0.O-pre-curriculum-migration-1.txt").exists()
+
 # Re-extracting tutorial plates must merge, not delete, separately ingested
 # user art; the merged library must still generate the legacy curriculum.
 with tempfile.TemporaryDirectory() as tmp:
@@ -650,7 +694,7 @@ assert p["modules"]["M1"]["state"] == "available"
 assert p["modules"]["M2"]["state"] == "available"
 assert p["modules"]["M3"]["state"] == "locked"
 assert v2.next_card(cur, p)["id"] == "M1.01"
-assert p["xp"] == 120 and "first-module" in p["badges"]
+assert p["xp"] == len(events) * 10 and "first-module" in p["badges"]
 almost = v2.project(cur, events[:-1])
 assert almost["modules"]["M0"]["state"] == "check_ready"
 with contextlib.redirect_stdout(io.StringIO()):
@@ -746,7 +790,7 @@ with tempfile.TemporaryDirectory() as tmp:
         assert first["title"] in text and first["prompt"] in text
         assert "DO THIS" in text
         assert "TARGET" in text and "COMMAND RECIPE" in text
-        assert "PROGRESS  M0 0/12 available" in text and "XP 0" in text
+        assert "PROGRESS  M0 0/14 available" in text and "XP 0" in text
         assert "WHY THIS EXISTS" in text
         assert first_module["meaning"] in text
         assert first_module["principle"] in text

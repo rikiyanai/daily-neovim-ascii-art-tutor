@@ -171,7 +171,8 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             env["VIM_DAILY_TEST_ORDERED_CHOICES"] = "1"
         try:
             run("tmux", "-L", inner, "-f", "/dev/null", "new-session", "-d",
-                "-s", "lesson", "-x", str(COLUMNS), "-y", str(ROWS))
+                "-s", "lesson", "-x", str(COLUMNS), "-y", str(ROWS),
+                "/bin/zsh", "-f")
             for key, value in env.items():
                 tmux(inner, "set-environment", "-g", key, value)
             tmux(inner, "set-hook", "-g", "client-attached", "run-shell -b %s" % HOOK)
@@ -266,7 +267,7 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                     assert "│" + target_row in brief_raw, brief_raw
                 if card.get("show_recipe", card.get("show_target", False)):
                     assert "TARGET" in brief and "RECIPE" in brief, brief
-                    assert all(keys in brief for keys, _why in card["recipe"]), brief
+                    assert all(keys.strip() in brief for keys, _why in card["recipe"]), brief
                 else:
                     assert "HINT" in brief and "hidden" in brief, brief
                     assert card["expected"] not in brief
@@ -367,6 +368,30 @@ if "--only-m005" in sys.argv:
     exercise("M0.05 corrected method evidence", passed=passed_before("M0.05"), route="compare",
              card_id="M0.05", artifact_card="M0.05",
              key_sequence="jj:7,9t$<CR>:ew<BS><BS>wq<CR>")
+    raise SystemExit(0)
+
+if "--only-m0-prereqs" in sys.argv:
+    exercise("M0 linewise yank/put prerequisite", passed=passed_before("M0.YP"),
+             route="guided", card_id="M0.YP")
+    exercise("M0 one-row open-line prerequisite", passed=passed_before("M0.O"),
+             route="guided", card_id="M0.O")
+    exercise("M0 addressed substitute prerequisite", passed=passed_before("M0.SR"),
+             route="guided", card_id="M0.SR")
+    raise SystemExit(0)
+
+if "--only-m0yp" in sys.argv:
+    exercise("M0 linewise yank/put prerequisite", passed=passed_before("M0.YP"),
+             route="guided", card_id="M0.YP")
+    raise SystemExit(0)
+
+if "--only-m0o" in sys.argv:
+    exercise("M0 one-row open-line prerequisite", passed=passed_before("M0.O"),
+             route="guided", card_id="M0.O")
+    raise SystemExit(0)
+
+if "--only-m0sr" in sys.argv:
+    exercise("M0 addressed substitute prerequisite", passed=passed_before("M0.SR"),
+             route="guided", card_id="M0.SR")
     raise SystemExit(0)
 
 if "--only-check" in sys.argv:

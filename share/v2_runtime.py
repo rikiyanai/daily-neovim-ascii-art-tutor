@@ -1145,6 +1145,30 @@ def _legacy_teaching(card):
     return keys, sources, concepts
 
 
+def _compact_target_lines(card, width=66):
+    """Place equal-height animation frames side by side in a short brief."""
+    target = card.get("target", [])
+    slices = card.get("frame_slices", [])
+    if (not slices or sum(slices) != len(target) or len(set(slices)) != 1
+            or len(slices) < 2):
+        return ["  │" + line for line in target]
+    frames = []
+    start = 0
+    for size in slices:
+        frames.append(target[start:start + size])
+        start += size
+    rows = []
+    for row_number in range(slices[0]):
+        row = "   ".join("│" + frame[row_number] for frame in frames)
+        # Do not use prose clipping here: textwrap collapses runs of spaces,
+        # which would silently destroy fixed-width registration in TARGET.
+        available = width - 2
+        if len(row) > available:
+            row = row[:max(0, available - 1)] + "…"
+        rows.append("  " + row)
+    return rows
+
+
 def _write_session_lesson(cfg, cur, progress, card):
     """Build the brief rendered above an art-only project strip by Neovim."""
     lesson = _paths(cfg)["sessions"] / card["project_id"] / (card["id"] + ".txt")
@@ -1175,9 +1199,11 @@ def _write_session_lesson(cfg, cur, progress, card):
             boundary = "keys hidden · compare after pass" if card.get(
                 "method_alternatives") else "exact command keys hidden"
             header.append("HINT · %s · %s" % (boundary, _clip(hint, 30)))
+        else:
+            header.append("HINT · " + _clip(hint, 59))
         if show_target:
             header.append("TARGET")
-            header.extend("  │" + line for line in card["target"])
+            header.extend(_compact_target_lines(card))
         if show_recipe:
             header.append("RECIPE  " + recipe)
         else:
