@@ -4668,3 +4668,38 @@ archive provenance intake, and the publication decision remain open. The
 rights audit found no redistribution permission; the operator later allowed
 local tutor integration, but did not authorize publication from this public
 repository. No third-party art was pushed.
+
+## VD-41 · 2026-09-29 — primary transfer-art migration begins with M3 FaceHUD poses
+
+**Finding.** Completing variant-specific question ownership removed the
+picture/question contradiction, but all 40 primary `M*.06` transfer variants
+still reported no exact source. M3 in particular still used two invented
+stick figures even though the already-local, audited FaceHUD material supplies
+two complete six-row poses that fit its whole-object register lesson.
+
+**Implemented in revision `.45`:**
+
+- M3.06 variant 1 now starts from `official-UI/FaceHUD res08` shock pose. The
+  learner selects all six rows into register a, appends the complete face, and
+  changes only the copied left pupil on row 9.
+- Variant 2 now uses the `official-UI/FaceHUD res02` neutral pose. Its blank
+  fourth row is intentionally inside the six-line object, so the task tests
+  whether the learner preserves registered vertical spacing as well as visible
+  glyph rows.
+- `M3.06.P01` and `M3.06.V2.P01` were both rewritten individually around the
+  exact FaceHUD START and TARGET. They print the complete source and copied
+  result, use four art/Neovim paired choices, and explain row scope, named-
+  register independence, blank-line ownership, and the one-cell pupil edit.
+- The source rows were already present in the local tutor's audited review
+  bank; this slice imports no additional third-party asset.
+
+**Proof:** generator `.45` writes 215 cards / 395 questions; question quality
+passes 395; clean Neovim passes **215/215 cards and 174/174 primary recipes**;
+all changed-art banks replay; and both M3.06 transfer variants pass their real-
+config headed routes at 80x24.
+
+**Still open.** The other nineteen module transfers still lack exact-source
+primary variants, and most earlier guided/independent module art is still tutor-
+authored scaffolding. M19.06's alternate headed proof and the revision-wide
+route matrix remain unclaimed. Archive provenance and public-repository
+publication remain separate open decisions; no push occurred.

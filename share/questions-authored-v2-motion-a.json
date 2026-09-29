@@ -2322,30 +2322,30 @@
     ]
   },
   "M3.06.P01": {
-    "prompt": "ANIMATION\nAn unfamiliar six-row body is copied intact; only the copied eye changes from o to O.\n\n  1 │  /\\   │\n  2 │ (o)   │\n  3 │--|--  │\n  4 │  |    │\n  5 │ / \\   │\n  6 │/___\\  │\n  AFTER copy eye: (O)\n\nNEOVIM\nWhich bounded command path reaches the target exactly?",
-    "compact_prompt": "ANIMATION\nCopy six unfamiliar rows; edit copied eye only.\n\n  1 │  /\\   │\n  2 │ (o)   │ → │ (O)   │\n  3 │--|--  │\n  4 │  |    │\n  5 │ / \\   │\n  6 │/___\\  │\n\nNEOVIM\nChoose the complete path.",
-    "animation_prompt": "The unfamiliar torso spelling is preserved in both bodies; only copy eye o→O.\n\n  original: (o) + --|--\n  copy:     (O) + --|--",
-    "animation_answer": "Copy the unfamiliar pose as one six-row object, then edit one eye in the copy.",
-    "neovim_prompt": "Use the named-register transfer path from the lesson.",
-    "neovim_answer": "ggV5j\"ayG\"ap8GforO selects six lines, stores/puts them via register a, then replaces the copied eye.",
+    "prompt": "ANIMATION\nThe complete six-row FaceHUD shock pose is copied as a second candidate. The original stays untouched; only the copied left pupil changes from o to O.\n\n  BEFORE\n  │ .' ._. `.│\n  │/ --. .-- \\│\n  │  (o) (o)│\n  │    ___│\n  │\\  /___\\  /│\n  │ `._   _.'│\n\n  AFTER\n  │ .' ._. `.│\n  │/ --. .-- \\│\n  │  (o) (o)│\n  │    ___│\n  │\\  /___\\  /│\n  │ `._   _.'│\n  │ .' ._. `.│\n  │/ --. .-- \\│\n  │  (O) (o)│\n  │    ___│\n  │\\  /___\\  /│\n  │ `._   _.'│\n\nNEOVIM\nWhich path gives register a the complete pose before editing the copied pupil?",
+    "compact_prompt": "ANIMATION\nCopy the complete FaceHUD pose; change only the copy's left pupil.\n\n  BEFORE       COPIED RESULT\n  │  (o) (o)│   │  (O) (o)│\n  │\\ /___\\ /│   │\\ /___\\ /│\n\nNEOVIM\nWhich scope owns all six source rows?",
+    "animation_prompt": "The full FaceHUD shock pose is preserved in both candidates; only the copied left pupil widens.",
+    "animation_answer": "Copy all six registered face rows, then overwrite one pupil in the copy.",
+    "neovim_prompt": "Decode the named-register path on the displayed twelve-row result.",
+    "neovim_answer": "ggV5j\"ay selects six lines into register a, G\"ap appends them, and 9G0forO changes only the copied left pupil.",
     "choices": [
-      "ANIMATION: The complete unfamiliar body is copied and only copy eye→O. | NEOVIM: ggV5j\"ayG\"ap8GforO has the exact six-row/register/local-eye scope.",
-      "ANIMATION: Only the eye is copied and the torso is redrawn. | NEOVIM: Use 2yy/p and type the unfamiliar body later.",
-      "ANIMATION: The original eye becomes O and the copy stays o. | NEOVIM: Put register a before yanking the complete pose.",
-      "ANIMATION: Both bodies change their torso and eye. | NEOVIM: Select the entire buffer before replacing."
+      "ANIMATION: The complete six-row face is copied and only the copy's left pupil becomes O. | NEOVIM: `ggV5j\"ayG\"ap9G0forO` has whole-pose register scope followed by one local replacement.",
+      "ANIMATION: Only the eye row is copied and the other five rows are retyped. | NEOVIM: `yy` owns the complete FaceHUD pose without a count or Visual range.",
+      "ANIMATION: The original pupil changes and the copy remains o. | NEOVIM: the put occurs after the local replacement on row 3.",
+      "ANIMATION: Both candidates' pupils become O. | NEOVIM: `rO` applies to every o stored in register a."
     ],
     "compact_choices": [
-      "A: full body; copy eye→O · V: Visual 6 + register + local r",
-      "A: eye only; redraw torso · V: 2yy/p",
-      "A: original→O; copy o · V: put before yank",
-      "A: both torso/eye change · V: select buffer"
+      "A: full face; copied left pupil→O · V: Visual 6 + register + local r",
+      "A: eye row only · V: yy means full pose",
+      "A: original pupil→O · V: edit before put",
+      "A: both pupils→O · V: register makes r global"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the selected six-line range and the local copied-eye replacement match TARGET.",
-      "The unfamiliar body is the continuity detail and must be copied, not retyped.",
-      "The original remains o; register storage precedes the put and local edit.",
-      "Whole-buffer selection destroys the bounded transfer scope."
+      "Correct: the six-line Visual range preserves the exact face, while the row-9 find/replacement is confined to its copy.",
+      "One yy owns one line. The complete FaceHUD candidate requires all six registered rows.",
+      "The source is yanked and put before row 9 is edited; the original row 3 remains unchanged.",
+      "A register stores text but does not make a later r command global; r overwrites one cursor cell."
     ]
   },
   "M3.DI.P01": {

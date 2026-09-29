@@ -3,8 +3,9 @@
 
 The source below is deliberately ordinary Python rather than hand-escaped JSON.
 It owns stable card/question ids; curriculum-v2.json is the installed artifact.
-All art here is original, tiny practice scaffolding. Third-party tutorial plates
-are cited as method references only and are not copied into this file.
+Primary scaffolds are authored for the tutor. Audited Stone Story excerpts used
+by local-only review and transfer surfaces live in ``stone_story_variants.py``;
+their public-repository publication boundary remains unresolved.
 """
 
 import json
@@ -719,23 +720,28 @@ MODULES = [
                  ["r<C-k>.M", "give only that frame a middle-dot accent"]],
             ),
         ],
-        "transfer": step(
-            ["  /\\   ", " (o)   ", "--|--  ", "  |    ", " / \\   ", "/___\\  "],
-            ["  /\\   ", " (o)   ", "--|--  ", "  |    ", " / \\   ", "/___\\  ",
-             "  /\\   ", " (O)   ", "--|--  ", "  |    ", " / \\   ", "/___\\  "],
-            "ggV5j\"ayG\"ap8GforO",
-            [["ggV5j\"ay", "select the full unfamiliar pose and preserve it in named register a"],
+        "transfer": dict(step(
+            stone_story_variants.FACE_SHOCK,
+            stone_story_variants.FACE_SHOCK + [
+                "  (O) (o)" if row == "  (o) (o)" else row
+                for row in stone_story_variants.FACE_SHOCK
+            ],
+            "ggV5j\"ayG\"ap9G0forO",
+            [["ggV5j\"ay", "select the complete six-row FaceHUD pose into named register a"],
              ["G\"ap", "put that complete registered pose after the original"],
-             ["8GforO", "change one eye only in the copy"]],
-        ),
-        "transfer_alt": step(
-            ["  /\\   ", " (x)   ", " \\|/   ", "  |    ", " / \\   ", "/___\\  "],
-            ["  /\\   ", " (x)   ", " \\|/   ", "  |    ", " / \\   ", "/___\\  ",
-             "  /\\   ", " (X)   ", " \\|/   ", "  |    ", " / \\   ", "/___\\  "],
-            "gg6yyGp8GfxrX",
-            [["gg6yyGp", "copy the complete alternate pose"],
-             ["8GfxrX", "change one accent in the copy"]],
-        ),
+             ["9G0forO", "change only the copied left pupil"]],
+        ), source="official-UI/FaceHUD res08 shock pose"),
+        "transfer_alt": dict(step(
+            stone_story_variants.FACE_NEUTRAL,
+            stone_story_variants.FACE_NEUTRAL + [
+                "  <O) (o>" if row == "  <o) (o>" else row
+                for row in stone_story_variants.FACE_NEUTRAL
+            ],
+            "ggV5j\"ayG\"ap9G0forO",
+            [["ggV5j\"ay", "select the complete six-row neutral FaceHUD pose"],
+             ["G\"ap", "put the stored pose after the original"],
+             ["9G0forO", "change only the copied left pupil"]],
+        ), source="official-UI/FaceHUD res02 neutral pose"),
     },
     {
         "id": "M4", "title": "Rotation tween", "node": "A2/V4", "project": "rotation-tween",
@@ -6323,7 +6329,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.44",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.45",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

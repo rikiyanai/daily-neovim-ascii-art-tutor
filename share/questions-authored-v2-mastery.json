@@ -1242,30 +1242,30 @@
     ]
   },
   "M3.06.V2.P01": {
-    "prompt": "ANIMATION\nThis transfer uses an unfamiliar six-row figure, not the face from the earlier lesson. The complete figure is copied as one new candidate and only the copied eye changes from x to X.\n\n  BEFORE       AFTER COPY\n  │  /\\   │     │  /\\   │\n  │ (x)   │     │ (x)   │\n  │ \\|/   │     │ \\|/   │\n  │  |    │     │  |    │\n  │ / \\   │     │ / \\   │\n  │/___\\  │     │/___\\  │\n                 │  /\\   │\n                 │ (X)   │\n                 │ \\|/   │\n                 │  |    │\n                 │ / \\   │\n                 │/___\\  │\n\nNEOVIM\nWhich path preserves the complete six-row object while changing only the copied eye?",
-    "compact_prompt": "ANIMATION\nCopy the complete figure; only the copied eye becomes X.\n\n  │ (x) │          │ (x) │\n  │ \\|/ │   →      │ \\|/ │\n                   │ (X) │\n                   │ \\|/ │\n\nNEOVIM\nWhich scope copies all six rows before the eye edit?",
-    "animation_prompt": "ANIMATION\nM3.06 variant 2 transfers whole-object copying to an unfamiliar full-body candidate rather than reusing the lesson face.",
-    "animation_answer": "The original six-row figure stays intact; a second complete figure appears below with only x changed to X.",
-    "neovim_prompt": "NEOVIM\nDecode `gg6yyGp8GfxrX` on the shown twelve-row result.",
-    "neovim_answer": "gg6yy copies all six source rows, Gp puts the complete copy below, 8G reaches its eye row, fx finds the copied eye, and rX overwrites that one cell.",
+    "prompt": "ANIMATION\nThis alternate transfer uses the six-row FaceHUD neutral pose, including its intentionally blank fourth row. The complete pose is copied; only the copied left pupil changes from o to O.\n\n  BEFORE\n  │ .'     `.│\n  │/ __   __ \\│\n  │  <o) (o>│\n  ││\n  │\\   ---   /│\n  │ `._   _.'│\n\n  AFTER\n  │ .'     `.│\n  │/ __   __ \\│\n  │  <o) (o>│\n  ││\n  │\\   ---   /│\n  │ `._   _.'│\n  │ .'     `.│\n  │/ __   __ \\│\n  │  <O) (o>│\n  ││\n  │\\   ---   /│\n  │ `._   _.'│\n\nNEOVIM\nWhich path preserves the blank row as part of the six-line pose while changing only the copied pupil?",
+    "compact_prompt": "ANIMATION\nCopy all six neutral-face rows, including the blank row; widen only the copy's left pupil.\n\n  │  <o) (o>│ → copy │  <O) (o>│\n  │           │        │           │\n  │\\   ---   /│        │\\   ---   /│\n\nNEOVIM\nWhich scope preserves the blank line inside the pose?",
+    "animation_prompt": "ANIMATION\nM3.06 variant 2 copies the complete neutral FaceHUD candidate, including its blank spacing row.",
+    "animation_answer": "The original six-row face stays intact; the appended six-row copy changes only its left pupil to O.",
+    "neovim_prompt": "NEOVIM\nDecode `ggV5j\"ayG\"ap9G0forO` on the displayed neutral face.",
+    "neovim_answer": "The Visual line range includes all six rows, even the blank fourth row; register a stores and puts that exact block, then row 9's first o is replaced.",
     "choices": [
-      "ANIMATION: Only the head is copied; the body is shared between candidates. | NEOVIM: `yy` copies the complete six-row object without a count.",
-      "ANIMATION: A complete second figure is created and only its eye becomes X. | NEOVIM: `6yy` owns the whole figure, `p` puts it below, and `fxrX` edits the copied eye.",
-      "ANIMATION: The original eye also becomes X. | NEOVIM: `rX` changes every x in both objects after one find.",
-      "ANIMATION: The copied figure shifts one column right. | NEOVIM: linewise `p` inserts one leading space on every yanked row."
+      "ANIMATION: The blank row is discarded because it contains no glyph. | NEOVIM: Visual line selection skips empty lines inside its range.",
+      "ANIMATION: A complete neutral face is copied, including its blank row, and only the copied left pupil becomes O. | NEOVIM: `ggV5j\"ayG\"ap` preserves six lines and `9G0forO` edits one copied cell.",
+      "ANIMATION: Both faces' left pupils become O. | NEOVIM: putting register a links the copy to later changes in the source.",
+      "ANIMATION: The mouth row moves up to close the blank spacing. | NEOVIM: `G\"ap` removes blank lines while putting a linewise register."
     ],
     "compact_choices": [
-      "A: head only · V: yy means six rows",
-      "A: full copy; copied eye only · V: 6yy, p, fxrX",
-      "A: both eyes change · V: r is global",
-      "A: copy shifts right · V: p indents"
+      "A: drop blank row · V: Visual skips empties",
+      "A: full six-row copy; copied pupil only · V: register block + local r",
+      "A: both pupils change · V: put links copies",
+      "A: close vertical gap · V: put removes blanks"
     ],
     "correct_choice": 1,
     "feedback": [
-      "A linewise yank needs the count 6 here; one yy would detach the head from its body.",
-      "Correct: the yank count preserves the object boundary and the later find/replacement is confined to the copy.",
-      "r overwrites only the cursor cell. The original six rows are never revisited after the put.",
-      "Linewise put preserves each row's stored text; it does not manufacture indentation."
+      "A Visual line range includes blank rows between its endpoints; that spacing is part of the registered pose.",
+      "Correct: object scope includes the blank line, while the later replacement is confined to the copied eye row.",
+      "A put creates independent text. Replacing one cell in the copy cannot mutate the earlier source rows.",
+      "Linewise put preserves the stored blank row; it does not compact vertical spacing."
     ]
   },
   "M4.06.V2.P01": {

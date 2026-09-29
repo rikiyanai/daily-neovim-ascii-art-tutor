@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.44",
+ "revision": "2026-09-29.45",
  "review_intervals_hours": [
   4,
   24,
@@ -16779,131 +16779,138 @@
    "project_id": "pose-copy",
    "variant_group": "M3.card-6",
    "start": [
-    "  /\\   ",
-    " (o)   ",
-    "--|--  ",
-    "  |    ",
-    " / \\   ",
-    "/___\\  "
+    " .' ._. `.",
+    "/ --. .-- \\",
+    "  (o) (o)",
+    "    ___",
+    "\\  /___\\  /",
+    " `._   _.'"
    ],
    "target": [
-    "  /\\   ",
-    " (o)   ",
-    "--|--  ",
-    "  |    ",
-    " / \\   ",
-    "/___\\  ",
-    "  /\\   ",
-    " (O)   ",
-    "--|--  ",
-    "  |    ",
-    " / \\   ",
-    "/___\\  "
+    " .' ._. `.",
+    "/ --. .-- \\",
+    "  (o) (o)",
+    "    ___",
+    "\\  /___\\  /",
+    " `._   _.'",
+    " .' ._. `.",
+    "/ --. .-- \\",
+    "  (O) (o)",
+    "    ___",
+    "\\  /___\\  /",
+    " `._   _.'"
    ],
-   "expected": "ggV5j\"ayG\"ap8GforO",
+   "expected": "ggV5j\"ayG\"ap9G0forO",
    "recipe": [
     [
      "ggV5j\"ay",
-     "select the full unfamiliar pose and preserve it in named register a"
+     "select the complete six-row FaceHUD pose into named register a"
     ],
     [
      "G\"ap",
      "put that complete registered pose after the original"
     ],
     [
-     "8GforO",
-     "change one eye only in the copy"
+     "9G0forO",
+     "change only the copied left pupil"
     ]
    ],
    "cursor": "^",
+   "source": "official-UI/FaceHUD res08 shock pose",
    "prompt": "Copy an unfamiliar six-row body and change one acting feature only in the copy.",
    "artifact": "transfer",
    "variants": [
     {
      "start": [
-      "  /\\   ",
-      " (o)   ",
-      "--|--  ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'"
      ],
      "target": [
-      "  /\\   ",
-      " (o)   ",
-      "--|--  ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (O)   ",
-      "--|--  ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'",
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (O) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'"
      ],
-     "expected": "ggV5j\"ayG\"ap8GforO",
+     "expected": "ggV5j\"ayG\"ap9G0forO",
      "recipe": [
       [
        "ggV5j\"ay",
-       "select the full unfamiliar pose and preserve it in named register a"
+       "select the complete six-row FaceHUD pose into named register a"
       ],
       [
        "G\"ap",
        "put that complete registered pose after the original"
       ],
       [
-       "8GforO",
-       "change one eye only in the copy"
+       "9G0forO",
+       "change only the copied left pupil"
       ]
      ],
      "cursor": "^",
+     "source": "official-UI/FaceHUD res08 shock pose",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       "ggV5j\"ayG\"ap8GforO"
+       "ggV5j\"ayG\"ap9G0forO"
       ]
      }
     },
     {
      "start": [
-      "  /\\   ",
-      " (x)   ",
-      " \\|/   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .'     `.",
+      "/ __   __ \\",
+      "  <o) (o>",
+      "",
+      "\\   ---   /",
+      " `._   _.'"
      ],
      "target": [
-      "  /\\   ",
-      " (x)   ",
-      " \\|/   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (X)   ",
-      " \\|/   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .'     `.",
+      "/ __   __ \\",
+      "  <o) (o>",
+      "",
+      "\\   ---   /",
+      " `._   _.'",
+      " .'     `.",
+      "/ __   __ \\",
+      "  <O) (o>",
+      "",
+      "\\   ---   /",
+      " `._   _.'"
      ],
-     "expected": "gg6yyGp8GfxrX",
+     "expected": "ggV5j\"ayG\"ap9G0forO",
      "recipe": [
       [
-       "gg6yyGp",
-       "copy the complete alternate pose"
+       "ggV5j\"ay",
+       "select the complete six-row neutral FaceHUD pose"
       ],
       [
-       "8GfxrX",
-       "change one accent in the copy"
+       "G\"ap",
+       "put the stored pose after the original"
+      ],
+      [
+       "9G0forO",
+       "change only the copied left pupil"
       ]
      ],
      "cursor": "^",
+     "source": "official-UI/FaceHUD res02 neutral pose",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       "gg6yyGp8GfxrX"
+       "ggV5j\"ayG\"ap9G0forO"
       ]
      },
      "paired_question_ids": [
@@ -16914,7 +16921,7 @@
    "method_requirement": {
     "label": "perform the unfamiliar-art transfer with its taught command path",
     "exact_any_of": [
-     "ggV5j\"ayG\"ap8GforO"
+     "ggV5j\"ayG\"ap9G0forO"
     ]
    },
    "required_before_mastery": true,
@@ -45448,59 +45455,59 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The key-hidden transfer comes first; afterward, four explicit choices check the command path and animation scope without free-text grading.",
-   "prompt": "ANIMATION\nAn unfamiliar six-row body is copied intact; only the copied eye changes from o to O.\n\n  1 │  /\\   │\n  2 │ (o)   │\n  3 │--|--  │\n  4 │  |    │\n  5 │ / \\   │\n  6 │/___\\  │\n  AFTER copy eye: (O)\n\nNEOVIM\nWhich bounded command path reaches the target exactly?",
+   "prompt": "ANIMATION\nThe complete six-row FaceHUD shock pose is copied as a second candidate. The original stays untouched; only the copied left pupil changes from o to O.\n\n  BEFORE\n  │ .' ._. `.│\n  │/ --. .-- \\│\n  │  (o) (o)│\n  │    ___│\n  │\\  /___\\  /│\n  │ `._   _.'│\n\n  AFTER\n  │ .' ._. `.│\n  │/ --. .-- \\│\n  │  (o) (o)│\n  │    ___│\n  │\\  /___\\  /│\n  │ `._   _.'│\n  │ .' ._. `.│\n  │/ --. .-- \\│\n  │  (O) (o)│\n  │    ___│\n  │\\  /___\\  /│\n  │ `._   _.'│\n\nNEOVIM\nWhich path gives register a the complete pose before editing the copied pupil?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "typed_keys",
    "choices": [
-    "ANIMATION: The complete unfamiliar body is copied and only copy eye→O. | NEOVIM: ggV5j\"ayG\"ap8GforO has the exact six-row/register/local-eye scope.",
-    "ANIMATION: Only the eye is copied and the torso is redrawn. | NEOVIM: Use 2yy/p and type the unfamiliar body later.",
-    "ANIMATION: The original eye becomes O and the copy stays o. | NEOVIM: Put register a before yanking the complete pose.",
-    "ANIMATION: Both bodies change their torso and eye. | NEOVIM: Select the entire buffer before replacing."
+    "ANIMATION: The complete six-row face is copied and only the copy's left pupil becomes O. | NEOVIM: `ggV5j\"ayG\"ap9G0forO` has whole-pose register scope followed by one local replacement.",
+    "ANIMATION: Only the eye row is copied and the other five rows are retyped. | NEOVIM: `yy` owns the complete FaceHUD pose without a count or Visual range.",
+    "ANIMATION: The original pupil changes and the copy remains o. | NEOVIM: the put occurs after the local replacement on row 3.",
+    "ANIMATION: Both candidates' pupils become O. | NEOVIM: `rO` applies to every o stored in register a."
    ],
    "correct_choice": 0,
    "feedback": [
-    "Correct: the selected six-line range and the local copied-eye replacement match TARGET.",
-    "The unfamiliar body is the continuity detail and must be copied, not retyped.",
-    "The original remains o; register storage precedes the put and local edit.",
-    "Whole-buffer selection destroys the bounded transfer scope."
+    "Correct: the six-line Visual range preserves the exact face, while the row-9 find/replacement is confined to its copy.",
+    "One yy owns one line. The complete FaceHUD candidate requires all six registered rows.",
+    "The source is yanked and put before row 9 is edited; the original row 3 remains unchanged.",
+    "A register stores text but does not make a later r command global; r overwrites one cursor cell."
    ],
-   "animation_prompt": "The unfamiliar torso spelling is preserved in both bodies; only copy eye o→O.\n\n  original: (o) + --|--\n  copy:     (O) + --|--",
-   "animation_answer": "Copy the unfamiliar pose as one six-row object, then edit one eye in the copy.",
-   "neovim_prompt": "Use the named-register transfer path from the lesson.",
-   "neovim_answer": "ggV5j\"ayG\"ap8GforO selects six lines, stores/puts them via register a, then replaces the copied eye.",
-   "compact_prompt": "ANIMATION\nCopy six unfamiliar rows; edit copied eye only.\n\n  1 │  /\\   │\n  2 │ (o)   │ → │ (O)   │\n  3 │--|--  │\n  4 │  |    │\n  5 │ / \\   │\n  6 │/___\\  │\n\nNEOVIM\nChoose the complete path.",
+   "animation_prompt": "The full FaceHUD shock pose is preserved in both candidates; only the copied left pupil widens.",
+   "animation_answer": "Copy all six registered face rows, then overwrite one pupil in the copy.",
+   "neovim_prompt": "Decode the named-register path on the displayed twelve-row result.",
+   "neovim_answer": "ggV5j\"ay selects six lines into register a, G\"ap appends them, and 9G0forO changes only the copied left pupil.",
+   "compact_prompt": "ANIMATION\nCopy the complete FaceHUD pose; change only the copy's left pupil.\n\n  BEFORE       COPIED RESULT\n  │  (o) (o)│   │  (O) (o)│\n  │\\ /___\\ /│   │\\ /___\\ /│\n\nNEOVIM\nWhich scope owns all six source rows?",
    "compact_choices": [
-    "A: full body; copy eye→O · V: Visual 6 + register + local r",
-    "A: eye only; redraw torso · V: 2yy/p",
-    "A: original→O; copy o · V: put before yank",
-    "A: both torso/eye change · V: select buffer"
+    "A: full face; copied left pupil→O · V: Visual 6 + register + local r",
+    "A: eye row only · V: yy means full pose",
+    "A: original pupil→O · V: edit before put",
+    "A: both pupils→O · V: register makes r global"
    ],
    "source_answer_contract": {
     "form": "typed_keys",
     "initial_lines": [
-     "  /\\   ",
-     " (o)   ",
-     "--|--  ",
-     "  |    ",
-     " / \\   ",
-     "/___\\  "
+     " .' ._. `.",
+     "/ --. .-- \\",
+     "  (o) (o)",
+     "    ___",
+     "\\  /___\\  /",
+     " `._   _.'"
     ],
     "target_lines": [
-     "  /\\   ",
-     " (o)   ",
-     "--|--  ",
-     "  |    ",
-     " / \\   ",
-     "/___\\  ",
-     "  /\\   ",
-     " (O)   ",
-     "--|--  ",
-     "  |    ",
-     " / \\   ",
-     "/___\\  "
+     " .' ._. `.",
+     "/ --. .-- \\",
+     "  (o) (o)",
+     "    ___",
+     "\\  /___\\  /",
+     " `._   _.'",
+     " .' ._. `.",
+     "/ --. .-- \\",
+     "  (O) (o)",
+     "    ___",
+     "\\  /___\\  /",
+     " `._   _.'"
     ],
     "initial_cursor": "^",
     "forbidden_side_effects": [
@@ -45509,7 +45516,7 @@
      "extra_window",
      "extra_tab"
     ],
-    "sample_answer": "ggV5j\"ayG\"ap8GforO",
+    "sample_answer": "ggV5j\"ayG\"ap9G0forO",
     "effect_version": 1
    },
    "authorship": "manual"
@@ -51316,39 +51323,39 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
-   "prompt": "ANIMATION\nThis transfer uses an unfamiliar six-row figure, not the face from the earlier lesson. The complete figure is copied as one new candidate and only the copied eye changes from x to X.\n\n  BEFORE       AFTER COPY\n  │  /\\   │     │  /\\   │\n  │ (x)   │     │ (x)   │\n  │ \\|/   │     │ \\|/   │\n  │  |    │     │  |    │\n  │ / \\   │     │ / \\   │\n  │/___\\  │     │/___\\  │\n                 │  /\\   │\n                 │ (X)   │\n                 │ \\|/   │\n                 │  |    │\n                 │ / \\   │\n                 │/___\\  │\n\nNEOVIM\nWhich path preserves the complete six-row object while changing only the copied eye?",
+   "prompt": "ANIMATION\nThis alternate transfer uses the six-row FaceHUD neutral pose, including its intentionally blank fourth row. The complete pose is copied; only the copied left pupil changes from o to O.\n\n  BEFORE\n  │ .'     `.│\n  │/ __   __ \\│\n  │  <o) (o>│\n  ││\n  │\\   ---   /│\n  │ `._   _.'│\n\n  AFTER\n  │ .'     `.│\n  │/ __   __ \\│\n  │  <o) (o>│\n  ││\n  │\\   ---   /│\n  │ `._   _.'│\n  │ .'     `.│\n  │/ __   __ \\│\n  │  <O) (o>│\n  ││\n  │\\   ---   /│\n  │ `._   _.'│\n\nNEOVIM\nWhich path preserves the blank row as part of the six-line pose while changing only the copied pupil?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "decode",
    "choices": [
-    "ANIMATION: Only the head is copied; the body is shared between candidates. | NEOVIM: `yy` copies the complete six-row object without a count.",
-    "ANIMATION: A complete second figure is created and only its eye becomes X. | NEOVIM: `6yy` owns the whole figure, `p` puts it below, and `fxrX` edits the copied eye.",
-    "ANIMATION: The original eye also becomes X. | NEOVIM: `rX` changes every x in both objects after one find.",
-    "ANIMATION: The copied figure shifts one column right. | NEOVIM: linewise `p` inserts one leading space on every yanked row."
+    "ANIMATION: The blank row is discarded because it contains no glyph. | NEOVIM: Visual line selection skips empty lines inside its range.",
+    "ANIMATION: A complete neutral face is copied, including its blank row, and only the copied left pupil becomes O. | NEOVIM: `ggV5j\"ayG\"ap` preserves six lines and `9G0forO` edits one copied cell.",
+    "ANIMATION: Both faces' left pupils become O. | NEOVIM: putting register a links the copy to later changes in the source.",
+    "ANIMATION: The mouth row moves up to close the blank spacing. | NEOVIM: `G\"ap` removes blank lines while putting a linewise register."
    ],
    "correct_choice": 1,
    "feedback": [
-    "A linewise yank needs the count 6 here; one yy would detach the head from its body.",
-    "Correct: the yank count preserves the object boundary and the later find/replacement is confined to the copy.",
-    "r overwrites only the cursor cell. The original six rows are never revisited after the put.",
-    "Linewise put preserves each row's stored text; it does not manufacture indentation."
+    "A Visual line range includes blank rows between its endpoints; that spacing is part of the registered pose.",
+    "Correct: object scope includes the blank line, while the later replacement is confined to the copied eye row.",
+    "A put creates independent text. Replacing one cell in the copy cannot mutate the earlier source rows.",
+    "Linewise put preserves the stored blank row; it does not compact vertical spacing."
    ],
-   "animation_prompt": "ANIMATION\nM3.06 variant 2 transfers whole-object copying to an unfamiliar full-body candidate rather than reusing the lesson face.",
-   "animation_answer": "The original six-row figure stays intact; a second complete figure appears below with only x changed to X.",
-   "neovim_prompt": "NEOVIM\nDecode `gg6yyGp8GfxrX` on the shown twelve-row result.",
-   "neovim_answer": "gg6yy copies all six source rows, Gp puts the complete copy below, 8G reaches its eye row, fx finds the copied eye, and rX overwrites that one cell.",
-   "compact_prompt": "ANIMATION\nCopy the complete figure; only the copied eye becomes X.\n\n  │ (x) │          │ (x) │\n  │ \\|/ │   →      │ \\|/ │\n                   │ (X) │\n                   │ \\|/ │\n\nNEOVIM\nWhich scope copies all six rows before the eye edit?",
+   "animation_prompt": "ANIMATION\nM3.06 variant 2 copies the complete neutral FaceHUD candidate, including its blank spacing row.",
+   "animation_answer": "The original six-row face stays intact; the appended six-row copy changes only its left pupil to O.",
+   "neovim_prompt": "NEOVIM\nDecode `ggV5j\"ayG\"ap9G0forO` on the displayed neutral face.",
+   "neovim_answer": "The Visual line range includes all six rows, even the blank fourth row; register a stores and puts that exact block, then row 9's first o is replaced.",
+   "compact_prompt": "ANIMATION\nCopy all six neutral-face rows, including the blank row; widen only the copy's left pupil.\n\n  │  <o) (o>│ → copy │  <O) (o>│\n  │           │        │           │\n  │\\   ---   /│        │\\   ---   /│\n\nNEOVIM\nWhich scope preserves the blank line inside the pose?",
    "compact_choices": [
-    "A: head only · V: yy means six rows",
-    "A: full copy; copied eye only · V: 6yy, p, fxrX",
-    "A: both eyes change · V: r is global",
-    "A: copy shifts right · V: p indents"
+    "A: drop blank row · V: Visual skips empties",
+    "A: full six-row copy; copied pupil only · V: register block + local r",
+    "A: both pupils change · V: put links copies",
+    "A: close vertical gap · V: put removes blanks"
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": "gg6yyGp8GfxrX",
+    "display": "ggV5j\"ayG\"ap9G0forO",
     "required_term_groups": [
      [
       "visual",

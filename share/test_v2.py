@@ -1473,7 +1473,7 @@ for source in [c for c in cur["cards"] if c.get("method_requirement")
         assert v2._required_method_error(
             method_cfg, source, {"actual_tokens": missing}), source["id"]
 m306 = next(c for c in cur["cards"] if c["id"] == "M3.06")
-mapped_prefix_replay = tokenize('ggggV55j"a"ayG"a"ap8GforOZZ')
+mapped_prefix_replay = tokenize('ggggV55j"a"ayG"a"ap9G0forOZZ')
 assert v2._required_method_error(
     method_cfg, m306, {"actual_tokens": mapped_prefix_replay}) is None
 unsupported_review = next(c for c in cur["cards"] if c["id"] == "M12.01")
