@@ -1385,7 +1385,18 @@ def _new_concepts(card, cur):
 def _new_concept_banner(card, cur, width=66):
     """VD-34: one-line compact banner naming each new idea."""
     new = _new_concepts(card, cur)
-    if not new:
+    # VD-40: a symbol taking a new job ($ as the last line, @ as a divider)
+    # is announced like a new command, so the learner scrolls to its line.
+    K = _keys_module()
+    met = _symbols_met_before(cur, card) or {}
+    multi = {}
+    for symbol, _role in K.SYMBOL_ROLES:
+        multi[symbol] = multi.get(symbol, 0) + 1
+    symbol_names = ["%s = %s" % (symbol, K.SYMBOL_ROLES[(symbol, role)][1].split(" (")[0])
+                    for symbol, role in K.symbol_roles(card.get("expected") or "")
+                    if cur and (symbol, role) not in met and role not in ("key", "glyph")
+                    and multi.get(symbol, 0) > 1]
+    if not new and not symbol_names:
         return None
     names = []
     for family, _meaning in new:
@@ -1396,6 +1407,15 @@ def _new_concept_banner(card, cur, width=66):
             name = name[5:]
         if name not in names:
             names.append(name)
+    for name in symbol_names:
+        bare = name.split(" = ")[0]
+        for index, existing in enumerate(names):
+            if existing in (bare, "{N}" + bare):
+                names[index] = name
+                break
+        else:
+            if name not in names:
+                names.append(name)
     # Readability audit #10: keep the pointer; shorten the names instead.
     tail = " ↓ alert below"
     head = "★ NEW %d: " % len(names)
@@ -1406,8 +1426,86 @@ def _new_concept_banner(card, cur, width=66):
 # \\ ... i thought \\ was an escape seq". Every pattern breakdown says it.
 SLASH_NOTE = [
     "     /    separates the parts: s/pattern/replacement/flags",
-    "     \\    inside a pattern starts a special piece (\\s, \\+); it is not a key you press",
+    "     \\    inside a pattern makes the next letter special (\\s, \\+); you type it, it is not Esc",
 ]
+
+
+def _symbols_met_before(cur, card):
+    """VD-40: (symbol, role) -> first card id, over every earlier card's answer."""
+    if not cur:
+        return None
+    K = _keys_module()
+    cards = {c["id"]: c for c in cur["cards"]}
+    source = card.get("review_source_card_id") or card["id"]
+    met = {}
+    for cid in (cid for module in cur["modules"] for cid in module["card_ids"]):
+        if cid == source:
+            break
+        for pair in K.symbol_roles(cards.get(cid, {}).get("expected") or ""):
+            met.setdefault(pair, cid)
+    return met
+
+
+def _first_recipe_card(cur):
+    for cid in (cid for module in cur["modules"] for cid in module["card_ids"]):
+        other = next((c for c in cur["cards"] if c["id"] == cid), {})
+        if other.get("show_recipe") and other.get("expected"):
+            return cid
+    return None
+
+
+def _symbol_lines(card, cur, wrap):
+    """VD-40: name a symbol's job when it changes meaning with context.
+
+    The learner met `$` as a line address (:1,3t$), then as a pattern anchor
+    (\\s\\+$), then as the end-of-row motion (2G$), and `\\` as an art glyph
+    before it became a pattern prefix; nothing said which job was which.
+    """
+    K = _keys_module()
+    met = _symbols_met_before(cur, card)
+    if met is None:
+        return [], set()
+    roles = K.symbol_roles(card.get("expected") or "")
+    multi = {}
+    for symbol, role in K.SYMBOL_ROLES:
+        multi[symbol] = multi.get(symbol, 0) + 1
+    lines, covered = [], set()
+    source = card.get("review_source_card_id") or card["id"]
+    if source == _first_recipe_card(cur):
+        lines += K.RECIPE_READING
+    for symbol, role in roles:
+        long, _short = K.SYMBOL_ROLES[(symbol, role)]
+        new = (symbol, role) not in met
+        if role == "key" or multi.get(symbol, 0) < 2:
+            if new and not (role == "key" and lines and lines[0] == K.RECIPE_READING[0]):
+                lines += wrap("★ NEW  " + long, "  ")
+                covered.add((symbol, role))
+            continue
+        others = [(K.SYMBOL_ROLES[pair][1], cid) for pair, cid in met.items()
+                  if pair[0] == symbol and pair[1] != role]
+        others += [(K.SYMBOL_ROLES[pair][1], "this lesson") for pair in roles
+                   if pair[0] == symbol and pair[1] != role]
+        if not (new or card.get("show_recipe")):
+            continue
+        if not others and (role == "glyph" or not new):
+            continue
+        seen = []
+        for short, cid in others:
+            if short not in [s for s, _c in seen]:
+                seen.append((short, cid))
+        contrast = "; ".join("%s (%s)" % (short, cid if cid == "this lesson" else "in " + cid)
+                             for short, cid in seen)
+        lines += wrap("%s  %s%s" % ("★ NEW" if new else "REMEMBER", long,
+                                     (" · elsewhere %s = %s" % (symbol, contrast)) if seen else ""),
+                      "  ")
+        covered.add((symbol, role))
+    if lines and lines[0] != K.RECIPE_READING[0] or len(lines) > len(K.RECIPE_READING):
+        head = "SYMBOLS · the same key can do a different job; read it by where it stands"
+        if lines[0] == K.RECIPE_READING[0]:
+            lines = lines[:len(K.RECIPE_READING)] + [head] + lines[len(K.RECIPE_READING):]
+        else:
+            lines = [head] + lines
+    return lines, covered
 
 
 def _new_concept_alert(card, cur, width=None):
@@ -1423,6 +1521,10 @@ def _new_concept_alert(card, cur, width=None):
     wrap = (lambda text, indent: textwrap.wrap(text, width=width, initial_indent=indent,
                                               subsequent_indent=indent + "   ")
             ) if width else (lambda text, indent: [indent + text])
+    symbols, covered = _symbol_lines(card, cur, wrap)
+    # VD-40: the SYMBOLS block already says what / and \\ do, with a contrast.
+    slash_note = [line for line, pair in zip(SLASH_NOTE, (("/", "separator"), ("\\", "special")))
+                  if pair not in covered]
     if not new:
         # A reinforcement lesson reuses an earlier idea: remind, do not alert.
         lines = []
@@ -1432,14 +1534,20 @@ def _new_concept_alert(card, cur, width=None):
                 if any(not meaning.startswith("the literal ") for _p, meaning in parts):
                     lines += wrap("REMEMBER · PATTERN %s, piece by piece:" % pattern, "")
                     lines += ["     %-4s %s" % (piece, meaning) for piece, meaning in parts]
-                    lines += SLASH_NOTE
-        return lines
+                    lines += slash_note
+        return lines + symbols
     lines = ["★ NEW CONCEPT ALERT · %d new idea%s · %s" % (
         len(new), "" if len(new) == 1 else "s",
         "Ctrl-W W, then scroll to read all" if width and width <= 66 else "read before editing")]
-    for number, (family, meaning) in enumerate(new, 1):
+    taught = []
+    for family, meaning in new:
         base = family.replace('"{reg}', "")
         teach = K.FAMILY_TEACH.get(base) or K.FAMILY_TEACH.get(base.replace("[count]", "")) or meaning
+        # VD-40: u and Ctrl-r share one teaching line; print it once.
+        if teach in [t for t, _f in taught]:
+            continue
+        taught.append((teach, family))
+    for number, (teach, family) in enumerate(taught, 1):
         lines += wrap("%d. %s" % (number, teach), "  ")
         example = K.example_for(family)
         if example:
@@ -1450,8 +1558,8 @@ def _new_concept_alert(card, cur, width=None):
             if any(not meaning.startswith("the literal ") for _piece, meaning in parts):
                 lines += wrap("PATTERN %s, piece by piece:" % pattern, "  ")
                 lines += ["     %-4s %s" % (piece, meaning) for piece, meaning in parts]
-                lines += SLASH_NOTE
-    return lines
+                lines += slash_note
+    return lines + symbols
 
 
 def _key_teaching(card, width=None, cur=None):
@@ -1662,7 +1770,8 @@ def _write_session_lesson(cfg, cur, progress, card):
         header.extend([
             "BASIC HELP  o new line below · O above · Space waits for WhichKey · clean mode F1",
             "COPY / PASTE  drag selects · Cmd-C copies · y copies a whole question · Cmd-V pastes",
-            "READING THE RECIPE  <C-k>.M middle-dot digraph · <Esc> Escape",
+            "READING THE RECIPE  <CR> press Enter · <Esc> Escape · <C-r> hold Ctrl, press r",
+            "  <C-k>.M middle-dot digraph · {N} any number · {char} any glyph · no braces typed",
             "SUBMIT / STUCK  :wq submits · :q! exits without submission",
         ])
         _write_lines_atomic(lesson, header)
@@ -1737,6 +1846,8 @@ def _write_session_lesson(cfg, cur, progress, card):
         "",
         "READING THE RECIPE",
         "  <CR> Enter  <Esc> Escape  <BS> Backspace  <C-v> Ctrl-v  <C-k>.M middle-dot digraph",
+        "  <C-v> = hold Ctrl, press v.  {char} any glyph  {N} any number  [count] optional",
+        "  number; you never type the braces.",
         "",
         "SUBMIT / STUCK",
         "  :wq submits. :q! exits without submission. Retry restores this card's checkpoint.",
@@ -3463,6 +3574,31 @@ def print_learned(cur, progress):
         if example:
             print("         e.g. %s" % example)
         print("         first met in %s" % first)
+    symbols = learned_symbols(cur, progress)
+    if symbols:
+        print("")
+        print("SYMBOLS WHOSE JOB DEPENDS ON WHERE THEY STAND")
+        for symbol, jobs in symbols:
+            print("  %-5s %s" % (symbol, " · ".join(jobs)))
+
+
+def learned_symbols(cur, progress):
+    """VD-40: one reminder line per symbol the learner has met in 2+ jobs."""
+    K = _keys_module()
+    passed = set(progress.get("passed_cards", []))
+    cards = {card["id"]: card for card in cur["cards"]}
+    jobs = {}
+    for cid in (cid for module in cur["modules"] for cid in module["card_ids"]):
+        if cid not in passed:
+            continue
+        for symbol, role in K.symbol_roles(cards.get(cid, {}).get("expected") or ""):
+            if role == "key":
+                continue
+            short = K.SYMBOL_ROLES[(symbol, role)][1]
+            jobs.setdefault(symbol, [])
+            if short not in jobs[symbol]:
+                jobs[symbol].append(short)
+    return [(symbol, found) for symbol, found in jobs.items() if len(found) > 1]
 
 
 def _journey_rows(cur, progress):

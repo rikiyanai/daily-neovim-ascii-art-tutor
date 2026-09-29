@@ -4846,7 +4846,7 @@ def m0_extra_cards(module):
                    ["s", "start the substitute command"],
                    ["/o/O/", "name the old glyph and its replacement"],
                    ["g", "replace every match on that addressed row"],
-                   ["<CR>", "execute the complete Ex statement"]],
+                   ["<CR>", "press Enter to run the whole : command line"]],
         "cursor": "^", "show_target": True, "show_recipe": True,
         "hint": (
             "Read :2s/o/O/g as address + command + old/new arguments + all-matches flag; "
@@ -4871,7 +4871,7 @@ def m0_extra_cards(module):
         "expected": ":1,3t$<CR>",
         "recipe": [[":1,3", "source range: all three frame rows"],
                    ["t$", "copy that range after the last line"],
-                   ["<CR>", "execute the complete Ex statement"]],
+                   ["<CR>", "press Enter to run the whole : command line"]],
         "cursor": "^", "show_target": True, "show_recipe": True,
         "hint": (
             "Ex copy grammar is source range + t/copy + destination + Enter; `$` means the "
@@ -5042,7 +5042,7 @@ def guided_bridge_cards(module):
                 [" /===\\ ", "|  O  |", " \\===/ ", " /---\\ ", "|  o  |", " \\---/ "],
                 ":1,3m$<CR>",
                 [[":1,3", "source range: the first complete build"],
-                 ["m$", "move it after the final row"], ["<CR>", "execute the Ex sentence"]],
+                 ["m$", "move it after the final row"], ["<CR>", "press Enter to run the whole : command line"]],
                 "ex-move", 5.5)),
         ])
     elif mid == "M7":

@@ -101,6 +101,9 @@ EX_NAMES = {
     "vsplit": "open a vertical split", "diffthis": "join this window to the diff",
     "diffoff": "leave diff mode", "earlier": "visit an older undo-tree state",
     "later": "visit a newer undo-tree state",
+    "vnew": "open a new empty window on the left", "new": "open a new empty window above",
+    "bwipeout": "remove this buffer (and its window) completely",
+    "bw": "remove this buffer (and its window) completely",
 }
 
 
@@ -208,7 +211,24 @@ def _explain_ex(text):
     if not m:
         return "run the command-line command %s" % _q(text), ":" + text
     rng, name, rest = m.groups()
+    bang = name.endswith("!")
+    name = name.rstrip("!")
     where = _range_words(rng)
+    if name == "silent" and rest.strip():
+        inner, _fam = _explain_ex(rest.strip())
+        return "without messages: " + inner, ":silent"
+    if name in ("read", "r") and rest.strip() in ("#", "%"):
+        what = ("the file you had open before (# = the alternate file)" if rest.strip() == "#"
+                else "a second copy of THIS file (% = the current file here; in :%s it "
+                     "means every line)")
+        where_ = "above line 1 (0 = before the first line)" if rng == "0" else "below the cursor"
+        return "read in %s, placed %s" % (what, where_), ":read " + rest.strip()
+    if name == "diffoff":
+        return ("leave diff mode" + (" in every window (! = all)" if bang else "")), ":diffoff" + \
+            ("!" if bang else "")
+    if name in ("bwipeout", "bw"):
+        return (EX_NAMES[name] + ("; ! = even with unsaved changes" if bang else "")), \
+            ":bwipeout" + ("!" if bang else "")
     fam_rng = "[range]" if rng else ""
     if name == "s" and rest[:1] in "/@#|!":
         sep = rest[0]
@@ -248,9 +268,6 @@ def _explain_ex(text):
         value = option.split("=", 1)[1] if "=" in option else ""
         return note(value), ":set %s" % base
     if name in EX_NAMES:
-        if name in ("read", "r") and rest.strip() == "%":
-            return ("read a second copy of THIS file below the cursor "
-                    "(% = the current file here; in :%s it means every line)"), ":read %"
         if not rng and name in NOT_LINE_COMMANDS:
             return "%s%s" % (EX_NAMES[name], (" " + rest.strip()) if rest.strip() else ""), \
                 ":%s" % name
@@ -716,3 +733,271 @@ EXAMPLES = {
 def example_for(family):
     base = family.replace('"{reg}', "")
     return EXAMPLES.get(base) or EXAMPLES.get(base.replace("[count]", ""))
+
+
+# VD-40: the same glyph does different jobs.  `$` is a line address in
+# :1,3t$, the end-of-row motion in 2G$ and an end anchor in :%s/\s\+$//e;
+# `\` is a glyph in `/!\`, a special-piece prefix in \s.  The learner asked
+# "what is the concept diff between / and \ ... i thought \ was an escape
+# seq".  Each (symbol, role) gets a plain meaning and a short contrast label.
+SYMBOL_ROLES = {
+    ("<CR>", "key"): ("<CR> = press Enter (do not type the letters < C R >)", "Enter"),
+    ("<Esc>", "key"): ("<Esc> = press the Escape key: it ends Insert/Replace mode and "
+                       "returns to Normal mode", "Escape"),
+    ("<C-x>", "key"): ("<C-r>, <C-v>, <C-w>, <C-a> … = hold Ctrl and press the letter "
+                       "(<C-r> = Ctrl+r)", "Ctrl+letter"),
+    ("<Space>", "key"): ("<Space> = press the space bar", "space bar"),
+    ("<BS>", "key"): ("<BS> = press Backspace", "Backspace"),
+    (":", "cmdline"): (": in Normal mode opens the command line at the bottom of the screen "
+                       "(Vim calls these Ex commands); type the command there, <CR> runs it, "
+                       "<Esc> cancels", "command line"),
+    ("$", "motion"): ("$ on its own = jump to the end of the row (a motion)", "end of row (2G$)"),
+    ("$", "address"): ("$ in a line address = the last line of the file "
+                       "(:1,3t$ = copy after the last line)", "last line (:1,3t$)"),
+    ("$", "anchor"): ("$ at the end of a pattern = match only at the end of the row",
+                      "row end in a pattern (\\s\\+$)"),
+    ("%", "range"): ("% before a : command = every line of the file (:%s = on all lines)",
+                     "every line (:%s)"),
+    ("%", "file"): ("% after :read = this file's own name", "this file (:read %)"),
+    ("%", "motion"): ("% on its own = jump to the matching bracket", "matching bracket"),
+    (".", "dot"): (". in Normal mode = repeat your last change", "repeat last change"),
+    (".", "any"): (". inside a pattern = any one character (\\. = a real dot)",
+                   "any character in a pattern"),
+    (".", "address"): (". in a line address = the current line", "current line"),
+    (".", "glyph"): (". after f, t, r or in typed text = just a dot glyph", "a dot glyph (f.)"),
+    ("^", "motion"): ("^ on its own = jump to the first glyph of the row", "first glyph"),
+    ("^", "anchor"): ("^ at the start of a pattern = match only at the start of the row",
+                      "row start in a pattern"),
+    ("^", "glyph"): ("^ after f, r or in typed text = just a caret glyph", "a caret glyph"),
+    ("|", "column"): ("{N}| = jump to column N (12| = column 12; a motion)", "column jump (12|)"),
+    ("|", "glyph"): ("| after i, a, r, f or in a pattern = just a bar glyph in the art",
+                     "a bar glyph"),
+    ("0", "motion"): ("0 on its own = jump to column 1", "column 1 (0)"),
+    ("0", "count"): ("0 after another digit = part of the number (10G = line ten, "
+                     "not 1 then 0)", "part of a number (10G)"),
+    ("0", "address"): ("0 as a line address = before line 1 (:m0 = move to the top)",
+                       "before line 1 (:m0)"),
+    (",", "range"): ("a,b in a line address = lines a through b (:4,6 = lines 4-6)",
+                     "from,to lines (:4,6)"),
+    (",", "motion"): (", on its own = repeat the last f/t find backwards", "find backwards"),
+    ("/", "search"): ("/ in Normal mode = search: type the text, <CR> jumps to it",
+                      "search (/text)"),
+    ("/", "separator"): ("/ inside :s or :g = the divider: s/pattern/replacement/flags",
+                         "divider in :s/old/new/"),
+    ("/", "glyph"): ("/ after f, r, in typed text or in a pattern = just a slash glyph",
+                     "a slash glyph"),
+    ("@", "separator"): ("@ right after :s or :g = the divider instead of /, so a / in "
+                         "the art needs no escape", "divider in :s@old@new@"),
+    ("@", "macro"): ("@ + a register letter = replay that macro (@q)", "replay macro (@q)"),
+    ("\\", "special"): ("\\ inside a pattern = the next letter is special (\\s = space or tab, "
+                        "\\+ = one or more); you type the backslash yourself, it is not Esc",
+                        "special piece (\\s, \\+)"),
+    ("\\", "escape"): ("\\ before . * / in a pattern = take that glyph literally "
+                       "(\\. = a real dot)", "literal marker (\\.)"),
+    ("\\", "literal"): ("\\\\ (two backslashes) in a pattern or replacement = one real "
+                        "backslash glyph", "one backslash (\\\\)"),
+    ("\\", "glyph"): ("\\ after r or in typed text = just a backslash glyph in the art",
+                      "a backslash glyph (/!\\)"),
+    ("*", "searchword"): ("* in Normal mode = search for the word under the cursor",
+                          "search word"),
+    ("*", "repeat"): ("* inside a pattern = zero or more of the previous item",
+                      "zero or more in a pattern"),
+    ("*", "glyph"): ("* after f, r or in typed text = just a star glyph", "a star glyph (f*)"),
+    ('"', "register"): ('"a before y, d or p = use register a, a named clipboard slot '
+                        '("ayl copies one cell into a)', 'register ("a)'),
+    ("#", "altfile"): ("# after :read = the file you had open before (the alternate file)",
+                       "previous file"),
+    ("<C-r>", "redo"): ("<C-r> in Normal mode = redo (undo the undo)", "redo"),
+    ("<C-r>", "paste"): ("<C-r> {reg} in Insert or Replace mode = type out register {reg}",
+                         "paste a register while typing"),
+}
+_GLYPH_SYMBOLS = set(".^|/\\*$%")
+
+RECIPE_READING = [
+    "HOW TO READ A RECIPE (once; it holds for every lesson)",
+    "  Press the keys left to right exactly as shown; letters are keys, not words.",
+    "  <CR> = press Enter · <Esc> = press Escape · <C-r> = hold Ctrl, press r.",
+    "  In reminders {char} = any glyph you choose, {N} = any number, {reg} = a",
+    "  register letter, [count] = an optional number. You never type the braces.",
+    "  Normal mode (start here): keys are commands. Insert mode (after i a o):",
+    "  keys type text until <Esc>. : opens the command line at the bottom.",
+]
+
+
+def _split_sep(rest):
+    """Split `/a/b/g` (any separator) into parts, keeping escaped separators."""
+    sep, parts, cur, i = rest[0], [], "", 1
+    while i < len(rest):
+        if rest[i] == "\\" and i + 1 < len(rest):
+            cur += rest[i:i + 2]
+            i += 2
+            continue
+        if rest[i] == sep:
+            parts.append(cur)
+            cur = ""
+        else:
+            cur += rest[i]
+        i += 1
+    parts.append(cur)
+    return sep, parts
+
+
+def _pattern_roles(pattern, add):
+    for piece, meaning in pattern_parts(pattern):
+        if piece in ("\\s", "\\S", "\\d", "\\+", "\\="):
+            add("\\", "special")
+        elif piece in ("\\.", "\\*", "\\/"):
+            add("\\", "escape")
+        elif piece == "\\\\":
+            add("\\", "literal")
+        elif piece == ".":
+            add(".", "any")
+        elif piece == "*":
+            add("*", "repeat")
+        elif piece == "^":
+            add("^", "anchor")
+        elif piece == "$":
+            add("$", "anchor")
+        elif piece in _GLYPH_SYMBOLS:
+            add(piece, "glyph")
+
+
+_ROLE_CACHE = {}
+
+
+def symbol_roles(keys):
+    """Ordered (symbol, role) pairs a key string uses (VD-40)."""
+    if keys in _ROLE_CACHE:
+        return list(_ROLE_CACHE[keys])
+    out = []
+
+    def add(symbol, role):
+        if (symbol, role) in SYMBOL_ROLES and (symbol, role) not in out:
+            out.append((symbol, role))
+
+    for token in tokens(keys):
+        if token in ("<CR>", "<Esc>", "<Space>", "<BS>"):
+            add(token, "key")
+        elif token.startswith("<C-"):
+            add("<C-x>", "key")
+    for chunk, _meaning, family in explain(keys):
+        count = re.match(r"[1-9]\d*", chunk)
+        if count and "0" in count.group(0):
+            add("0", "count")
+        if chunk.startswith(":"):
+            add(":", "cmdline")
+            _ex_roles(chunk[1:].replace("<CR>", ""), add)
+            continue
+        if family in ("/pattern", "?pattern"):
+            add("/", "search")
+            _pattern_roles(chunk[1:].replace("<CR>", ""), add)
+            continue
+        base = family.replace("[count]", "").replace('"{reg}', "")
+        if '"{reg}' in family:
+            add('"', "register")
+        if base.endswith("{char}") and chunk[-1:] in _GLYPH_SYMBOLS:
+            add(chunk[-1], "glyph")
+        elif base.endswith("{text}<Esc>"):
+            for ch in set(chunk[1:]) & _GLYPH_SYMBOLS:
+                add(ch, "glyph")
+        elif base == "R<C-r>{reg}<Esc>":
+            add("<C-r>", "paste")
+        elif base == "<C-r>":
+            add("<C-r>", "redo")
+        elif base in ("$", "0", "^", "%"):
+            add(base, "motion")
+        elif base == ".":
+            add(".", "dot")
+        elif base == ",":
+            add(",", "motion")
+        elif base == "[count]|" or family == "[count]|":
+            add("|", "column")
+        elif base == "*":
+            add("*", "searchword")
+        elif base == "@{reg}":
+            add("@", "macro")
+        elif base.endswith("{motion}") and chunk[-1:] in ("$", "0", "^", "%"):
+            add(chunk[-1], "motion")
+    _ROLE_CACHE[keys] = tuple(out)
+    return out
+
+
+def _ex_roles(text, add):
+    m = re.match(r"^((?:[%.,$0-9+\-]|'[a-z<>])*)\s*([a-z]+!?)(.*)$", text)
+    if not m:
+        return
+    rng, name, rest = m.groups()
+    if "%" in rng:
+        add("%", "range")
+    if "$" in rng:
+        add("$", "address")
+    if "." in rng:
+        add(".", "address")
+    if "," in rng:
+        add(",", "range")
+    dest = rest.strip()
+    if name in ("t", "co", "copy", "m", "move"):
+        add({"$": "$", "0": "0", ".": "."}.get(dest, ""), "address")
+    if name == "silent":
+        _ex_roles(dest, add)
+        return
+    if name in ("read", "r"):
+        if rng == "0":
+            add("0", "address")
+        if dest == "%":
+            add("%", "file")
+        if dest == "#":
+            add("#", "altfile")
+    if name in ("s", "g", "global", "v") and rest[:1] and not rest[:1].isalnum() \
+            and rest[:1] not in " \"":
+        sep, parts = _split_sep(rest)
+        add(sep if sep in ("/", "@") else "", "separator")
+        _pattern_roles(parts[0], add)
+        if name == "s" and len(parts) > 1 and "\\\\" in parts[1]:
+            add("\\", "literal")
+        if name != "s" and len(parts) > 1:
+            normal = re.match(r"\s*norm(?:al)?!?\s+(.*)", parts[1])
+            if normal:
+                for pair in symbol_roles(normal.group(1)):
+                    add(*pair)
+
+
+# VD-40 / concept-overload audit F17: families that had no teaching line or no
+# worked example, so the NEW CONCEPT ALERT echoed the command instead.
+FAMILY_TEACH.update({
+    ":read %": ":read %  read a second copy of this file below the cursor (% = this file here)",
+    ":read #": ":read #  read in the file you had open before (# = the alternate file)",
+    ":vnew": ":vnew  open a new, empty window on the left (a scratch space)",
+    ":silent": ":silent {command}  run the command without printing a message",
+    ":set scrollbind": ":set scrollbind  scroll this window together with the other bound window",
+    ":diffoff!": ":diffoff!  leave diff mode in every window (! = all windows)",
+    ":diffoff": ":diffoff  leave diff mode in the current window",
+    ":bwipeout!": ":bwipeout!  remove this buffer and its window (! = even if unsaved)",
+    ":bwipeout": ":bwipeout  remove this buffer and its window",
+})
+EXAMPLES.update({
+    "0": "on `  ab` with the cursor on b: 0 lands on the first space (column 1)",
+    "$": "on `ab  ` (2 trailing spaces): $ lands on the last space; x there deletes it",
+    "^": "on `  ab`: ^ lands on a, the first glyph after the spaces",
+    "<C-r>": "after rO then u (the O is gone): Ctrl-r brings the O back",
+    "i{text}<Esc>": "on `ac` with the cursor on c: ib<Esc> makes `abc`",
+    "[count]dd": "on 5 rows with the cursor on row 2: 2dd removes rows 2 and 3",
+    "dd": "on 3 rows, 2G then dd removes row 2; the rows below move up",
+    "da{object}": "dap on a frame deletes the frame and the blank line after it",
+    "T{char}": "on `ab-cd` with the cursor on d: T- stops on c, just after the '-'",
+    "y{motion}": "on `*ab` with the cursor on *: yl copies just the `*`",
+    "C{text}<Esc>": "on `ab---` at the first '-': C==<Esc> makes `ab==`",
+    "Visual y": "v2l then y copies the 3 selected characters",
+    "Visual d": "V2j then d deletes the 3 selected rows",
+    "Visual c{text}<Esc>": "Ctrl-v 2j c=<Esc> replaces one column on 3 rows with '='",
+    ">>": ":set shiftwidth=1 then >> moves the row right by one cell; << moves it back",
+    "%": "on `(ab)` with the cursor on (: % jumps to the matching )",
+    "w": "on `ab-cd` at a: w jumps to '-' (a punctuation run is its own word)",
+    ":read %": ":read % under a 3-row frame adds a second copy of those 3 rows",
+    ":read #": ":vnew then :read # shows the file you were editing in the new window",
+    ":vnew": ":vnew opens an empty window on the left; :q closes it again",
+    ":silent": ":silent 0read # reads the previous file in without a '3 lines' message",
+    ":set scrollbind": "with two windows side by side, :set scrollbind in both keeps rows level",
+    ":diffoff!": "after :diffthis in two windows, :diffoff! clears the diff colours in both",
+    ":bwipeout!": "in the scratch window, :bwipeout! closes it and throws its text away",
+})

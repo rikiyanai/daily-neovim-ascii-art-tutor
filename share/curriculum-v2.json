@@ -1853,7 +1853,7 @@
     ],
     [
      "<CR>",
-     "execute the complete Ex statement"
+     "press Enter to run the whole : command line"
     ]
    ],
    "cursor": "^",
@@ -2216,7 +2216,7 @@
     ],
     [
      "<CR>",
-     "execute the complete Ex statement"
+     "press Enter to run the whole : command line"
     ]
    ],
    "cursor": "^",
@@ -26707,7 +26707,7 @@
     ],
     [
      "<CR>",
-     "execute the Ex sentence"
+     "press Enter to run the whole : command line"
     ]
    ],
    "cursor": "^",

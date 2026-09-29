@@ -1817,6 +1817,31 @@ for mutator in (
     except ValueError:
         pass
 
+# VD-40: a symbol that changes job is named in its role, with a contrast
+# against the job the learner already met; the recipe notation is read once.
+def _alert_text(cid):
+    return " ".join(" ".join(v2._new_concept_alert(card_by_id[cid], cur, width=66)).split())
+
+
+assert "HOW TO READ A RECIPE" in _alert_text("M0.01") and "<CR> = press Enter" in _alert_text("M0.01")
+assert "HOW TO READ A RECIPE" not in _alert_text("M0.YP")
+assert "$ in a line address = the last line" in _alert_text("M0.T")
+assert "$ on its own = jump to the end of the row" in _alert_text("M11.LS")
+assert "last line (:1,3t$) (in M0.T)" in _alert_text("M11.LS")
+assert "\\ inside a pattern = the next letter is special" in _alert_text("M11.TR")
+assert "a backslash glyph (/!\\) (in M0.O)" in _alert_text("M11.TR")
+assert "| = a bar glyph (this lesson)" in _alert_text("M11.VE")
+assert "@ right after :s or :g = the divider" in _alert_text("M11.05")
+assert "0 as a line address = before line 1" in _alert_text("M16.05")
+assert _alert_text("M11.UR").count("u undo; Ctrl-r redo") == 1
+assert "$ = last line" in (v2._new_concept_banner(card_by_id["M0.T"], cur) or "")
+for _cid in ("M0.SR", "M11.UR", "M4.DIFF"):
+    assert "run the command-line command" not in _alert_text(_cid), _cid
+assert "run the command-line command" not in " ".join(
+    v2_keys.explain_lines(card_by_id["M4.DIFF"]["expected"]))
+_symbols = dict(v2.learned_symbols(cur, {"passed_cards": [c["id"] for c in cur["cards"]]}))
+assert "last line (:1,3t$)" in _symbols["$"] and "end of row (2G$)" in _symbols["$"]
+
 print("\n%d/%d executable lessons present; %d/%d primary edit recipes passable (config=%s); "
       "%d conceptual/check lessons, %d changed-art transfer variants, "
       "%d compare paths, and graph/questions/state valid" % (

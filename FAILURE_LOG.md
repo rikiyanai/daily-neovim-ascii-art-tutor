@@ -5759,3 +5759,86 @@ touched. The prompt says "paste or type".
   review mode).
 - "Post to GitHub?" for feedback, later.
 - The M11.TR "art was offset" report, not yet reproduced.
+
+## VD-40 · 2026-09-29 — context-dependent symbols and recipe notation were never taught
+
+**Operator (feedback after M11.TR, `:%s/\s\+$//e`):** "what are these called?
+what is the concept diff between / and \ i thought \ was an escape seq or
+something. also do not remember learning this ... how do i not memorize these
+things? a reminder line about the syntax maybe helpful".
+
+**Cause:** the course uses symbols whose job depends on where they stand, and
+recipe meta-notation, without ever naming the job. Before M11.TR the learner
+had met `\` as an art glyph (`/!\`, M0.O) and `$` as the last-line address
+(`:1,3t$`, M0.T). In M11.WS both changed job (`\s` prefix, `$` row-end
+anchor) and nothing said so. The VD-39 note even said "\ ... it is not a key
+you press", which is wrong: the learner types it.
+
+**Measured (audit `share/audits/SYMBOL_NOTATION_AUDIT_2026-09-29.md`, 226
+cards, module order; candidates from `v2_keys.symbol_roles`, each row read on
+the card):**
+- `$` has three jobs, met in this order: address (M0.T), pattern anchor
+  (M11.WS), motion (M11.LS). No card contrasted them.
+- `@` as the `:s` separator and `\\` = one backslash are first required on
+  hidden M11.05 and never shown on a guided card. `\.`-style escapes
+  (M17.06) are the same.
+- `0` as a line address (`:m0`) is first required on hidden M16.05. Dot
+  repeat is first required on hidden M1.05; the first guided card is M17.01.
+- `:` / "Ex statement" (M0.SR), `<CR>` (M0.01 vocabulary), `<C-r>`-style
+  "hold Ctrl" notation (M11.UR) and `{char}`/`{N}`/`[count]` placeholders
+  (M0.01 alert) were never defined. The only definition was a footer at the
+  bottom of the brief, and the 80×24 footer did not list `<CR>`.
+- M11.VE uses `|` as the column motion and as a typed glyph in one recipe.
+- M11.UR's alert printed "u undo; Ctrl-r redo" twice. M4.DIFF/M4.DIFFH
+  explained `:vnew`, `:silent 0read #`, `:diffoff!`, `:bwipeout!` by echo.
+  6 families had no FAMILY_TEACH and 22 had no EXAMPLES.
+
+**Fix:**
+- `share/v2_keys.py`: `SYMBOL_ROLES` (42 symbol/job pairs, each a plain
+  sentence plus a short contrast label); `symbol_roles(keys)`;
+  `RECIPE_READING`; `_explain_ex` handles `!`, `:vnew`, `:silent`,
+  `:read #`/`%` with `0`, `:diffoff!`, `:bwipeout!`; 9 FAMILY_TEACH and 24
+  EXAMPLES entries added.
+- `share/v2_runtime.py`:
+  - `_symbol_lines`, inside the NEW CONCEPT ALERT / REMEMBER block (below
+    the first screen), prints a SYMBOLS block:
+    - `★ NEW` the first time a job appears, e.g. "$ on its own = jump to the
+      end of the row · elsewhere $ = last line (:1,3t$) (in M0.T); row end
+      in a pattern (\s\+$) (in M11.WS)";
+    - `REMEMBER` on guided cards when the symbol has another job the learner
+      already met.
+  - M0.01, the first guided recipe card, carries a one-time HOW TO READ A
+    RECIPE block covering `<CR>`, `<Esc>`, `<C-r>`, placeholders and modes.
+  - `_new_concept_banner` names new symbol jobs (`★ NEW 2: :t{dest} · $ =
+    last line`).
+  - SLASH_NOTE is corrected and dropped where SYMBOLS already covers it.
+  - Alert lines are de-duplicated.
+  - The footers list `<CR>` and the placeholders.
+  - `--learned` ends with "SYMBOLS WHOSE JOB DEPENDS ON WHERE THEY STAND"
+    (`learned_symbols`): the reminder line the operator asked for.
+- `share/gen_curriculum_v2.py`: `<CR>` recipe rows say "press Enter to run
+  the whole : command line" instead of "execute the complete Ex statement".
+- `share/test_v2.py`: VD-40 assertions (M0.01 block, M0.T/M11.LS/M11.TR/
+  M11.VE/M11.05/M16.05 symbol lines, M11.UR de-duplication, no echo on
+  M4.DIFF, the learned-symbols deck).
+
+**Evidence (all run after the last code change):**
+- `share/test_v2.py` exit 0: "226/226 executable lessons present; 185/185
+  primary edit recipes passable". The VD-40 assertions pass.
+- `test_question_quality.py` PASS on 406; `test_feedback.py` PASS;
+  `test_stone_story_variants.py` exit 0.
+- `test_tmux_v2.py` PASS at 80×24 and 188×49 (real user config).
+- `test_tmux_v2_routes.py` 28/28 PASS at 80×24.
+- 0 orphaned `nvim --embed`.
+- The first 188×49 run failed: the longer footer line wrapped
+  "<C-k>.M middle-dot". The footer line was restored and the placeholder text
+  moved to its own line.
+
+**Still open:**
+- `@` separator, `\\`, `\.` escapes, dot repeat and the `0` address are
+  still first required on hidden cards. They now carry a ★ NEW symbol line
+  there, but no guided single-idea card comes before them.
+- The term "Ex" and "address" remain in authored question stems and
+  key_vocabulary. The `:` symbol line now defines "Ex commands".
+- M0.01 recipe rows still omit the `0` that `expected` uses (overload audit
+  F7).
