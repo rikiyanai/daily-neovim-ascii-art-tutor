@@ -239,6 +239,15 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                     tmux(outer, "send-keys", "-t", pane, "Enter")
 
             if route in ("concept", "check", "review"):
+                if route == "concept" and CARDS.get(card_id, {}).get("teaching_lines"):
+                    # Readability audit #1: teaching is held on its own page.
+                    for _attempt in range(50):
+                        if "TEACH FIRST" in capture(outer, pane):
+                            break
+                        time.sleep(0.1)
+                    teach_screen = capture(outer, pane)
+                    assert "TEACH FIRST" in teach_screen and "show the question" in teach_screen, teach_screen
+                    tmux(outer, "send-keys", "-t", pane, "Enter")
                 wait_signal(inner, question)
                 prompt_raw = capture(outer, pane)
                 prompt = " ".join(prompt_raw.split())

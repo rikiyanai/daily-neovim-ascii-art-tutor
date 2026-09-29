@@ -5579,3 +5579,39 @@ and shows me lesson complete or whatever."
   config). The test now presses `f` on the held lesson-end page in the real
   popup, types a message, waits for "feedback saved", and asserts the
   `feedback.jsonl` row has `card_id` M0.01 and `screen` lesson-end.
+
+## VD-36 · 2026-09-29 13:25 — readability audit and fixes (headings, concept alert, progress)
+
+**Audit:** `share/audits/READABILITY_AUDIT_2026-09-29.md` (17 prioritised
+findings from headed captures at 80×24 and 188×49).
+
+**Implemented:**
+- #1: the concept page's TEACH FIRST lines were erased by the question
+  page's screen clear. They now get their own held page ("Enter = show the
+  question · f = feedback"); the route test presses Enter on it.
+- #2: DO THIS in the compact brief wraps instead of being clipped at 54
+  cells. It uses up to 3 rows and fewer when a tall TARGET needs them, so
+  TARGET stays whole at 80×24.
+- #3: the compact module map wraps between cards, never inside a card id.
+- #4: compact side-by-side TARGET frames are padded to their own width, so
+  the frame separators line up.
+- #5: the progress line carries a module bar (`M11 6/16 ▕████░░░░░░▏`).
+- #6: the Neovim brief highlights headings, the ★ alert, REMEMBER lines and
+  the command names in alert items (bold, colorscheme colours, window-local
+  `matchadd`), plus `breakindent`. A headless check confirmed art rows and
+  prose do not match.
+- #8: ATTEMPT NOT PASSED is red; PROGRESS UNCHANGED is yellow.
+- #10: the ★ NEW banner keeps its "↓ alert below" pointer and shortens the
+  concept names instead.
+
+**Evidence, after the last change:**
+- `share/test_tmux_v2.py` PASS at 80×24, 100×36 and 188×49 (real user
+  config).
+- `share/test_tmux_v2_routes.py` at 80×24: 28/28 PASS. The first two runs
+  caught TARGET rows pushed off screen by the longer DO THIS and progress
+  lines; both fixed.
+- `share/test_v2.py` exit 0; `test_feedback.py` PASS; 0 orphaned
+  `nvim --embed`.
+
+**Not yet done:** audit #7 (heading-word standardisation; tests assert the
+current words), #9 (brief width sizing at 188 columns) and #11–#17.

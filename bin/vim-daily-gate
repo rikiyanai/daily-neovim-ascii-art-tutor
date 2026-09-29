@@ -642,6 +642,23 @@ NOPAIRS = ("vim.bo.autoindent=false;vim.bo.smartindent=false;vim.bo.cindent=fals
            "pcall(function() vim.b.delimitMate_autoclose = 0 end)")
 
 
+# Readability audit #6: the brief is a plain buffer, so headings, the NEW
+# CONCEPT ALERT and taught command names get Neovim highlights (bold, using
+# the user's colorscheme colours). Art rows start with "  │" and never match.
+BRIEF_HIGHLIGHT_LUA = (
+    r"local hw=vim.g.vim_daily_brief_win;"
+    r"if hw and vim.api.nvim_win_is_valid(hw) then "
+    r"local function hl(name,src) local ok,h=pcall(vim.api.nvim_get_hl,0,{name=src,link=false});"
+    r"vim.api.nvim_set_hl(0,name,{fg=(ok and h and h.fg) or nil,bold=true}) end;"
+    r"hl('VimDailyHeading','Title');hl('VimDailyAlert','DiagnosticWarn');hl('VimDailyKey','String');"
+    r"vim.fn.matchadd('VimDailyHeading',[[^\u[[:upper:]/×,]\+\( [[:upper:]/×,]\+\)*]],10,-1,{window=hw});"
+    r"vim.fn.matchadd('VimDailyAlert',[[^\(★\|REMEMBER\).*]],11,-1,{window=hw});"
+    r"vim.fn.matchadd('VimDailyKey',[[^  \d\+\. \zs\S\+\( \S\+\)\?]],11,-1,{window=hw});"
+    r"vim.wo[hw].breakindent=true;vim.wo[hw].breakindentopt='shift:2';"
+    r"end"
+)
+
+
 def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=None):
     """Open the lesson with the cursor parked on the edit and keystrokes logged.
 
@@ -809,6 +826,7 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
                 "vim.schedule(function() if vim.api.nvim_win_is_valid(hw) then vim.cmd('qa!') end end) end})"
             ) % json.dumps(brief)
             cmd.append("+lua " + brief_lua)
+            cmd.append("+lua " + BRIEF_HIGHLIGHT_LUA)
         ready_signal = os.environ.get("VIM_DAILY_TMUX_READY_SIGNAL")
         if ready_signal and os.environ.get("TMUX") and use_user_config:
             # Do not announce readiness until LazyVim has fired VeryLazy and

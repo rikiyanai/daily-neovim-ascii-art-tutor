@@ -1370,7 +1370,10 @@ def _new_concept_banner(card, cur, width=66):
             name = name[5:]
         if name not in names:
             names.append(name)
-    return _clip("★ NEW %d · %s · read NEW CONCEPT ALERT" % (len(names), " · ".join(names)), width)
+    # Readability audit #10: keep the pointer; shorten the names instead.
+    tail = " ↓ alert below"
+    head = "★ NEW %d: " % len(names)
+    return head + _clip(" · ".join(names), max(10, width - len(head) - len(tail))) + tail
 
 
 def _new_concept_alert(card, cur, width=None):
@@ -1474,6 +1477,12 @@ def _answer_breakdown(card, width=None):
     return lines
 
 
+def _bar(done, total, width=10):
+    """Readability audit #5: a module bar such as ▕███░░░░░░░▏."""
+    filled = 0 if not total else round(width * min(done, total) / total)
+    return "▕" + "█" * filled + "░" * (width - filled) + "▏"
+
+
 def _progress_line(cfg, progress, card):
     cell = progress["modules"][card["module_id"]]
     stage_id = card["stage_owner"]
@@ -1481,9 +1490,10 @@ def _progress_line(cfg, progress, card):
     streak, best, total = _legacy_streak(cfg.state)
     flame = " 🔥" if streak >= 3 else ""
     level, title, into, needed = _level(progress["xp"])
-    return ("PROGRESS  %s %d/%d %s  ·  %s %d/%d  ·  XP %d  ·  LEVEL %d %s %d/%d  ·  today %d/%d  ·  streak %d day%s%s  ·  best %d  ·  %d drill%s all time" % (
+    return ("PROGRESS  %s %d/%d %s  ·  %s %d/%d %s  ·  XP %d  ·  LEVEL %d %s %d/%d  ·  today %d/%d  ·  streak %d day%s%s  ·  best %d  ·  %d drill%s all time" % (
         stage_id, stage["done"], stage["total"], stage["state"],
-        card["module_id"], cell["done"], cell["total"], progress["xp"], level, title, into, needed,
+        card["module_id"], cell["done"], cell["total"], _bar(cell["done"], cell["total"]),
+        progress["xp"], level, title, into, needed,
         _legacy_today(cfg.state), cfg.target, streak, "" if streak == 1 else "s",
         flame, best, total, "" if total == 1 else "s"))
 
@@ -1522,8 +1532,12 @@ def _compact_target_lines(card, width=66):
         frames.append(target[start:start + size])
         start += size
     rows = []
+    # Readability audit #4: pad each frame to its own width so the frame
+    # separators stay in one column and the frames read as registered.
+    widths = [max(len(line) for line in frame) for frame in frames]
     for row_number in range(slices[0]):
-        row = "   ".join("│" + frame[row_number] for frame in frames)
+        row = "   ".join("│" + frame[row_number].ljust(width)
+                         for frame, width in zip(frames, widths))
         # Do not use prose clipping here: textwrap collapses runs of spaces,
         # which would silently destroy fixed-width registration in TARGET.
         available = width - 2
@@ -1561,15 +1575,24 @@ def _write_session_lesson(cfg, cur, progress, card):
             "NEOVIM × ASCII ANIMATION · %s" % card["id"],
             # VD-13: own line, so XP/today survive the 68-cell clip.
             _clip(_progress_line(cfg, progress, card), 68),
-            "DO THIS · " + _clip(card["prompt"], 54),
         ]
+        # Readability audit #2: the task sentence was clipped at 54 cells and
+        # lost its actual instruction. Wrap it to at most three rows instead.
+        do_rows = textwrap.wrap(card["prompt"], width=58) or [""]
+        # About 11 brief rows are visible at 80x24; TARGET must stay whole.
+        target_rows = len(_compact_target_lines(card)) if show_target else 0
+        budget = max(1, min(3, 7 - target_rows))
+        if len(do_rows) > budget:
+            do_rows = do_rows[:budget - 1] + [_clip(" ".join(do_rows[budget - 1:]), 58)]
+        header.append("DO THIS · " + do_rows[0])
+        header.extend("          " + row for row in do_rows[1:])
         if not show_recipe:
             boundary = "keys hidden · compare after pass" if card.get(
                 "method_alternatives") else "exact command keys hidden"
-            header.append("HINT · %s · %s" % (boundary, _clip(hint, 30)))
+            header.append(_clip("HINT · %s · %s" % (boundary, hint), 66))
         else:
             banner = _new_concept_banner(card, cur)
-            header.append(banner or "HINT · " + _clip(hint, 59))
+            header.append(banner or _clip("HINT · " + hint, 66))
         if show_target:
             header.append("TARGET")
             header.extend(_compact_target_lines(card))
@@ -2392,7 +2415,7 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
                           card_title=card.get("title"), module_id=card.get("module_id"),
                           lesson_result="complete" if completed else "not passed",
                           screen="result")
-    bold, dim, off, green, _red, _yellow = cfg.colours
+    bold, dim, off, green, red, _yellow = cfg.colours
     context = _lesson_context(cur, card)
     compact = (__import__("sys").stdout.isatty()
                and shutil.get_terminal_size((80, 24)).lines < 55)
@@ -2418,7 +2441,7 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
         elif not (compact and check_replay):
             print("verified outcome: the saved project matches the target exactly")
     else:
-        print("%sATTEMPT NOT PASSED%s  ·  %s  ·  %s" % (bold, off, card["id"], card["title"]))
+        print("%sATTEMPT NOT PASSED%s  ·  %s  ·  %s" % (red + bold, off, card["id"], card["title"]))
         if concept_replay:
             print("no progress awarded: the conceptual choice was incorrect")
         elif check_replay:
@@ -2584,7 +2607,7 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
     else:
         footer = "LESSON COMPLETE" if completed else "ATTEMPT NOT PASSED"
     print("\n%s%s%s  ·  %s  ·  result summary above" % (
-        green + bold if completed else bold, footer, off, card["id"]))
+        green + bold if completed else red + bold, footer, off, card["id"]))
 
 
 def progress_full_rows(cur):
@@ -2598,13 +2621,14 @@ def progress_full_rows(cur):
 
 def _post_progress(cfg, cur, card, progress, *, completed=True):
     """Render held page two: progression only, without feedback scrolling away."""
-    bold, _dim, off, green, _red, _yellow = cfg.colours
+    bold, _dim, off, green, _red, yellow = cfg.colours
     _clear_if_tty()
     if getattr(cfg, "practice", False):
         label = "PRACTICE COMPLETE · PROGRESS UNCHANGED"
     else:
         label = "PROGRESS AWARDED" if completed else "PROGRESS UNCHANGED"
-    colour = green + bold if completed else bold
+    # Readability audit #8: an unchanged result reads as a warning, not success.
+    colour = green + bold if completed else yellow + bold
     ultra = (__import__("sys").stdout.isatty()
              and shutil.get_terminal_size((80, 24)).lines < progress_full_rows(cur))
     print("%s%s%s  ·  %s  ·  %s" % (colour, label, off, card["id"], card["title"]))
@@ -2620,7 +2644,12 @@ def _post_progress(cfg, cur, card, progress, *, completed=True):
             for cid in module["card_ids"])
         # VD-13: new card labels (P0, O, T) lengthened the map; keep the
         # daily count on its own line so it is never split by wrapping.
-        print("CURRENT MODULE MAP  %s %s" % (module["id"], cells))
+        # Readability audit #3: wrap between cards, never inside a card id.
+        width = max(40, shutil.get_terminal_size((80, 24)).columns - 10)
+        for row in textwrap.wrap("CURRENT MODULE MAP  %s %s" % (module["id"], cells),
+                                 width=width, subsequent_indent="  ",
+                                 break_long_words=False):
+            print(row)
         print("today %d/%d" % (_legacy_today(cfg.state), cfg.target))
     else:
         print("\n%sCURRENT MODULE MAP%s" % (bold, off))
@@ -2724,6 +2753,21 @@ def run_concept(cfg, cur, progress, card):
         print("TEACH FIRST")
         for line in teaching:
             print("  %s" % line)
+        # Readability audit #1: the question page clears the screen, which
+        # erased this teaching before it could be read. Hold it on its own
+        # page first when a person is at the keyboard.
+        if (__import__("sys").stdin.isatty() and __import__("sys").stdout.isatty()
+                and cfg.question_answer is None):
+            while True:
+                try:
+                    answer = input("\nEnter = show the question  ·  f = feedback ")
+                except (EOFError, KeyboardInterrupt):
+                    return 0
+                if answer.strip().lower() not in ("f", "feedback"):
+                    break
+                note_feedback_context(revision=cur.get("revision"), card_id=card["id"],
+                                      card_title=card.get("title"), screen="teach-first")
+                collect_feedback(input, screen="teach-first")
     if ultra:
         print("DO THIS %s: choose the answer whose ANIMATION and NEOVIM halves are both correct."
               % card["id"])
