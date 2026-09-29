@@ -5712,3 +5712,50 @@ touched. The prompt says "paste or type".
 - 13:37: the dashboard shows internal validator prose ("REMEDIATION Q-M0.01
   alternate changed-art edit variant …") instead of a learner's bird's-eye
   view of what was learned and the journey.
+
+## VD-39 · 2026-09-29 13:50 — dashboard showed validator prose instead of the learner's journey
+
+**Operator (feedback 13:37 and 13:33):**
+- "clean up this dashboard: access what I have learned so far". The
+  "REMEDIATION Q-M0.01 alternate changed-art edit variant | …" line "sounds
+  like internal dev validator prose, confusing".
+- The dashboard "should be where I can see the birds-eye view of my master
+  progress and journey".
+- Asked for a flashcard deck of every concept, key and command already
+  covered.
+- Asked what the difference is between `/` and `\`.
+
+**Implemented (`share/v2_runtime.py`, `bin/vim-daily-gate`):**
+- `--tree` / `--status` open with **YOUR JOURNEY**: one row per stage with
+  a progress bar and "← you are here".
+- **TO REVISIT** lists each spaced-remediation lesson in plain words:
+  "↻ M0.01 Foundation edit — redo the edit on new art", "answer a fresh
+  version of its question". The ids, "changed_variant" and "paired stem"
+  prose are gone from every learner screen.
+- **WHAT YOU HAVE LEARNED** lists one reminder line per command family
+  passed so far, with how many lessons used it. Families sharing a reminder
+  (u / Ctrl-r, 0 ^ $) are merged.
+- The new `vim-daily-gate --learned` prints the full deck: reminder,
+  example and the lesson where each command was first met. This is the
+  flashcard deck.
+- The compact result page (80×24) keeps its heading on screen. The learned
+  count joins the XP line, the state legend fits on one row, and TO REVISIT
+  is a single line.
+- Every pattern breakdown (NEW CONCEPT ALERT and REMEMBER) now ends with:
+  "/ separates the parts: s/pattern/replacement/flags" and "\ inside a
+  pattern starts a special piece (\s, \+); it is not a key you press".
+  The `…//e` reminder says the same.
+
+**Evidence:**
+- `vim-daily-gate --tree` and `--learned` were read on the operator's real
+  state (19 commands, 5 revisit rows).
+- `share/test_tmux_v2.py` PASS at 80×24, 100×36 and 188×49, and the 80×24
+  awarded page was read after the change.
+- `share/test_tmux_v2_routes.py` 28/28 PASS at 80×24.
+- `share/test_v2.py` exit 0; 0 orphaned processes.
+
+**Still open from the operator's feedback:**
+- Memory anchors and cross-session spaced drill of the deck (a flashcard
+  review mode).
+- "Post to GitHub?" for feedback, later.
+- The M11.TR "art was offset" report, not yet reproduced.

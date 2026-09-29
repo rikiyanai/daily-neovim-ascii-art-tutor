@@ -1402,6 +1402,14 @@ def _new_concept_banner(card, cur, width=66):
     return head + _clip(" · ".join(names), max(10, width - len(head) - len(tail))) + tail
 
 
+# Operator feedback 2026-09-29 13:33: "what is the concept diff between / and
+# \\ ... i thought \\ was an escape seq". Every pattern breakdown says it.
+SLASH_NOTE = [
+    "     /    separates the parts: s/pattern/replacement/flags",
+    "     \\    inside a pattern starts a special piece (\\s, \\+); it is not a key you press",
+]
+
+
 def _new_concept_alert(card, cur, width=None):
     """VD-34: explain every first-time idea before the learner edits.
 
@@ -1424,6 +1432,7 @@ def _new_concept_alert(card, cur, width=None):
                 if any(not meaning.startswith("the literal ") for _p, meaning in parts):
                     lines += wrap("REMEMBER · PATTERN %s, piece by piece:" % pattern, "")
                     lines += ["     %-4s %s" % (piece, meaning) for piece, meaning in parts]
+                    lines += SLASH_NOTE
         return lines
     lines = ["★ NEW CONCEPT ALERT · %d new idea%s · %s" % (
         len(new), "" if len(new) == 1 else "s",
@@ -1441,6 +1450,7 @@ def _new_concept_alert(card, cur, width=None):
             if any(not meaning.startswith("the literal ") for _piece, meaning in parts):
                 lines += wrap("PATTERN %s, piece by piece:" % pattern, "  ")
                 lines += ["     %-4s %s" % (piece, meaning) for piece, meaning in parts]
+                lines += SLASH_NOTE
     return lines
 
 
@@ -3395,6 +3405,80 @@ def _module_card_map(cur, progress, module_id):
     return "%s cards: %s" % (module_id, " ".join(cells))
 
 
+def _revisit_rows(cur, progress):
+    """VD-39: remediation in the learner's words, not validator ids."""
+    cards = {card["id"]: card for card in cur["cards"]}
+    rows = []
+    for card_id, row in progress.get("active_remediations", {}).items():
+        card = cards.get(card_id, {})
+        title = card.get("title", card_id).split(" · ", 1)[-1]
+        variant = row.get("changed_variant", "")
+        if "edit" in variant and "question" not in variant:
+            action = "redo the edit on new art"
+        elif "edit" in variant:
+            action = "a fresh question, then the edit on new art"
+        else:
+            action = "answer a fresh version of its question"
+        rows.append((card_id, title, action))
+    return rows
+
+
+def learned_deck(cur, progress):
+    """VD-39: every command family the learner has passed, oldest first.
+
+    Returns [(family, reminder, times_used, first_card_id)]. This is the
+    learner's flashcard deck: what they are expected to know already.
+    """
+    K = _keys_module()
+    passed = set(progress.get("passed_cards", []))
+    order = [cid for module in cur["modules"] for cid in module["card_ids"]]
+    cards = {card["id"]: card for card in cur["cards"]}
+    seen = {}
+    for cid in order:
+        card = cards.get(cid, {})
+        if cid not in passed or not card.get("expected"):
+            continue
+        for family, meaning in K.families(card["expected"]):
+            if family in ("[count]",):
+                continue
+            base = family.replace('"{reg}', "")
+            reminder = (K.FAMILY_TEACH.get(base)
+                        or K.FAMILY_TEACH.get(base.replace("[count]", "")) or meaning)
+            key = reminder  # u and Ctrl-r share one card; so do 0 ^ $
+            if key not in seen:
+                seen[key] = [family, reminder, 0, cid]
+            seen[key][2] += 1
+    return [tuple(row) for row in seen.values()]
+
+
+def print_learned(cur, progress):
+    """`--learned`: the flashcard deck of commands already covered."""
+    K = _keys_module()
+    deck = learned_deck(cur, progress)
+    print("WHAT YOU HAVE LEARNED · %d commands · oldest first" % len(deck))
+    print("(× = lessons that used it; review the ones with low counts first)")
+    for family, reminder, times, first in deck:
+        print("  ✓ %-3s %s" % ("×%d" % times, reminder))
+        example = K.example_for(family)
+        if example:
+            print("         e.g. %s" % example)
+        print("         first met in %s" % first)
+
+
+def _journey_rows(cur, progress):
+    marks = {"locked": "·", "available": "○", "learning": "◐",
+             "check_ready": "◆", "review_pending": "↻", "mastered": "✓"}
+    current = progress.get("current_stage")
+    rows = []
+    for stage in cur["stages"]:
+        cell = progress["stages"][stage["id"]]
+        here = "  ← you are here" if stage["id"] == current else ""
+        rows.append("%s %-2s %-29s %s %d/%d%s" % (
+            marks[cell["state"]], stage["id"], stage["title"],
+            _bar(cell["done"], cell["total"]), cell["done"], cell["total"], here))
+    return rows
+
+
 def print_tree(cur, progress, cfg=None, *, compact=False):
     marks = {"locked": "·", "available": "○", "learning": "◐",
              "check_ready": "◆", "review_pending": "↻", "mastered": "✓"}
@@ -3404,17 +3488,20 @@ def print_tree(cur, progress, cfg=None, *, compact=False):
             cell = progress["stages"][stage["id"]]
             nodes.append("%s%s %d/%d" % (
                 marks[cell["state"]], stage["id"], cell["done"], cell["total"]))
-        print("STATE  ○ available · locked ◐ learning ◆ check-ready ↻ review-pending ✓ mastered")
+        print("KEY  ○ open · ◐ learning · ◆ check · ↻ review · ✓ mastered · locked")
         for start in range(0, len(nodes), 6):
             print(("STAGES  " if start == 0 else "        ") + " | ".join(nodes[start:start + 6]))
         due = sum(1 for r in progress["reviews"].values() if _due(r.get("next_due")))
         level, title, into, needed = _level(progress["xp"])
-        print("XP %d · LEVEL %d %s %d/%d · reviews %d · badges %d" % (
-            progress["xp"], level, title, into, needed, due, len(progress["badges"])))
-        if progress.get("active_remediations"):
-            print("REMEDIATION  " + " | ".join(
-                "%s %s" % (row["id"], row["changed_variant"])
-                for row in progress["active_remediations"].values()))
+        print(_clip("XP %d · LEVEL %d %s %d/%d · reviews %d · learned %d (--learned)" % (
+            progress["xp"], level, title, into, needed, due,
+            len(learned_deck(cur, progress))), 70))
+        revisit = _revisit_rows(cur, progress)
+        if revisit:
+            shown = " · ".join(card_id for card_id, _t, _a in revisit[:5])
+            print(_clip("TO REVISIT  %s%s" % (shown, " +%d more" % (len(revisit) - 5)
+                                               if len(revisit) > 5 else ""), 68))
+
         if cfg:
             streak, best, total = _legacy_streak(cfg.state)
             bold, _dim, off, _green, _red, _yellow = cfg.colours
@@ -3426,17 +3513,21 @@ def print_tree(cur, progress, cfg=None, *, compact=False):
         print("current stage: %s · next: %s" % (
             current, nxt["id"] if nxt else "spaced review or course complete"))
         return
-    print("Neovim × ASCII animation skill tree")
-    print("main path: S0 → S7 still authoring, then A0 → A7 animation")
-    print("P is optional and unlocks after S5; it never blocks the main path")
-    for stage in cur["stages"]:
-        cell = progress["stages"][stage["id"]]
-        requires = ",".join(stage.get("prerequisites", [])) or "start"
-        branch = "optional" if stage.get("optional") else stage["track"]
-        print("%s %-2s %-29s %d/%d  %-14s [%s] requires %s" % (
-            marks[cell["state"]], stage["id"], stage["title"], cell["done"],
-            cell["total"], cell["state"], branch, requires))
-    print("\nProject/module ledger")
+    print("YOUR JOURNEY · Neovim × ASCII animation")
+    print("stills first (S0 → S7), then animation (A0 → A7); P is an optional side branch")
+    for row in _journey_rows(cur, progress):
+        print(row)
+    revisit = _revisit_rows(cur, progress)
+    if revisit:
+        print("\nTO REVISIT · lessons coming back for spaced practice")
+        for card_id, title, action in revisit:
+            print("  ↻ %-7s %s — %s" % (card_id, title, action))
+    deck = learned_deck(cur, progress)
+    print("\nWHAT YOU HAVE LEARNED · %d commands (full deck with examples: vim-daily-gate --learned)"
+          % len(deck))
+    for _family, reminder, times, _first in deck:
+        print("  ✓ %-3s %s" % ("×%d" % times, _clip(reminder, 90)))
+    print("\nMODULES · each is one art project")
     for module in cur["modules"]:
         cell = progress["modules"][module["id"]]
         owners = ",".join(module.get("stage_ids", []))
@@ -3449,11 +3540,6 @@ def print_tree(cur, progress, cfg=None, *, compact=False):
     print("XP: %d   LEVEL %d %s: %d/%d toward next level" % (
         progress["xp"], level, title, into, needed))
     print("badges: %s" % (", ".join(progress["badges"]) or "none yet"))
-    if progress.get("active_remediations"):
-        print("active remediation:")
-        for row in progress["active_remediations"].values():
-            print("  %s  %s  next: %s" % (
-                row["id"], row["name"], row["changed_variant"]))
     if cfg:
         streak, best, total = _legacy_streak(cfg.state)
         bold, _dim, off, _green, _red, _yellow = cfg.colours
@@ -3540,6 +3626,9 @@ def run(cfg, argv, *, force=False):
     note_feedback_context(revision=cur.get("revision"))
     if mode == "--feedback":
         print_feedback(cfg.state)
+        return 0
+    if mode == "--learned":
+        print_learned(cur, progress)
         return 0
     if mode in ("--tree", "--status"):
         print_tree(cur, progress, cfg)

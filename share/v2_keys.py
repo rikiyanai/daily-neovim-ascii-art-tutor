@@ -515,7 +515,7 @@ FAMILY_TEACH = {
     ":set colorcolumn": ":set colorcolumn={N}  paint column N as a ruler for the frame's right edge (off: :set colorcolumn=)",
     ":set virtualedit": ":set virtualedit=all  let the cursor stand past a row's end",
     ":set shiftwidth": ":set shiftwidth={N}  choose how far >> and << shift a row",
-    ":[range]s/old/new/e": ":{range}s/pattern//e  delete what the pattern matches; e = stay quiet on lines with no match",
+    ":[range]s/old/new/e": ":{range}s/pattern//e  delete what the pattern matches (/ separates the parts; \\ starts a special piece like \\s); e = no error on lines with no match",
     ":[range]s/old/new/ge": ":{range}s/pattern/new/ge  every match on each line; e = no error when a line has none",
     "j": "j k h l  move down / up / left / right one cell",
     "k": "j k h l  move down / up / left / right one cell",

@@ -32,6 +32,7 @@ Usage
   vim-daily-gate --due-quiet     exit 0 if a drill is due, 1 if not, no output
   vim-daily-gate --status        progress, streak and per-skill mastery
   vim-daily-gate --feedback      list the messages sent with f from lesson screens
+  vim-daily-gate --learned       flashcard deck: every command you have learned, with examples
   vim-daily-gate --streak        one line: the current streak
   vim-daily-gate --concepts [N]  print the paradigm chapters (the "why")
   vim-daily-gate --quiz [CONCEPT] multiple-choice + key-order questions
@@ -1104,7 +1105,7 @@ def main(argv):
     # VD-09: V2 is the normal hourly route. The original 46 exact-recipe drills stay
     # available through --drill and --legacy-* while existing progress remains
     # untouched in progress.json and the dated logs.
-    v2_modes = {"run", "--force", "--if-due", "--due-quiet", "--status", "--tree", "--feedback",
+    v2_modes = {"run", "--force", "--if-due", "--due-quiet", "--status", "--tree", "--feedback", "--learned",
                 "--list", "--export-progress", "--card", "--project", "--preview"}
     if mode in v2_modes:
         v2 = load_v2_runtime()
