@@ -30128,7 +30128,7 @@
    "animation_prompt": "A head-only fragment is not a key pose; the missing torso, legs, and baseline must return.\n\n  REQUIRED       BROKEN\n  1 │  /\\   │     │  /\\   │\n  2 │ (o)   │     │ (o)   │\n  3 │ /|\\   │     │       │\n  4 │  |    │     │       │\n  5 │ / \\   │     │       │\n  6 │/___\\  │     │       │",
    "animation_answer": "Restore the complete six-row body around the copied head.",
    "neovim_prompt": "Use the linewise whole-pose operation rather than patching a row.",
-   "neovim_answer": "Undo the fragment and copy the complete six-line pose with 6yy/p or an addressed six-line copy.",
+   "neovim_answer": "Undo the fragment and use the taught 6yy/p whole-pose copy so all six rows travel together.",
    "compact_prompt": "ANIMATION\nThe copied head is detached from its body.\n\n  REQUIRED       BROKEN\n  1 │  /\\   │     │  /\\   │\n  2 │ (o)   │     │ (o)   │\n  3 │ /|\\   │     │       │\n  4 │  |    │     │       │\n  5 │ / \\   │     │       │\n  6 │/___\\  │     │       │\n\nNEOVIM\nWhat should be copied?",
    "compact_choices": [
     "A: restore full body · V: copy six lines",

@@ -112,7 +112,7 @@
     "compact_prompt": "ANIMATION\nCopied forward rows become a vertical two-cell midpoint.\n\n  1 │  \\    │\n  2 │   \\   │\n  3 │---o---│\n  4 │    /→|│\n  5 │   / →|│\n  moving rows: /,/ → |,|\n\nNEOVIM\nWhich scope is correct?",
     "animation_prompt": "The working copy changes only its moving strokes into a two-cell vertical midpoint.\n\n  moving cells: / / → | |\n  pivots: ---o--- stay",
     "animation_answer": "Align and replace the moving prop cells while preserving both pivot rows.",
-    "neovim_prompt": "Predict the bounded sequence from the guided and block lessons.",
+    "neovim_prompt": "Use only the previously taught complete-frame copy and moving-row edits.",
     "neovim_answer": "Copy a complete three-row extreme, use C to align the upper stroke, then Visual-block replace only the two true midpoint cells at column 4.",
     "choices": [
       "ANIMATION: The copy becomes a vertical midpoint; pivots and earlier extremes stay. | NEOVIM: Copy the full frame, align the moving row, then block-replace exactly the two prop cells.",
@@ -1949,7 +1949,7 @@
     "animation_prompt": "A head-only fragment is not a key pose; the missing torso, legs, and baseline must return.\n\n  REQUIRED       BROKEN\n  1 │  /\\   │     │  /\\   │\n  2 │ (o)   │     │ (o)   │\n  3 │ /|\\   │     │       │\n  4 │  |    │     │       │\n  5 │ / \\   │     │       │\n  6 │/___\\  │     │       │",
     "animation_answer": "Restore the complete six-row body around the copied head.",
     "neovim_prompt": "Use the linewise whole-pose operation rather than patching a row.",
-    "neovim_answer": "Undo the fragment and copy the complete six-line pose with 6yy/p or an addressed six-line copy.",
+    "neovim_answer": "Undo the fragment and use the taught 6yy/p whole-pose copy so all six rows travel together.",
     "choices": [
       "ANIMATION: Restore torso, legs, and baseline so the head is attached to a full pose. | NEOVIM: Undo the fragment and copy all six lines with 6yy/p or :1,6t$.",
       "ANIMATION: Accept the head-only fragment as a new pose extreme. | NEOVIM: Leave the missing rows blank to show a transition.",

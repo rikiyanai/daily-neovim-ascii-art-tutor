@@ -3641,8 +3641,8 @@ and rejected further generated question prose.
 - `python3 share/test_question_quality.py`: PASS on all 347 questions.
 - `python3 share/test_v2.py`: PASS, including 187/187 executable lessons and
   146/146 primary edit recipes under `config=none`.
-- `python3 share/test_stone_story_variants.py`: PASS on the 32 currently
-  integrated review variants; it still reports 22 border-swap variants under
+- `python3 share/test_stone_story_variants.py`: PASS on the 42 currently
+  integrated review variants; it still reports 18 border-swap variants under
   the separate VD-29 work item.
 
 ### Still open outside VD-30
