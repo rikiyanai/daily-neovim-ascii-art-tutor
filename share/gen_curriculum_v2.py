@@ -2961,7 +2961,9 @@ STILL_PROMPT_REWRITES = {
 # Vertical slice for variant-accurate transfer questioning.  Each listed
 # card's second changed-art variant owns its own manually authored question;
 # runtime card.update(variant) then selects that question before the editor.
-ALT_VARIANT_QUESTION_CARDS = {"M3.06", "M4.06"}
+ALT_VARIANT_QUESTION_CARDS = {
+    "M0.06", "M1.06", "M2.06", "M3.06", "M4.06",
+}
 
 FIRST_READING_DISTRACTORS = {
     "M0": [
@@ -6318,7 +6320,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.38",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.39",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

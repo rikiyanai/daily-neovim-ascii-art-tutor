@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.38",
+ "revision": "2026-09-29.39",
  "review_intervals_hours": [
   4,
   24,
@@ -2562,7 +2562,10 @@
       "exact_any_of": [
        "jforO:s/-/=/g<CR>"
       ]
-     }
+     },
+     "paired_question_ids": [
+      "M0.06.V2.P01"
+     ]
     }
    ],
    "method_requirement": {
@@ -5391,7 +5394,10 @@
       "exact_any_of": [
        "G0f,r:"
       ]
-     }
+     },
+     "paired_question_ids": [
+      "M1.06.V2.P01"
+     ]
     }
    ],
    "method_requirement": {
@@ -6958,7 +6964,10 @@
        "jforO",
        "2GforO"
       ]
-     }
+     },
+     "paired_question_ids": [
+      "M2.06.V2.P01"
+     ]
     }
    ],
    "required_before_mastery": true,
@@ -50261,6 +50270,305 @@
      "the Enter key"
     ],
     "sample_answer": "<CR>"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M0.06.V2.P01",
+   "card_id": "M0.06",
+   "module_id": "M0",
+   "grammar_family": "ex-substitute-line",
+   "grammar_breakdown_id": "ex-substitute-line",
+   "grammar_breakdown": [
+    "current-line address + s command + pattern + replacement + flags + <CR>",
+    "r + replacement glyph; overwrite one cell without shifting the row",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+   ],
+   "paired_invariant": "test the smallest readable multi-row subject before adding frames",
+   "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThis unfamiliar comet faces left. Its three-row silhouette and registration stay fixed; only the core brightens and the two-cell tail changes material.\n\n  BEFORE      AFTER\n  │   |\\  │    │   |\\  │\n  │--< o >│ →  │==< O >│\n  │   |/  │    │   |/  │\n\nNEOVIM\nWhich account explains both edits without shifting any cell?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: The complete comet moves left by two cells. | NEOVIM: `:s` inserts equals signs before the dashes.",
+    "ANIMATION: Only the core brightens; the tail keeps its dash material. | NEOVIM: the missing `%` makes the substitute affect no row.",
+    "ANIMATION: The core brightens and both tail cells change material while the contour stays registered. | NEOVIM: `rO` overwrites the found core and current-row `:s/-/=/g` replaces both dashes.",
+    "ANIMATION: Both diagonal rays are redrawn. | NEOVIM: `g` extends the substitute into the rows above and below."
+   ],
+   "correct_choice": 2,
+   "feedback": [
+    "Every delimiter remains in its original column. Substitute overwrites matches; it does not insert before them.",
+    "An omitted range means the current row, not zero rows; the g flag reaches both dashes on that row.",
+    "Correct: one-cell replacement handles the core, then current-row substitution changes both tail cells without moving the mirrored silhouette.",
+    "Here g means every match in the addressed row. It does not add vertical scope."
+   ],
+   "animation_prompt": "ANIMATION\nM0.06 variant 2 applies the brightness-and-material change to a mirrored, left-facing comet.",
+   "animation_answer": "The registered contour is unchanged; the core becomes O and the two tail dashes become equals signs.",
+   "neovim_prompt": "NEOVIM\nDecode `jforO:s/-/=/g` on the mirrored comet.",
+   "neovim_answer": "j reaches the acting row, fo finds its core, rO overwrites that one cell, and the un-ranged substitute changes every dash on only the current row because of g.",
+   "compact_prompt": "ANIMATION\nA left-facing comet keeps its silhouette; o becomes O and -- becomes ==.\n\n  │--< o >│ → │==< O >│\n\nNEOVIM\nWhich edit is bounded to the core and current row?",
+   "compact_choices": [
+    "A: comet moves · V: :s inserts",
+    "A: core only · V: no % means no edit",
+    "A: core + two tail cells · V: r then current-row :s/g",
+    "A: diagonal rays change · V: g spans rows"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "jforO:s/-/=/g<CR>",
+    "required_term_groups": [
+     [
+      "current line",
+      "line"
+     ],
+     [
+      "substitute",
+      "replace"
+     ],
+     [
+      "pattern"
+     ],
+     [
+      "replacement"
+     ],
+     [
+      "flag",
+      "global",
+      "g"
+     ],
+     [
+      "enter",
+      "execute"
+     ],
+     [
+      "replace",
+      "overwrite",
+      "r"
+     ],
+     [
+      "cell",
+      "glyph"
+     ],
+     [
+      "width",
+      "shift",
+      "registered"
+     ],
+     [
+      "search",
+      "find",
+      "landmark"
+     ],
+     [
+      "pattern",
+      "character"
+     ],
+     [
+      "cursor",
+      "cell"
+     ]
+    ],
+    "sample_answer": "current line substitute pattern replacement flag enter replace cell width search pattern cursor"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M1.06.V2.P01",
+   "card_id": "M1.06",
+   "module_id": "M1",
+   "grammar_family": "normal-replace",
+   "grammar_breakdown_id": "normal-replace",
+   "grammar_breakdown": [
+    "r + replacement glyph; overwrite one cell without shifting the row",
+    "f/t landmark + ; repeat in the same direction or , repeat in reverse",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
+   ],
+   "paired_invariant": "reuse one memorised slope vocabulary across every frame",
+   "source_ref": "ascii-art-authoring §§4.4,4.7; Neovim tutor 2.1,2.4,4.2",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThis contour is mirrored, so its joint is no longer at the lesson's old column. Only the low comma joint becomes a centred colon; the endpoint, curve, and row width remain fixed.\n\n  BEFORE       AFTER\n  │´._      │    │´._      │\n  │   `-._  │    │   `-._  │\n  │     ,._o│ →  │     :._o│\n\nNEOVIM\nWhy is the comma itself a safer destination than a remembered column count?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Only the mirrored joint changes and the anchor stays fixed. | NEOVIM: `f,` uses the visible joint as a landmark, so `r:` does not depend on the old column.",
+    "ANIMATION: The entire bottom contour shifts left. | NEOVIM: `f,` deletes text before the comma while moving to it.",
+    "ANIMATION: The endpoint o becomes the new joint. | NEOVIM: `G0` jumps to the last character of the last row.",
+    "ANIMATION: Every comma in the drawing becomes a colon. | NEOVIM: `r:` is a file-wide replacement once preceded by f."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: the landmark survives mirroring even though its column changes, and r preserves the row width.",
+    "f is a motion; it does not delete or shift the prefix it crosses.",
+    "G selects the last line and 0 selects its first cell. The later f, motion finds the joint, not the endpoint.",
+    "r overwrites exactly the cursor cell. It does not search beyond the comma reached by f."
+   ],
+   "animation_prompt": "ANIMATION\nM1.06 variant 2 centres the joint on a mirrored contour without moving its anchored endpoint.",
+   "animation_answer": "The comma becomes a colon in place; every other contour cell and the final o remain registered.",
+   "neovim_prompt": "NEOVIM\nDecode `G0f,r:` on the mirrored drawing.",
+   "neovim_answer": "G0 selects the last row from its first cell, f, finds the visible comma wherever the mirror placed it, and r: overwrites only that joint.",
+   "compact_prompt": "ANIMATION\nOn the mirrored contour, only the comma joint becomes a colon.\n\n  │     ,._o│ → │     :._o│\n\nNEOVIM\nWhy use `f,` before `r:`?",
+   "compact_choices": [
+    "A: joint only, anchor fixed · V: find landmark + replace",
+    "A: contour shifts · V: f deletes prefix",
+    "A: endpoint changes · V: G0 means row end",
+    "A: every comma changes · V: r is global"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "G0f,r:",
+    "required_term_groups": [
+     [
+      "replace",
+      "overwrite",
+      "r"
+     ],
+     [
+      "cell",
+      "glyph"
+     ],
+     [
+      "width",
+      "shift",
+      "registered"
+     ],
+     [
+      "find",
+      "landmark",
+      "f",
+      "t"
+     ],
+     [
+      "semicolon",
+      ";",
+      "repeat"
+     ],
+     [
+      "comma",
+      ",",
+      "backwards"
+     ],
+     [
+      "search",
+      "find",
+      "landmark"
+     ],
+     [
+      "pattern",
+      "character"
+     ],
+     [
+      "cursor",
+      "cell"
+     ],
+     [
+      "motion",
+      "move",
+      "cursor"
+     ],
+     [
+      "landmark",
+      "row",
+      "column",
+      "cell"
+     ]
+    ],
+    "sample_answer": "replace cell width find semicolon comma search pattern cursor motion landmark"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M2.06.V2.P01",
+   "card_id": "M2.06",
+   "module_id": "M2",
+   "grammar_family": "normal-replace",
+   "grammar_breakdown_id": "normal-replace",
+   "grammar_breakdown": [
+    "r + replacement glyph; overwrite one cell without shifting the row",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+   ],
+   "paired_invariant": "make an operator no larger than the facial feature it is meant to change",
+   "source_ref": "ascii-art-authoring §§2,4.6; Neovim tutor 2.1-3.4",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThis unfamiliar face has a heavy `===` brow and a `---` mouth. Neither feature is the acting part: only the eye changes from o to O.\n\n  BEFORE      AFTER\n  │ /===\\│    │ /===\\│\n  │|  o  |│ →  │|  O  |│\n  │| --- |│    │| --- |│\n  │ \\___/│    │ \\___/│\n\nNEOVIM\nWhich path uses the eye glyph as the landmark and preserves both horizontal materials?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: The brow is brightened with the eye. | NEOVIM: `j` selects both the first and second rows for replacement.",
+    "ANIMATION: The mouth dashes become equals signs. | NEOVIM: `fo` searches every later row until it reaches the mouth.",
+    "ANIMATION: A second eye is inserted before the old one. | NEOVIM: `rO` inserts O and keeps o to its right.",
+    "ANIMATION: Only the eye brightens; both horizontal materials and the outline stay fixed. | NEOVIM: `j` reaches the eye row, `fo` lands on o, and `rO` overwrites that one cell."
+   ],
+   "correct_choice": 3,
+   "feedback": [
+    "j is a one-row motion here; no Visual selection includes the brow.",
+    "f searches only the current row. It cannot cross into the mouth row.",
+    "r replaces one existing cell and preserves row width; it does not insert a neighbour.",
+    "Correct: the command grammar names one row, one visible landmark, and one-cell replacement, matching the acting-part boundary."
+   ],
+   "animation_prompt": "ANIMATION\nM2.06 variant 2 isolates a one-cell facial change inside a face with two distracting horizontal materials.",
+   "animation_answer": "Only o becomes O; the brow, mouth, outline, and fixed width do not change.",
+   "neovim_prompt": "NEOVIM\nExplain `jforO` on the shown four-row face.",
+   "neovim_answer": "j enters the eye row, fo finds that row's o landmark, and rO overwrites one cell without touching the brow or mouth rows.",
+   "compact_prompt": "ANIMATION\nOnly the eye changes; the `===` brow and `---` mouth stay intact.\n\n  │|  o  |│ → │|  O  |│\n\nNEOVIM\nWhich bounded path edits the eye?",
+   "compact_choices": [
+    "A: brow + eye · V: j selects two rows",
+    "A: mouth changes · V: f crosses rows",
+    "A: insert second eye · V: r inserts",
+    "A: eye only · V: j, find o, replace"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "jforO",
+    "required_term_groups": [
+     [
+      "replace",
+      "overwrite",
+      "r"
+     ],
+     [
+      "cell",
+      "glyph"
+     ],
+     [
+      "width",
+      "shift",
+      "registered"
+     ],
+     [
+      "search",
+      "find",
+      "landmark"
+     ],
+     [
+      "pattern",
+      "character"
+     ],
+     [
+      "cursor",
+      "cell"
+     ]
+    ],
+    "sample_answer": "replace cell width search pattern cursor"
    },
    "authorship": "manual"
   },

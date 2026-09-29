@@ -29,7 +29,7 @@ scheduled through the strict S0-S7 still-art path and then A0-A7 animation path.
 P is an optional proportional branch unlocked by S5 and is not a prerequisite
 for S6. Cards belong to exactly one progression stage even when a project module
 stores work used at more than one point in the journey. The item
-bank includes 377 separately authored visual readings, command/output predictions,
+bank includes 380 separately authored visual readings, command/output predictions,
 diagnoses, method comparisons, transfer decisions, and coherence checks. Every
 item has four paired animation-and-Neovim choices with mistake-specific feedback. A module
 contains guided edits, answer-hidden concepts, an independent edit, a
@@ -145,7 +145,7 @@ the bug class that broke drill 2 on 2026-09-14. Regenerate, then re-run
     concepts.json    seven paradigm chapters (prose)
     art.json         49 art excerpts, each with provenance
     curriculum.json  GENERATED legacy set: 46 drills
-    curriculum-v2.json GENERATED project course: 20 modules / 215 cards / 377 questions
+    curriculum-v2.json GENERATED project course: 20 modules / 215 cards / 380 questions
 
 `extract_art.py` re-derives plate entries in art.json and merges them with
 separately ingested entries instead of replacing the whole library. User
@@ -320,7 +320,7 @@ real nvim, types exactly the documented recipe, and asserts the buffer reaches
 the documented target. All 46/46 passed under both `-u NONE` and the real config
 on 2026-09-27. A drill whose recipe does not produce its target must not ship.
 
-`test_v2.py` validates the strict stage graph, exact 215/377 counts, matching
+`test_v2.py` validates the strict stage graph, exact 215/380 counts, matching
 choice/feedback completeness, minimum visual substance, generated-artifact equality,
 glyph vocabulary, project continuity, review cadence,
 frame-boundary preview behavior, every executable recipe, runtime method contracts,

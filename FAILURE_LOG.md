@@ -4509,3 +4509,33 @@ question for variant 2, and no first variant has yet been replaced by Stone
 Story art. The implementation is intentionally not described as course-wide
 variant-question parity. Archive provenance and publication remain open; no
 third-party art was pushed.
+
+### VD-40 follow-through · revision `.39` — M0/M1/M2 alternates now own their evidence
+
+The next three alternate transfers were reviewed and written individually,
+not populated from a prose template:
+
+- `M0.06` variant 2 prints the mirrored, left-facing comet and asks the learner
+  to distinguish one-cell `rO` from current-row `:s/-/=/g`; its feedback
+  explains why `g` expands matches within the addressed row rather than adding
+  vertical scope.
+- `M1.06` variant 2 prints the mirrored contour and makes the changed column
+  part of the question: `f,` follows the visible joint after mirroring, whereas
+  a memorized column would not transfer.
+- `M2.06` variant 2 prints the heavy `===` brow and `---` mouth as deliberate
+  distractor materials, then requires the learner to identify the eye row,
+  glyph landmark, and one-cell `rO` scope.
+
+All three own full and compact ASCII evidence, four paired
+animation/Neovim choices, and mistake-specific feedback. The selected retry
+variant supplies its own question id through the `.38` mechanism.
+
+**Proof:** generator `.39` writes 215 cards / 380 manually authored questions;
+question quality passes 380; clean Neovim remains **215/215 cards and 174/174
+primary recipes**; and all three new alternate routes pass with the real user
+config at 80x24.
+
+**Still open.** Fifteen other `.06` cards still lack a manually authored
+variant-2 question. First variants still use the existing lesson art, so the
+Stone Story primary-art replacement, provenance intake, full headed route
+matrix, and publication decision remain open. No third-party art was pushed.
