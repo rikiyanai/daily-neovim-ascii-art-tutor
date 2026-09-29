@@ -1404,30 +1404,30 @@
     ]
   },
   "M7.06.P01": {
-    "prompt": "ANIMATION\nA fresh two-frame build keeps its complete shells while both eyes change from o to O.\n\n  F1 │  /\\  │\n     │ (o)  │\n     │ /--\\ │\n     │/----\\│\n     │______│\n  F2 │ same complete 5-row build with (o)\n\nNEOVIM\nWhich bounded transfer reaches TARGET?",
-    "compact_prompt": "ANIMATION\nTwo complete five-row frames: (o)→(O).\n\n  F1 (o)\n  F2 (o)\n\n  1 │ [ (o) ] │ F1\n  2 │ [ (o) ] │ F2\n\nNEOVIM\nChoose the transfer path.",
-    "animation_prompt": "Only the eye changes in each complete held frame; shell rows remain.\n\n  (o) → (O)\n  (o) → (O)",
-    "animation_answer": "Change the first eye and repeat that one-cell edit five rows below.",
+    "prompt": "ANIMATION\nTwo padded Skully idle frames form a five-row hold. Both must look left: the first o in each face becomes O while the hat, second eye, mouth, and two padding rows stay unchanged.\n\n  BEFORE F1/F2       AFTER F1/F2\n  │     ,--.│         │     ,--.│\n  │    (_o,o)│   →    │    (_O,o)│\n  │      `\"´│         │      `\"´│\n  ││                  ││\n  ││                  ││\n  │     ,--.│         │     ,--.│\n  │    (_o,o)│   →    │    (_O,o)│\n  │      `\"´│         │      `\"´│\n  ││                  ││\n  ││                  ││\n\nNEOVIM\nWhy does the five-row motion land dot on the corresponding eye?",
+    "compact_prompt": "ANIMATION\nBoth padded Skully hold frames change `_o,o` to `_O,o`.\n\n  │    (_o,o)│ → │    (_O,o)│\n       five rows later\n  │    (_o,o)│ → │    (_O,o)│\n\nNEOVIM\nDecode `2G0forO5j.`.",
+    "animation_prompt": "Only the first eye changes in each complete padded Skully hold frame; every other source cell remains fixed.",
+    "animation_answer": "Make the first Skully look left and repeat that one-cell edit exactly one five-row frame later.",
     "neovim_prompt": "Decode 2GforO5j.",
     "neovim_answer": "2G reaches the first eye row, fo lands on o, rO replaces it, 5j moves to the matching row, and dot repeats the change.",
     "choices": [
-      "ANIMATION: Both complete frames change only their eyes to O. | NEOVIM: 2GforO followed by 5j. makes one local edit and repeats it in the duplicate.",
-      "ANIMATION: The second frame is copied over the first. | NEOVIM: 5j. repeats a whole-frame put.",
-      "ANIMATION: Only the first frame changes. | NEOVIM: Move 5j but omit dot so the duplicate stays o.",
-      "ANIMATION: Every o in the project becomes O. | NEOVIM: Use a whole-file substitute instead of a frame-local repeat."
+      "ANIMATION: Both complete Skully holds change only their first eye to O. | NEOVIM: `2G0forO` makes one local edit and `5j.` repeats it at the homologous eye.",
+      "ANIMATION: The second Skully is pasted over the first. | NEOVIM: dot repeats a whole-frame put rather than the last one-cell change.",
+      "ANIMATION: Only the first Skully looks left. | NEOVIM: moving 5j without dot completes the second edit.",
+      "ANIMATION: Both eyes in both faces become O. | NEOVIM: dot repeats rO across every o on the row."
     ],
     "compact_choices": [
-      "A: both eyes O; shells fixed · V: local rO + 5j.",
-      "A: put second over first · V: dot copies frame",
-      "A: first only · V: 5j no dot",
-      "A: all o→O · V: whole-file substitute"
+      "A: first eye in both holds · V: local rO + 5j.",
+      "A: paste frames · V: dot repeats put",
+      "A: first hold only · V: 5j without dot",
+      "A: all eyes O · V: dot edits every o"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the fresh art changes only the homologous eye and dot repeats the local change.",
+      "Correct: padding makes the homologous eye exactly five rows away, and dot repeats only the recorded rO change.",
       "The target preserves both frames; dot is not a frame-copy command.",
-      "The duplicate eye is part of the target and must receive the repeat.",
-      "The scope is the two visible frames, not every o in the project."
+      "The second held eye remains o unless dot applies the earlier replacement after the motion.",
+      "One dot invocation acts at one cursor cell. The second eye in each face remains lowercase."
     ]
   },
   "M7.08.P01": {

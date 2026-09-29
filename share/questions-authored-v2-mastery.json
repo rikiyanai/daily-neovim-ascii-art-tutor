@@ -1215,30 +1215,30 @@
     ]
   },
   "M7.06.V2.P01": {
-    "prompt": "ANIMATION\nTwo complete five-row build frames already form a hold. Only the x eye brightens to X in each frame; roofs, hatch rows, and baselines must remain unchanged.\n\n  BEFORE F1     BEFORE F2\n  │  /\\   │     │  /\\   │\n  │ (x)   │     │ (x)   │\n  │ /==\\  │     │ /==\\  │\n  │/====\\ │     │/====\\ │\n  │------ │     │------ │\n\n  AFTER F1      AFTER F2\n  │  /\\   │     │  /\\   │\n  │ (X)   │     │ (X)   │\n  │ /==\\  │     │ /==\\  │\n  │/====\\ │     │/====\\ │\n  │------ │     │------ │\n\nNEOVIM\nAfter the first `rX`, why does `5j.` repeat the right edit on the right part?",
-    "compact_prompt": "ANIMATION\nBoth five-row hold frames keep their shells; x becomes X in each.\n\n  │ (x) │     │ (x) │\n       ↓           ↓\n  │ (X) │     │ (X) │\n\nNEOVIM\nWhat does `5j.` repeat?",
-    "animation_prompt": "ANIMATION\nM7.06 variant 2 transfers a one-cell brightness change across two registered full-pose hold frames.",
-    "animation_answer": "Both eyes become X while the two complete shells and their five-row spacing remain unchanged.",
-    "neovim_prompt": "NEOVIM\nDecode `2GfxrX5j.` across the two frames.",
-    "neovim_answer": "2Gfx reaches the first eye, rX records a one-cell replacement, 5j lands on the corresponding eye row in the next five-row frame, and dot repeats only that replacement.",
+    "prompt": "ANIMATION\nTwo padded Frog frames form a five-row hold. Close only the right eye in each frame: the final o on the head row becomes `-`; the left O, body rows, and two padding rows remain unchanged.\n\n  BEFORE F1/F2       AFTER F1/F2\n  │     ,Oo│          │     ,O-│\n  │  (\\/ .-)│    →    │  (\\/ .-)│\n  │  ´ ·-\\´\\│          │  ´ ·-\\´\\│\n  ││                   ││\n  ││                   ││\n  │     ,Oo│          │     ,O-│\n  │  (\\/ .-)│    →    │  (\\/ .-)│\n  │  ´ ·-\\´\\│          │  ´ ·-\\´\\│\n  ││                   ││\n  ││                   ││\n\nNEOVIM\nWhy does editing the visible row-end once, then moving five rows and pressing dot, preserve both complete frogs?",
+    "compact_prompt": "ANIMATION\nClose the right eye in both padded Frog hold frames.\n\n  │     ,Oo│ → │     ,O-│\n       five rows later\n  │     ,Oo│ → │     ,O-│\n\nNEOVIM\nDecode `gg$r-5j.`.",
+    "animation_prompt": "ANIMATION\nM7.06 variant 2 repeats one right-eye blink across two complete padded Frog holds.",
+    "animation_answer": "The final o in each head row becomes a dash; every other frog and padding cell remains fixed.",
+    "neovim_prompt": "NEOVIM\nExplain `gg$r-5j.` across the two five-row frames.",
+    "neovim_answer": "gg$ lands on the first frame's visible right eye, r- records one replacement, 5j reaches the same row in the next padded frame, and dot repeats only r-.",
     "choices": [
-      "ANIMATION: The first complete frame is pasted over the second. | NEOVIM: dot repeats every motion and edit from `2GfxrX`.",
-      "ANIMATION: Only frame 2 changes because movement cancels the first replacement. | NEOVIM: `5j` undoes `rX` before moving.",
-      "ANIMATION: Every x anywhere in the project becomes X. | NEOVIM: dot is an unscoped global substitution.",
-      "ANIMATION: The corresponding eye changes in both full frames while their shells stay fixed. | NEOVIM: `5j` preserves the registered row offset and dot repeats the last change, `rX`, at the second eye."
+      "ANIMATION: The first complete frog is pasted over the second. | NEOVIM: dot repeats every motion beginning with gg$ as one frame-copy action.",
+      "ANIMATION: Only the second frog blinks because movement cancels the first replacement. | NEOVIM: 5j undoes r- before moving.",
+      "ANIMATION: Every o in both frogs becomes a dash. | NEOVIM: dot is an unscoped global substitution.",
+      "ANIMATION: Only the corresponding right eye closes in both complete frogs. | NEOVIM: 5j preserves the registered row offset and dot repeats the last change, r-, at the second eye."
     ],
     "compact_choices": [
-      "A: paste frame · V: dot repeats motions too",
-      "A: frame 2 only · V: 5j undoes",
-      "A: every x · V: dot is global",
-      "A: both eyes only · V: five rows then repeat rX"
+      "A: paste frog · V: dot repeats motions too",
+      "A: second frog only · V: 5j undoes",
+      "A: every o closes · V: dot is global",
+      "A: right eye in both · V: five rows then repeat r-"
     ],
     "correct_choice": 3,
     "feedback": [
       "Dot repeats the last change, not the navigation used to reach it; no full-frame put occurred.",
-      "5j moves the cursor and leaves the first replacement intact.",
-      "Dot acts once at the current cursor. It does not search the project for matching glyphs.",
-      "Correct: the frame height supplies the five-row offset, and dot reuses the one-cell overwrite on the corresponding acting part."
+      "5j moves the cursor and leaves the first blink replacement intact.",
+      "Dot acts once at the current cursor. It does not search the held frames for every o.",
+      "Correct: the padded frame height supplies the five-row offset, and dot reuses the one-cell blink on the corresponding eye."
     ]
   },
   "M3.06.V2.P01": {

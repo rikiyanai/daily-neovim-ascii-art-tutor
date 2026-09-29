@@ -1151,24 +1151,28 @@ MODULES = [
                 [["21G5dd", "remove the accidental trailing duplicate while retaining the anticipation hold"]],
             ),
         ],
-        "transfer": step(
-            ["  /\\   ", " (o)  ", " /--\\ ", "/----\\", "______",
-             "  /\\   ", " (o)  ", " /--\\ ", "/----\\", "______"],
-            ["  /\\   ", " (O)  ", " /--\\ ", "/----\\", "______",
-             "  /\\   ", " (O)  ", " /--\\ ", "/----\\", "______"],
-            "2GforO5j.",
-            [["2GforO", "change the acting feature in the first complete held frame"],
-             ["5j.", "repeat that exact edit in its timed duplicate"]],
-        ),
-        "transfer_alt": step(
-            ["  /\\   ", " (x)  ", " /==\\ ", "/====\\", "------",
-             "  /\\   ", " (x)  ", " /==\\ ", "/====\\", "------"],
-            ["  /\\   ", " (X)  ", " /==\\ ", "/====\\", "------",
-             "  /\\   ", " (X)  ", " /==\\ ", "/====\\", "------"],
-            "2GfxrX5j.",
-            [["2GfxrX", "change the alternate hold's acting feature"],
-             ["5j.", "repeat it in the duplicate frame"]],
-        ),
+        "transfer": dict(step(
+            (stone_story_variants.SKULLY_IDLE + ["", ""]) * 2,
+            (stone_story_variants.SKULLY_LOOK + ["", ""]) * 2,
+            "2G0forO5j.",
+            [["2G0forO", "make the first held Skully look left"],
+             ["5j.", "repeat that one-cell eye edit in its timed duplicate"]],
+        ), source="official-Pets/Skully res01 idle + res02 look overlay, held twice",
+           prompt=(
+               "Both padded Skully hold frames must look left: change the first "
+               "eye, move exactly one five-row frame, and repeat the same edit."
+           )),
+        "transfer_alt": dict(step(
+            (stone_story_variants.FROG_OPEN + ["", ""]) * 2,
+            (stone_story_variants.FROG_ONE_OPEN + ["", ""]) * 2,
+            "gg$r-5j.",
+            [["gg$r-", "close the right eye in the first held frog frame"],
+             ["5j.", "repeat that one-cell blink edit in the timed duplicate"]],
+        ), source="official-Pets/Frog res01 + res05 blink overlay, held twice",
+           prompt=(
+               "Close the right eye in both padded Frog hold frames: edit the first "
+               "frame at its visible row end, then move five rows and repeat."
+           )),
     },
     {
         "id": "M8", "title": "Walk study", "node": "A7/V8", "project": "walk-study",
@@ -6339,7 +6343,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.47",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.48",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

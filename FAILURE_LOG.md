@@ -4730,3 +4730,23 @@ this entry was written and is not claimed. The older M19 alternate process and
 the revision-wide route matrix are also unclaimed. Seventeen other module
 transfers still use tutor-authored primary variants. No new source assets were
 imported and no push occurred.
+
+### VD-41 follow-through · revision `.48` — M7 holds now use padded Skully and Frog animation states
+
+- M7.06 variant 1 now holds the audited Skully idle pose twice, padding each
+  three-row source frame to the module's declared five-row height. One local
+  `o→O` look edit is repeated exactly five rows later with dot.
+- Variant 2 holds the audited Frog open-eye pose twice with the same explicit
+  padding. It changes only the visible right eye from `o` to `-`, then repeats
+  that blink one complete frame later.
+- Both questions print both complete BEFORE and AFTER holds, including the
+  blank registration rows, and distinguish repeating the last one-cell change
+  from repeating navigation, copying a frame, or applying a global search.
+
+**Proof:** revision `.48` writes 215 cards / 395 questions; question quality,
+all 215 cards / 174 recipes, and changed-art replay pass. Both M7.06 variants
+pass real-user-config headed routes at 80x24.
+
+**Still open.** Sixteen module transfers still use tutor-authored primary
+variants. The pending M4/M19 headed processes and full route matrix remain
+unclaimed here. No new source asset was imported and no push occurred.

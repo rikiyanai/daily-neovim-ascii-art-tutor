@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.47",
+ "revision": "2026-09-29.48",
  "review_intervals_hours": [
   4,
   24,
@@ -23968,129 +23968,134 @@
    "project_id": "timed-pyramid-build",
    "variant_group": "M7.card-6",
    "start": [
-    "  /\\   ",
-    " (o)  ",
-    " /--\\ ",
-    "/----\\",
-    "______",
-    "  /\\   ",
-    " (o)  ",
-    " /--\\ ",
-    "/----\\",
-    "______"
+    "     ,--.",
+    "    (_o,o)",
+    "      `\"´",
+    "",
+    "",
+    "     ,--.",
+    "    (_o,o)",
+    "      `\"´",
+    "",
+    ""
    ],
    "target": [
-    "  /\\   ",
-    " (O)  ",
-    " /--\\ ",
-    "/----\\",
-    "______",
-    "  /\\   ",
-    " (O)  ",
-    " /--\\ ",
-    "/----\\",
-    "______"
+    "     ,--.",
+    "    (_O,o)",
+    "      `\"´",
+    "",
+    "",
+    "     ,--.",
+    "    (_O,o)",
+    "      `\"´",
+    "",
+    ""
    ],
-   "expected": "2GforO5j.",
+   "expected": "2G0forO5j.",
    "recipe": [
     [
-     "2GforO",
-     "change the acting feature in the first complete held frame"
+     "2G0forO",
+     "make the first held Skully look left"
     ],
     [
      "5j.",
-     "repeat that exact edit in its timed duplicate"
+     "repeat that one-cell eye edit in its timed duplicate"
     ]
    ],
    "cursor": "^",
+   "source": "official-Pets/Skully res01 idle + res02 look overlay, held twice",
    "prompt": "Give a fresh build-up a meaningful hold and a scoped batch edit without modifying instructions or other projects.",
    "artifact": "transfer",
    "variants": [
     {
      "start": [
-      "  /\\   ",
-      " (o)  ",
-      " /--\\ ",
-      "/----\\",
-      "______",
-      "  /\\   ",
-      " (o)  ",
-      " /--\\ ",
-      "/----\\",
-      "______"
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´",
+      "",
+      "",
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´",
+      "",
+      ""
      ],
      "target": [
-      "  /\\   ",
-      " (O)  ",
-      " /--\\ ",
-      "/----\\",
-      "______",
-      "  /\\   ",
-      " (O)  ",
-      " /--\\ ",
-      "/----\\",
-      "______"
+      "     ,--.",
+      "    (_O,o)",
+      "      `\"´",
+      "",
+      "",
+      "     ,--.",
+      "    (_O,o)",
+      "      `\"´",
+      "",
+      ""
      ],
-     "expected": "2GforO5j.",
+     "expected": "2G0forO5j.",
      "recipe": [
       [
-       "2GforO",
-       "change the acting feature in the first complete held frame"
+       "2G0forO",
+       "make the first held Skully look left"
       ],
       [
        "5j.",
-       "repeat that exact edit in its timed duplicate"
+       "repeat that one-cell eye edit in its timed duplicate"
       ]
      ],
      "cursor": "^",
+     "source": "official-Pets/Skully res01 idle + res02 look overlay, held twice",
+     "prompt": "Both padded Skully hold frames must look left: change the first eye, move exactly one five-row frame, and repeat the same edit.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       "2GforO5j."
+       "2G0forO5j."
       ]
      }
     },
     {
      "start": [
-      "  /\\   ",
-      " (x)  ",
-      " /==\\ ",
-      "/====\\",
-      "------",
-      "  /\\   ",
-      " (x)  ",
-      " /==\\ ",
-      "/====\\",
-      "------"
+      "     ,Oo",
+      "  (\\/ .-)",
+      "  ´ ·-\\´\\",
+      "",
+      "",
+      "     ,Oo",
+      "  (\\/ .-)",
+      "  ´ ·-\\´\\",
+      "",
+      ""
      ],
      "target": [
-      "  /\\   ",
-      " (X)  ",
-      " /==\\ ",
-      "/====\\",
-      "------",
-      "  /\\   ",
-      " (X)  ",
-      " /==\\ ",
-      "/====\\",
-      "------"
+      "     ,O-",
+      "  (\\/ .-)",
+      "  ´ ·-\\´\\",
+      "",
+      "",
+      "     ,O-",
+      "  (\\/ .-)",
+      "  ´ ·-\\´\\",
+      "",
+      ""
      ],
-     "expected": "2GfxrX5j.",
+     "expected": "gg$r-5j.",
      "recipe": [
       [
-       "2GfxrX",
-       "change the alternate hold's acting feature"
+       "gg$r-",
+       "close the right eye in the first held frog frame"
       ],
       [
        "5j.",
-       "repeat it in the duplicate frame"
+       "repeat that one-cell blink edit in the timed duplicate"
       ]
      ],
      "cursor": "^",
+     "source": "official-Pets/Frog res01 + res05 blink overlay, held twice",
+     "prompt": "Close the right eye in both padded Frog hold frames: edit the first frame at its visible row end, then move five rows and repeat.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       "2GfxrX5j."
+       "gg$r-5j."
       ]
      },
      "paired_question_ids": [
@@ -24101,7 +24106,7 @@
    "method_requirement": {
     "label": "perform the unfamiliar-art transfer with its taught command path",
     "exact_any_of": [
-     "2GforO5j."
+     "2G0forO5j."
     ]
    },
    "required_before_mastery": true,
@@ -48408,61 +48413,61 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The key-hidden transfer comes first; afterward, four explicit choices check the command path and animation scope without free-text grading.",
-   "prompt": "ANIMATION\nA fresh two-frame build keeps its complete shells while both eyes change from o to O.\n\n  F1 │  /\\  │\n     │ (o)  │\n     │ /--\\ │\n     │/----\\│\n     │______│\n  F2 │ same complete 5-row build with (o)\n\nNEOVIM\nWhich bounded transfer reaches TARGET?",
+   "prompt": "ANIMATION\nTwo padded Skully idle frames form a five-row hold. Both must look left: the first o in each face becomes O while the hat, second eye, mouth, and two padding rows stay unchanged.\n\n  BEFORE F1/F2       AFTER F1/F2\n  │     ,--.│         │     ,--.│\n  │    (_o,o)│   →    │    (_O,o)│\n  │      `\"´│         │      `\"´│\n  ││                  ││\n  ││                  ││\n  │     ,--.│         │     ,--.│\n  │    (_o,o)│   →    │    (_O,o)│\n  │      `\"´│         │      `\"´│\n  ││                  ││\n  ││                  ││\n\nNEOVIM\nWhy does the five-row motion land dot on the corresponding eye?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "typed_keys",
    "choices": [
-    "ANIMATION: Both complete frames change only their eyes to O. | NEOVIM: 2GforO followed by 5j. makes one local edit and repeats it in the duplicate.",
-    "ANIMATION: The second frame is copied over the first. | NEOVIM: 5j. repeats a whole-frame put.",
-    "ANIMATION: Only the first frame changes. | NEOVIM: Move 5j but omit dot so the duplicate stays o.",
-    "ANIMATION: Every o in the project becomes O. | NEOVIM: Use a whole-file substitute instead of a frame-local repeat."
+    "ANIMATION: Both complete Skully holds change only their first eye to O. | NEOVIM: `2G0forO` makes one local edit and `5j.` repeats it at the homologous eye.",
+    "ANIMATION: The second Skully is pasted over the first. | NEOVIM: dot repeats a whole-frame put rather than the last one-cell change.",
+    "ANIMATION: Only the first Skully looks left. | NEOVIM: moving 5j without dot completes the second edit.",
+    "ANIMATION: Both eyes in both faces become O. | NEOVIM: dot repeats rO across every o on the row."
    ],
    "correct_choice": 0,
    "feedback": [
-    "Correct: the fresh art changes only the homologous eye and dot repeats the local change.",
+    "Correct: padding makes the homologous eye exactly five rows away, and dot repeats only the recorded rO change.",
     "The target preserves both frames; dot is not a frame-copy command.",
-    "The duplicate eye is part of the target and must receive the repeat.",
-    "The scope is the two visible frames, not every o in the project."
+    "The second held eye remains o unless dot applies the earlier replacement after the motion.",
+    "One dot invocation acts at one cursor cell. The second eye in each face remains lowercase."
    ],
-   "animation_prompt": "Only the eye changes in each complete held frame; shell rows remain.\n\n  (o) → (O)\n  (o) → (O)",
-   "animation_answer": "Change the first eye and repeat that one-cell edit five rows below.",
+   "animation_prompt": "Only the first eye changes in each complete padded Skully hold frame; every other source cell remains fixed.",
+   "animation_answer": "Make the first Skully look left and repeat that one-cell edit exactly one five-row frame later.",
    "neovim_prompt": "Decode 2GforO5j.",
    "neovim_answer": "2G reaches the first eye row, fo lands on o, rO replaces it, 5j moves to the matching row, and dot repeats the change.",
-   "compact_prompt": "ANIMATION\nTwo complete five-row frames: (o)→(O).\n\n  F1 (o)\n  F2 (o)\n\n  1 │ [ (o) ] │ F1\n  2 │ [ (o) ] │ F2\n\nNEOVIM\nChoose the transfer path.",
+   "compact_prompt": "ANIMATION\nBoth padded Skully hold frames change `_o,o` to `_O,o`.\n\n  │    (_o,o)│ → │    (_O,o)│\n       five rows later\n  │    (_o,o)│ → │    (_O,o)│\n\nNEOVIM\nDecode `2G0forO5j.`.",
    "compact_choices": [
-    "A: both eyes O; shells fixed · V: local rO + 5j.",
-    "A: put second over first · V: dot copies frame",
-    "A: first only · V: 5j no dot",
-    "A: all o→O · V: whole-file substitute"
+    "A: first eye in both holds · V: local rO + 5j.",
+    "A: paste frames · V: dot repeats put",
+    "A: first hold only · V: 5j without dot",
+    "A: all eyes O · V: dot edits every o"
    ],
    "source_answer_contract": {
     "form": "typed_keys",
     "initial_lines": [
-     "  /\\   ",
-     " (o)  ",
-     " /--\\ ",
-     "/----\\",
-     "______",
-     "  /\\   ",
-     " (o)  ",
-     " /--\\ ",
-     "/----\\",
-     "______"
+     "     ,--.",
+     "    (_o,o)",
+     "      `\"´",
+     "",
+     "",
+     "     ,--.",
+     "    (_o,o)",
+     "      `\"´",
+     "",
+     ""
     ],
     "target_lines": [
-     "  /\\   ",
-     " (O)  ",
-     " /--\\ ",
-     "/----\\",
-     "______",
-     "  /\\   ",
-     " (O)  ",
-     " /--\\ ",
-     "/----\\",
-     "______"
+     "     ,--.",
+     "    (_O,o)",
+     "      `\"´",
+     "",
+     "",
+     "     ,--.",
+     "    (_O,o)",
+     "      `\"´",
+     "",
+     ""
     ],
     "initial_cursor": "^",
     "forbidden_side_effects": [
@@ -48471,7 +48476,7 @@
      "extra_window",
      "extra_tab"
     ],
-    "sample_answer": "2GforO5j.",
+    "sample_answer": "2G0forO5j.",
     "effect_version": 1
    },
    "authorship": "manual"
@@ -51744,39 +51749,39 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
-   "prompt": "ANIMATION\nTwo complete five-row build frames already form a hold. Only the x eye brightens to X in each frame; roofs, hatch rows, and baselines must remain unchanged.\n\n  BEFORE F1     BEFORE F2\n  │  /\\   │     │  /\\   │\n  │ (x)   │     │ (x)   │\n  │ /==\\  │     │ /==\\  │\n  │/====\\ │     │/====\\ │\n  │------ │     │------ │\n\n  AFTER F1      AFTER F2\n  │  /\\   │     │  /\\   │\n  │ (X)   │     │ (X)   │\n  │ /==\\  │     │ /==\\  │\n  │/====\\ │     │/====\\ │\n  │------ │     │------ │\n\nNEOVIM\nAfter the first `rX`, why does `5j.` repeat the right edit on the right part?",
+   "prompt": "ANIMATION\nTwo padded Frog frames form a five-row hold. Close only the right eye in each frame: the final o on the head row becomes `-`; the left O, body rows, and two padding rows remain unchanged.\n\n  BEFORE F1/F2       AFTER F1/F2\n  │     ,Oo│          │     ,O-│\n  │  (\\/ .-)│    →    │  (\\/ .-)│\n  │  ´ ·-\\´\\│          │  ´ ·-\\´\\│\n  ││                   ││\n  ││                   ││\n  │     ,Oo│          │     ,O-│\n  │  (\\/ .-)│    →    │  (\\/ .-)│\n  │  ´ ·-\\´\\│          │  ´ ·-\\´\\│\n  ││                   ││\n  ││                   ││\n\nNEOVIM\nWhy does editing the visible row-end once, then moving five rows and pressing dot, preserve both complete frogs?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "decode",
    "choices": [
-    "ANIMATION: The first complete frame is pasted over the second. | NEOVIM: dot repeats every motion and edit from `2GfxrX`.",
-    "ANIMATION: Only frame 2 changes because movement cancels the first replacement. | NEOVIM: `5j` undoes `rX` before moving.",
-    "ANIMATION: Every x anywhere in the project becomes X. | NEOVIM: dot is an unscoped global substitution.",
-    "ANIMATION: The corresponding eye changes in both full frames while their shells stay fixed. | NEOVIM: `5j` preserves the registered row offset and dot repeats the last change, `rX`, at the second eye."
+    "ANIMATION: The first complete frog is pasted over the second. | NEOVIM: dot repeats every motion beginning with gg$ as one frame-copy action.",
+    "ANIMATION: Only the second frog blinks because movement cancels the first replacement. | NEOVIM: 5j undoes r- before moving.",
+    "ANIMATION: Every o in both frogs becomes a dash. | NEOVIM: dot is an unscoped global substitution.",
+    "ANIMATION: Only the corresponding right eye closes in both complete frogs. | NEOVIM: 5j preserves the registered row offset and dot repeats the last change, r-, at the second eye."
    ],
    "correct_choice": 3,
    "feedback": [
     "Dot repeats the last change, not the navigation used to reach it; no full-frame put occurred.",
-    "5j moves the cursor and leaves the first replacement intact.",
-    "Dot acts once at the current cursor. It does not search the project for matching glyphs.",
-    "Correct: the frame height supplies the five-row offset, and dot reuses the one-cell overwrite on the corresponding acting part."
+    "5j moves the cursor and leaves the first blink replacement intact.",
+    "Dot acts once at the current cursor. It does not search the held frames for every o.",
+    "Correct: the padded frame height supplies the five-row offset, and dot reuses the one-cell blink on the corresponding eye."
    ],
-   "animation_prompt": "ANIMATION\nM7.06 variant 2 transfers a one-cell brightness change across two registered full-pose hold frames.",
-   "animation_answer": "Both eyes become X while the two complete shells and their five-row spacing remain unchanged.",
-   "neovim_prompt": "NEOVIM\nDecode `2GfxrX5j.` across the two frames.",
-   "neovim_answer": "2Gfx reaches the first eye, rX records a one-cell replacement, 5j lands on the corresponding eye row in the next five-row frame, and dot repeats only that replacement.",
-   "compact_prompt": "ANIMATION\nBoth five-row hold frames keep their shells; x becomes X in each.\n\n  │ (x) │     │ (x) │\n       ↓           ↓\n  │ (X) │     │ (X) │\n\nNEOVIM\nWhat does `5j.` repeat?",
+   "animation_prompt": "ANIMATION\nM7.06 variant 2 repeats one right-eye blink across two complete padded Frog holds.",
+   "animation_answer": "The final o in each head row becomes a dash; every other frog and padding cell remains fixed.",
+   "neovim_prompt": "NEOVIM\nExplain `gg$r-5j.` across the two five-row frames.",
+   "neovim_answer": "gg$ lands on the first frame's visible right eye, r- records one replacement, 5j reaches the same row in the next padded frame, and dot repeats only r-.",
+   "compact_prompt": "ANIMATION\nClose the right eye in both padded Frog hold frames.\n\n  │     ,Oo│ → │     ,O-│\n       five rows later\n  │     ,Oo│ → │     ,O-│\n\nNEOVIM\nDecode `gg$r-5j.`.",
    "compact_choices": [
-    "A: paste frame · V: dot repeats motions too",
-    "A: frame 2 only · V: 5j undoes",
-    "A: every x · V: dot is global",
-    "A: both eyes only · V: five rows then repeat rX"
+    "A: paste frog · V: dot repeats motions too",
+    "A: second frog only · V: 5j undoes",
+    "A: every o closes · V: dot is global",
+    "A: right eye in both · V: five rows then repeat r-"
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": "2GfxrX5j.",
+    "display": "gg$r-5j.",
     "required_term_groups": [
      [
       "replace",
