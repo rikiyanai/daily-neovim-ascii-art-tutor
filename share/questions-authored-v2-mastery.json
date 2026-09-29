@@ -592,5 +592,32 @@
       "Correct: the method separates authoring alternatives from the final selection and proves the learner can navigate both.",
       "History commands replace the current buffer state; they do not insert a second glyph into the row."
     ]
+  },
+  "M5.C.P01": {
+    "prompt": "ANIMATION\nA cloud, a foreground ledge, and the ground are separate registered layers. Only the ledge tail changes from two dots to two dashes; the closing rail stays in the same column.\n\n  BEFORE       AFTER\n  | .:::. |    | .:::. |\n  | /___..| -> | /___--|\n  |_/_____|    |_/_____|\n\nNEOVIM\nAfter landing on the first tail dot, what region does C own?",
+    "compact_prompt": "ANIMATION\nOnly the ledge tail changes; its rail stays registered.\n\n  | .:::. |    | .:::. |\n  | /___..| -> | /___--|\n  |_/_____|    |_/_____|\n\nNEOVIM\nWhat does C replace?",
+    "animation_prompt": "ANIMATION\nThe foreground tail changes material without moving its seam or either neighbouring layer.",
+    "animation_answer": "The two dots become dashes and the closing rail is retyped at the same column.",
+    "neovim_prompt": "NEOVIM\nDecode C after the cursor lands on the first tail dot.",
+    "neovim_answer": "C changes from the cursor through the end of the current row and enters Insert mode, so the replacement must include the two dashes and closing rail before Escape.",
+    "choices": [
+      "ANIMATION: Only the two tail cells change and the rail stays registered. | NEOVIM: C changes from the cursor through the row end; type --|, then Escape.",
+      "ANIMATION: The complete ledge row is deleted. | NEOVIM: C is a line-delete command that never enters Insert mode.",
+      "ANIMATION: The cloud and ground shift right with the ledge. | NEOVIM: C inserts two cells before the cursor and preserves the old tail.",
+      "ANIMATION: Only the first dot changes and the second dot remains. | NEOVIM: C owns exactly one display cell, like r."
+    ],
+    "compact_choices": [
+      "A: tail only, rail fixed · V: cursor-to-end change",
+      "A: delete ledge row · V: no Insert mode",
+      "A: shift all layers · V: insert before cursor",
+      "A: one dot only · V: C behaves like r"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: C owns the suffix from the first dot, and retyping the closing rail preserves the fixed-width seam.",
+      "C changes a row suffix and enters Insert mode; it does not delete the whole ledge row.",
+      "The target preserves both neighbouring layers and the ledge's final column; insertion would break that registration.",
+      "A one-cell overwrite would use r. C owns every cell from the cursor through the current row end."
+    ]
   }
 }

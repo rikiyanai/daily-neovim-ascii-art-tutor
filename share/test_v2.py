@@ -96,10 +96,10 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["paradigm"] == concept["paradigm"]
 
 assert len(cur["modules"]) == 20
-assert len(cur["cards"]) == 209
-assert len(cur["questions"]) == 369
-assert len({card["title"] for card in cur["cards"]}) == 209
-assert len({card["prompt"] for card in cur["cards"]}) == 209
+assert len(cur["cards"]) == 210
+assert len(cur["questions"]) == 370
+assert len({card["title"] for card in cur["cards"]}) == 210
+assert len({card["prompt"] for card in cur["cards"]}) == 210
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
 
@@ -113,7 +113,7 @@ def card_lines(card, lines):
 mc_questions = [question for question in cur["questions"]
                 if question["form"] == "multiple_choice"]
 assert {question["form"] for question in cur["questions"]} == {"multiple_choice"}
-assert len(mc_questions) == len(cur["questions"]) == 369
+assert len(mc_questions) == len(cur["questions"]) == 370
 assert not any(
     phrase in question["prompt"]
     for question in cur["questions"]
@@ -223,7 +223,7 @@ assert all("ANIMATION" in q["compact_prompt"] and "NEOVIM" in q["compact_prompt"
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == len(mc_questions) == 369
+            for q in mc_questions}) == len(mc_questions) == 370
 def contains_ascii_visual(value):
     if "│" in value:
         return True
@@ -257,7 +257,7 @@ assert all(q.get("authorship") == "manual" for q in mc_questions), [
 ]
 assert all(len(set(q["choices"])) == 4 for q in mc_questions)
 nodes = [module["node"] for module in cur["modules"]]
-assert len(nodes) == len(set(nodes)) and "A3/V4" in nodes
+assert len(nodes) == len(set(nodes)) and any(node.startswith("A3/") for node in nodes)
 assert all(card.get("animation", {}).get("pivot") == "column 4"
            for card in cur["cards"] if card["module_id"] == "M4" and card.get("animation"))
 assert all(all(module.get(field) for field in
@@ -783,12 +783,27 @@ for card in cur["cards"]:
     for line in card.get("start", []) + card.get("target", []):
         assert not (set(line) - allowed), (card["id"], set(line) - allowed)
 
-# A fresh projection exposes only M0. The authored prerequisite chain then
-# opens the next still-authoring module, not a later animation branch.
+# The authoritative tree is stage-owned: every card advances exactly one
+# stage, S0-S7 precede A0-A7, and the proportional branch unlocks after S5
+# without becoming a prerequisite for S6.
+main_stage_ids = [*("S%d" % number for number in range(8)),
+                  *("A%d" % number for number in range(8))]
+assert cur["main_stage_sequence"] == main_stage_ids
+assert [stage["id"] for stage in cur["stages"]] == [*main_stage_ids, "P"]
+assert all(card["master_stages"] == [card["stage_owner"]]
+           for card in cur["cards"])
+assert {card["stage_owner"] for card in cur["cards"]} == set(main_stage_ids) | {"P"}
+assert card_by_id["M0.P0"]["stage_owner"] == "S0"
+assert card_by_id["M0.SL"]["stage_owner"] == "S0"
+assert card_by_id["M0.02"]["stage_owner"] == "A1"
+assert card_by_id["M13.06"]["stage_owner"] == "A4"
+
 p = v2.project(cur, [])
-assert p["modules"]["M0"]["state"] == "available"
-assert p["modules"]["M1"]["state"] == "locked"
-assert p["modules"]["M2"]["state"] == "locked"
+assert p["stages"]["S0"]["state"] == "available"
+assert all(p["stages"][stage_id]["state"] == "locked"
+           for stage_id in main_stage_ids[1:])
+assert p["stages"]["P"]["state"] == "locked"
+assert p["current_stage"] == "S0"
 assert v2.next_card(cur, p)["id"] == "M0.P0"
 # Level progression remains monotonic and bounded within each 80-XP band even
 # after the old ten-title ceiling and the full course/review XP maximum.
@@ -797,35 +812,65 @@ assert all(level_samples[index][0] <= level_samples[index + 1][0]
            for index in range(len(level_samples) - 1))
 assert all(0 <= into < needed for _level, _title, into, needed in level_samples)
 assert v2._level(800)[0] == 11 and v2._level(800)[2] == 0
-events = [{"type": "card", "result": "pass", "card_id": card_id,
-           "module_id": "M0", "at": "2026-09-27T00:00:00+00:00"}
-          for card_id in next(module for module in cur["modules"]
-                              if module["id"] == "M0")["card_ids"]]
+def add_stage_completion(events, stage_id):
+    stage = next(row for row in cur["stages"] if row["id"] == stage_id)
+    for card_id in stage["card_ids"]:
+        events.append({
+            "type": "card", "result": "pass", "card_id": card_id,
+            "module_id": card_by_id[card_id]["module_id"],
+            "at": "2026-09-27T00:00:00+00:00",
+        })
+    for card_id in stage["required_review_card_ids"]:
+        events.append({
+            "type": "review", "result": "pass", "review_key": card_id,
+            "review_stage": 1, "module_id": card_by_id[card_id]["module_id"],
+            "at": "2026-09-27T05:00:00+00:00",
+        })
+
+
+events = []
+s0 = next(stage for stage in cur["stages"] if stage["id"] == "S0")
+for card_id in s0["card_ids"]:
+    events.append({"type": "card", "result": "pass", "card_id": card_id,
+                   "module_id": card_by_id[card_id]["module_id"]})
 p = v2.project(cur, events)
-assert p["modules"]["M0"]["state"] == "review_pending"
-assert p["modules"]["M0"]["reviews_done"] == 0
-assert p["modules"]["M0"]["reviews_total"] == 1
-assert p["modules"]["M1"]["state"] == "locked"
-events.append({
-    "type": "review", "result": "pass", "review_key": "M0.06",
-    "review_stage": 1, "module_id": "M0", "at": "2026-09-27T05:00:00+00:00",
-})
+assert p["stages"]["S0"]["state"] == "review_pending"
+assert p["stages"]["S1"]["state"] == "locked"
+for card_id in s0["required_review_card_ids"]:
+    events.append({"type": "review", "result": "pass", "review_key": card_id,
+                   "review_stage": 1, "module_id": card_by_id[card_id]["module_id"]})
 p = v2.project(cur, events)
-assert p["modules"]["M0"]["state"] == "mastered"
-assert p["modules"]["M0"]["reviews_done"] == 1
-assert p["modules"]["M11"]["state"] == "available"
-assert p["modules"]["M1"]["state"] == "locked"
-assert p["modules"]["M2"]["state"] == "locked"
-assert p["modules"]["M3"]["state"] == "locked"
-assert v2.next_card(cur, p)["id"] == "M11.01"
-assert p["xp"] == (len(events) - 1) * 10 + 3 and "first-module" in p["badges"]
-almost = v2.project(cur, events[:-2])
-assert almost["modules"]["M0"]["state"] == "check_ready"
+assert p["stages"]["S0"]["state"] == "mastered"
+assert p["stages"]["S1"]["state"] == "available"
+assert p["current_stage"] == "S1"
+assert v2.next_card(cur, p)["id"] == "M1.01"
+assert "grid-author" in p["badges"]
+
+for stage_id in ("S1", "S2", "S3", "S4", "S5"):
+    add_stage_completion(events, stage_id)
+events_through_s5 = list(events)
+p = v2.project(cur, events)
+assert p["stages"]["S6"]["state"] == "available"
+assert p["stages"]["P"]["state"] == "available"
+assert v2.next_card(cur, p)["id"] == "M5.01", "optional P must not pre-empt S6"
+for stage_id in ("S6", "S7"):
+    add_stage_completion(events, stage_id)
+p = v2.project(cur, events)
+assert p["stages"]["A0"]["state"] == "available"
+assert p["current_stage"] == "A0"
+assert v2.next_card(cur, p)["id"] == "M16.01"
+
+almost_events = []
+for card_id in s0["card_ids"][:-1]:
+    almost_events.append({"type": "card", "result": "pass", "card_id": card_id,
+                          "module_id": card_by_id[card_id]["module_id"]})
+almost = v2.project(cur, almost_events)
+assert almost["stages"]["S0"]["state"] == "check_ready"
 with contextlib.redirect_stdout(io.StringIO()):
     v2.print_tree(cur, almost, compact=True)
 
-# Manual card selection may choose between available branches, but it cannot
-# jump within a module or replay a solved card for secondary daily credit.
+# Manual card selection follows the current stage ordering. It cannot jump to
+# a later stage/card or replay a solved card for secondary daily credit.
 with tempfile.TemporaryDirectory() as tmp:
     cfg = v2.RuntimeConfig(state=tmp, share=str(HERE), editor="nvim", max_tries=3,
                            target=12, cooldown=3600, stamp=str(Path(tmp) / "stamp"),
@@ -833,7 +878,7 @@ with tempfile.TemporaryDirectory() as tmp:
                            hold_open=lambda: None, colours=("", "", "", "", "", ""))
     output = io.StringIO()
     with contextlib.redirect_stdout(output):
-        assert v2.run(cfg, ["--card", "M0.03"]) == 1
+        assert v2.run(cfg, ["--card", "M11.01"]) == 1
     assert "complete M0.P0 first" in output.getvalue()
     v2.append_event(cfg, {"type": "card", "result": "pass", "card_id": "M0.P0",
                           "module_id": "M0"})
@@ -843,14 +888,30 @@ with tempfile.TemporaryDirectory() as tmp:
     with contextlib.redirect_stdout(output):
         assert v2.run(cfg, ["--card", "M0.01"]) == 1
     assert "already complete" in output.getvalue()
-    for event in events:
-        v2.append_event(cfg, event)
-    # M0 mastery opens the next still-authoring module in the explicit chain.
-    assert v2.run(cfg, ["--card", "M11.01"]) == 0
     output = io.StringIO()
     with contextlib.redirect_stdout(output):
-        assert v2.run(cfg, ["--card", "M11.03"]) == 1
-    assert "complete M11.01 first" in output.getvalue()
+        assert v2.run(cfg, ["--card", "M11.01"]) == 1
+    assert "complete M0.YP first" in output.getvalue()
+    output = io.StringIO()
+    with contextlib.redirect_stdout(output):
+        assert v2.run(cfg, ["--card", "M0.03"]) == 1
+    assert "locked by stage A1 prerequisites" in output.getvalue()
+    output = io.StringIO()
+    with contextlib.redirect_stdout(output):
+        assert v2.run(cfg, ["--card", "M10.01"]) == 1
+    assert "locked by stage P prerequisites" in output.getvalue()
+
+with tempfile.TemporaryDirectory() as tmp:
+    cfg = v2.RuntimeConfig(state=tmp, share=str(HERE), editor="nvim", max_tries=3,
+                           target=12, cooldown=3600, stamp=str(Path(tmp) / "stamp"),
+                           run_editor=lambda *_: None, decode_keylog=lambda _: [],
+                           hold_open=lambda: None, colours=("", "", "", "", "", ""))
+    for event in events_through_s5:
+        v2.append_event(cfg, event)
+    # The branch is selectable once S5 is mastered, while automatic scheduling
+    # remains on S6.
+    assert v2.next_card(cur, v2.rebuild(cfg, cur))["id"] == "M5.01"
+    assert v2.run(cfg, ["--card", "M10.01"]) == 0
 
 # Duplicate passes and duplicate review stages do not farm XP.
 assert v2.project(cur, events + [dict(events[0])])["xp"] == p["xp"]
@@ -913,7 +974,7 @@ with tempfile.TemporaryDirectory() as tmp:
         assert first["title"] in text and first["prompt"] in text
         assert "DO THIS" in text
         assert "TARGET" in text and "COMMAND RECIPE" in text
-        assert "PROGRESS  M0 0/14 available" in text and "XP 0" in text
+        assert "PROGRESS  S0 0/21 available  ·  M0 0/14" in text and "XP 0" in text
         assert "WHY THIS EXISTS" in text
         assert first_module["meaning"] in text
         assert first_module["principle"] in text
@@ -962,7 +1023,7 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "Streak extended to 1 day." in rendered
     assert "best 1" in rendered and "1 drill all time" in rendered
     assert "SKILL TREE / MODULE PROGRESS" in rendered
-    assert "M0  Spark loop" in rendered and "1/12" in rendered
+    assert "M0  Spark loop" in rendered and "1/14" in rendered
     assert "XP: 10" in rendered and "today: 1/12 lessons" in rendered
     assert "next: M0.P0" in rendered
     assert v2.project(cur, v2.read_events(cfg))["passed_cards"] == ["M0.01"]
@@ -1616,6 +1677,8 @@ with tempfile.TemporaryDirectory() as tmp:
 for mutator in (
     lambda broken: broken["questions"][0].__setitem__("correct_choice", 4),
     lambda broken: broken["cards"][0].__setitem__("module_id", "M404"),
+    lambda broken: broken["cards"][0].__setitem__("stage_owner", "A7"),
+    lambda broken: broken["stages"][1].__setitem__("prerequisites", []),
     lambda broken: broken["modules"][0]["card_ids"].__setitem__(0, "M0.99"),
     lambda broken: next(card for card in broken["cards"]
                         if card.get("kind") == "transfer").__setitem__(

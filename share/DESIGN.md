@@ -24,16 +24,19 @@ the top-level README. Updated 2026-09-27 for curriculum v2.
 
 ## V2 architecture
 
-The default hourly route is `vim-daily/curriculum@4`: nineteen dependency-linked modules,
-eight stable cards per module, and ten conceptual items per module. The item
-bank includes 190 separately authored visual readings, command/output predictions,
+The default hourly route is `vim-daily/curriculum@4`: twenty project modules
+scheduled through the strict S0-S7 still-art path and then A0-A7 animation path.
+P is an optional proportional branch unlocked by S5 and is not a prerequisite
+for S6. Cards belong to exactly one progression stage even when a project module
+stores work used at more than one point in the journey. The item
+bank includes 370 separately authored visual readings, command/output predictions,
 diagnoses, method comparisons, transfer decisions, and coherence checks. Every
 item has four paired animation-and-Neovim choices with mistake-specific feedback. A module
 contains guided edits, answer-hidden concepts, an independent edit, a
 method-contrast card, a separate transfer artifact, diagnosis, and a mixed
-module check. The prerequisite graph—not lifetime completion count—unlocks new
-branches. M0 opens M1 and M2; later joins require all named prerequisites before
-M9 combines scene composition and motion editing.
+module check. A stage unlocks only after every owned card and every required
+changed-art review reaches review stage 1. Project/module state is a ledger view;
+it does not override stage locks.
 
 `events-v2.jsonl` is authoritative. `progress-v2.json` is rewritten atomically
 from those events and can be deleted/rebuilt without losing evidence. A card
@@ -46,8 +49,8 @@ project cards are complete, due reviews remain runnable without that cadence.
 Explicit `--force` means the next project card, not a review. Review stages are
 capped at the 4h, 1d, 3d, 7d, and 14d intervals.
 The projection awards 10 XP once per unique card and 3 XP once per unique
-review key/stage. Badges derive from evidence milestones, so duplicate ledger
-events cannot farm either XP or unlocks.
+review key/stage. Badges derive from stage evidence milestones, so duplicate
+ledger events cannot farm either XP or unlocks.
 
 Each project card edits the same `strip.txt` as the preceding project card.
 M6 and M7 deliberately share `pyramid-build/strip.txt` across the module
@@ -142,7 +145,7 @@ the bug class that broke drill 2 on 2026-09-14. Regenerate, then re-run
     concepts.json    seven paradigm chapters (prose)
     art.json         49 art excerpts, each with provenance
     curriculum.json  GENERATED legacy set: 46 drills
-    curriculum-v2.json GENERATED project course: 19 modules / 152 cards / 190 questions
+    curriculum-v2.json GENERATED project course: 20 modules / 210 cards / 370 questions
 
 `extract_art.py` re-derives plate entries in art.json and merges them with
 separately ingested entries instead of replacing the whole library. User
@@ -254,7 +257,8 @@ The v2 post-attempt surface is deliberately paged. Feedback page one shows the
 artifact before/after on success or wanted/yours plus the first differing
 column on failure. It also shows the actual-versus-taught keys, `WHY`, concrete
 benefit, `DO / AVOID`, and source. An explicit Enter replaces that page with a
-progress page containing the complete nineteen-module tree, reviews, XP, badges,
+progress page containing the complete S0-S7/A0-A7 stage tree, optional P branch,
+module ledger, reviews, XP, badges,
 streak, best streak, all-time completions, next card, and daily count. A second
 Enter closes a successful popup; failed edits instead offer checkpoint restore
 and retry from the progress page. Concept cards retain the chosen/correct answer
@@ -277,8 +281,8 @@ the statusline or close plugin windows. `VIM_DAILY_CLEAN=1` is the explicit
 fallback route; only that isolated route supplies the tutor statusline, F1
 cheat sheet, and repeated-motion coach. The compact feedback page retains a
 literal `YOU TYPED │ THE RECIPE ASKS FOR` row rather than collapsing it to an
-actual/taught sentence; the progress page compresses nineteen modules to two
-tree rows. At 100×36 and above the fuller prose/table layout is used.
+actual/taught sentence; the progress page compresses the stage path into compact
+rows. Larger viewports may also show the project/module ledger.
 
 Two things the decoder must keep doing:
 
@@ -316,7 +320,7 @@ real nvim, types exactly the documented recipe, and asserts the buffer reaches
 the documented target. All 46/46 passed under both `-u NONE` and the real config
 on 2026-09-27. A drill whose recipe does not produce its target must not ship.
 
-`test_v2.py` validates the prerequisite graph, exact 152/190 counts, matching
+`test_v2.py` validates the strict stage graph, exact 210/370 counts, matching
 choice/feedback completeness, minimum visual substance, generated-artifact equality,
 glyph vocabulary, project continuity, review cadence,
 frame-boundary preview behavior, every executable recipe, runtime method contracts,
@@ -324,11 +328,10 @@ nonduplicated loop seams for M4/M5, the attached bottom-up M6 build, and the com
 46-ID disposition table in `LEGACY_CURRICULUM_DISPOSITION.md`. A separate
 representative surface test checks that the v2 brief preserves the legacy
 lesson's teaching jobs and their content; it does not claim command parity from
-matching headings. The suite renders all 114 edit briefs to enforce the
-guided/hidden boundary and executes both alternatives on all nineteen compare cards.
-All 114/114 primary v2 edit paths plus 38/38 compare paths pass with clean and
-real-config Neovim on revision `.18`; revision `.19` changes the presentation
-contract without changing those recipes. Its automatic failure/retry/debrief
+matching headings. The suite renders every edit brief to enforce the
+guided/hidden boundary and executes all 169 primary recipe-bearing paths.
+Revision `.35` passes 169/169 primary paths in clean Neovim; headed real-config
+acceptance for the new stage rendering is a separate gate. Its automatic failure/retry/debrief
 test additionally enters Visual mode, toggles F1 help, and triggers the
 repeated-motion coach before checking the compact two-column ledger.
 
@@ -338,7 +341,7 @@ render `--if-due` inside `display-popup`. An outer 188×49 tmux terminal capture
 that popup. The test captures and scrolls the teaching brief, captures an
 intentional failed artifact/key replay, advances to unchanged progression,
 retries inside the same popup, captures the successful artifact/key replay,
-advances to the updated nineteen-node tree, module count, XP/badges,
+advances to the updated stage tree, module count, XP/badges,
 daily/streak totals and next lesson, then proves the progress page remains open
 until Enter. Direct `--force` execution is not evidence for this boundary.
 

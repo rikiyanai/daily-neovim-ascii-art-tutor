@@ -35,6 +35,8 @@ M0_CARD_IDS = next(module for module in CURRICULUM["modules"]
                    if module["id"] == "M0")["card_ids"]
 M0_TOTAL = len(M0_CARD_IDS)
 M0_AFTER_FIRST = M0_CARD_IDS[M0_CARD_IDS.index("M0.01") + 1]
+S0_TOTAL = len(next(stage for stage in CURRICULUM["stages"]
+                    if stage["id"] == "S0")["card_ids"])
 
 
 def run(*args, **kwargs):
@@ -239,7 +241,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             "M0.01",
             "DO THIS",
             "NORMAL",
-            "PROGRESS M0 1/%d learning" % M0_TOTAL,
+            "PROGRESS S0 1/%d learning · M0 1/%d" % (S0_TOTAL, M0_TOTAL),
             "XP 10",
             "TARGET",
         ]
@@ -466,7 +468,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         failed_progress_screen = capture_outer(outer_socket, outer_pane)
         failed_progress_flat = " ".join(failed_progress_screen.split())
         failed_progress_required = [
-            "PROGRESS UNCHANGED", "SKILL TREE / MODULE PROGRESS", "M0", "1/%d" % M0_TOTAL,
+            "PROGRESS UNCHANGED", "SKILL TREE / MODULE PROGRESS", "S0", "1/%d" % S0_TOTAL,
             "streak: 1 day", "next: M0.01",
         ]
         missing = [text for text in failed_progress_required if text not in failed_progress_flat]
@@ -594,7 +596,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         progress_screen = capture_outer(outer_socket, outer_pane)
         progress_flat = " ".join(progress_screen.split())
         progress_required = [
-            "PROGRESS AWARDED", "SKILL TREE / MODULE PROGRESS", "M0", "2/%d" % M0_TOTAL,
+            "PROGRESS AWARDED", "SKILL TREE / MODULE PROGRESS", "S0", "2/%d" % S0_TOTAL,
             "streak: 1 day", "next: %s" % M0_AFTER_FIRST,
         ]
         missing = [text for text in progress_required if text not in progress_flat]

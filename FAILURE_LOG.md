@@ -4289,3 +4289,73 @@ the mixed `MASTER_COVERAGE` labels into a truthful enforced S0→S7 then A0→A7
 stage journey rather than relabeling mixed cards; and finish Stone Story archive
 provenance/publication handling without publishing third-party material by
 default.
+
+## VD-37 · 2026-09-29 — mixed stage labels replaced by an enforced S0-S7 → A0-A7 journey
+
+**Observed failure:** revision `.34` attached two or three `master_stages` labels
+to most cards but never projected stage state. Progress and availability were
+computed only from module prerequisites in `share/v2_runtime.py::project()` and
+`next_card()`. A single pass could therefore appear to cover unrelated still and
+animation stages (for example M0 claimed S0+A0 and M11 claimed S0+A3), and the
+tree could not prove the operator's required stills-before-animation order. M10
+was described as an optional branch but appeared before M5 in the default module
+iteration, so it could pre-empt the main route after S5.
+
+**Implemented in revision `.35`:**
+
+- `share/gen_curriculum_v2.py` now emits sixteen main stage records in the exact
+  order `S0..S7,A0..A7`, plus optional P with prerequisite S5. Every one of the
+  210 cards has one `stage_owner`; `master_stages` is exactly that one owner.
+  Stage inventories are derived from the owned cards, not separately maintained
+  counts.
+- `share/v2_runtime.py::project()` now projects stage `done/total`, required
+  review evidence, and state. The next main stage remains locked until every
+  current-stage card passes and every owned `required_before_mastery` review has
+  reached review stage 1. Module state remains a project ledger and no longer
+  authorizes a card independently of its stage.
+- `share/v2_runtime.py::next_card()` always chooses the current main-stage card.
+  P becomes selectable after S5 but cannot pre-empt an available S6-A7 lesson;
+  it is offered automatically only while the main path is waiting on spaced
+  review or after the main path is complete.
+- The popup progress line now names both the authoritative stage and the project
+  module. The compact tree prints all S/A/P stage cells; the full tree prints the
+  stage path first and a separate project/module ledger second. Unlock notices
+  name stages rather than implying that a module label is a mastery level.
+- Stage content ownership is now: M11→S0, M1→S1, M19→S2, M2→S3, M12→S4,
+  M14→S5, M5→S6, M15→S7, M16→A0, the Spark strip→A1, M3+M4→A2,
+  M17→A3, M13+M7→A4, M6→A5, M18→A6, M8+M9→A7, and M10→P.
+  The seven M0 grammar/fixed-grid labs (`P0`, `01`, `YP`, `O`, `SR`, `T`,
+  `SL`) explicitly own S0; the remaining Spark cards own A1. This is a real
+  scheduler split, not a second label on the same completion event.
+
+**New prerequisite defect found by reachable-stage validation:** after moving
+animation modules behind S7, M5.04 and M5.05 required `C`/change-to-end while
+the only visible guides were in later A2 or optional P. New card `M5.C` teaches
+the row-suffix grammar on a three-layer fixed-width still before either hidden
+use. Its manually authored `M5.C.P01` question prints the cloud/ledge/ground
+visual and distinguishes `C` from whole-line deletion, insertion, and one-cell
+`r`. The generator now validates grammar introduction in the order a learner
+can actually reach (S0-S5, optional P, S6-S7, A0-A7), rather than trusting
+module storage order.
+
+**Executable evidence:**
+
+- `python3 share/gen_curriculum_v2.py` writes 20 modules, 210 cards, and 370
+  questions at revision `.35`.
+- `python3 share/test_question_quality.py` passes all 370 manually authored
+  four-choice questions.
+- `python3 share/test_animation_lesson_pack.py` and
+  `python3 share/test_animation_curriculum_integration.py` pass all 12 pack
+  lessons / 24 paired questions.
+- `python3 share/test_v2.py` passes **210/210 lessons and 169/169 primary
+  recipes**. Its projection tests prove: only S0 is initially available; every
+  successor is locked; an all-card S0 without reviews is `review_pending`; S1
+  opens only after all three S0 review gates; P and S6 both open after S5;
+  automatic selection chooses S6; and A0 remains locked until S7 masters.
+
+**Still open; no overall-completion claim:** the new stage rendering still needs
+headed popup proof at 80×24, 100×36, and 188×49. Module `.06` transfer variants
+still need variant-specific manually authored questions before their first art
+can be replaced; remaining invented primary art still needs source-backed
+replacement; and Stone Story archive provenance/publication intake remains
+unresolved. No third-party art was pushed or published in this change.

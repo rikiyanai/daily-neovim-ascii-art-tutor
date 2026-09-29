@@ -1,7 +1,8 @@
 # Curriculum v2 — animation projects, Vim fluency, and durable mastery
 
-Status: the v2 runtime and its 152 cards are clean/real-config automated-test verified,
-2026-09-27; first complete human journey remains acceptance evidence. The
+Status: revision `.35` contains 210 cards and 370 manually authored questions.
+The clean-Neovim suite passes all 169 recipe-bearing paths; headed re-verification
+of the new stage-tree rendering remains separate acceptance evidence. The
 runtime/data owners are `share/v2_runtime.py`,
 `share/gen_curriculum_v2.py`, and generated `share/curriculum-v2.json`. The old
 46-drill path remains available and its state is not migrated destructively.
@@ -53,7 +54,7 @@ refer to its 2026-09-26 state; no existing user edits were reverted to prepare t
 |---|---|---|
 | E01 | Legacy `share/curriculum.json:10-20` has only three tier thresholds, 0/8/16 lifetime passes; legacy `unlocked` at `bin/vim-daily-gate:325-328` checks total passes, not prerequisites. | A learner could unlock later legacy material by repeating unrelated easy drills. V2 supersedes this route with module prerequisites. |
 | E02 | Legacy `bin/vim-daily-gate:331-355` chooses by `passed - failed`; the three-item recency exclusion sorts `last`, which legacy `do_drill` sets only on success (`:723-750`). | A failed legacy drill can reappear after one intervening slot, while repeats remain exact. V2 reviews use item variants and explicit due times. |
-| E03 | Legacy `bin/vim-daily-gate:390-427` defines eight fixed questions only for `grammar` and `modes`; `:879-881` runs them only by explicit `--quiz`; `:469-474` stores best score, total, and last date. | The legacy bank has no animation-reading, interstitial, or unlock role. V2 provides 190 item-level questions and check evidence. |
+| E03 | Legacy `bin/vim-daily-gate:390-427` defines eight fixed questions only for `grammar` and `modes`; `:879-881` runs them only by explicit `--quiz`; `:469-474` stores best score, total, and last date. | The legacy bank has no animation-reading, interstitial, or unlock role. V2 provides 370 item-level questions and check evidence. |
 | E04 | Legacy `bin/vim-daily-gate:499-546` prints the full concept, recipe, and visible target before an edit. | V2 keeps the visible target on every edit. Guided cards also expose the recipe; retrieval/check cards expose a non-key hint while withholding only the exact command answer. |
 | E05 | Legacy `bin/vim-daily-gate:723-750` writes a date-and-drill-specific lesson file and records one drill result. | V2 adds authoritative continuing `strip.txt`, transfer, manifest, checkpoint, and next-card state. |
 | E06 | Legacy `bin/vim-daily-gate:358-383` calls one-pass coverage `concept_mastery`; `:866-903` exposes it in manual export/status. | Legacy evidence remains visible through `--legacy-status`; V2 `--tree` now exposes prerequisite-backed module state. |
@@ -107,56 +108,41 @@ dot and macros have distinct repeat semantics ([repeat help](https://neovim.io/d
 
 ## 4. Progression model
 
-There are two linked branches. An edge means prerequisite, not a mandatory calendar
-delay. The learner can preview any locked node and manually practice it; only earned
-mastery/unlock credit is gated. Completion count alone never unlocks a node.
+The implemented main path is strict: `S0 → S1 → … → S7 → A0 → A1 → … → A7`.
+P is an optional proportional-Shift_JIS branch unlocked by S5; it is never a
+prerequisite for S6. Completion count alone never unlocks a stage.
 
-The implemented module DAG is `M0 → {M1,M2,M11}`, `M2 → M3`,
-`{M1,M3} → M4`, `{M2,M3} → M5`, `M3 → M6 → M7`,
-`{M4,M7} → M8`, `{M5,M8} → M9`, `M1 → M10`,
-`{M1,M11} → M12`, `{M1,M12} → M13`, `{M3,M13} → M14`,
-`{M13,M14} → M15`, `{M14,M15} → M16`, `{M15,M16} → M17`, and
-`{M16,M17} → M18`. The tree prints these named
-requirements, not an inferred previous-module lock.
+Modules are project/storage units, while stages are mastery units. Every card has
+one `stage_owner`; a pass cannot advance both a still and animation stage. A stage
+becomes mastered only when all owned cards pass and every owned
+`required_before_mastery` card has a successful changed-art review at stage 1 or
+higher. Until then the successor remains locked. This is enforced by the runtime
+projection and validated against the actual card inventory.
 
 ```text
-Vim/Neovim                                Animation craft
-V0 safe modes ─→ V1 motion landmarks       A0 read motion ─→ A1 glyph language
-                     ↓                                  ↓
-                 V2 operator/counts       A2 primary pose + shot test
-                     ↓                                  ↓
-                 V3 copy/put/registers    A3 extremes + timing plan
-                     ↓                                  ↓
-              V4 visual/text objects ─────┤ A4 midpoint tween + coherence
-                     ↓                    ↓             ↓
-              V5 dot/macro/ranges ─────────→ A5 holds + offset parts
-                                      both → A6 playback + polish
-                                           → A7 original short animation
+S0 grid/overwrite → S1 stroke runs → S2 hand mirror → S3 block a still
+ → S4 joint heights → S5 variants/palette → S6 layers/seams
+ → S7 texture/ground → A0 plan/key poses → A1 extremes/copy-vary
+ → A2 in-betweens/onion skin → A3 coherent anchors → A4 timing/holds
+ → A5 subtractive build → A6 mirrored return → A7 playback polish
+                              ↘ P proportional Shift_JIS (optional after S5)
 ```
 
-Cross-branch unlocks: V3+A3 permits copying a pose into a new keyframe; V1+V3+A4
-permits surgical tween edits; V4+A4 permits column/layer edits; V5+A5 permits
-repeated holds and batch cleanup; A6 requires a playable equal-height strip.
-
-Node states: `locked → available → learning → check_ready → mastered`. A mastered
-node may also have `review_due`; it does not relock or erase the badge. A failed
+Stage states: `locked → available → learning → check_ready → review_pending → mastered`.
+A failed
 check returns to `learning` with a named misconception/remediation card. `skip`,
 let-through, and forced practice do not award a node. Manual `--drill` remains
 available but cannot bypass the module check.
 
-Mastery rule, v2 proposal: pass the module's executable checkpoint; answer at least
-4 of 5 unseen conceptual items correctly across Vim and animation; pass two short
-key-hidden transfer edits on unfamiliar source art; and leave the persistent strip in
-the required verified state. This evidence accumulates across cards 5-8 rather
-than imposing a seven-part test in one hourly popup. A failed subpart reschedules
-only that subpart with a new variant. A later spaced recall determines `stable`,
-not initial `mastered`. These thresholds are configurable curriculum data and
-should be usability-tested.
+Mastery rule: pass every card owned by the stage, including each module check's
+4-of-5 conceptual threshold and verified artifact, then pass the stage's declared
+key-hidden changed-art reviews. A failed subpart reschedules only that subpart.
+Module completion remains visible, but it cannot override the stage gate.
 
 ## 5. Module sequence and lesson inventory
 
-Implemented content is **19 modules × 8 authored hourly cards = 152 core cards**, plus
-**190 distinct paired conceptual items** (ten per module) and transfer variants. Each card has one
+Implemented content is **20 modules / 210 cards**, plus **370 distinct paired
+conceptual items** and transfer/review variants. Each card has one
 new decision or edit; no popup silently expands into a 45-minute session. A module
 shares one `strip.txt` across its eight cards. The table is the authoring order,
 not a promise that every user sees all cards on consecutive clock hours.

@@ -84,6 +84,34 @@ def validate_curriculum(cur):
     if len(cids) != len(set(cids)) or len(qids) != len(set(qids)):
         raise ValueError("duplicate v2 ids")
     qset = set(qids)
+    main_stages = [*("S%d" % number for number in range(8)),
+                   *("A%d" % number for number in range(8))]
+    if cur.get("main_stage_sequence") != main_stages:
+        raise ValueError("v2 curriculum must gate S0-S7 before A0-A7")
+    stage_ids = [stage.get("id") for stage in cur.get("stages", [])]
+    if stage_ids != [*main_stages, "P"]:
+        raise ValueError("v2 stage inventory must end with optional P")
+    stage_map = {stage["id"]: stage for stage in cur["stages"]}
+    staged_cards = [cid for stage in cur["stages"] for cid in stage.get("card_ids", [])]
+    if len(staged_cards) != len(set(staged_cards)) or set(staged_cards) != set(cids):
+        raise ValueError("every v2 card must belong to exactly one stage")
+    for index, stage_id in enumerate(main_stages):
+        stage = stage_map[stage_id]
+        expected = [] if index == 0 else [main_stages[index - 1]]
+        if (stage.get("prerequisites") != expected or stage.get("optional") is not False
+                or not stage.get("required_review_card_ids")):
+            raise ValueError("invalid main-stage gate at %s" % stage_id)
+    if (stage_map["P"].get("prerequisites") != ["S5"]
+            or stage_map["P"].get("optional") is not True):
+        raise ValueError("P must be an optional branch after S5")
+    card_index = {card["id"]: card for card in cur["cards"]}
+    for stage in cur["stages"]:
+        expected_reviews = [
+            cid for cid in stage["card_ids"]
+            if card_index[cid].get("required_before_mastery")
+        ]
+        if stage.get("required_review_card_ids") != expected_reviews:
+            raise ValueError("stage %s has an invalid spaced-review gate" % stage["id"])
     module_ids = [module["id"] for module in cur["modules"]]
     if len(module_ids) != len(set(module_ids)):
         raise ValueError("duplicate module ids")
@@ -107,10 +135,13 @@ def validate_curriculum(cur):
         if not card.get("lesson_benefit"):
             raise ValueError("card %s is missing its executable lesson benefit" % card["id"])
         for field in ("grammar_families", "grammar_stage", "paired_question_ids",
-                      "question_placement", "master_habits", "master_stages"):
+                      "question_placement", "master_habits", "master_stages",
+                      "stage_owner"):
             if not card.get(field):
                 raise ValueError("card %s is missing grammar-first field %s" % (
                     card["id"], field))
+        if card["stage_owner"] not in stage_map or card["master_stages"] != [card["stage_owner"]]:
+            raise ValueError("card %s has mixed or invalid stage ownership" % card["id"])
         if any(qid not in qset for qid in card.get("paired_question_ids", [])):
             raise ValueError("card %s has a dangling paired question" % card["id"])
         if not card.get("paired_question_ids") and not (
@@ -457,21 +488,54 @@ def project(cur, events):
                 "stage": 0, "next_due": event["next_due"], "module_id": event.get("module_id"),
                 "question_id": event.get("question_id"),
             })
+    stages = {}
+    for stage in cur["stages"]:
+        done = sum(1 for cid in stage["card_ids"] if cid in passed)
+        required_review_ids = stage.get("required_review_card_ids", [])
+        reviews_done = sum(
+            1 for cid in required_review_ids
+            if any(key == cid and review_stage >= 1
+                   for key, review_stage in earned_review_stages)
+        )
+        prerequisites_met = all(stages[p]["state"] == "mastered"
+                                for p in stage.get("prerequisites", []))
+        if done == len(stage["card_ids"]) and reviews_done == len(required_review_ids):
+            state = "mastered"
+        elif done == len(stage["card_ids"]):
+            state = "review_pending"
+        elif not prerequisites_met:
+            state = "locked"
+        elif done == len(stage["card_ids"]) - 1 and stage["card_ids"][-1] not in passed:
+            state = "check_ready"
+        elif done:
+            state = "learning"
+        else:
+            state = "available"
+        stages[stage["id"]] = {
+            "state": state, "done": done, "total": len(stage["card_ids"]),
+            "reviews_done": reviews_done, "reviews_total": len(required_review_ids),
+            "optional": stage.get("optional", False), "title": stage["title"],
+        }
+
     modules = {}
+    card_stages = {card["id"]: card["stage_owner"] for card in cur["cards"]}
     for module in cur["modules"]:
         done = sum(1 for cid in module["card_ids"] if cid in passed)
         required_review_ids = module.get("required_review_card_ids", [])
         reviews_done = sum(
             1 for cid in required_review_ids
-            if any(key == cid and stage >= 1 for key, stage in earned_review_stages)
+            if any(key == cid and review_stage >= 1
+                   for key, review_stage in earned_review_stages)
         )
-        prerequisites_met = all(modules[p]["state"] == "mastered"
-                                for p in module.get("prerequisites", []))
+        incomplete_stage_ids = {
+            card_stages[cid] for cid in module["card_ids"] if cid not in passed
+        }
         if done == len(module["card_ids"]) and reviews_done == len(required_review_ids):
             state = "mastered"
         elif done == len(module["card_ids"]):
             state = "review_pending"
-        elif not prerequisites_met:
+        elif incomplete_stage_ids and all(
+                stages[stage_id]["state"] == "locked" for stage_id in incomplete_stage_ids):
             state = "locked"
         elif done == len(module["card_ids"]) - 1 and module["card_ids"][-1] not in passed:
             state = "check_ready"
@@ -482,13 +546,17 @@ def project(cur, events):
         modules[module["id"]] = {
             "state": state, "done": done, "total": len(module["card_ids"]),
             "reviews_done": reviews_done, "reviews_total": len(required_review_ids),
+            "stage_ids": module.get("stage_ids", []),
         }
+    current_stage = next((stage_id for stage_id in cur["main_stage_sequence"]
+                          if stages[stage_id]["state"] != "mastered"), None)
     out = {
         "schema": "vim-daily/progress@2", "revision": cur["revision"], "passed_cards": sorted(passed),
         "attempts": attempts, "question_attempts": question_attempts, "reviews": reviews,
         "passed_questions": sorted(passed_questions),
         "check_concepts": sorted(check_concepts),
-        "modules": modules, "completed_at": completed_at, "ledger_errors": errors,
+        "stages": stages, "current_stage": current_stage, "modules": modules,
+        "completed_at": completed_at, "ledger_errors": errors,
         "active_remediations": active_remediations,
     }
     badges = []
@@ -496,15 +564,17 @@ def project(cur, events):
         badges.append("first-step")
     if any(cid.endswith(".06") for cid in passed):
         badges.append("transfer")
-    if modules["M0"]["state"] == "mastered":
-        badges.append("first-module")
-    if modules["M4"]["state"] == "mastered":
-        badges.append("midpoint-tween")
-    if modules["M7"]["state"] == "mastered":
-        badges.append("playable-strip")
-    if modules["M9"]["state"] == "mastered":
+    if stages["S0"]["state"] == "mastered":
+        badges.append("grid-author")
+    if stages["S7"]["state"] == "mastered":
+        badges.append("still-artist")
+    if stages["A2"]["state"] == "mastered":
+        badges.append("inbetweener")
+    if stages["A4"]["state"] == "mastered":
+        badges.append("timing-editor")
+    if stages["A7"]["state"] == "mastered":
         badges.append("animator")
-    if modules.get("M10", {}).get("state") == "mastered":
+    if stages["P"]["state"] == "mastered":
         badges.append("corpus-reader")
     out["xp"] = 10 * len(passed) + 3 * len(earned_review_stages)
     out["badges"] = badges
@@ -548,13 +618,23 @@ def _due(iso):
 
 def next_card(cur, progress):
     passed = set(progress["passed_cards"])
-    for module in cur["modules"]:
-        cell = progress["modules"][module["id"]]
-        if cell["state"] == "locked":
-            continue
-        for cid in module["card_ids"]:
+    card_map = {card["id"]: card for card in cur["cards"]}
+    current = progress.get("current_stage")
+    if current and progress["stages"][current]["state"] not in {
+            "locked", "review_pending", "mastered"}:
+        stage = next(row for row in cur["stages"] if row["id"] == current)
+        for cid in stage["card_ids"]:
             if cid not in passed:
-                return next(c for c in cur["cards"] if c["id"] == cid)
+                return card_map[cid]
+    # The proportional course is a non-blocking branch.  Offer it while the
+    # main path is waiting on spaced retrieval, or after the main path ends;
+    # never let it pre-empt an available S/A lesson.
+    proportional = progress["stages"]["P"]
+    if proportional["state"] not in {"locked", "review_pending", "mastered"}:
+        stage = next(row for row in cur["stages"] if row["id"] == "P")
+        for cid in stage["card_ids"]:
+            if cid not in passed:
+                return card_map[cid]
     return None
 
 
@@ -1258,11 +1338,14 @@ def _answer_breakdown(card, width=None):
 
 def _progress_line(cfg, progress, card):
     cell = progress["modules"][card["module_id"]]
+    stage_id = card["stage_owner"]
+    stage = progress["stages"][stage_id]
     streak, best, total = _legacy_streak(cfg.state)
     flame = " 🔥" if streak >= 3 else ""
     level, title, into, needed = _level(progress["xp"])
-    return ("PROGRESS  %s %d/%d %s  ·  XP %d  ·  LEVEL %d %s %d/%d  ·  today %d/%d  ·  streak %d day%s%s  ·  best %d  ·  %d drill%s all time" % (
-        card["module_id"], cell["done"], cell["total"], cell["state"], progress["xp"], level, title, into, needed,
+    return ("PROGRESS  %s %d/%d %s  ·  %s %d/%d  ·  XP %d  ·  LEVEL %d %s %d/%d  ·  today %d/%d  ·  streak %d day%s%s  ·  best %d  ·  %d drill%s all time" % (
+        stage_id, stage["done"], stage["total"], stage["state"],
+        card["module_id"], cell["done"], cell["total"], progress["xp"], level, title, into, needed,
         _legacy_today(cfg.state), cfg.target, streak, "" if streak == 1 else "s",
         flame, best, total, "" if total == 1 else "s"))
 
@@ -2326,7 +2409,7 @@ def progress_full_rows(cur):
     VD-11: a fixed 28-row threshold let the 14-module tree scroll the page's
     PROGRESS header off a 100x36 popup.
     """
-    return len(cur["modules"]) + 24
+    return len(cur["stages"]) + len(cur["modules"]) + 28
 
 
 def _post_progress(cfg, cur, card, progress, *, completed=True):
@@ -2342,7 +2425,7 @@ def _post_progress(cfg, cur, card, progress, *, completed=True):
              and shutil.get_terminal_size((80, 24)).lines < progress_full_rows(cur))
     print("%s%s%s  ·  %s  ·  %s" % (colour, label, off, card["id"], card["title"]))
     print("\n%sSKILL TREE / MODULE PROGRESS%s%s" % (
-        bold, off, " · A craft / V editor" if ultra else ""))
+        bold, off, " · S stills → A animation · P optional" if ultra else ""))
     print_tree(cur, progress, cfg, compact=ultra)
     if ultra:
         module = next(m for m in cur["modules"] if m["id"] == card["module_id"])
@@ -2419,9 +2502,9 @@ def _complete(cfg, cur, card, *, question_id=None, extra=None, replay=None):
             best_streak, all_time, "" if all_time == 1 else "s", off))
     progress = rebuild(cfg, cur)
     progress["new_unlocks"] = [
-        module["id"] for module in cur["modules"]
-        if before_progress["modules"][module["id"]]["state"] == "locked"
-        and progress["modules"][module["id"]]["state"] != "locked"
+        stage["id"] for stage in cur["stages"]
+        if before_progress["stages"][stage["id"]]["state"] == "locked"
+        and progress["stages"][stage["id"]]["state"] != "locked"
     ]
     cell = progress["modules"][card["module_id"]]
     print("\n✓ %s complete — %s %d/%d (%s)" % (
@@ -2430,7 +2513,9 @@ def _complete(cfg, cur, card, *, question_id=None, extra=None, replay=None):
     if nxt:
         print("next: %s  %s" % (nxt["id"], nxt["title"]))
     else:
-        print("all %d modules mastered" % len(cur["modules"]))
+        current = progress.get("current_stage")
+        print("%s" % ("stage %s is waiting on spaced review" % current
+                       if current else "main S0-A7 path mastered"))
     _post_lesson(cfg, cur, card, progress, replay)
     if cfg.post_rendered:
         cfg.post_rendered()
@@ -3052,17 +3137,17 @@ def _module_card_map(cur, progress, module_id):
 
 
 def print_tree(cur, progress, cfg=None, *, compact=False):
+    marks = {"locked": "·", "available": "○", "learning": "◐",
+             "check_ready": "◆", "review_pending": "↻", "mastered": "✓"}
     if compact:
-        marks = {"locked": "·", "available": "○", "learning": "◐",
-                 "check_ready": "◆", "review_pending": "↻", "mastered": "✓"}
         nodes = []
-        for module in cur["modules"]:
-            cell = progress["modules"][module["id"]]
+        for stage in cur["stages"]:
+            cell = progress["stages"][stage["id"]]
             nodes.append("%s%s %d/%d" % (
-                marks[cell["state"]], module["id"], cell["done"], cell["total"]))
+                marks[cell["state"]], stage["id"], cell["done"], cell["total"]))
         print("STATE  ○ available · locked ◐ learning ◆ check-ready ↻ review-pending ✓ mastered")
-        for start in range(0, len(nodes), 5):
-            print(("TREE  " if start == 0 else "      ") + " | ".join(nodes[start:start + 5]))
+        for start in range(0, len(nodes), 6):
+            print(("STAGES  " if start == 0 else "        ") + " | ".join(nodes[start:start + 6]))
         due = sum(1 for r in progress["reviews"].values() if _due(r.get("next_due")))
         level, title, into, needed = _level(progress["xp"])
         print("XP %d · LEVEL %d %s %d/%d · reviews %d · badges %d" % (
@@ -3077,19 +3162,28 @@ def print_tree(cur, progress, cfg=None, *, compact=False):
             flame = " 🔥" if streak >= 3 else ""
             print("%sstreak: %d day%s%s · best %d · all-time %d%s" % (
                 bold, streak, "" if streak == 1 else "s", flame, best, total, off))
+        current = progress.get("current_stage") or "complete"
         nxt = next_card(cur, progress)
-        print("next: %s" % (nxt["id"] if nxt else "course complete"))
+        print("current stage: %s · next: %s" % (
+            current, nxt["id"] if nxt else "spaced review or course complete"))
         return
     print("Neovim × ASCII animation skill tree")
-    print("tracks: A = ASCII craft level; V = Neovim editing level")
+    print("main path: S0 → S7 still authoring, then A0 → A7 animation")
+    print("P is optional and unlocks after S5; it never blocks the main path")
+    for stage in cur["stages"]:
+        cell = progress["stages"][stage["id"]]
+        requires = ",".join(stage.get("prerequisites", [])) or "start"
+        branch = "optional" if stage.get("optional") else stage["track"]
+        print("%s %-2s %-29s %d/%d  %-14s [%s] requires %s" % (
+            marks[cell["state"]], stage["id"], stage["title"], cell["done"],
+            cell["total"], cell["state"], branch, requires))
+    print("\nProject/module ledger")
     for module in cur["modules"]:
         cell = progress["modules"][module["id"]]
-        marks = {"locked": "·", "available": "○", "learning": "◐",
-                 "check_ready": "◆", "review_pending": "↻", "mastered": "✓"}
-        requires = ",".join(module.get("prerequisites", [])) or "start"
-        print("%s %-3s %-26s %d/%d  %-14s [%s] requires %s" % (
+        owners = ",".join(module.get("stage_ids", []))
+        print("%s %-3s %-26s %d/%d  %-14s [%s] stages %s" % (
             marks[cell["state"]], module["id"], module["title"], cell["done"], cell["total"],
-            cell["state"], module["node"], requires))
+            cell["state"], module["node"], owners))
     due = sum(1 for r in progress["reviews"].values() if _due(r.get("next_due")))
     print("reviews due: %d   ledger errors: %d" % (due, progress["ledger_errors"]))
     level, title, into, needed = _level(progress["xp"])
@@ -3108,7 +3202,9 @@ def print_tree(cur, progress, cfg=None, *, compact=False):
         print("%sstreak: %d day%s%s   best: %d   all-time completions: %d%s" % (
             bold, streak, "" if streak == 1 else "s", flame, best, total, off))
     nxt = next_card(cur, progress)
-    print("next: %s" % ((nxt["id"] + " " + nxt["title"]) if nxt else "course complete"))
+    print("current stage: %s" % (progress.get("current_stage") or "main path complete"))
+    print("next: %s" % ((nxt["id"] + " " + nxt["title"])
+                        if nxt else "spaced review or course complete"))
 
 
 def export_progress(cur, progress):
@@ -3201,19 +3297,20 @@ def run(cfg, argv, *, force=False):
             print("no such v2 card: %s" % wanted)
             return 1
         if mode == "--card":
-            state = progress["modules"][card["module_id"]]["state"]
+            stage_id = card["stage_owner"]
+            state = progress["stages"][stage_id]["state"]
             if state == "locked":
-                print("%s is locked by its module prerequisites" % wanted)
+                print("%s is locked by stage %s prerequisites" % (wanted, stage_id))
                 return 1
             if wanted in set(progress["passed_cards"]):
                 print("%s is already complete; use the result-page repeat control for uncredited practice" % wanted)
                 return 1
-            module = _module_for_card(cur, card)
-            module_next = next((cid for cid in module["card_ids"]
-                                if cid not in set(progress["passed_cards"])), None)
-            if wanted != module_next:
-                print("%s is not the current card for %s; complete %s first" % (
-                    wanted, module["id"], module_next or "the module"))
+            stage = next(row for row in cur["stages"] if row["id"] == stage_id)
+            stage_next = next((cid for cid in stage["card_ids"]
+                               if cid not in set(progress["passed_cards"])), None)
+            if wanted != stage_next:
+                print("%s is not the current card for stage %s; complete %s first" % (
+                    wanted, stage_id, stage_next or "the stage"))
                 return 1
         force = True
     elif mode == "--practice-review":

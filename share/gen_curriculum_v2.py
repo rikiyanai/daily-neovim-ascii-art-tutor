@@ -399,7 +399,7 @@ def require_method(label, any_of=None, max_tokens=None, all_of=None,
 
 MODULES = [
     {
-        "id": "M0", "title": "Spark loop", "node": "A0/V0", "project": "spark-loop",
+        "id": "M0", "title": "Spark loop", "node": "A1/V0", "project": "spark-loop",
         "skill": "modes, whole-frame copying, and readable change", "frame_rows": 3,
         "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
         "meaning": "a registered three-row spark brightens into a wider flare, holds, then settles",
@@ -510,7 +510,7 @@ MODULES = [
         },
     },
     {
-        "id": "M1", "title": "Contour run", "node": "A1/V1", "project": "line-run",
+        "id": "M1", "title": "Contour run", "node": "S1/V1", "project": "line-run",
         "skill": "glyph geometry, shallow curves, and precise landmarks", "frame_rows": 3,
         "source_ref": "ascii-art-authoring §§4.4,4.7; Neovim tutor 2.1,2.4,4.2",
         "meaning": "an anchored shallow contour rises and falls without moving its endpoint",
@@ -582,7 +582,7 @@ MODULES = [
         ),
     },
     {
-        "id": "M2", "title": "Face focus", "node": "A1/V2", "project": "shape-edit",
+        "id": "M2", "title": "Face focus", "node": "S3/V2", "project": "shape-edit",
         "skill": "operator/motion grammar inside a stable contour", "frame_rows": 4,
         "labels_steps": [1],
         "source_ref": "ascii-art-authoring §§2,4.6; Neovim tutor 2.1-3.4",
@@ -738,7 +738,7 @@ MODULES = [
         ),
     },
     {
-        "id": "M4", "title": "Rotation tween", "node": "A3/V4", "project": "rotation-tween",
+        "id": "M4", "title": "Rotation tween", "node": "A2/V4", "project": "rotation-tween",
         "skill": "multi-row extremes, midpoint, and stable pivot", "frame_rows": 3,
         "source_ref": "ascii-art-authoring §§4.4,9f-9g; P2 00:37:34; Neovim help visual-block, :copy",
         "meaning": "a two-cell prop rotates around a registered body pivot through a vertical midpoint",
@@ -863,7 +863,7 @@ MODULES = [
         ),
     },
     {
-        "id": "M5", "title": "Layered scene", "node": "A4/V5", "project": "layered-scene",
+        "id": "M5", "title": "Layered scene", "node": "S6/V5", "project": "layered-scene",
         "skill": "foreground, background, and negative-space seams", "frame_rows": 7,
         "source_ref": "ascii-art-authoring §§3,11; Neovim help visual-line, /, :copy",
         "meaning": "a swinging foreground blade stays separate from a textured background in every frame",
@@ -1056,7 +1056,7 @@ MODULES = [
         ),
     },
     {
-        "id": "M7", "title": "Timed build", "node": "A6/V7", "project": "timed-pyramid-build",
+        "id": "M7", "title": "Timed build", "node": "A4/V7", "project": "timed-pyramid-build",
         "skill": "holds, dot repeat, macro, and scoped polish", "frame_rows": 5,
         "source_ref": "ascii-art-authoring §10 timing; Neovim help q, @, ., :substitute",
         "meaning": "the five-row build pauses before completion and removes an accidental trailing duplicate",
@@ -1231,7 +1231,7 @@ MODULES = [
         ),
     },
     {
-        "id": "M9", "title": "Original bounce capstone", "node": "A8/V9", "project": "original-micro",
+        "id": "M9", "title": "Original bounce capstone", "node": "A7/V9", "project": "original-micro",
         "skill": "plan, keyframe, tween, preview, and revise", "frame_rows": 3,
         "source_ref": "ascii-art-authoring §§9-10; all mastered Neovim nodes",
         "meaning": "an original three-row ball falls, squashes on a registered ground, rebounds with overshoot, then settles through the loop seam",
@@ -1307,7 +1307,7 @@ MODULES = [
         ),
     },
     {
-        "id": "M10", "title": "SJIS puff tween", "node": "P1/V10", "project": "sjis-puff-tween",
+        "id": "M10", "title": "SJIS puff tween", "node": "P/V10", "project": "sjis-puff-tween",
         "skill": "proportional contour motion, occlusion stacks, bounded hatching, and true-metric review",
         "frame_rows": 3, "medium": "proportional-sjis",
         "phase_titles": {3: "Read the proportional motion", 7: "Diagnose the proportional motion"},
@@ -1389,7 +1389,7 @@ MODULES = [
         ),
     },
     {
-        "id": "M11", "title": "Fixed-width redraw", "node": "A9/V11", "project": "redraw-lab",
+        "id": "M11", "title": "Fixed-width redraw", "node": "S0/V11", "project": "redraw-lab",
         "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
         "frame_rows": 3,
         "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
@@ -1532,7 +1532,7 @@ MODULES = [
         ),
     },
     {
-        "id": "M12", "title": "Joint sweep", "node": "S2/V12", "project": "mirror-sweep",
+        "id": "M12", "title": "Joint sweep", "node": "S4/V12", "project": "mirror-sweep",
         "skill": "staggered bilateral accents with till motions and repeated character searches",
         "frame_rows": 3,
         "source_ref": "ascii-art-authoring §10 stagger and drag; Neovim help f, t, ;, comma",
@@ -1680,7 +1680,7 @@ MODULES = [
         ),
     },
     {
-        "id": "M13", "title": "Texture pulse", "node": "S3/V13", "project": "texture-pulse",
+        "id": "M13", "title": "Texture pulse", "node": "A4/V13", "project": "texture-pulse",
         "skill": "WORD landmarks across separated texture clusters and a travelling material accent",
         "frame_rows": 3,
         "source_ref": "ascii-art-authoring §§5,10; Neovim help WORD, W, B, E",
@@ -2862,38 +2862,49 @@ for _edit in [*_m17["steps"], _m17["transfer"], _m17["transfer_alt"]]:
 KINDS = {1: "guided_edit", 2: "guided_edit", 3: "concept", 4: "independent_edit",
          5: "compare_methods", 6: "transfer", 7: "concept", 8: "module_check"}
 
-PREREQUISITES = {
-    "M0": [],
-    "M11": ["M0"],
-    "M1": ["M11"],
-    "M19": ["M1"],
-    "M2": ["M19"],
-    "M12": ["M2"],
-    "M13": ["M12"],
-    "M14": ["M13"],
-    "M5": ["M14"],
-    "M10": ["M14"],
-    "M15": ["M5"],
-    "M16": ["M15"],
-    "M3": ["M16"],
-    "M4": ["M3"],
-    "M17": ["M4"],
-    "M7": ["M17"],
-    "M6": ["M7"],
-    "M18": ["M6"],
-    "M8": ["M18"],
-    "M9": ["M8"],
-}
+PREREQUISITES = {module["id"]: [] for module in MODULES}
 
-# Generated order is the learner's topological journey, not numeric id order.
-# It keeps the proportional branch after S5 and every animation module after
-# the still-authoring sequence currently represented by M0/M11/M1/M19/M2/
-# M12/M13/M14/M5/M15.  Numeric ids remain stable for existing ledgers.
+# Modules are storage/project units.  Stages are the learner's actual gated
+# journey.  Keeping those concepts separate lets the S0 command primer live in
+# M0 without forcing the Spark animation project to precede the still course.
 MODULE_SEQUENCE = [
-    "M0", "M11", "M1", "M19", "M2", "M12", "M13", "M14", "M10",
-    "M5", "M15", "M16", "M3", "M4", "M17", "M7", "M6", "M18",
+    "M0", "M11", "M1", "M19", "M2", "M12", "M14", "M10", "M5",
+    "M15", "M16", "M3", "M4", "M17", "M13", "M7", "M6", "M18",
     "M8", "M9",
 ]
+
+MAIN_STAGE_SEQUENCE = [
+    *(f"S{number}" for number in range(8)),
+    *(f"A{number}" for number in range(8)),
+]
+
+STAGE_TITLES = {
+    "S0": "Grid and overwrite", "S1": "Stroke runs", "S2": "Hand mirroring",
+    "S3": "Block a still", "S4": "Joint heights", "S5": "Variants and palette",
+    "S6": "Layers and seams", "S7": "Texture and ground",
+    "A0": "Plan and key poses", "A1": "Extremes and copy-vary",
+    "A2": "In-betweens and onion skin", "A3": "Coherent anchors",
+    "A4": "Timing and holds", "A5": "Subtractive build",
+    "A6": "Mirrored return", "A7": "Playback polish",
+    "P": "Proportional Shift_JIS branch",
+}
+
+PRIMARY_STAGE_BY_MODULE = {
+    "M11": "S0", "M1": "S1", "M19": "S2", "M2": "S3",
+    "M12": "S4", "M14": "S5", "M5": "S6", "M15": "S7",
+    "M16": "A0", "M0": "A1", "M3": "A2", "M4": "A2",
+    "M17": "A3", "M13": "A4", "M7": "A4", "M6": "A5",
+    "M18": "A6", "M8": "A7", "M9": "A7", "M10": "P",
+}
+
+# These are still-authoring command labs, not playback lessons.  They teach
+# the grammar later stages rely on using one still or a non-playing working
+# copy; the remaining M0 cards own A1 and form the first animation strip.
+STAGE_OWNER_OVERRIDES = {
+    card_id: "S0" for card_id in (
+        "M0.P0", "M0.01", "M0.YP", "M0.O", "M0.SR", "M0.T", "M0.SL",
+    )
+}
 
 FIRST_READING_DISTRACTORS = {
     "M0": [
@@ -4032,25 +4043,25 @@ WHY_SPECS = {
 
 
 MASTER_COVERAGE = {
-    "M0": (["H1", "H3"], ["S0", "A0"]),
-    "M1": (["H2"], ["S1", "A1"]),
-    "M2": (["H1", "H2"], ["S3", "A1"]),
-    "M3": (["H3"], ["S2", "A2"]),
-    "M4": (["H2", "H4", "H7"], ["S4", "A2"]),
-    "M5": (["H3", "H4", "H7"], ["S6", "A4"]),
+    "M0": (["H1", "H3"], ["A1"]),
+    "M1": (["H2"], ["S1"]),
+    "M2": (["H1", "H2"], ["S3"]),
+    "M3": (["H3"], ["A2"]),
+    "M4": (["H2", "H4", "H7"], ["A2"]),
+    "M5": (["H3", "H4", "H7"], ["S6"]),
     "M6": (["H3", "H9"], ["A5"]),
-    "M7": (["H5"], ["A4", "A6"]),
-    "M8": (["H2", "H8"], ["A4", "A7"]),
-    "M9": (["H1", "H3", "H9"], ["A0", "A4", "A7"]),
-    "M10": (["H2"], ["S5", "P"]),
-    "M11": (["H1", "H4", "H5"], ["S0", "A3"]),
-    "M12": (["H2", "H5"], ["S1", "A4"]),
-    "M13": (["H2", "H5"], ["S2", "A4"]),
-    "M14": (["H3", "H6", "H9"], ["S5", "A1"]),
-    "M15": (["H4", "H8"], ["S7", "A5"]),
+    "M7": (["H5"], ["A4"]),
+    "M8": (["H2", "H8"], ["A7"]),
+    "M9": (["H1", "H3", "H9"], ["A7"]),
+    "M10": (["H2"], ["P"]),
+    "M11": (["H1", "H4", "H5"], ["S0"]),
+    "M12": (["H2", "H5"], ["S4"]),
+    "M13": (["H2", "H5"], ["A4"]),
+    "M14": (["H3", "H6", "H9"], ["S5"]),
+    "M15": (["H4", "H8"], ["S7"]),
     "M16": (["H3", "H9"], ["A0"]),
-    "M17": (["H2", "H5"], ["A3", "A7"]),
-    "M18": (["H1", "H3", "H9"], ["A6", "A7"]),
+    "M17": (["H2", "H5"], ["A3"]),
+    "M18": (["H1", "H3", "H9"], ["A6"]),
     "M19": (["H1", "H2", "H3"], ["S2"]),
 }
 
@@ -4696,6 +4707,24 @@ def guided_bridge_cards(module):
              ["<C-v>2j", "select that exact column through three rows"],
              ["r|", "replace every selected cell in place"]],
             "visual-scope", 3.5)))
+    elif mid == "M5":
+        change_tail = bridge(
+            "C", "Redraw one layer tail without moving its seam",
+            "On the middle layer only, change the two dotted tail cells to dashes and retype its closing rail. Preserve the cloud and ground rows byte-for-byte.",
+            ["| .:::. |", "| /___..|", "|_/_____|"],
+            ["| .:::. |", "| /___--|", "|_/_____|"],
+            "2G0f.C--|<Esc>",
+            [["2G0f.", "land on the first cell of the layer tail"],
+             ["C", "change from that cell through the row end"],
+             ["--|<Esc>", "redraw the two tail cells and the closing rail at the same width"]],
+            "change-to-end", 3.5,
+        )
+        # M5.04/M5.05 are the hidden changed-art retrieval for this family;
+        # do not create synthetic border-swap reviews for the guided lab.
+        change_tail.pop("review_variants", None)
+        change_tail.pop("review_source_card_id", None)
+        change_tail.pop("review_method_family", None)
+        rows.append(("M5.04", change_tail))
     elif mid == "M6":
         rows.extend([
             ("M6.04", bridge(
@@ -5885,6 +5914,18 @@ def build():
             module_cards = expanded
         # VD-29: real Stone Story frames replace same-subject "changed art".
         stone_story_variants.apply(module_cards)
+        for card in module_cards:
+            owner = STAGE_OWNER_OVERRIDES.get(
+                card["id"], PRIMARY_STAGE_BY_MODULE[module["id"]])
+            card["stage_owner"] = owner
+            # One card supplies evidence to one progression stage.  The old
+            # mixed labels made a single pass appear to advance unrelated
+            # still and animation stages simultaneously.
+            card["master_stages"] = [owner]
+        stage_ids = []
+        for card in module_cards:
+            if card["stage_owner"] not in stage_ids:
+                stage_ids.append(card["stage_owner"])
         modules.append({
             "id": module["id"], "title": module["title"], "node": module["node"],
             "project_id": module["project"], "skill": module["skill"],
@@ -5896,6 +5937,7 @@ def build():
             "scaled": module["scaled"], "source_ref": module["source_ref"],
             "medium": module.get("medium", "monospace"),
             "prerequisites": PREREQUISITES[module["id"]],
+            "stage_ids": stage_ids,
             "card_ids": [card["id"] for card in module_cards],
             "required_review_card_ids": [
                 card["id"] for card in module_cards
@@ -6031,10 +6073,33 @@ def build():
     for question_id, authored in authored_questions.items():
         question_map[question_id].update(authored)
         question_map[question_id]["authorship"] = "manual"
+
+    stage_order = [*MAIN_STAGE_SEQUENCE, "P"]
+    stages = []
+    for index, stage_id in enumerate(stage_order):
+        stage_cards = [card for card in cards if card["stage_owner"] == stage_id]
+        prerequisites = ([MAIN_STAGE_SEQUENCE[index - 1]]
+                         if stage_id in MAIN_STAGE_SEQUENCE and index else [])
+        if stage_id == "P":
+            prerequisites = ["S5"]
+        stages.append({
+            "id": stage_id,
+            "title": STAGE_TITLES[stage_id],
+            "track": ("still" if stage_id.startswith("S") else
+                      "animation" if stage_id.startswith("A") else "optional"),
+            "optional": stage_id == "P",
+            "prerequisites": prerequisites,
+            "card_ids": [card["id"] for card in stage_cards],
+            "required_review_card_ids": [
+                card["id"] for card in stage_cards
+                if card.get("required_before_mastery")
+            ],
+        })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.34",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.35",
         "review_intervals_hours": [4, 24, 72, 168, 336],
-        "modules": modules, "cards": cards, "questions": questions,
+        "main_stage_sequence": MAIN_STAGE_SEQUENCE,
+        "stages": stages, "modules": modules, "cards": cards, "questions": questions,
         "animation_lesson_pack": animation_lessons,
         "animation_lesson_pack_contract": {
             "source": "share/animation_lesson_pack.md",
@@ -6059,6 +6124,63 @@ def validate(cur):
     errors = []
     modules, cards, questions = cur["modules"], cur["cards"], cur["questions"]
     module_map = {module["id"]: module for module in modules}
+    stage_ids = [stage.get("id") for stage in cur.get("stages", [])]
+    expected_stage_ids = [*MAIN_STAGE_SEQUENCE, "P"]
+    if cur.get("main_stage_sequence") != MAIN_STAGE_SEQUENCE:
+        errors.append("main stage sequence must be exactly S0-S7 then A0-A7")
+    if stage_ids != expected_stage_ids:
+        errors.append("stage records must be S0-S7, A0-A7, then optional P")
+    stage_map = {stage.get("id"): stage for stage in cur.get("stages", [])}
+    all_stage_cards = []
+    for index, stage_id in enumerate(MAIN_STAGE_SEQUENCE):
+        stage = stage_map.get(stage_id, {})
+        expected_prerequisites = [] if index == 0 else [MAIN_STAGE_SEQUENCE[index - 1]]
+        if stage.get("prerequisites") != expected_prerequisites:
+            errors.append(f"{stage_id}: stage prerequisite is not the prior main stage")
+        if stage.get("optional") is not False or stage.get("track") not in {
+                "still", "animation"}:
+            errors.append(f"{stage_id}: main stage metadata is invalid")
+        if not stage.get("card_ids") or not stage.get("required_review_card_ids"):
+            errors.append(f"{stage_id}: needs executable cards and a spaced-review gate")
+        all_stage_cards.extend(stage.get("card_ids", []))
+    proportional = stage_map.get("P", {})
+    if (proportional.get("prerequisites") != ["S5"]
+            or proportional.get("optional") is not True
+            or proportional.get("track") != "optional"):
+        errors.append("P must be an optional branch unlocked by S5")
+    all_stage_cards.extend(proportional.get("card_ids", []))
+    card_ids = [card["id"] for card in cards]
+    if len(all_stage_cards) != len(set(all_stage_cards)) or set(all_stage_cards) != set(card_ids):
+        errors.append("every card must belong to exactly one progression stage")
+    for card in cards:
+        owner = card.get("stage_owner")
+        if owner not in stage_map or card.get("master_stages") != [owner]:
+            errors.append(f"{card['id']}: stage ownership is absent or still mixed")
+    for stage in cur.get("stages", []):
+        expected_reviews = [
+            card["id"] for card in cards
+            if card.get("stage_owner") == stage.get("id")
+            and card.get("required_before_mastery")
+        ]
+        if stage.get("required_review_card_ids") != expected_reviews:
+            errors.append(f"{stage.get('id')}: spaced-review gate does not match owned cards")
+    # Validate the order learners can actually encounter, not the generator's
+    # module-storage order.  P branches after S5; no hidden command may depend
+    # on a guide trapped in a later stage.
+    reachable_stage_order = [*MAIN_STAGE_SEQUENCE[:6], "P", *MAIN_STAGE_SEQUENCE[6:]]
+    first_guided_by_stage = {}
+    for stage_id in reachable_stage_order:
+        for card in cards:
+            if card.get("stage_owner") != stage_id:
+                continue
+            if card.get("grammar_stage") == "guided":
+                for family in card.get("grammar_families", []):
+                    first_guided_by_stage.setdefault(family, card["id"])
+            elif card.get("grammar_stage") == "hidden":
+                for family in card.get("grammar_families", []):
+                    if family not in first_guided_by_stage:
+                        errors.append(
+                            f"{card['id']}: stage path hides {family} before guided performance")
     animation_lessons = cur.get("animation_lesson_pack", [])
     animation_contract = cur.get("animation_lesson_pack_contract", {})
     expected_animation_ids = [f"AL{number:02d}" for number in range(1, 13)]
@@ -6299,8 +6421,8 @@ def validate(cur):
         if len(set(q["choices"])) != 4:
             errors.append(f"{q['id']}: all four answer choices must be distinct")
     nodes = [module["node"] for module in modules]
-    if len(nodes) != len(set(nodes)) or "A3/V4" not in nodes:
-        errors.append("skill-tree nodes must be unique and the A3 bridge must be assigned")
+    if len(nodes) != len(set(nodes)) or not any(node.startswith("A3/") for node in nodes):
+        errors.append("skill-tree nodes must be unique and the A3 stage must be assigned")
     for module in modules:
         for field in ("meaning", "first_reading", "principle", "defect", "basic", "scaled", "source_ref"):
             if not module.get(field): errors.append(f"{module['id']}: missing teaching field {field}")

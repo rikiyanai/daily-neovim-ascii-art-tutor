@@ -93,25 +93,29 @@ def send_spec(socket, pane, spec):
 
 
 def seed(root, passed, *, artifact_card=None, due_review=False, progress_to=None,
-         failed_card=None, failed_attempts=0):
+         target_card=None, failed_card=None, failed_attempts=0):
     state = root / "state" / "vim-daily"
     state.mkdir(parents=True)
     rows = []
-    m0_ids = next(module for module in CUR["modules"] if module["id"] == "M0")["card_ids"]
-    seed_ids = list(m0_ids[:passed])
-    if progress_to:
+    s0_ids = next(stage for stage in CUR["stages"] if stage["id"] == "S0")["card_ids"]
+    seed_ids = list(s0_ids[:passed])
+    target = progress_to or target_card
+    if target:
+        if target not in CARDS:
+            raise AssertionError("unknown progress target %s" % target)
+        owner = CARDS[target]["stage_owner"]
+        main = CUR["main_stage_sequence"]
+        stage_ids = ([*main[:main.index(owner)], owner] if owner in main else
+                     [*main[:main.index("S5") + 1], "P"])
         seed_ids = []
-        found = False
-        for module in CUR["modules"]:
-            for candidate in module["card_ids"]:
-                if candidate == progress_to:
-                    found = True
+        for stage_id in stage_ids:
+            stage = next(row for row in CUR["stages"] if row["id"] == stage_id)
+            for candidate in stage["card_ids"]:
+                if candidate == target:
                     break
                 seed_ids.append(candidate)
-            if found:
+            if stage_id == owner:
                 break
-        if not found:
-            raise AssertionError("unknown progress target %s" % progress_to)
     for card_id in seed_ids:
         module_id = card_id.split(".", 1)[0]
         rows.append({
@@ -120,20 +124,20 @@ def seed(root, passed, *, artifact_card=None, due_review=False, progress_to=None
             "next_due": ("2026-09-20T13:00:00-04:00" if due_review and card_id == "M0.01"
                          else "2099-01-01T00:00:00-05:00"),
         })
-    # Progress-targeted route fixtures must satisfy the same mastery contract
-    # as a real learner. Card-pass rows alone leave every completed module in
-    # review_pending, which locks the next module and produces no popup.
+    # Progress-targeted route fixtures must satisfy the same stage mastery
+    # contract as a real learner. Card-pass rows alone leave a completed stage
+    # review_pending, which locks its successor and produces no popup.
     seeded = set(seed_ids)
     card_map = {card["id"]: card for card in CUR["cards"]}
-    for module in CUR["modules"]:
-        if not set(module["card_ids"]).issubset(seeded):
+    for stage in CUR["stages"]:
+        if not set(stage["card_ids"]).issubset(seeded):
             continue
-        for review_key in module.get("required_review_card_ids", []):
+        for review_key in stage.get("required_review_card_ids", []):
             question_ids = card_map[review_key].get("question_ids", [])
             rows.append({
                 "type": "review", "result": "pass", "review_key": review_key,
                 "review_stage": 1, "card_id": review_key,
-                "module_id": module["id"],
+                "module_id": card_map[review_key]["module_id"],
                 "question_id": question_ids[0] if question_ids else None,
                 "at": "2026-09-20T12:15:00-04:00",
                 "next_due": "2099-01-01T00:00:00-05:00",
@@ -170,7 +174,9 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
         data.mkdir()
         (data / "vim-daily").symlink_to(ROOT / "share", target_is_directory=True)
         seed(root, passed, artifact_card=artifact_card, due_review=due_review,
-             progress_to=progress_to, failed_card=card_id, failed_attempts=failed_attempts)
+             progress_to=progress_to,
+             target_card=None if route == "review" else card_id,
+             failed_card=card_id, failed_attempts=failed_attempts)
 
         token = uuid.uuid4().hex[:10]
         inner = "vdr-inner-" + token

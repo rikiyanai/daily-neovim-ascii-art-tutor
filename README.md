@@ -1,10 +1,11 @@
 # practice your neovim and ascii art skills 
 
 Short Neovim and ASCII-animation lessons that interrupt you every 15 minutes, in a
-tmux popup, and make you actually use the keys. The default curriculum is an
-nineteen-module skill tree: each module advances one persistent text-art strip,
-mixes performed edits with conceptual retrieval, and ends in an unfamiliar
-transfer plus a module check. The original 46 exact-recipe drills remain
+tmux popup, and make you actually use the keys. The default curriculum is a
+sixteen-stage main path across twenty project modules: S0-S7 establish still-art
+craft, then A0-A7 build animation. Each stage mixes performed edits with
+conceptual retrieval and cannot unlock its successor until its required
+changed-art review is passed. The original 46 exact-recipe drills remain
 available as the legacy practice set.
 
 The ascii art itself is inspired by Standard combo's lecture on ascii art authoring. 
@@ -31,10 +32,11 @@ And it keeps a streak.
 The streak is now secondary to evidence-backed progress:
 
 ```
-○ M0  Spark loop                 0/8  available  [A0/V0]
-· M1  Line run                   0/8  locked     [A1/V1]
-· M2  Shape edit                0/8  locked     [A1/V2]
-next: M0.01 Read and make the first intentional change
+○ S0  Grid and overwrite         0/21 available
+· S1  Stroke runs                0/9  locked      requires S0
+· A0  Plan and key poses         0/9  locked      requires S7
+· P   Proportional Shift_JIS     0/8  locked      optional after S5
+next: M0.P0 Spark loop · Vim grammar primer
 ```
 
 Each module follows the Stone Story authoring order where it applies: establish
@@ -96,12 +98,13 @@ copy the previous frame, then change only the cells that move.
 
 ## What is in it
 
-- **152 project cards** across nineteen prerequisite-gated modules: 114 executable
-  Neovim edits and 38 conceptual retrieval cards/checks.
-- **38 executable compare paths** across nineteen method-contrast cards and **38
-  changed-art transfer variants** across nineteen transfer cards; every path is
+- **210 project cards** across twenty project modules and sixteen prerequisite-gated
+  main stages: 169 recipe-bearing Neovim edits and 61 conceptual/check surfaces
+  (module checks contain both, so those counts overlap).
+- **20 method-contrast cards** and **68 changed-art review banks**; every primary
+  edit path is
   replayed through Neovim by the v2 suite.
-- **190 module-specific paired conceptual items** spanning visual reading,
+- **370 manually authored paired conceptual items** spanning visual reading,
   command/output prediction, diagnosis, method comparison, transfer reasoning,
   and coherence checks. Every item requires both an animation/authoring reading
   and a Neovim edit-scope or command decision. Choices are shuffled and carry
@@ -124,7 +127,7 @@ copy the previous frame, then change only the cells that move.
   both halves of a spaced review as appropriate. Successful module checks play
   the verified strip automatically and retain a playback receipt. Failed
   question/transfer/check routes name the next changed remediation. The progress page owns the complete
-  nineteen-node dependency tree, current eight-card map, level/XP, badges,
+  S0-S7/A0-A7 stage tree, optional P branch, current module map, level/XP, badges,
   daily/streak totals, new unlocks, and next lesson.
 - A visible skill tree, bounded XP (once per unique card/review stage), and
   evidence-backed badges for first progress, transfer, tween, playable strip,
@@ -167,8 +170,8 @@ never edits the Neovim config or installs plugins on the learner's behalf.
 ```
 vim-drill                    run a drill now
 vim-drill --card M0.01       run a module's first unfinished card (choose an open branch)
-vim-drill --list             all 152 project cards and completion marks
-vim-drill --tree             module/node progress and the next action
+vim-drill --list             all 210 project cards and completion marks
+vim-drill --tree             stage/module progress and the next action
 vim-drill --status           the tree plus reviews, streak, and totals
 vim-drill --project M0       print M0's persistent strip
 vim-drill --preview M0 0.2   preview at 0.2 seconds per frame
@@ -269,13 +272,12 @@ VIM_DAILY_TEST_COLUMNS=100 VIM_DAILY_TEST_ROWS=36 share/test_tmux_v2_routes.py
 VIM_DAILY_TEST_COLUMNS=80 VIM_DAILY_TEST_ROWS=24 share/test_tmux_v2_routes.py
 ```
 
-The v2 suite validates the 19-module prerequisite graph, 152 stable cards, 190
+The v2 suite validates the S0-S7/A0-A7 stage chain, optional P branch, 210 cards, 370
 complete questions, the complete 46-ID disposition table, one representative
 legacy-to-v2 surface-job comparison, persistent start→target continuity,
-review state, every one of the 114 primary edit
-recipes, and both executable paths on all nineteen comparison cards in clean and real-config
-Neovim, plus both changed-art variants on all nineteen transfer cards. It also
-checks all 114 edit briefs for required teaching sections and answer
+review state, every one of the 169 primary edit recipes, and both executable
+paths on all twenty comparison cards in clean Neovim, plus every changed-art
+review bank. It also checks all edit briefs for required teaching sections and answer
 leakage. Unequal frame heights block
 `--preview` with a repair message instead of rendering a misleading animation.
 The tmux test attaches a real client so the installed `client-attached` hook
@@ -291,19 +293,16 @@ for conceptual, independent, compare-method, five-question module-check,
 spaced-review, and every module-transfer route. It also drives a deterministic
 non-identity answer shuffle. Both headed suites prove the page remains visible
 before Enter and disappears afterward. They run at 188×49, 100×36, and 80×24;
-the smallest viewport uses a reflowed brief, evidence replay, and two-line tree.
-Revision `.21` keeps the learner's own Neovim chrome by default: lualine owns
+the smallest viewport uses a reflowed brief, evidence replay, and compact tree.
+The learner's own Neovim chrome remains the default: lualine owns
 the live mode, WhichKey and Hardtime remain active, and only clean fallback mode
 adds the tutor statusline/F1 UI. Retrieval cards show TARGET plus an action
 hint while hiding only the exact keys, and results retain the two-column
-keystroke ledger. Revision
-`.18` added M14-M18 for S5 palette
-variants, S7 texture construction, A0 planning, A3 coherent anchors, and A6
-hand-mirrored reverse reuse. At revision `.21`, all 114 primary recipes pass in
-clean and real-config Neovim, and the automatic
-failure/retry/debrief/progress popup passes at 188×49, 100×36, and 80×24. The
-full conceptual/remediation/edit/check/review/M0-M18 transfer route matrix has
-not been rerun at `.21`; it remains an open verification item.
+keystroke ledger. Revision `.35` gives every card one stage owner and makes
+stage advancement depend on both card completion and the stage's required
+spaced reviews. P unlocks after S5 but never blocks S6. The clean suite passes
+210/210 cards and 169/169 primary recipes; headed popup re-verification for the
+new stage rendering is tracked separately and is not implied by that result.
 
 Recipes that need the extended middle-dot glyph teach Neovim's portable
 digraph: type `<C-k>.M` where the recipe shows it. For example,
