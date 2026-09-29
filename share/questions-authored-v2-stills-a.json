@@ -405,30 +405,30 @@
     ]
   },
   "M11.06.P01": {
-    "prompt": "ANIMATION\nThe unfamiliar transfer shell must keep its walls while its first roof becomes ==.\n\n    BEFORE         AFTER\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │| x|  |x |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich bounded path reaches TARGET?",
-    "compact_prompt": "ANIMATION\nTransfer the same fixed-width roof edit to dots-and-x art.\n\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │| x|  |x |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich path preserves the unfamiliar shell?",
-    "animation_prompt": "ANIMATION\nOnly the first two roof cells change; the dot walls and x indicators remain.\n\n    │/..\\  /..\\│  →  │/==\\  /..\\│\n    │| x|  |x |│      │| x|  |x |│\n    │\\__|  |__/│      │\\__|  |__/│",
-    "animation_answer": "The transfer applies the same two-cell Replace edit while preserving the changed shell.",
-    "neovim_prompt": "NEOVIM\nWhich command reaches the exact target?\n\n    │/..\\  /..\\│\n    │| x|  |x |│\n    │\\__|  |__/│",
-    "neovim_answer": "0lR==<Esc> is a bounded path that overwrites the first roof run.",
+    "prompt": "ANIMATION\nSnail blinks by closing both eyes on the first row. The shell, O-shaped spiral, slash, and four-cell crawl baseline remain registered.\n\n  BEFORE      AFTER\n  │ _ Oo│     │ _ --│\n  │(O)/│  →  │(O)/│\n  │¯¯¯\"│     │¯¯¯\"│\n\nNEOVIM\nWhich fixed-width redraw closes exactly the two eye cells?",
+    "compact_prompt": "ANIMATION\nClose Snail's two eyes; preserve shell and crawl baseline.\n\n  │ _ Oo│ → │ _ --│\n  │(O)/│   │(O)/│\n  │¯¯¯\"│   │¯¯¯\"│\n\nNEOVIM\nDecode `0fOR--<Esc>`.",
+    "animation_prompt": "ANIMATION\nOnly the two eye glyphs change from Oo to -- in this complete Snail pose.",
+    "animation_answer": "Both eyes close together; every cell in the shell and crawl baseline stays fixed.",
+    "neovim_prompt": "NEOVIM\nExplain the visible-eye search followed by a two-cell Replace-mode redraw.",
+    "neovim_answer": "0fO finds the first open eye, R-- overwrites O and o in sequence, and Escape stops the redraw after those two cells.",
     "choices": [
-      "ANIMATION: Preserve dots and x cells; change the first roof only. | NEOVIM: 0lR==<Esc> reaches TARGET exactly.",
-      "ANIMATION: Normalize all dots and x cells to the old machine. | NEOVIM: :%s/[.x]/-/g rewrites the whole file.",
-      "ANIMATION: Insert == before the dots, shifting the shell. | NEOVIM: 0l i==<Esc> is required.",
-      "ANIMATION: Change both roofs and both indicators. | NEOVIM: :%s/../==/g changes every two-character run."
+      "ANIMATION: Both eyes close while shell and baseline remain fixed. | NEOVIM: `0fO` reaches the first eye and `R--<Esc>` overwrites exactly two cells.",
+      "ANIMATION: The whole face row shifts left during the blink. | NEOVIM: R deletes the characters it crosses before typing.",
+      "ANIMATION: Only the capital O closes; lowercase o stays open. | NEOVIM: Replace mode stops automatically after one typed dash.",
+      "ANIMATION: Every O and o in the project becomes a dash. | NEOVIM: fO begins a file-wide substitution."
     ],
     "compact_choices": [
-      "A: unfamiliar shell retained · V: 0lR==",
-      "A: normalize shell · V: global class substitute",
-      "A: insert before dots · V: insert mode",
-      "A: all roofs/indicators · V: global two-char substitute"
+      "A: both eyes only · V: find O then R two cells",
+      "A: row shifts left · V: R deletes while moving",
+      "A: one eye only · V: R stops after one dash",
+      "A: all eyes globally · V: f starts substitute"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: transfer preserves the unfamiliar art and reuses only the bounded roof operation.",
-      "Changing the transfer shell defeats the purpose of unseen art.",
-      "Insertion shifts the walls and cannot reach the fixed-width target.",
-      "The target contains only one changed roof, not a whole-file rewrite."
+      "Correct: two typed dashes replace the adjacent eyes without changing row width or the lower pose.",
+      "Replace mode overwrites existing cells; it does not delete crossed text or pull later cells left.",
+      "Replace mode continues for each typed glyph until Escape, so two dashes close both eyes.",
+      "fO is a current-line cursor motion to one visible O; it is not a substitute command."
     ]
   },
   "M11.VE.P01": {

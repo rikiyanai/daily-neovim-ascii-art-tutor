@@ -66,6 +66,10 @@ DRACULA_WALK_F2 = ["   \\(}_", ".-´  ,'", " ¯-´ \\"]       # frame 2
 BOO_HOVER_F2 = ["  .-.", "_(   )_", "`.   .´"]      # frame 2: body expands
 BOO_HOVER_F3 = ["  .-.", " (   )", "-´   `-"]       # frame 3
 BOO_HOVER_F4 = ["  .-.", " (   )", " /   \\"]       # frame 4: skirt folds inward
+SNAIL_OPEN = [" _ Oo", "(O)/", "¯¯¯\""]            # official-Pets/Snail idle; @ spiral -> alphabet-safe O
+SNAIL_BLINK = [" _ --", "(O)/", "¯¯¯\""]           # res15 blink over idle body
+SNAIL_CRAWL_F4 = [" _ Oo", "(O)/", "´¯¯\""]        # res28-res31 crawl composite
+SNAIL_CRAWL_IDLE = [" _ Oo", "(O)/", "¯¯¯\""]      # res32-res35 loop-close composite
 
 
 def _rail(rows, column):

@@ -4800,3 +4800,24 @@ M9.06 source variants pass their real-user-config headed routes at 80x24.
 variants. Full same-process route coverage at all three viewport sizes remains
 unclaimed. The Boo excerpt is authorized for this local tutor only; no push or
 publication occurred.
+
+### VD-43 follow-through · revision `.51` — M11 redraw now uses Snail blink and crawl frames
+
+- M11.06 variant 1 composites the official Snail idle layers and closes the
+  adjacent `Oo` eyes as `--` with a two-cell Replace-mode redraw. The shell,
+  spiral, slash, and crawl baseline are complete and remain registered. The
+  source `@` spiral is explicitly adapted to alphabet-safe `O`; the rest of the
+  composite is unchanged.
+- Variant 2 uses the official crawl loop's frame-4 to loop-close transition:
+  only the first baseline glyph settles from `´` to `¯` with normal-mode `r`.
+- Both paired questions were rewritten by hand around their exact full-pose
+  BEFORE/AFTER art and distinguish `R`'s sequential overwrite from `r`'s
+  single-cell scope.
+
+**Proof:** revision `.51` writes 215 cards / 395 questions; question quality,
+all 215 cards / 174 primary recipes, and every changed-art replay pass. Both
+M11.06 source variants pass their real-user-config headed routes at 80x24.
+
+**Still open.** Thirteen module transfers still use tutor-authored primary
+variants. The Snail excerpts are local-tutor use only; no push or publication
+occurred.

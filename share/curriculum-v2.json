@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.50",
+ "revision": "2026-09-29.51",
  "review_intervals_hours": [
   4,
   24,
@@ -4192,81 +4192,98 @@
    "project_id": "redraw-lab",
    "variant_group": "M11.card-6",
    "start": [
-    "/..\\  /..\\",
-    "| x|  |x |",
-    "\\__|  |__/"
+    " _ Oo",
+    "(O)/",
+    "¯¯¯\""
    ],
    "target": [
-    "/==\\  /..\\",
-    "| x|  |x |",
-    "\\__|  |__/"
+    " _ --",
+    "(O)/",
+    "¯¯¯\""
    ],
-   "expected": "0lR==<Esc>",
+   "expected": "0fOR--<Esc>",
    "recipe": [
     [
-     "0lR==<Esc>",
-     "overwrite the unfamiliar roof run without shifting its walls"
+     "0fO",
+     "find the first open eye on Snail's face row"
+    ],
+    [
+     "R--<Esc>",
+     "overwrite both eyes shut without shifting the shell"
     ]
    ],
    "cursor": "^",
    "method_requirement": {
-    "label": "transfer the fixed-width redraw with Replace mode",
+    "label": "transfer the two-cell blink with Replace mode",
     "exact_any_of": [
-     "0lR==<Esc>"
+     "0fOR--<Esc>"
     ]
    },
+   "source": "official-Pets/Snail res05-res07 + res12 to res15 blink composite; @ spiral adapted to O",
    "prompt": "Transfer the bounded `R` redraw to an unfamiliar shell without shifting its endpoints.",
    "artifact": "transfer",
    "variants": [
     {
      "start": [
-      "/..\\  /..\\",
-      "| x|  |x |",
-      "\\__|  |__/"
+      " _ Oo",
+      "(O)/",
+      "¯¯¯\""
      ],
      "target": [
-      "/==\\  /..\\",
-      "| x|  |x |",
-      "\\__|  |__/"
+      " _ --",
+      "(O)/",
+      "¯¯¯\""
      ],
-     "expected": "0lR==<Esc>",
+     "expected": "0fOR--<Esc>",
      "recipe": [
       [
-       "0lR==<Esc>",
-       "overwrite the unfamiliar roof run without shifting its walls"
+       "0fO",
+       "find the first open eye on Snail's face row"
+      ],
+      [
+       "R--<Esc>",
+       "overwrite both eyes shut without shifting the shell"
       ]
      ],
      "cursor": "^",
      "method_requirement": {
-      "label": "transfer the fixed-width redraw with Replace mode",
+      "label": "transfer the two-cell blink with Replace mode",
       "exact_any_of": [
-       "0lR==<Esc>"
+       "0fOR--<Esc>"
       ]
-     }
+     },
+     "source": "official-Pets/Snail res05-res07 + res12 to res15 blink composite; @ spiral adapted to O",
+     "prompt": "Close Snail's two eyes with one fixed-width Replace-mode redraw; preserve the shell, spiral, slash, and moving baseline."
     },
     {
      "start": [
-      ".--.  .--.",
-      "| *|  |* |",
-      "'__'  '  '"
+      " _ Oo",
+      "(O)/",
+      "´¯¯\""
      ],
      "target": [
-      ".==.  .--.",
-      "| *|  |* |",
-      "'__'  '  '"
+      " _ Oo",
+      "(O)/",
+      "¯¯¯\""
      ],
-     "expected": "0lR==<Esc>",
+     "expected": "3G0r¯",
      "recipe": [
       [
-       "0lR==<Esc>",
-       "apply the same bounded overwrite to a changed silhouette"
+       "3G0",
+       "address the first cell of Snail's acting crawl baseline"
+      ],
+      [
+       "r¯",
+       "settle the one high accent back to the flat baseline"
       ]
      ],
      "cursor": "^",
+     "source": "official-Pets/Snail res28-res31 to res32-res35 crawl composites; @ spiral adapted to O",
+     "prompt": "Close Snail's crawl loop by settling only the baseline's first accent from acute to macron; keep eyes, shell, and the other three baseline cells fixed.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       "0lR==<Esc>"
+       "3G0r¯"
       ]
      },
      "paired_question_ids": [
@@ -4277,9 +4294,9 @@
    "required_before_mastery": true,
    "show_target": true,
    "show_recipe": false,
-   "hint": "Vim toolbox: Replace mode can redraw cells in place without shifting the rest of the row. Scope: Treat each 3-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: inserted or deleted cells shift the machinery walls, undo/redo is performed as a no-op demonstration, or blur trails land in different columns.",
+   "hint": "Vim toolbox: a visible character landmark is safer than repeated unit motions. Scope: Treat each 3-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: inserted or deleted cells shift the machinery walls, undo/redo is performed as a no-op demonstration, or blur trails land in different columns.",
    "review_source_card_id": "M11.06",
-   "review_method_family": "required:transfer the fixed-width redraw with Replace mode",
+   "review_method_family": "required:transfer the two-cell blink with Replace mode",
    "master_habits": [
     "H1",
     "H4",
@@ -4290,11 +4307,13 @@
    ],
    "grammar_families": [
     "replace-mode",
+    "search-landmark",
     "normal-motion"
    ],
    "grammar_stage": "hidden",
    "key_vocabulary": [
     "R enters Replace mode; typed glyphs overwrite cells until <Esc>",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
    "stage_owner": "S0",
@@ -39955,6 +39974,7 @@
    "grammar_breakdown_id": "replace-mode",
    "grammar_breakdown": [
     "R enters Replace mode; typed glyphs overwrite cells until <Esc>",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
@@ -39963,47 +39983,47 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The key-hidden transfer comes first; afterward, four explicit choices check the command path and animation scope without free-text grading.",
-   "prompt": "ANIMATION\nThe unfamiliar transfer shell must keep its walls while its first roof becomes ==.\n\n    BEFORE         AFTER\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │| x|  |x |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich bounded path reaches TARGET?",
+   "prompt": "ANIMATION\nSnail blinks by closing both eyes on the first row. The shell, O-shaped spiral, slash, and four-cell crawl baseline remain registered.\n\n  BEFORE      AFTER\n  │ _ Oo│     │ _ --│\n  │(O)/│  →  │(O)/│\n  │¯¯¯\"│     │¯¯¯\"│\n\nNEOVIM\nWhich fixed-width redraw closes exactly the two eye cells?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "typed_keys",
    "choices": [
-    "ANIMATION: Preserve dots and x cells; change the first roof only. | NEOVIM: 0lR==<Esc> reaches TARGET exactly.",
-    "ANIMATION: Normalize all dots and x cells to the old machine. | NEOVIM: :%s/[.x]/-/g rewrites the whole file.",
-    "ANIMATION: Insert == before the dots, shifting the shell. | NEOVIM: 0l i==<Esc> is required.",
-    "ANIMATION: Change both roofs and both indicators. | NEOVIM: :%s/../==/g changes every two-character run."
+    "ANIMATION: Both eyes close while shell and baseline remain fixed. | NEOVIM: `0fO` reaches the first eye and `R--<Esc>` overwrites exactly two cells.",
+    "ANIMATION: The whole face row shifts left during the blink. | NEOVIM: R deletes the characters it crosses before typing.",
+    "ANIMATION: Only the capital O closes; lowercase o stays open. | NEOVIM: Replace mode stops automatically after one typed dash.",
+    "ANIMATION: Every O and o in the project becomes a dash. | NEOVIM: fO begins a file-wide substitution."
    ],
    "correct_choice": 0,
    "feedback": [
-    "Correct: transfer preserves the unfamiliar art and reuses only the bounded roof operation.",
-    "Changing the transfer shell defeats the purpose of unseen art.",
-    "Insertion shifts the walls and cannot reach the fixed-width target.",
-    "The target contains only one changed roof, not a whole-file rewrite."
+    "Correct: two typed dashes replace the adjacent eyes without changing row width or the lower pose.",
+    "Replace mode overwrites existing cells; it does not delete crossed text or pull later cells left.",
+    "Replace mode continues for each typed glyph until Escape, so two dashes close both eyes.",
+    "fO is a current-line cursor motion to one visible O; it is not a substitute command."
    ],
-   "animation_prompt": "ANIMATION\nOnly the first two roof cells change; the dot walls and x indicators remain.\n\n    │/..\\  /..\\│  →  │/==\\  /..\\│\n    │| x|  |x |│      │| x|  |x |│\n    │\\__|  |__/│      │\\__|  |__/│",
-   "animation_answer": "The transfer applies the same two-cell Replace edit while preserving the changed shell.",
-   "neovim_prompt": "NEOVIM\nWhich command reaches the exact target?\n\n    │/..\\  /..\\│\n    │| x|  |x |│\n    │\\__|  |__/│",
-   "neovim_answer": "0lR==<Esc> is a bounded path that overwrites the first roof run.",
-   "compact_prompt": "ANIMATION\nTransfer the same fixed-width roof edit to dots-and-x art.\n\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │| x|  |x |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich path preserves the unfamiliar shell?",
+   "animation_prompt": "ANIMATION\nOnly the two eye glyphs change from Oo to -- in this complete Snail pose.",
+   "animation_answer": "Both eyes close together; every cell in the shell and crawl baseline stays fixed.",
+   "neovim_prompt": "NEOVIM\nExplain the visible-eye search followed by a two-cell Replace-mode redraw.",
+   "neovim_answer": "0fO finds the first open eye, R-- overwrites O and o in sequence, and Escape stops the redraw after those two cells.",
+   "compact_prompt": "ANIMATION\nClose Snail's two eyes; preserve shell and crawl baseline.\n\n  │ _ Oo│ → │ _ --│\n  │(O)/│   │(O)/│\n  │¯¯¯\"│   │¯¯¯\"│\n\nNEOVIM\nDecode `0fOR--<Esc>`.",
    "compact_choices": [
-    "A: unfamiliar shell retained · V: 0lR==",
-    "A: normalize shell · V: global class substitute",
-    "A: insert before dots · V: insert mode",
-    "A: all roofs/indicators · V: global two-char substitute"
+    "A: both eyes only · V: find O then R two cells",
+    "A: row shifts left · V: R deletes while moving",
+    "A: one eye only · V: R stops after one dash",
+    "A: all eyes globally · V: f starts substitute"
    ],
    "source_answer_contract": {
     "form": "typed_keys",
     "initial_lines": [
-     "/..\\  /..\\",
-     "| x|  |x |",
-     "\\__|  |__/"
+     " _ Oo",
+     "(O)/",
+     "¯¯¯\""
     ],
     "target_lines": [
-     "/==\\  /..\\",
-     "| x|  |x |",
-     "\\__|  |__/"
+     " _ --",
+     "(O)/",
+     "¯¯¯\""
     ],
     "initial_cursor": "^",
     "forbidden_side_effects": [
@@ -40012,7 +40032,7 @@
      "extra_window",
      "extra_tab"
     ],
-    "sample_answer": "0lR==<Esc>",
+    "sample_answer": "0fOR--<Esc>",
     "effect_version": 1
    },
    "authorship": "manual"
@@ -50473,6 +50493,7 @@
    "grammar_breakdown_id": "replace-mode",
    "grammar_breakdown": [
     "R enters Replace mode; typed glyphs overwrite cells until <Esc>",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
@@ -50481,39 +50502,39 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
-   "prompt": "ANIMATION\nThis unfamiliar two-shell still uses stars as indicators and apostrophes as feet. Only the first shell's two roof dashes become equals signs; its corner dots and every cell of the second shell stay fixed.\n\n  BEFORE         AFTER\n  │.--.  .--.│   │.==.  .--.│\n  │| *|  |* |│ → │| *|  |* |│\n  │'__'  '  '│   │'__'  '  '│\n\nNEOVIM\nWhy is `R==<Esc>` bounded differently from inserting `==`?",
+   "prompt": "ANIMATION\nSnail's crawl loop settles from its raised first baseline accent back to a flat four-glyph baseline. Eyes, shell, O-shaped spiral, slash, and the other three baseline cells do not move.\n\n  BEFORE      AFTER\n  │ _ Oo│     │ _ Oo│\n  │(O)/│  →  │(O)/│\n  │´¯¯\"│     │¯¯¯\"│\n\nNEOVIM\nWhich one-cell edit closes the loop without retyping the baseline?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "decode",
    "choices": [
-    "ANIMATION: The first roof changes material while both shell widths and the second roof stay fixed. | NEOVIM: `R` overwrites successive cells and Escape stops after two equals signs.",
-    "ANIMATION: Both roofs become equals signs. | NEOVIM: Replace mode automatically repeats at the same columns in later text.",
-    "ANIMATION: The first shell widens by two cells. | NEOVIM: R inserts typed text before the old dashes.",
-    "ANIMATION: A corner dot is consumed with the roof. | NEOVIM: Escape performs one final replacement before leaving Replace mode."
+    "ANIMATION: The entire four-glyph baseline becomes macrons. | NEOVIM: r¯ repeats through end of line.",
+    "ANIMATION: Only the first baseline accent settles; the rest of Snail is registered. | NEOVIM: `3G0` addresses that cell and `r¯` overwrites exactly one glyph.",
+    "ANIMATION: Snail moves left by one cell as it settles. | NEOVIM: 0 deletes the first cell before r inserts a macron.",
+    "ANIMATION: A new flat-baseline frame is appended below. | NEOVIM: 3G copies three rows before r edits them."
    ],
-   "correct_choice": 0,
+   "correct_choice": 1,
    "feedback": [
-    "Correct: Replace mode is useful for a contiguous redraw because it changes glyphs without shifting the fixed-width shell.",
-    "Replace mode follows typed cursor positions only; it does not search for matching columns in the second shell.",
-    "R overwrites existing cells. Insert mode would be the width-changing operation.",
-    "Escape only leaves Replace mode; it does not alter the next cell."
+    "Normal-mode r owns one cursor cell only; it cannot flatten the remaining three glyphs automatically.",
+    "Correct: the loop closes through a single in-place material change at a known row boundary.",
+    "0 is a motion to the first character; it does not delete or move the creature.",
+    "3G is an absolute line jump to row 3, not a three-row copy operation."
    ],
-   "animation_prompt": "ANIMATION\nM11.06 variant 2 redraws one two-cell roof material inside an unfamiliar paired-shell still.",
-   "animation_answer": "The first roof's two dashes become equals signs; both corner dots, both stars, and the second shell remain unchanged.",
-   "neovim_prompt": "NEOVIM\nDecode `0lR==<Esc>` on the shown first row.",
-   "neovim_answer": "0l lands on the first dash, R enters Replace mode, the two typed equals signs overwrite the two dashes in sequence, and Escape stops before the corner dot.",
-   "compact_prompt": "ANIMATION\nOnly the first roof's `--` becomes `==`; both shells keep their width.\n\n  │.--.  .--.│ → │.==.  .--.│\n\nNEOVIM\nWhat does `0lR==<Esc>` replace?",
+   "animation_prompt": "ANIMATION\nM11.06 variant 2 closes a real five-frame Snail crawl loop with one fixed-width baseline change.",
+   "animation_answer": "Only the first baseline glyph settles from acute to macron; the complete upper pose and the remaining baseline stay fixed.",
+   "neovim_prompt": "NEOVIM\nExplain the absolute row, line start, and one-cell replacement in `3G0r¯`.",
+   "neovim_answer": "3G selects the baseline row, 0 reaches its first cell, and r¯ replaces only the acute accent without entering Replace mode or shifting the row.",
+   "compact_prompt": "ANIMATION\nSettle only the first crawl-baseline accent.\n\n  │´¯¯\"│ → │¯¯¯\"│\n\nNEOVIM\nDecode `3G0r¯`.",
    "compact_choices": [
-    "A: first roof only · V: sequential overwrite then Escape",
-    "A: both roofs · V: R repeats later",
-    "A: shell widens · V: R inserts",
-    "A: corner consumed · V: Escape replaces"
+    "A: whole baseline · V: r repeats",
+    "A: first accent only · V: row 3, column 1, replace",
+    "A: Snail shifts left · V: 0 deletes",
+    "A: append frame · V: 3G copies rows"
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": "0lR==<Esc>",
+    "display": "3G0r¯",
     "required_term_groups": [
      [
       "replace mode",
@@ -50528,6 +50549,19 @@
       "shift"
      ],
      [
+      "search",
+      "find",
+      "landmark"
+     ],
+     [
+      "pattern",
+      "character"
+     ],
+     [
+      "cursor",
+      "cell"
+     ],
+     [
       "motion",
       "move",
       "cursor"
@@ -50539,7 +50573,7 @@
       "cell"
      ]
     ],
-    "sample_answer": "replace mode escape width motion landmark"
+    "sample_answer": "replace mode escape width search pattern cursor motion landmark"
    },
    "authorship": "manual"
   },
@@ -53885,6 +53919,7 @@
     ],
     "hidden_families": [
      "replace-mode",
+     "search-landmark",
      "normal-motion"
     ]
    },
@@ -54183,7 +54218,7 @@
   },
   {
    "card_id": "M11.06",
-   "label": "transfer the fixed-width redraw with Replace mode",
+   "label": "transfer the two-cell blink with Replace mode",
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
@@ -54784,7 +54819,7 @@
   },
   {
    "source_card_id": "M11.06",
-   "method_family": "required:transfer the fixed-width redraw with Replace mode",
+   "method_family": "required:transfer the two-cell blink with Replace mode",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -55384,6 +55419,11 @@
    "hidden_card_id": "M11.06",
    "grammar_family": "replace-mode",
    "prior_guided_card_id": "M11.01"
+  },
+  {
+   "hidden_card_id": "M11.06",
+   "grammar_family": "search-landmark",
+   "prior_guided_card_id": "M0.01"
   },
   {
    "hidden_card_id": "M11.06",
@@ -57057,7 +57097,7 @@
   {
    "module_id": "M11",
    "source_card_id": "M11.06",
-   "method_label": "transfer the fixed-width redraw with Replace mode",
+   "method_label": "transfer the two-cell blink with Replace mode",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,

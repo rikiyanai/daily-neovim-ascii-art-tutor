@@ -999,30 +999,30 @@
     ]
   },
   "M11.06.V2.P01": {
-    "prompt": "ANIMATION\nThis unfamiliar two-shell still uses stars as indicators and apostrophes as feet. Only the first shell's two roof dashes become equals signs; its corner dots and every cell of the second shell stay fixed.\n\n  BEFORE         AFTER\n  │.--.  .--.│   │.==.  .--.│\n  │| *|  |* |│ → │| *|  |* |│\n  │'__'  '  '│   │'__'  '  '│\n\nNEOVIM\nWhy is `R==<Esc>` bounded differently from inserting `==`?",
-    "compact_prompt": "ANIMATION\nOnly the first roof's `--` becomes `==`; both shells keep their width.\n\n  │.--.  .--.│ → │.==.  .--.│\n\nNEOVIM\nWhat does `0lR==<Esc>` replace?",
-    "animation_prompt": "ANIMATION\nM11.06 variant 2 redraws one two-cell roof material inside an unfamiliar paired-shell still.",
-    "animation_answer": "The first roof's two dashes become equals signs; both corner dots, both stars, and the second shell remain unchanged.",
-    "neovim_prompt": "NEOVIM\nDecode `0lR==<Esc>` on the shown first row.",
-    "neovim_answer": "0l lands on the first dash, R enters Replace mode, the two typed equals signs overwrite the two dashes in sequence, and Escape stops before the corner dot.",
+    "prompt": "ANIMATION\nSnail's crawl loop settles from its raised first baseline accent back to a flat four-glyph baseline. Eyes, shell, O-shaped spiral, slash, and the other three baseline cells do not move.\n\n  BEFORE      AFTER\n  │ _ Oo│     │ _ Oo│\n  │(O)/│  →  │(O)/│\n  │´¯¯\"│     │¯¯¯\"│\n\nNEOVIM\nWhich one-cell edit closes the loop without retyping the baseline?",
+    "compact_prompt": "ANIMATION\nSettle only the first crawl-baseline accent.\n\n  │´¯¯\"│ → │¯¯¯\"│\n\nNEOVIM\nDecode `3G0r¯`.",
+    "animation_prompt": "ANIMATION\nM11.06 variant 2 closes a real five-frame Snail crawl loop with one fixed-width baseline change.",
+    "animation_answer": "Only the first baseline glyph settles from acute to macron; the complete upper pose and the remaining baseline stay fixed.",
+    "neovim_prompt": "NEOVIM\nExplain the absolute row, line start, and one-cell replacement in `3G0r¯`.",
+    "neovim_answer": "3G selects the baseline row, 0 reaches its first cell, and r¯ replaces only the acute accent without entering Replace mode or shifting the row.",
     "choices": [
-      "ANIMATION: The first roof changes material while both shell widths and the second roof stay fixed. | NEOVIM: `R` overwrites successive cells and Escape stops after two equals signs.",
-      "ANIMATION: Both roofs become equals signs. | NEOVIM: Replace mode automatically repeats at the same columns in later text.",
-      "ANIMATION: The first shell widens by two cells. | NEOVIM: R inserts typed text before the old dashes.",
-      "ANIMATION: A corner dot is consumed with the roof. | NEOVIM: Escape performs one final replacement before leaving Replace mode."
+      "ANIMATION: The entire four-glyph baseline becomes macrons. | NEOVIM: r¯ repeats through end of line.",
+      "ANIMATION: Only the first baseline accent settles; the rest of Snail is registered. | NEOVIM: `3G0` addresses that cell and `r¯` overwrites exactly one glyph.",
+      "ANIMATION: Snail moves left by one cell as it settles. | NEOVIM: 0 deletes the first cell before r inserts a macron.",
+      "ANIMATION: A new flat-baseline frame is appended below. | NEOVIM: 3G copies three rows before r edits them."
     ],
     "compact_choices": [
-      "A: first roof only · V: sequential overwrite then Escape",
-      "A: both roofs · V: R repeats later",
-      "A: shell widens · V: R inserts",
-      "A: corner consumed · V: Escape replaces"
+      "A: whole baseline · V: r repeats",
+      "A: first accent only · V: row 3, column 1, replace",
+      "A: Snail shifts left · V: 0 deletes",
+      "A: append frame · V: 3G copies rows"
     ],
-    "correct_choice": 0,
+    "correct_choice": 1,
     "feedback": [
-      "Correct: Replace mode is useful for a contiguous redraw because it changes glyphs without shifting the fixed-width shell.",
-      "Replace mode follows typed cursor positions only; it does not search for matching columns in the second shell.",
-      "R overwrites existing cells. Insert mode would be the width-changing operation.",
-      "Escape only leaves Replace mode; it does not alter the next cell."
+      "Normal-mode r owns one cursor cell only; it cannot flatten the remaining three glyphs automatically.",
+      "Correct: the loop closes through a single in-place material change at a known row boundary.",
+      "0 is a motion to the first character; it does not delete or move the creature.",
+      "3G is an absolute line jump to row 3, not a three-row copy operation."
     ]
   },
   "M12.06.V2.P01": {

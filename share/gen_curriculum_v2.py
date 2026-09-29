@@ -1551,21 +1551,31 @@ MODULES = [
                 ],
             ),
         ],
-        "transfer": step(
-            ["/..\\  /..\\", "| x|  |x |", "\\__|  |__/"],
-            ["/==\\  /..\\", "| x|  |x |", "\\__|  |__/"],
-            "0lR==<Esc>",
-            [["0lR==<Esc>", "overwrite the unfamiliar roof run without shifting its walls"]],
+        "transfer": dict(step(
+            stone_story_variants.SNAIL_OPEN,
+            stone_story_variants.SNAIL_BLINK,
+            "0fOR--<Esc>",
+            [["0fO", "find the first open eye on Snail's face row"],
+             ["R--<Esc>", "overwrite both eyes shut without shifting the shell"]],
             method_requirement=require_method(
-                "transfer the fixed-width redraw with Replace mode",
-                exact_any_of=["0lR==<Esc>"]),
-        ),
-        "transfer_alt": step(
-            [".--.  .--.", "| *|  |* |", "'__'  '  '"],
-            [".==.  .--.", "| *|  |* |", "'__'  '  '"],
-            "0lR==<Esc>",
-            [["0lR==<Esc>", "apply the same bounded overwrite to a changed silhouette"]],
-        ),
+                "transfer the two-cell blink with Replace mode",
+                exact_any_of=["0fOR--<Esc>"]),
+        ), source="official-Pets/Snail res05-res07 + res12 to res15 blink composite; @ spiral adapted to O",
+           prompt=(
+               "Close Snail's two eyes with one fixed-width Replace-mode redraw; "
+               "preserve the shell, spiral, slash, and moving baseline."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.SNAIL_CRAWL_F4,
+            stone_story_variants.SNAIL_CRAWL_IDLE,
+            "3G0r¯",
+            [["3G0", "address the first cell of Snail's acting crawl baseline"],
+             ["r¯", "settle the one high accent back to the flat baseline"]],
+        ), source="official-Pets/Snail res28-res31 to res32-res35 crawl composites; @ spiral adapted to O",
+           prompt=(
+               "Close Snail's crawl loop by settling only the baseline's first accent "
+               "from acute to macron; keep eyes, shell, and the other three baseline cells fixed."
+           )),
     },
     {
         "id": "M12", "title": "Joint sweep", "node": "S4/V12", "project": "mirror-sweep",
@@ -6359,7 +6369,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.50",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.51",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,
