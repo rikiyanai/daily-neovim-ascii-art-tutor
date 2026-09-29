@@ -3688,3 +3688,68 @@ and rejected further generated question prose.
     config.
   - **Not observed:** a human mouse drag and Cmd-C inside the popup. The test
     asserts mouse state, not an actual selection.
+
+## VD-31 · 2026-09-28 20:58 — popup launchers changed global tmux state; stray processes kept normal panes from copying
+
+**Operator:** "i had to kill stray python processes that prevented me from
+copying normal tmux panes, please make sure this does not happen again."
+
+**Root cause:** VD-30 made all three popup launchers run
+`tmux set-option -g mouse off`. They also rebound `copy-mode-vi` `y`,
+`Enter` and `MouseDragEnd1Pane` to `pbcopy` in the global key table. The
+mouse setting was restored only by a bash `trap … EXIT`. That failed in
+three ways:
+1. While a lesson process hung, every normal pane in the server had tmux
+   mouse off, so drag-copy stopped working. Killing the stray process let
+   the trap run.
+2. Two overlapping launchers (attach hook + hourly job): the second saved
+   `off` as the "original" value and restored it for good.
+3. `kill -9` of a launcher skipped the trap.
+The rebindings were never undone. The live server still carried all three
+`pbcopy` bindings; the user's `~/.tmux.conf` defines none of them and
+tmux-yank is not installed.
+
+**Stray processes found:**
+- 28 `nvim --embed` servers reparented to launchd (PPID 1). All came from
+  headed test runs: `vim-daily-routes-*` temp state dirs and an earlier
+  repro scratchpad. `tmux kill-server` killed their TUI clients, and these
+  servers ignore SIGTERM (checked: `kill` returned 0 and the process stayed).
+- One `share/test_v2.py --real`, alive 19 h under a Codex parent.
+
+**Fix:**
+- `tmux/vim-drill-popup.sh`, `vim-drill-hourly.sh` and
+  `vim-drill-popup-force.sh` no longer set any global option or key table;
+  a comment states why. The popup copy methods are now the `c` key (the
+  operator confirmed it copied) and the terminal's own Shift-drag selection.
+  The title and lesson help say so.
+- `share/test_tmux_v2.py` now asserts that global `mouse` is unchanged
+  (`on`) during and after the popup, and that no `pbcopy` binding is added.
+- Both headed tests `pkill -9 -f <their temp dir>` after `kill-server`.
+- Live cleanup:
+  - the three injected bindings were reset to tmux defaults (checked
+    against a fresh `-f /dev/null` server: `Enter` and `MouseDragEnd1Pane`
+    → `copy-pipe-and-cancel`, `y` unbound);
+  - the 28 orphans and the 19 h test run were killed with SIGKILL.
+
+**Evidence:**
+- `share/test_tmux_v2.py` PASS at 80×24, 100×36 and 188×49 (real user
+  config).
+- After a test run: 0 orphaned `nvim --embed`, user server `mouse on`,
+  0 `pbcopy` bindings.
+- `share/test_v2.py` exit 0 (187/187, 146/146), after regenerating the JSON
+  from current sources.
+- Not observed: a human Shift-drag in the popup. That Ghostty lets Shift
+  bypass tmux mouse capture is inferred from Ghostty's
+  `mouse-shift-capture` default.
+
+**Open findings from reviewing the concurrent session's 20:44 report:**
+- `037f478` changed `questions-authored-v2-motion-a.json` (M4.Q04) without
+  regenerating `curriculum-v2.json`. `share/test_v2.py` fails at that
+  commit with "generated artifact drifted", so its claim that 187/187
+  lessons pass does not hold for the commit.
+- `share/test_tmux_v2_routes.py` fails at 80×24 on the authored bank: it
+  still asserts "DO THIS" and "both" in the concept/check prompt, which the
+  VD-30 wording no longer contains. The report listed only
+  `test_tmux_v2.py`.
+- Its claim that the worktree was clean was false at the time:
+  `questions-authored-v2-motion-a.json` was being modified again.

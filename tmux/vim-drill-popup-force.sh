@@ -3,16 +3,8 @@
 set -uo pipefail
 gate="$HOME/.local/bin/vim-daily-gate"
 [ -x "$gate" ] || exit 0
-mouse_before="$(tmux show-options -gv mouse 2>/dev/null || printf 'off')"
-restore_mouse() {
-  tmux set-option -g mouse "$mouse_before" >/dev/null 2>&1 || true
-}
-trap restore_mouse EXIT
-tmux set-option -g mouse off
-if command -v pbcopy >/dev/null 2>&1; then
-  tmux set-option -g set-clipboard on
-  tmux bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel 'pbcopy'
-  tmux bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel 'pbcopy'
-  tmux bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel 'pbcopy'
-fi
-tmux display-popup -e VIM_DAILY_POPUP=1 -E -w 90% -h 85% -T " vim drill · drag selects · Cmd-C copies · Cmd-V pastes " "$gate --force"
+# Never change global tmux options or key tables here (VD-31). A popup whose
+# lesson process hangs, is killed, or overlaps another launcher would leave
+# every normal pane with the changed setting. Copying inside the popup uses
+# the tutor's `c` key or the terminal's own Shift-drag selection.
+tmux display-popup -e VIM_DAILY_POPUP=1 -E -w 90% -h 85% -T " vim drill · c copies a question · Shift-drag selects · Cmd-V pastes " "$gate --force"

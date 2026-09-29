@@ -356,6 +356,9 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             for socket in (outer, inner):
                 subprocess.run(["tmux", "-L", socket, "kill-server"],
                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            # VD-31: reap `nvim --embed` servers orphaned by kill-server.
+            subprocess.run(["pkill", "-9", "-f", tmp], stdout=subprocess.DEVNULL,
+                           stderr=subprocess.DEVNULL)
 
 
 if GATE.resolve() != ROOT / "bin" / "vim-daily-gate":

@@ -160,9 +160,9 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         run("tmux", "-L", inner_socket, "-f", "/dev/null", "new-session", "-d",
             "-s", inner_session, "-x", str(COLUMNS), "-y", str(ROWS),
             "/bin/zsh", "-f")
-        # Start from the user's common `mouse on` preference. The popup must
-        # temporarily release drag gestures to native terminal selection, then
-        # restore this exact preference when it closes.
+        # Start from the user's common `mouse on` preference. VD-31: the popup
+        # must never change it (or any global option/key table), because a
+        # hung or overlapping popup would leave every normal pane changed.
         tmux(inner_socket, "set-option", "-g", "mouse", "on")
         for key, value in lesson_env.items():
             tmux(inner_socket, "set-environment", "-g", key, value)
@@ -199,16 +199,15 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
                  capture_output=True).stdout.strip()
             for option in ("mouse", "set-clipboard")
         ])
-        if "mouse off" not in tmux_options or "set-clipboard on" not in tmux_options:
-            raise AssertionError("popup did not release drag selection to the terminal: " + tmux_options)
+        if "mouse on" not in tmux_options:
+            raise AssertionError("popup changed the global tmux mouse option: " + tmux_options)
         copy_bindings = tmux(
             inner_socket, "list-keys", "-T", "copy-mode-vi",
             capture_output=True).stdout
-        for binding in (" y ", " MouseDragEnd1Pane "):
-            if binding not in copy_bindings or "copy-pipe-and-cancel pbcopy" not in copy_bindings:
-                raise AssertionError("popup copy mode is not wired to macOS clipboard:\n" + copy_bindings)
+        if "pbcopy" in copy_bindings:
+            raise AssertionError("popup rebound the global copy-mode-vi table:\n" + copy_bindings)
         required = [
-            "vim drill · drag selects · Cmd-C copies · Cmd-V pastes",
+            "vim drill · c copies a question · Shift-drag selects · Cmd-V pastes",
             "NEOVIM × ASCII ANIMATION",
             "M0.01",
             "DO THIS",
@@ -643,3 +642,8 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         for socket in (outer_socket, inner_socket):
             subprocess.run(["tmux", "-L", socket, "kill-server"],
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        # VD-31: kill-server kills the Neovim TUI but can orphan its
+        # `nvim --embed` server (reparented to launchd; it ignores SIGTERM). Kill anything still
+        # referring to this test's private state directory.
+        subprocess.run(["pkill", "-9", "-f", tmp], stdout=subprocess.DEVNULL,
+                       stderr=subprocess.DEVNULL)
