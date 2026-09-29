@@ -96,10 +96,10 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["paradigm"] == concept["paradigm"]
 
 assert len(cur["modules"]) == 20
-assert len(cur["cards"]) == 205
-assert len(cur["questions"]) == 365
-assert len({card["title"] for card in cur["cards"]}) == 205
-assert len({card["prompt"] for card in cur["cards"]}) == 205
+assert len(cur["cards"]) == 209
+assert len(cur["questions"]) == 369
+assert len({card["title"] for card in cur["cards"]}) == 209
+assert len({card["prompt"] for card in cur["cards"]}) == 209
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
 
@@ -113,7 +113,7 @@ def card_lines(card, lines):
 mc_questions = [question for question in cur["questions"]
                 if question["form"] == "multiple_choice"]
 assert {question["form"] for question in cur["questions"]} == {"multiple_choice"}
-assert len(mc_questions) == len(cur["questions"]) == 365
+assert len(mc_questions) == len(cur["questions"]) == 369
 assert not any(
     phrase in question["prompt"]
     for question in cur["questions"]
@@ -223,7 +223,7 @@ assert all("ANIMATION" in q["compact_prompt"] and "NEOVIM" in q["compact_prompt"
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == len(mc_questions) == 365
+            for q in mc_questions}) == len(mc_questions) == 369
 def contains_ascii_visual(value):
     if "│" in value:
         return True
@@ -366,9 +366,10 @@ assert all(card_by_id[row["review_card_id"]].get("show_recipe") is False
 required_reviews = cur["required_mastery_review_coverage"]
 extension_mastery_ids = {
     "M13.WH", "M13.GH", "M14.DAPH", "M3.GAH",
-    "M4.BIH", "M4.BCH", "M4.GVH", "M15.ZPH", "M11.WSH",
+    "M4.BIH", "M4.BCH", "M4.GVH", "M4.DIFFH", "M15.ZPH", "M11.WSH",
+    "M11.UTH",
 }
-assert len(required_reviews) == len(cur["modules"]) + len(extension_mastery_ids) == 29
+assert len(required_reviews) == len(cur["modules"]) + len(extension_mastery_ids) == 31
 assert {row["source_card_id"] for row in required_reviews} == {
     "%s.06" % module["id"] for module in cur["modules"]} | extension_mastery_ids
 assert all(row["changed_art_variants"] >= 2 and row["keys_hidden"] is True
@@ -391,6 +392,8 @@ mastery_extension_contract = {
     "M14.DAPH": ("paragraph-delete", "ggdap"),
     "M15.ZPH": ("trimmed-block-copy", "gg0<C-v>2j6|zy4G2|zp"),
     "M11.WSH": ("whitespace-column-audit", ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=7<CR>:%s/\\s\\+$//e<CR>"),
+    "M4.DIFFH": ("onion-diff-view", ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:close!<CR>"),
+    "M11.UTH": ("undo-tree-travel", "2G0fnr!ur-g-g+:earlier 1<CR>g+"),
 }
 for card_id, (family, expected) in mastery_extension_contract.items():
     card = card_by_id[card_id]

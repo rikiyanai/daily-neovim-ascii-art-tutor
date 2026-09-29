@@ -484,5 +484,113 @@
       "Correct: inspection proves where the padding is, and the row-end anchor protects all interior pose spacing.",
       "A fixed-column deletion would remove visible glyphs from shorter or wider rows and ignores the ragged contour."
     ]
+  },
+  "M4.DIFF.P01": {
+    "prompt": "ANIMATION\nMissile frame 3 remains visible as a reference while the working copy advances only its last exhaust puff from apostrophe to dot. Matching rows must stay vertically aligned while you inspect the change.\n\n  REFERENCE F3    WORKING F4\n  │  ____/      │ │  ____/      │\n  │< / / |::'  │ │< / / |::.  │\n  │  ¯¯¯¯\\      │ │  ¯¯¯¯\\      │\n\nNEOVIM\nWhy do both windows use :diffthis and scrollbind, and why is only the disposable reference closed afterward?",
+    "compact_prompt": "ANIMATION\nHold F3 beside F4; only '→. changes.\n\n  │|::'│ ⇄ │|::.│\n  │¯¯¯¯\\│   │¯¯¯¯\\│\n\nNEOVIM\nWhat do diffthis, scrollbind, and close each own?",
+    "animation_prompt": "ANIMATION\nM4.DIFF holds the prior missile frame beside the working frame so one exhaust-cell change can be judged in registration.",
+    "animation_answer": "The reference stays unchanged, the working exhaust endpoint advances to a dot, and corresponding rows remain aligned.",
+    "neovim_prompt": "NEOVIM\nExplain the two-window comparison and teardown.",
+    "neovim_answer": ":diffthis enables comparison in each window, scrollbind keeps their corresponding rows aligned, and closing the disposable reference leaves the working art and tutor brief intact.",
+    "choices": [
+      "ANIMATION: Prior and working frames stay row-aligned; only the working exhaust endpoint changes. | NEOVIM: diffthis compares both windows, scrollbind aligns their view, and only the disposable reference is closed.",
+      "ANIMATION: Both frames are edited together. | NEOVIM: diffthis mirrors every buffer change into the other window.",
+      "ANIMATION: The reference scrolls away from the working frame. | NEOVIM: scrollbind deliberately gives each window an independent viewport.",
+      "ANIMATION: The working frame is discarded after inspection. | NEOVIM: :close must run in the submitted art window."
+    ],
+    "compact_choices": [
+      "A: aligned; work changes · V: diff+bind; close ref",
+      "A: both change · V: diff mirrors edits",
+      "A: rows drift · V: bind separates",
+      "A: work discarded · V: close work"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the reference is visual evidence, not another edit target; the bound view makes row-to-row comparison trustworthy.",
+      "Diff mode highlights differences but does not synchronize buffer edits.",
+      "scrollbind exists to keep corresponding rows moving together, not to separate them.",
+      "The working art is the deliverable. Only the temporary reference window should be closed."
+    ]
+  },
+  "M4.DIFFH.P01": {
+    "prompt": "ANIMATION\nOn an unfamiliar Chick pose, keep the open-beak frame beside the working copy while only the beak endpoint closes from < to -. The eye, crack row, and feet must remain registered.\n\n  REFERENCE       WORKING\n  │  __O<       │ │  __O-       │\n  │`{/ ;        │ │`{/ ;        │\n  │  ^^         │ │  ^^         │\n\nNEOVIM\nWhich window workflow creates a true onion-skin comparison without sacrificing the tutor's upper brief?",
+    "compact_prompt": "ANIMATION\nCompare open and closed Chick beaks in aligned rows.\n\n  │__O<│ ⇄ │__O-│\n  │ ^^ │   │ ^^ │\n\nNEOVIM\nWhich view is disposable?",
+    "animation_prompt": "ANIMATION\nM4.DIFFH transfers two-window frame comparison to the Chick peep animation.",
+    "animation_answer": "The open-beak reference remains unchanged while the working endpoint closes; all other pose cells align.",
+    "neovim_prompt": "NEOVIM\nChoose the workflow that diffs and binds both art views, then closes only the temporary reference.",
+    "neovim_answer": "Create a disposable vertical reference, enable diffthis and scrollbind in both art windows, edit the working frame, turn diff off, and close the reference window only.",
+    "choices": [
+      "ANIMATION: Change both beaks to -. | NEOVIM: edit the shared reference so both views update together.",
+      "ANIMATION: Keep an open-beak reference beside the closed working beak. | NEOVIM: diff and bind both art views, edit only the work, then close only the disposable reference.",
+      "ANIMATION: Compare the beak against the tutor prose. | NEOVIM: close the art pane and run diffthis in the upper brief.",
+      "ANIMATION: Stack the two poses into one buffer. | NEOVIM: join their rows with J instead of using windows."
+    ],
+    "compact_choices": [
+      "A: both beaks close · V: shared edit",
+      "A: ref open; work closes · V: diff+bind; close ref",
+      "A: compare prose · V: close art",
+      "A: stack poses · V: join rows"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "The reference must remain the prior frame; editing it removes the comparison baseline.",
+      "Correct: two independent art buffers provide before/after evidence, while window-local binding keeps their rows aligned.",
+      "The upper pane explains the task; it is not a frame buffer and must not be closed for comparison.",
+      "Joining destroys frame boundaries and does not provide a synchronized before/after view."
+    ]
+  },
+  "M11.UT.P01": {
+    "prompt": "ANIMATION\nSkully's left eye has two authored takes. ! is an exaggerated reaction; O is the chosen look. After choosing O, you still revisit the abandoned ! take before returning to the look for submission.\n\n  START       BRANCH A     CHOSEN B\n  │(_o,o)│ → │(_!,o)│ ↔ │(_O,o)│\n  │  `\"´│   │  `\"´│   │  `\"´│\n\nNEOVIM\nHow do u, g-/g+, and :earlier differ when comparing these animation takes?",
+    "compact_prompt": "ANIMATION\nAuthor ! and O eye takes; inspect ! again; finish on O.\n\n  │(_o,o)│ → │(_!,o)│ ↔ │(_O,o)│\n\nNEOVIM\nWhich keys create and travel the branch?",
+    "animation_prompt": "ANIMATION\nM11.UT preserves an alternate Skully eye take in history while submitting the chosen look pose.",
+    "animation_answer": "The exaggerated ! take remains visitable, but the final saved left eye is the chosen O.",
+    "neovim_prompt": "NEOVIM\nExplain undo branching and chronological history travel.",
+    "neovim_answer": "u returns before the first take so the O-eye edit creates a branch; g- and g+ move through changes chronologically, while :earlier 1 revisits the preceding authored state.",
+    "choices": [
+      "ANIMATION: The ! take remains inspectable and the final saved left eye is O. | NEOVIM: u enables a branch; g-/g+ and :earlier travel authored states chronologically.",
+      "ANIMATION: Both ! and O appear in the final eye cell. | NEOVIM: g+ merges two branches into one glyph.",
+      "ANIMATION: The abandoned ! take is permanently deleted. | NEOVIM: u erases it from the undo tree before the O eye is authored.",
+      "ANIMATION: The original lowercase-o eye must be submitted. | NEOVIM: :earlier always discards every newer state with no return path."
+    ],
+    "compact_choices": [
+      "A: inspect !; save O · V: branch + history travel",
+      "A: save ! and O · V: g+ merges glyphs",
+      "A: ! erased · V: u deletes history",
+      "A: save original · V: earlier is irreversible"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: undo creates the opportunity for a sibling take, and chronological travel lets you compare without losing the chosen newest state.",
+      "One fixed cell can hold one glyph; g+ changes history state rather than combining buffer contents.",
+      "The old take remains in the undo tree and is the point of the comparison exercise.",
+      "History travel is reversible here; g+ returns to the newer chosen take before save."
+    ]
+  },
+  "M11.UTH.P01": {
+    "prompt": "ANIMATION\nOn an unfamiliar SnowBunny pose, ! is an exaggerated left-eye take and - is the chosen half-blink. The task must visit the abandoned ! state and still finish on -.\n\n  START       ALT TAKE     CHOSEN TAKE\n  │ ( n.n)│ → │ ( !.n)│ ↔ │ ( -.n)│\n  │o(,`_\"_)│ │o(,`_\"_)│ │o(,`_\"_)│\n\nNEOVIM\nWhich history model keeps both authored takes available while allowing the chosen half-blink to be saved?",
+    "compact_prompt": "ANIMATION\nCompare ! and - left-eye takes; finish on -.\n\n  │( n.n)│ → │( !.n)│ ↔ │( -.n)│\n\nNEOVIM\nWhich model is an undo branch?",
+    "animation_prompt": "ANIMATION\nM11.UTH transfers undo-tree take comparison to a different complete pose.",
+    "animation_answer": "The alternate eye remains in history, but the final visible left eye is the half-blink dash.",
+    "neovim_prompt": "NEOVIM\nChoose the route that branches after undo and travels older/newer states before save.",
+    "neovim_answer": "Author the alternate, undo, author the chosen sibling, use g-/g+ and :earlier to inspect history, then return to the chosen newer state.",
+    "choices": [
+      "ANIMATION: Save the exaggerated ! eye. | NEOVIM: stop immediately after travelling to the older branch.",
+      "ANIMATION: Delete the SnowBunny pose and retype it. | NEOVIM: undo history cannot retain sibling takes.",
+      "ANIMATION: Keep the alternate take visitable but save the - half-blink. | NEOVIM: undo before authoring the sibling, travel with g-/g+ and :earlier, then return to the chosen newer state.",
+      "ANIMATION: Display both eye takes in adjacent cells. | NEOVIM: g- duplicates the older glyph beside the current one."
+    ],
+    "compact_choices": [
+      "A: save ! · V: stop on old branch",
+      "A: retype pose · V: no sibling history",
+      "A: inspect !; save - · V: branch + travel + return",
+      "A: show both eye takes · V: g- duplicates"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "The alternate is for comparison; the target and final saved take use the closed dash.",
+      "Undo branching exists specifically so a sibling variant need not erase or require retyping the complete pose.",
+      "Correct: the method separates authoring alternatives from the final selection and proves the learner can navigate both.",
+      "History commands replace the current buffer state; they do not insert a second glyph into the row."
+    ]
   }
 }

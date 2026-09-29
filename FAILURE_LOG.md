@@ -4235,3 +4235,47 @@ proved directly instead of being inferred from the module's `.06` transfer.
 `scrollbind`, plus undo-tree travel with `g-`, `g+`, and `:earlier`. The stage
 gate, transfer-question replacement, primary-art replacement, and archive
 provenance/publication work listed above also remain open.
+
+### VD-36 follow-through · revision `2026-09-29.34` — comparison windows and undo-tree takes close the named command list
+
+The last two command families in VD-26's explicit missing list now have the
+same enforced progression as the earlier additions:
+
+- `M4.DIFF` → `M4.DIFFH`: create a disposable vertical copy of the prior
+  frame, enable `:diffthis` and `scrollbind` in both art windows, edit only the
+  working frame, turn diff off, and close only the disposable reference. The
+  hidden Chick beak lesson passed in the real-user-config 80×24 popup; its
+  cleanup leaves the tutor's upper brief intact. Reviews use Skully and
+  SnowBunny blink work.
+- `M11.UT` → `M11.UTH`: author one exaggerated take, `u` to branch, author the
+  chosen sibling take, visit the abandoned take chronologically with `g-` and
+  return with `g+`, then repeat the comparison with `:earlier 1` and restore
+  the chosen state before save. The hidden SnowBunny half-blink lesson passed
+  in the real-user-config 80×24 popup. Reviews transfer the same history model
+  to missile exhaust and Chick beak timing.
+
+Both hidden cards are required before module mastery and each owns two
+source-linked, method-required spaced reviews. Their four paired questions are
+individually authored with the actual reference/working frames or history
+branches shown. `--only-card=<id>` live-route proof prevents these inserted
+cards from hiding behind the older `.06` transfer matrix.
+
+Revision `.34` contains 209 cards and 369 manually authored four-choice
+questions. `test_question_quality.py` passes all 369. A complete `test_v2.py`
+run was still in progress when this paragraph was written, so its final result
+is deliberately not claimed here.
+
+The client-attached base popup also passes concurrently at 80×24, 100×36, and
+188×49 on `.34` with the real user config. This proves the general question,
+copy, edit, debrief, progress, retry/repeat, and cleanup surface; the two new
+hidden command cards have the separate direct-route evidence above.
+
+**Scope correction:** the concrete command gaps enumerated by VD-26 are now
+represented by executable guided → hidden-method → changed-art-review paths;
+that does **not** make the course complete. The remaining curriculum failures
+are structural/content work: replace module transfer art only after writing
+matching per-variant questions; replace remaining invented primary art; turn
+the mixed `MASTER_COVERAGE` labels into a truthful enforced S0→S7 then A0→A7
+stage journey rather than relabeling mixed cards; and finish Stone Story archive
+provenance/publication handling without publishing third-party material by
+default.

@@ -3810,6 +3810,16 @@ FAMILY_DEFS = {
         "grammar": ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace",
         "terms": [["list", "whitespace"], ["cursorcolumn", "active column"], ["colorcolumn", "boundary"], ["substitute", "trailing", "cleanup"]],
     },
+    "onion-diff-view": {
+        "class": "window",
+        "grammar": "a disposable vertical reference window holds the prior frame; :diffthis and scrollbind align both views; the reference closes after the changed cells are checked",
+        "terms": [["vnew", "reference", "window"], ["diffthis", "compare"], ["scrollbind", "align"], ["close", "disposable"]],
+    },
+    "undo-tree-travel": {
+        "class": "history",
+        "grammar": "u returns before a change so a second variant creates a branch; g-/g+ travel changes chronologically; :earlier 1 revisits the previous authored state",
+        "terms": [["u", "undo", "branch"], ["g-", "older"], ["g+", "newer"], ["earlier", "history", "state"]],
+    },
     "glyph-inspect": {
         "class": "standalone_normal",
         "grammar": "ga reports the glyph under the cursor before a deliberate fixed-cell replacement",
@@ -5090,6 +5100,59 @@ def mastery_extension_cards(module):
                 ])),
         ])
 
+        def onion_diff_keys(edit_keys):
+            return (":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR>"
+                    "<C-w>p:diffthis<CR>:set scrollbind<CR>" + edit_keys +
+                    ":diffoff!<CR><C-w>p:close!<CR>")
+
+        diff_label = "compare a working frame against a scroll-bound reference"
+        missile_diff = onion_diff_keys("2G0f'r.")
+        chick_diff = onion_diff_keys("gg0f<r-")
+        skully_diff = onion_diff_keys("2G0for=;r=")
+        bunny_diff = onion_diff_keys("2G0fnr-;r-")
+        rows.extend([
+            ("M4.04", card(
+                "DIFF", "Onion-skin a missile exhaust frame in a bound diff view",
+                "Open a disposable vertical reference of missile frame 3, enable diff and scroll binding in both views, change only the final exhaust puff to frame 4, then close only the reference window.",
+                ss.MISSILE_F3, ss.MISSILE_F4, missile_diff,
+                [[":vnew<CR>:0read #<CR>ggdd", "make a disposable reference from the saved prior frame"],
+                 [":diffthis<CR>:set scrollbind<CR>", "enable aligned comparison in the reference"],
+                 ["<C-w>p:diffthis<CR>:set scrollbind<CR>", "return to the working frame and bind its comparison view"],
+                 ["2G0f'r.", "advance only the final exhaust puff"],
+                 [":diffoff!<CR><C-w>p:close!<CR>", "end comparison and close only the disposable reference"]],
+                "onion-diff-view", 3.4,
+                "official-Games/TowerDefense res18 missile frame 3 -> 4", guided=True)),
+            ("M4.06", card(
+                "DIFFH", "Retrieve onion-skin diff on a Chick peep frame",
+                "On the unfamiliar Chick pose, build a disposable scroll-bound diff reference, close only the beak from < to -, then tear down the comparison without closing the tutor brief.",
+                ss.CHICK_PEEP_F3, ss.CHICK_PEEP_F4, chick_diff,
+                [[":vnew<CR>:0read #<CR>ggdd", "copy the prior Chick frame into a disposable reference"],
+                 [":diffthis<CR>:set scrollbind<CR>", "align that reference"],
+                 ["<C-w>p:diffthis<CR>:set scrollbind<CR>", "bind the working pose to it"],
+                 ["gg0f<r-", "close only the beak endpoint"],
+                 [":diffoff!<CR><C-w>p:close!<CR>", "remove diff mode and close the reference"]],
+                "onion-diff-view", 5.4,
+                "official-Pets/Chick res03 peep frame 3 -> 4", guided=False,
+                reviews=[
+                    review(ss.SKULLY_IDLE, ss.SKULLY_BLINK, skully_diff,
+                           [["reference + diffthis", "open the prior Skully pose beside the work"],
+                            ["scrollbind", "keep corresponding pose rows aligned"],
+                            ["2G0for=;r=", "close both eyes with repeated bounded find and replace"],
+                            ["diffoff + close", "tear down only the disposable reference"]],
+                           "official-Pets/Skully res01 -> res04 blink overlay", diff_label,
+                           "Skully review: compare the open pose beside the working blink, keep rows bound, and close the disposable reference after verifying both eye changes.",
+                           "The reference is a temporary window; the working art remains the submitted buffer."),
+                    review(ss.SNOWBUNNY_IDLE, ss.SNOWBUNNY_BLINK, bunny_diff,
+                           [["reference + diffthis", "open the prior bunny pose beside the work"],
+                            ["scrollbind", "align the three pose rows"],
+                            ["2G0fnr-;r-", "close the two eyes around the unchanged nose"],
+                            ["diffoff + close", "remove only the reference view"]],
+                           "official-Pets/SnowBunny res01 -> res03 blink overlay", diff_label,
+                           "SnowBunny review: onion-skin the open pose, make the blink in the working frame, then close only the disposable comparison window.",
+                           "Use window-local comparison tools; do not close the tutor's upper brief."),
+                ])),
+        ])
+
         gv_label = "restore and refine the same block with gv"
         rows.extend([
             ("M4.04", card(
@@ -5306,6 +5369,54 @@ def mastery_extension_cards(module):
                            "official-Pets/SnowBunny res01", audit_label,
                            "SnowBunny review: reveal and remove only invisible row tails; the ears, face, and body must remain byte-for-byte visible.",
                            "The cleanup pattern is anchored at each row end."),
+                ])),
+        ])
+
+        undo_label = "visit alternate animation takes through the undo tree"
+        skully_undo = "2G0for!urOg-g+:earlier 1<CR>g+"
+        bunny_undo = "2G0fnr!ur-g-g+:earlier 1<CR>g+"
+        missile_undo = "2G0f'r!ur.g-g+:earlier 1<CR>g+"
+        chick_undo = "gg0f<r!ur-g-g+:earlier 1<CR>g+"
+        bunny_half = [ss.SNOWBUNNY_IDLE[0],
+                      ss.SNOWBUNNY_IDLE[1].replace("n", "-", 1),
+                      ss.SNOWBUNNY_IDLE[2]]
+        rows.extend([
+            ("M11.04", card(
+                "UT", "Compare two Skully look takes through the undo tree",
+                "Try ! as an exaggerated left eye, undo it, author the chosen O look, visit the abandoned ! take with chronological history, then return to and submit the O-eye frame.",
+                ss.SKULLY_IDLE, ss.SKULLY_LOOK, skully_undo,
+                [["2G0for!", "author the exaggerated ! eye take"],
+                 ["u", "return before that take so the next edit creates a branch"],
+                 ["rO", "author the chosen look take"],
+                 ["g-g+", "visit the abandoned older take, then return to the newer choice"],
+                 [":earlier 1<CR>g+", "repeat the history comparison and finish on the chosen O eye"]],
+                "undo-tree-travel", 3.7,
+                "official-Pets/Skully res01 -> res02 look overlay", guided=True)),
+            ("M11.06", card(
+                "UTH", "Retrieve undo-tree comparison on a SnowBunny half-blink",
+                "On the unfamiliar SnowBunny pose, try ! as an exaggerated left eye, undo and author the chosen -, inspect the abandoned take chronologically, then return to the half-blink for submission.",
+                ss.SNOWBUNNY_IDLE, bunny_half, bunny_undo,
+                [["2G0fnr!", "author the exaggerated first-eye take"],
+                 ["ur-", "undo it and create the chosen half-blink branch"],
+                 ["g-g+", "walk to the abandoned take and back chronologically"],
+                 [":earlier 1<CR>g+", "revisit the older state once more and finish on the chosen branch"]],
+                "undo-tree-travel", 5.7,
+                "official-Pets/SnowBunny res01 half-blink study", guided=False,
+                reviews=[
+                    review(ss.MISSILE_F3, ss.MISSILE_F4, missile_undo,
+                           [["r! then u", "try and undo an exaggerated exhaust puff"],
+                            ["r.", "author the chosen settled exhaust"],
+                            ["g-/g+ and :earlier", "inspect the abandoned take and return"]],
+                           "official-Games/TowerDefense res18 missile frame 3 -> 4", undo_label,
+                           "Missile review: branch between an exaggerated exhaust puff and the chosen settle, visit the abandoned take chronologically, and submit the dot.",
+                           "History travel compares takes; the newest chosen take must be restored before saving."),
+                    review(ss.CHICK_PEEP_F3, ss.CHICK_PEEP_F4, chick_undo,
+                           [["r! then u", "try and undo an exaggerated beak"],
+                            ["r-", "author the chosen closed beak"],
+                            ["g-/g+ and :earlier", "inspect the abandoned branch and return"]],
+                           "official-Pets/Chick res03 peep frame 3 -> 4", undo_label,
+                           "Chick review: compare an exaggerated beak against the chosen closed endpoint through the undo tree, then finish on the dash.",
+                           "The art result and the visited history commands are both graded."),
                 ])),
         ])
     return rows
@@ -5921,7 +6032,7 @@ def build():
         question_map[question_id].update(authored)
         question_map[question_id]["authorship"] = "manual"
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.32",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.34",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "modules": modules, "cards": cards, "questions": questions,
         "animation_lesson_pack": animation_lessons,

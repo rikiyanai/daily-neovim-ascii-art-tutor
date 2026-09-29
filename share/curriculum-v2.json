@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.32",
+ "revision": "2026-09-29.34",
  "review_intervals_hours": [
   4,
   24,
@@ -74,9 +74,11 @@
     "M11.03",
     "M11.UR",
     "M11.WS",
+    "M11.UT",
     "M11.04",
     "M11.05",
     "M11.WSH",
+    "M11.UTH",
     "M11.06",
     "M11.07",
     "M11.VE",
@@ -84,6 +86,7 @@
    ],
    "required_review_card_ids": [
     "M11.WSH",
+    "M11.UTH",
     "M11.06"
    ],
    "animation_pack_lesson_ids": [
@@ -517,11 +520,13 @@
     "M4.VB",
     "M4.BI",
     "M4.BC",
+    "M4.DIFF",
     "M4.GV",
     "M4.04",
     "M4.05",
     "M4.BIH",
     "M4.BCH",
+    "M4.DIFFH",
     "M4.GVH",
     "M4.06",
     "M4.07",
@@ -530,6 +535,7 @@
    "required_review_card_ids": [
     "M4.BIH",
     "M4.BCH",
+    "M4.DIFFH",
     "M4.GVH",
     "M4.06"
    ],
@@ -2816,6 +2822,102 @@
    "pairing_exception": null
   },
   {
+   "id": "M11.UT",
+   "module_id": "M11",
+   "ordinal": 3.7,
+   "kind": "guided_edit",
+   "title": "Fixed-width redraw · Compare two Skully look takes through the undo tree",
+   "project_id": "mastery-m11-ut",
+   "artifact": "transfer",
+   "variant_group": "M11.UT.mastery",
+   "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar; official-Pets/Skully res01 -> res02 look overlay",
+   "source": "official-Pets/Skully res01 -> res02 look overlay",
+   "medium": "monospace",
+   "node_ids": [
+    "A9/V11"
+   ],
+   "master_habits": [
+    "H1",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S0",
+    "A3"
+   ],
+   "lesson_benefit": "perform undo-tree-travel with visible keys",
+   "prompt": "Try ! as an exaggerated left eye, undo it, author the chosen O look, visit the abandoned ! take with chronological history, then return to and submit the O-eye frame.",
+   "roadmap_contract": "Try ! as an exaggerated left eye, undo it, author the chosen O look, visit the abandoned ! take with chronological history, then return to and submit the O-eye frame.",
+   "start": [
+    "     ,--.",
+    "    (_o,o)",
+    "      `\"´"
+   ],
+   "target": [
+    "     ,--.",
+    "    (_O,o)",
+    "      `\"´"
+   ],
+   "expected": "2G0for!urOg-g+:earlier 1<CR>g+",
+   "recipe": [
+    [
+     "2G0for!",
+     "author the exaggerated ! eye take"
+    ],
+    [
+     "u",
+     "return before that take so the next edit creates a branch"
+    ],
+    [
+     "rO",
+     "author the chosen look take"
+    ],
+    [
+     "g-g+",
+     "visit the abandoned older take, then return to the newer choice"
+    ],
+    [
+     ":earlier 1<CR>g+",
+     "repeat the history comparison and finish on the chosen O eye"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "Follow the visible grammar once, then inspect the registered result.",
+   "grammar_families": [
+    "undo-tree-travel"
+   ],
+   "grammar_stage": "guided",
+   "key_vocabulary": [
+    "u returns before a change so a second variant creates a branch; g-/g+ travel changes chronologically; :earlier 1 revisits the previous authored state"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught undo-tree-travel path",
+    "exact_any_of": [
+     "2G0for!urOg-g+:earlier 1<CR>g+"
+    ]
+   },
+   "paired_question_ids": [
+    "M11.UT.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M11.UT.P01"
+    ],
+    "rationale": {
+     "M11.UT.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
    "id": "M11.04",
    "module_id": "M11",
    "ordinal": 4,
@@ -3349,6 +3451,177 @@
     ],
     "rationale": {
      "M11.WSH.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "id": "M11.UTH",
+   "module_id": "M11",
+   "ordinal": 5.7,
+   "kind": "independent_edit",
+   "title": "Fixed-width redraw · Retrieve undo-tree comparison on a SnowBunny half-blink",
+   "project_id": "mastery-m11-uth",
+   "artifact": "transfer",
+   "variant_group": "M11.UTH.mastery",
+   "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar; official-Pets/SnowBunny res01 half-blink study",
+   "source": "official-Pets/SnowBunny res01 half-blink study",
+   "medium": "monospace",
+   "node_ids": [
+    "A9/V11"
+   ],
+   "master_habits": [
+    "H1",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S0",
+    "A3"
+   ],
+   "lesson_benefit": "retrieve undo-tree-travel on unfamiliar animation art with the key path hidden",
+   "prompt": "On the unfamiliar SnowBunny pose, try ! as an exaggerated left eye, undo and author the chosen -, inspect the abandoned take chronologically, then return to the half-blink for submission.",
+   "roadmap_contract": "On the unfamiliar SnowBunny pose, try ! as an exaggerated left eye, undo and author the chosen -, inspect the abandoned take chronologically, then return to the half-blink for submission.",
+   "start": [
+    "   (\\(\\",
+    "  ( n.n)",
+    "o(,`_\"_)"
+   ],
+   "target": [
+    "   (\\(\\",
+    "  ( -.n)",
+    "o(,`_\"_)"
+   ],
+   "expected": "2G0fnr!ur-g-g+:earlier 1<CR>g+",
+   "recipe": [
+    [
+     "2G0fnr!",
+     "author the exaggerated first-eye take"
+    ],
+    [
+     "ur-",
+     "undo it and create the chosen half-blink branch"
+    ],
+    [
+     "g-g+",
+     "walk to the abandoned take and back chronologically"
+    ],
+    [
+     ":earlier 1<CR>g+",
+     "revisit the older state once more and finish on the chosen branch"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": false,
+   "hint": "Name the acting cells first. The exact key sequence remains hidden until evaluation.",
+   "grammar_families": [
+    "undo-tree-travel"
+   ],
+   "grammar_stage": "hidden",
+   "key_vocabulary": [
+    "u returns before a change so a second variant creates a branch; g-/g+ travel changes chronologically; :earlier 1 revisits the previous authored state"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught undo-tree-travel path",
+    "exact_any_of": [
+     "2G0fnr!ur-g-g+:earlier 1<CR>g+"
+    ]
+   },
+   "review_variants": [
+    {
+     "start": [
+      "  ____/",
+      "< / / |::'",
+      "  ¯¯¯¯\\"
+     ],
+     "target": [
+      "  ____/",
+      "< / / |::.",
+      "  ¯¯¯¯\\"
+     ],
+     "expected": "2G0f'r!ur.g-g+:earlier 1<CR>g+",
+     "recipe": [
+      [
+       "r! then u",
+       "try and undo an exaggerated exhaust puff"
+      ],
+      [
+       "r.",
+       "author the chosen settled exhaust"
+      ],
+      [
+       "g-/g+ and :earlier",
+       "inspect the abandoned take and return"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Games/TowerDefense res18 missile frame 3 -> 4",
+     "prompt": "Missile review: branch between an exaggerated exhaust puff and the chosen settle, visit the abandoned take chronologically, and submit the dot.",
+     "hint": "History travel compares takes; the newest chosen take must be restored before saving.",
+     "method_requirement": {
+      "label": "visit alternate animation takes through the undo tree",
+      "exact_any_of": [
+       "2G0f'r!ur.g-g+:earlier 1<CR>g+"
+      ]
+     }
+    },
+    {
+     "start": [
+      "  __O<",
+      "`{/ ;",
+      "  ^^"
+     ],
+     "target": [
+      "  __O-",
+      "`{/ ;",
+      "  ^^"
+     ],
+     "expected": "gg0f<r!ur-g-g+:earlier 1<CR>g+",
+     "recipe": [
+      [
+       "r! then u",
+       "try and undo an exaggerated beak"
+      ],
+      [
+       "r-",
+       "author the chosen closed beak"
+      ],
+      [
+       "g-/g+ and :earlier",
+       "inspect the abandoned branch and return"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Chick res03 peep frame 3 -> 4",
+     "prompt": "Chick review: compare an exaggerated beak against the chosen closed endpoint through the undo tree, then finish on the dash.",
+     "hint": "The art result and the visited history commands are both graded.",
+     "method_requirement": {
+      "label": "visit alternate animation takes through the undo tree",
+      "exact_any_of": [
+       "gg0f<r!ur-g-g+:earlier 1<CR>g+"
+      ]
+     }
+    }
+   ],
+   "review_source_card_id": "M11.UTH",
+   "review_method_family": "undo-tree-travel",
+   "required_before_mastery": true,
+   "paired_question_ids": [
+    "M11.UTH.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M11.UTH.P01"
+    ],
+    "rationale": {
+     "M11.UTH.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
     }
    },
    "pairing_exception": null
@@ -18018,6 +18291,102 @@
    "pairing_exception": null
   },
   {
+   "id": "M4.DIFF",
+   "module_id": "M4",
+   "ordinal": 3.4,
+   "kind": "guided_edit",
+   "title": "Rotation tween · Onion-skin a missile exhaust frame in a bound diff view",
+   "project_id": "mastery-m4-diff",
+   "artifact": "transfer",
+   "variant_group": "M4.DIFF.mastery",
+   "skill": "multi-row extremes, midpoint, and stable pivot",
+   "source_ref": "ascii-art-authoring §§4.4,9f-9g; P2 00:37:34; Neovim help visual-block, :copy; official-Games/TowerDefense res18 missile frame 3 -> 4",
+   "source": "official-Games/TowerDefense res18 missile frame 3 -> 4",
+   "medium": "monospace",
+   "node_ids": [
+    "A3/V4"
+   ],
+   "master_habits": [
+    "H2",
+    "H4",
+    "H7"
+   ],
+   "master_stages": [
+    "S4",
+    "A2"
+   ],
+   "lesson_benefit": "perform onion-diff-view with visible keys",
+   "prompt": "Open a disposable vertical reference of missile frame 3, enable diff and scroll binding in both views, change only the final exhaust puff to frame 4, then close only the reference window.",
+   "roadmap_contract": "Open a disposable vertical reference of missile frame 3, enable diff and scroll binding in both views, change only the final exhaust puff to frame 4, then close only the reference window.",
+   "start": [
+    "  ____/",
+    "< / / |::'",
+    "  ¯¯¯¯\\"
+   ],
+   "target": [
+    "  ____/",
+    "< / / |::.",
+    "  ¯¯¯¯\\"
+   ],
+   "expected": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0f'r.:diffoff!<CR><C-w>p:close!<CR>",
+   "recipe": [
+    [
+     ":vnew<CR>:0read #<CR>ggdd",
+     "make a disposable reference from the saved prior frame"
+    ],
+    [
+     ":diffthis<CR>:set scrollbind<CR>",
+     "enable aligned comparison in the reference"
+    ],
+    [
+     "<C-w>p:diffthis<CR>:set scrollbind<CR>",
+     "return to the working frame and bind its comparison view"
+    ],
+    [
+     "2G0f'r.",
+     "advance only the final exhaust puff"
+    ],
+    [
+     ":diffoff!<CR><C-w>p:close!<CR>",
+     "end comparison and close only the disposable reference"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "Follow the visible grammar once, then inspect the registered result.",
+   "grammar_families": [
+    "onion-diff-view"
+   ],
+   "grammar_stage": "guided",
+   "key_vocabulary": [
+    "a disposable vertical reference window holds the prior frame; :diffthis and scrollbind align both views; the reference closes after the changed cells are checked"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught onion-diff-view path",
+    "exact_any_of": [
+     ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0f'r.:diffoff!<CR><C-w>p:close!<CR>"
+    ]
+   },
+   "paired_question_ids": [
+    "M4.DIFF.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M4.DIFF.P01"
+    ],
+    "rationale": {
+     "M4.DIFF.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
    "id": "M4.GV",
    "module_id": "M4",
    "ordinal": 3.3,
@@ -18699,6 +19068,189 @@
     ],
     "rationale": {
      "M4.BCH.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "id": "M4.DIFFH",
+   "module_id": "M4",
+   "ordinal": 5.4,
+   "kind": "independent_edit",
+   "title": "Rotation tween · Retrieve onion-skin diff on a Chick peep frame",
+   "project_id": "mastery-m4-diffh",
+   "artifact": "transfer",
+   "variant_group": "M4.DIFFH.mastery",
+   "skill": "multi-row extremes, midpoint, and stable pivot",
+   "source_ref": "ascii-art-authoring §§4.4,9f-9g; P2 00:37:34; Neovim help visual-block, :copy; official-Pets/Chick res03 peep frame 3 -> 4",
+   "source": "official-Pets/Chick res03 peep frame 3 -> 4",
+   "medium": "monospace",
+   "node_ids": [
+    "A3/V4"
+   ],
+   "master_habits": [
+    "H2",
+    "H4",
+    "H7"
+   ],
+   "master_stages": [
+    "S4",
+    "A2"
+   ],
+   "lesson_benefit": "retrieve onion-diff-view on unfamiliar animation art with the key path hidden",
+   "prompt": "On the unfamiliar Chick pose, build a disposable scroll-bound diff reference, close only the beak from < to -, then tear down the comparison without closing the tutor brief.",
+   "roadmap_contract": "On the unfamiliar Chick pose, build a disposable scroll-bound diff reference, close only the beak from < to -, then tear down the comparison without closing the tutor brief.",
+   "start": [
+    "  __O<",
+    "`{/ ;",
+    "  ^^"
+   ],
+   "target": [
+    "  __O-",
+    "`{/ ;",
+    "  ^^"
+   ],
+   "expected": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:close!<CR>",
+   "recipe": [
+    [
+     ":vnew<CR>:0read #<CR>ggdd",
+     "copy the prior Chick frame into a disposable reference"
+    ],
+    [
+     ":diffthis<CR>:set scrollbind<CR>",
+     "align that reference"
+    ],
+    [
+     "<C-w>p:diffthis<CR>:set scrollbind<CR>",
+     "bind the working pose to it"
+    ],
+    [
+     "gg0f<r-",
+     "close only the beak endpoint"
+    ],
+    [
+     ":diffoff!<CR><C-w>p:close!<CR>",
+     "remove diff mode and close the reference"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": false,
+   "hint": "Name the acting cells first. The exact key sequence remains hidden until evaluation.",
+   "grammar_families": [
+    "onion-diff-view"
+   ],
+   "grammar_stage": "hidden",
+   "key_vocabulary": [
+    "a disposable vertical reference window holds the prior frame; :diffthis and scrollbind align both views; the reference closes after the changed cells are checked"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught onion-diff-view path",
+    "exact_any_of": [
+     ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:close!<CR>"
+    ]
+   },
+   "review_variants": [
+    {
+     "start": [
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´"
+     ],
+     "target": [
+      "     ,--.",
+      "    (_=,=)",
+      "      `\"´"
+     ],
+     "expected": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0for=;r=:diffoff!<CR><C-w>p:close!<CR>",
+     "recipe": [
+      [
+       "reference + diffthis",
+       "open the prior Skully pose beside the work"
+      ],
+      [
+       "scrollbind",
+       "keep corresponding pose rows aligned"
+      ],
+      [
+       "2G0for=;r=",
+       "close both eyes with repeated bounded find and replace"
+      ],
+      [
+       "diffoff + close",
+       "tear down only the disposable reference"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Skully res01 -> res04 blink overlay",
+     "prompt": "Skully review: compare the open pose beside the working blink, keep rows bound, and close the disposable reference after verifying both eye changes.",
+     "hint": "The reference is a temporary window; the working art remains the submitted buffer.",
+     "method_requirement": {
+      "label": "compare a working frame against a scroll-bound reference",
+      "exact_any_of": [
+       ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0for=;r=:diffoff!<CR><C-w>p:close!<CR>"
+      ]
+     }
+    },
+    {
+     "start": [
+      "   (\\(\\",
+      "  ( n.n)",
+      "o(,`_\"_)"
+     ],
+     "target": [
+      "   (\\(\\",
+      "  ( -.-)",
+      "o(,`_\"_)"
+     ],
+     "expected": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0fnr-;r-:diffoff!<CR><C-w>p:close!<CR>",
+     "recipe": [
+      [
+       "reference + diffthis",
+       "open the prior bunny pose beside the work"
+      ],
+      [
+       "scrollbind",
+       "align the three pose rows"
+      ],
+      [
+       "2G0fnr-;r-",
+       "close the two eyes around the unchanged nose"
+      ],
+      [
+       "diffoff + close",
+       "remove only the reference view"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/SnowBunny res01 -> res03 blink overlay",
+     "prompt": "SnowBunny review: onion-skin the open pose, make the blink in the working frame, then close only the disposable comparison window.",
+     "hint": "Use window-local comparison tools; do not close the tutor's upper brief.",
+     "method_requirement": {
+      "label": "compare a working frame against a scroll-bound reference",
+      "exact_any_of": [
+       ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0fnr-;r-:diffoff!<CR><C-w>p:close!<CR>"
+      ]
+     }
+    }
+   ],
+   "review_source_card_id": "M4.DIFFH",
+   "review_method_family": "onion-diff-view",
+   "required_before_mastery": true,
+   "paired_question_ids": [
+    "M4.DIFFH.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M4.DIFFH.P01"
+    ],
+    "rationale": {
+     "M4.DIFFH.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
     }
    },
    "pairing_exception": null
@@ -37539,6 +38091,78 @@
    "authorship": "manual"
   },
   {
+   "id": "M11.UT.P01",
+   "card_id": "M11.UT",
+   "module_id": "M11",
+   "grammar_family": "undo-tree-travel",
+   "grammar_breakdown_id": "undo-tree-travel",
+   "grammar_breakdown": [
+    "u returns before a change so a second variant creates a branch; g-/g+ travel changes chronologically; :earlier 1 revisits the previous authored state"
+   ],
+   "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
+   "difficulty": 1,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nSkully's left eye has two authored takes. ! is an exaggerated reaction; O is the chosen look. After choosing O, you still revisit the abandoned ! take before returning to the look for submission.\n\n  START       BRANCH A     CHOSEN B\n  │(_o,o)│ → │(_!,o)│ ↔ │(_O,o)│\n  │  `\"´│   │  `\"´│   │  `\"´│\n\nNEOVIM\nHow do u, g-/g+, and :earlier differ when comparing these animation takes?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: The ! take remains inspectable and the final saved left eye is O. | NEOVIM: u enables a branch; g-/g+ and :earlier travel authored states chronologically.",
+    "ANIMATION: Both ! and O appear in the final eye cell. | NEOVIM: g+ merges two branches into one glyph.",
+    "ANIMATION: The abandoned ! take is permanently deleted. | NEOVIM: u erases it from the undo tree before the O eye is authored.",
+    "ANIMATION: The original lowercase-o eye must be submitted. | NEOVIM: :earlier always discards every newer state with no return path."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: undo creates the opportunity for a sibling take, and chronological travel lets you compare without losing the chosen newest state.",
+    "One fixed cell can hold one glyph; g+ changes history state rather than combining buffer contents.",
+    "The old take remains in the undo tree and is the point of the comparison exercise.",
+    "History travel is reversible here; g+ returns to the newer chosen take before save."
+   ],
+   "animation_prompt": "ANIMATION\nM11.UT preserves an alternate Skully eye take in history while submitting the chosen look pose.",
+   "animation_answer": "The exaggerated ! take remains visitable, but the final saved left eye is the chosen O.",
+   "neovim_prompt": "NEOVIM\nExplain undo branching and chronological history travel.",
+   "neovim_answer": "u returns before the first take so the O-eye edit creates a branch; g- and g+ move through changes chronologically, while :earlier 1 revisits the preceding authored state.",
+   "compact_prompt": "ANIMATION\nAuthor ! and O eye takes; inspect ! again; finish on O.\n\n  │(_o,o)│ → │(_!,o)│ ↔ │(_O,o)│\n\nNEOVIM\nWhich keys create and travel the branch?",
+   "compact_choices": [
+    "A: inspect !; save O · V: branch + history travel",
+    "A: save ! and O · V: g+ merges glyphs",
+    "A: ! erased · V: u deletes history",
+    "A: save original · V: earlier is irreversible"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "2G0for!urOg-g+:earlier 1<CR>g+",
+    "required_term_groups": [
+     [
+      "u",
+      "undo",
+      "branch"
+     ],
+     [
+      "g-",
+      "older"
+     ],
+     [
+      "g+",
+      "newer"
+     ],
+     [
+      "earlier",
+      "history",
+      "state"
+     ]
+    ],
+    "sample_answer": "u g- g+ earlier"
+   },
+   "authorship": "manual"
+  },
+  {
    "id": "M11.04.P01",
    "card_id": "M11.04",
    "module_id": "M11",
@@ -37729,6 +38353,78 @@
      ]
     ],
     "sample_answer": "list cursorcolumn colorcolumn substitute"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M11.UTH.P01",
+   "card_id": "M11.UTH",
+   "module_id": "M11",
+   "grammar_family": "undo-tree-travel",
+   "grammar_breakdown_id": "undo-tree-travel",
+   "grammar_breakdown": [
+    "u returns before a change so a second variant creates a branch; g-/g+ travel changes chronologically; :earlier 1 revisits the previous authored state"
+   ],
+   "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nOn an unfamiliar SnowBunny pose, ! is an exaggerated left-eye take and - is the chosen half-blink. The task must visit the abandoned ! state and still finish on -.\n\n  START       ALT TAKE     CHOSEN TAKE\n  │ ( n.n)│ → │ ( !.n)│ ↔ │ ( -.n)│\n  │o(,`_\"_)│ │o(,`_\"_)│ │o(,`_\"_)│\n\nNEOVIM\nWhich history model keeps both authored takes available while allowing the chosen half-blink to be saved?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Save the exaggerated ! eye. | NEOVIM: stop immediately after travelling to the older branch.",
+    "ANIMATION: Delete the SnowBunny pose and retype it. | NEOVIM: undo history cannot retain sibling takes.",
+    "ANIMATION: Keep the alternate take visitable but save the - half-blink. | NEOVIM: undo before authoring the sibling, travel with g-/g+ and :earlier, then return to the chosen newer state.",
+    "ANIMATION: Display both eye takes in adjacent cells. | NEOVIM: g- duplicates the older glyph beside the current one."
+   ],
+   "correct_choice": 2,
+   "feedback": [
+    "The alternate is for comparison; the target and final saved take use the closed dash.",
+    "Undo branching exists specifically so a sibling variant need not erase or require retyping the complete pose.",
+    "Correct: the method separates authoring alternatives from the final selection and proves the learner can navigate both.",
+    "History commands replace the current buffer state; they do not insert a second glyph into the row."
+   ],
+   "animation_prompt": "ANIMATION\nM11.UTH transfers undo-tree take comparison to a different complete pose.",
+   "animation_answer": "The alternate eye remains in history, but the final visible left eye is the half-blink dash.",
+   "neovim_prompt": "NEOVIM\nChoose the route that branches after undo and travels older/newer states before save.",
+   "neovim_answer": "Author the alternate, undo, author the chosen sibling, use g-/g+ and :earlier to inspect history, then return to the chosen newer state.",
+   "compact_prompt": "ANIMATION\nCompare ! and - left-eye takes; finish on -.\n\n  │( n.n)│ → │( !.n)│ ↔ │( -.n)│\n\nNEOVIM\nWhich model is an undo branch?",
+   "compact_choices": [
+    "A: save ! · V: stop on old branch",
+    "A: retype pose · V: no sibling history",
+    "A: inspect !; save - · V: branch + travel + return",
+    "A: show both eye takes · V: g- duplicates"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "2G0fnr!ur-g-g+:earlier 1<CR>g+",
+    "required_term_groups": [
+     [
+      "u",
+      "undo",
+      "branch"
+     ],
+     [
+      "g-",
+      "older"
+     ],
+     [
+      "g+",
+      "newer"
+     ],
+     [
+      "earlier",
+      "history",
+      "state"
+     ]
+    ],
+    "sample_answer": "u g- g+ earlier"
    },
    "authorship": "manual"
   },
@@ -44089,6 +44785,77 @@
    "authorship": "manual"
   },
   {
+   "id": "M4.DIFF.P01",
+   "card_id": "M4.DIFF",
+   "module_id": "M4",
+   "grammar_family": "onion-diff-view",
+   "grammar_breakdown_id": "onion-diff-view",
+   "grammar_breakdown": [
+    "a disposable vertical reference window holds the prior frame; :diffthis and scrollbind align both views; the reference closes after the changed cells are checked"
+   ],
+   "paired_invariant": "draw both complete extremes before inserting the middle in-between",
+   "source_ref": "ascii-art-authoring §§4.4,9f-9g; P2 00:37:34; Neovim help visual-block, :copy",
+   "difficulty": 1,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nMissile frame 3 remains visible as a reference while the working copy advances only its last exhaust puff from apostrophe to dot. Matching rows must stay vertically aligned while you inspect the change.\n\n  REFERENCE F3    WORKING F4\n  │  ____/      │ │  ____/      │\n  │< / / |::'  │ │< / / |::.  │\n  │  ¯¯¯¯\\      │ │  ¯¯¯¯\\      │\n\nNEOVIM\nWhy do both windows use :diffthis and scrollbind, and why is only the disposable reference closed afterward?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Prior and working frames stay row-aligned; only the working exhaust endpoint changes. | NEOVIM: diffthis compares both windows, scrollbind aligns their view, and only the disposable reference is closed.",
+    "ANIMATION: Both frames are edited together. | NEOVIM: diffthis mirrors every buffer change into the other window.",
+    "ANIMATION: The reference scrolls away from the working frame. | NEOVIM: scrollbind deliberately gives each window an independent viewport.",
+    "ANIMATION: The working frame is discarded after inspection. | NEOVIM: :close must run in the submitted art window."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: the reference is visual evidence, not another edit target; the bound view makes row-to-row comparison trustworthy.",
+    "Diff mode highlights differences but does not synchronize buffer edits.",
+    "scrollbind exists to keep corresponding rows moving together, not to separate them.",
+    "The working art is the deliverable. Only the temporary reference window should be closed."
+   ],
+   "animation_prompt": "ANIMATION\nM4.DIFF holds the prior missile frame beside the working frame so one exhaust-cell change can be judged in registration.",
+   "animation_answer": "The reference stays unchanged, the working exhaust endpoint advances to a dot, and corresponding rows remain aligned.",
+   "neovim_prompt": "NEOVIM\nExplain the two-window comparison and teardown.",
+   "neovim_answer": ":diffthis enables comparison in each window, scrollbind keeps their corresponding rows aligned, and closing the disposable reference leaves the working art and tutor brief intact.",
+   "compact_prompt": "ANIMATION\nHold F3 beside F4; only '→. changes.\n\n  │|::'│ ⇄ │|::.│\n  │¯¯¯¯\\│   │¯¯¯¯\\│\n\nNEOVIM\nWhat do diffthis, scrollbind, and close each own?",
+   "compact_choices": [
+    "A: aligned; work changes · V: diff+bind; close ref",
+    "A: both change · V: diff mirrors edits",
+    "A: rows drift · V: bind separates",
+    "A: work discarded · V: close work"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0f'r.:diffoff!<CR><C-w>p:close!<CR>",
+    "required_term_groups": [
+     [
+      "vnew",
+      "reference",
+      "window"
+     ],
+     [
+      "diffthis",
+      "compare"
+     ],
+     [
+      "scrollbind",
+      "align"
+     ],
+     [
+      "close",
+      "disposable"
+     ]
+    ],
+    "sample_answer": "vnew diffthis scrollbind close"
+   },
+   "authorship": "manual"
+  },
+  {
    "id": "M4.GV.P01",
    "card_id": "M4.GV",
    "module_id": "M4",
@@ -44435,6 +45202,77 @@
      ]
     ],
     "sample_answer": "ctrl-v c each row escape"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M4.DIFFH.P01",
+   "card_id": "M4.DIFFH",
+   "module_id": "M4",
+   "grammar_family": "onion-diff-view",
+   "grammar_breakdown_id": "onion-diff-view",
+   "grammar_breakdown": [
+    "a disposable vertical reference window holds the prior frame; :diffthis and scrollbind align both views; the reference closes after the changed cells are checked"
+   ],
+   "paired_invariant": "draw both complete extremes before inserting the middle in-between",
+   "source_ref": "ascii-art-authoring §§4.4,9f-9g; P2 00:37:34; Neovim help visual-block, :copy",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nOn an unfamiliar Chick pose, keep the open-beak frame beside the working copy while only the beak endpoint closes from < to -. The eye, crack row, and feet must remain registered.\n\n  REFERENCE       WORKING\n  │  __O<       │ │  __O-       │\n  │`{/ ;        │ │`{/ ;        │\n  │  ^^         │ │  ^^         │\n\nNEOVIM\nWhich window workflow creates a true onion-skin comparison without sacrificing the tutor's upper brief?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Change both beaks to -. | NEOVIM: edit the shared reference so both views update together.",
+    "ANIMATION: Keep an open-beak reference beside the closed working beak. | NEOVIM: diff and bind both art views, edit only the work, then close only the disposable reference.",
+    "ANIMATION: Compare the beak against the tutor prose. | NEOVIM: close the art pane and run diffthis in the upper brief.",
+    "ANIMATION: Stack the two poses into one buffer. | NEOVIM: join their rows with J instead of using windows."
+   ],
+   "correct_choice": 1,
+   "feedback": [
+    "The reference must remain the prior frame; editing it removes the comparison baseline.",
+    "Correct: two independent art buffers provide before/after evidence, while window-local binding keeps their rows aligned.",
+    "The upper pane explains the task; it is not a frame buffer and must not be closed for comparison.",
+    "Joining destroys frame boundaries and does not provide a synchronized before/after view."
+   ],
+   "animation_prompt": "ANIMATION\nM4.DIFFH transfers two-window frame comparison to the Chick peep animation.",
+   "animation_answer": "The open-beak reference remains unchanged while the working endpoint closes; all other pose cells align.",
+   "neovim_prompt": "NEOVIM\nChoose the workflow that diffs and binds both art views, then closes only the temporary reference.",
+   "neovim_answer": "Create a disposable vertical reference, enable diffthis and scrollbind in both art windows, edit the working frame, turn diff off, and close the reference window only.",
+   "compact_prompt": "ANIMATION\nCompare open and closed Chick beaks in aligned rows.\n\n  │__O<│ ⇄ │__O-│\n  │ ^^ │   │ ^^ │\n\nNEOVIM\nWhich view is disposable?",
+   "compact_choices": [
+    "A: both beaks close · V: shared edit",
+    "A: ref open; work closes · V: diff+bind; close ref",
+    "A: compare prose · V: close art",
+    "A: stack poses · V: join rows"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:close!<CR>",
+    "required_term_groups": [
+     [
+      "vnew",
+      "reference",
+      "window"
+     ],
+     [
+      "diffthis",
+      "compare"
+     ],
+     [
+      "scrollbind",
+      "align"
+     ],
+     [
+      "close",
+      "disposable"
+     ]
+    ],
+    "sample_answer": "vnew diffthis scrollbind close"
    },
    "authorship": "manual"
   },
@@ -49464,6 +50302,11 @@
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
+   "card_id": "M11.UT",
+   "label": "use the taught undo-tree-travel path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M11.04",
    "label": "undo and redo a real fixed-width redraw",
    "evidence": "runtime-required ordered command path plus exact target"
@@ -49481,6 +50324,11 @@
   {
    "card_id": "M11.WSH",
    "label": "use the taught whitespace-column-audit path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
+   "card_id": "M11.UTH",
+   "label": "use the taught undo-tree-travel path",
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
@@ -49834,6 +50682,11 @@
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
+   "card_id": "M4.DIFF",
+   "label": "use the taught onion-diff-view path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M4.GV",
    "label": "use the taught visual-reselect path",
    "evidence": "runtime-required ordered command path plus exact target"
@@ -49856,6 +50709,11 @@
   {
    "card_id": "M4.BCH",
    "label": "use the taught block-change path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
+   "card_id": "M4.DIFFH",
+   "label": "use the taught onion-diff-view path",
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
@@ -50055,6 +50913,12 @@
   {
    "source_card_id": "M11.WSH",
    "method_family": "whitespace-column-audit",
+   "changed_art_variants": 2,
+   "evidence": "source-linked changed-art review bank"
+  },
+  {
+   "source_card_id": "M11.UTH",
+   "method_family": "undo-tree-travel",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -50371,6 +51235,12 @@
    "evidence": "source-linked changed-art review bank"
   },
   {
+   "source_card_id": "M4.DIFFH",
+   "method_family": "onion-diff-view",
+   "changed_art_variants": 2,
+   "evidence": "source-linked changed-art review bank"
+  },
+  {
    "source_card_id": "M4.GVH",
    "method_family": "visual-reselect",
    "changed_art_variants": 2,
@@ -50632,6 +51502,11 @@
    "hidden_card_id": "M11.WSH",
    "grammar_family": "whitespace-column-audit",
    "prior_guided_card_id": "M11.WS"
+  },
+  {
+   "hidden_card_id": "M11.UTH",
+   "grammar_family": "undo-tree-travel",
+   "prior_guided_card_id": "M11.UT"
   },
   {
    "hidden_card_id": "M11.06",
@@ -51489,6 +52364,11 @@
    "prior_guided_card_id": "M4.BC"
   },
   {
+   "hidden_card_id": "M4.DIFFH",
+   "grammar_family": "onion-diff-view",
+   "prior_guided_card_id": "M4.DIFF"
+  },
+  {
    "hidden_card_id": "M4.GVH",
    "grammar_family": "visual-reselect",
    "prior_guided_card_id": "M4.GV"
@@ -52004,6 +52884,14 @@
    "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
   },
   {
+   "grammar_family": "undo-tree-travel",
+   "guided_card_id": "M11.UT",
+   "review_card_id": "M11.UTH",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+  },
+  {
    "grammar_family": "virtual-column",
    "guided_card_id": "M11.VE",
    "review_card_id": "M11.08",
@@ -52196,6 +53084,14 @@
    "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
   },
   {
+   "grammar_family": "onion-diff-view",
+   "guided_card_id": "M4.DIFF",
+   "review_card_id": "M4.DIFFH",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+  },
+  {
    "grammar_family": "visual-reselect",
    "guided_card_id": "M4.GV",
    "review_card_id": "M4.GVH",
@@ -52242,6 +53138,15 @@
    "module_id": "M11",
    "source_card_id": "M11.WSH",
    "method_label": "use the taught whitespace-column-audit path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M11",
+   "source_card_id": "M11.UTH",
+   "method_label": "use the taught undo-tree-travel path",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
@@ -52413,6 +53318,15 @@
    "module_id": "M4",
    "source_card_id": "M4.BCH",
    "method_label": "use the taught block-change path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M4",
+   "source_card_id": "M4.DIFFH",
+   "method_label": "use the taught onion-diff-view path",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
