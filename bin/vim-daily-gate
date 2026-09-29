@@ -912,7 +912,7 @@ _RETRY_REQUESTED = False
 
 
 def _collect_feedback(screen):
-    """VD-35: route `f` on a result page to the runtime's feedback inbox."""
+    """VD-43: route `f` on a result page to the runtime's feedback inbox."""
     v2 = _V2_RUNTIME.get("module")
     if v2 is None:
         print("feedback is unavailable on this page")
@@ -942,7 +942,7 @@ def hold_open():
             answer = input(prompt % (DIM, OFF))
         except (EOFError, KeyboardInterrupt):
             return
-        # VD-35: send a message about what is wrong, then choose again.
+        # VD-43: send a message about what is wrong, then choose again.
         if answer.strip().lower() in ("f", "feedback") and _collect_feedback("lesson-end"):
             continue
         if answer.strip().lower() in ("f", "feedback"):

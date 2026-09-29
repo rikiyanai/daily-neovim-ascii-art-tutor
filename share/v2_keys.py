@@ -107,7 +107,7 @@ EX_NAMES = {
 }
 
 
-# VD-34: a recipe line must say what an option or a pattern DOES, not echo it.
+# VD-42: a recipe line must say what an option or a pattern DOES, not echo it.
 OPTION_ALIASES = {"cuc": "cursorcolumn", "cc": "colorcolumn", "ve": "virtualedit",
                   "sw": "shiftwidth", "scb": "scrollbind", "nolist": "list",
                   "nocursorcolumn": "cursorcolumn", "nocuc": "cursorcolumn"}
@@ -735,7 +735,7 @@ def example_for(family):
     return EXAMPLES.get(base) or EXAMPLES.get(base.replace("[count]", ""))
 
 
-# VD-40: the same glyph does different jobs.  `$` is a line address in
+# VD-48: the same glyph does different jobs.  `$` is a line address in
 # :1,3t$, the end-of-row motion in 2G$ and an end anchor in :%s/\s\+$//e;
 # `\` is a glyph in `/!\`, a special-piece prefix in \s.  The learner asked
 # "what is the concept diff between / and \ ... i thought \ was an escape
@@ -866,7 +866,7 @@ _ROLE_CACHE = {}
 
 
 def symbol_roles(keys):
-    """Ordered (symbol, role) pairs a key string uses (VD-40)."""
+    """Ordered (symbol, role) pairs a key string uses (VD-48)."""
     if keys in _ROLE_CACHE:
         return list(_ROLE_CACHE[keys])
     out = []
@@ -962,7 +962,7 @@ def _ex_roles(text, add):
                     add(*pair)
 
 
-# VD-40 / concept-overload audit F17: families that had no teaching line or no
+# VD-48 / concept-overload audit F17: families that had no teaching line or no
 # worked example, so the NEW CONCEPT ALERT echoed the command instead.
 FAMILY_TEACH.update({
     ":read %": ":read %  read a second copy of this file below the cursor (% = this file here)",
@@ -1001,3 +1001,75 @@ EXAMPLES.update({
     ":diffoff!": "after :diffthis in two windows, :diffoff! clears the diff colours in both",
     ":bwipeout!": "in the scratch window, :bwipeout! closes it and throws its text away",
 })
+
+
+
+# VD-49: the operator asked for this chat explanation to become curriculum:
+# draw any :s command as a labelled tree, then say it in plain English.
+_SUB_RE = re.compile(r":([%.,$0-9']*)s/((?:\\/|[^/])*)/((?:\\/|[^/])*)/([a-z]*)")
+_FLAG_WORDS = {"g": "g: every match on the line, not just the first",
+               "e": "e: no error on lines that have no match",
+               "c": "c: ask before each change", "i": "i: ignore upper/lower case"}
+
+
+def substitute_anatomy(keys):
+    """Return (diagram_rows, plain_english) for the first :s command in keys."""
+    m = _SUB_RE.search(keys)
+    if not m:
+        return None
+    rng, pattern, replacement, flags = m.groups()
+    text = ":" + rng + "s/" + pattern + "/" + replacement + "/" + flags
+    labels = []  # (column, text)
+    col = 1
+    if rng:
+        where = _range_words(rng).replace("on ", "", 1)
+        labels.append((col, "%s = %s" % (rng, where)))
+        col += len(rng)
+    labels.append((col, "s = substitute (no range before it = this line only)"
+                   if not rng else "s = substitute"))
+    col += 1
+    labels.append((col, "divider"))
+    col += 1
+    for piece, meaning in pattern_parts(pattern):
+        labels.append((col, "%s = %s" % (piece, meaning)))
+        col += len(piece)
+    labels.append((col, "divider"))
+    col += 1
+    if replacement:
+        labels.append((col, "replacement: %s" % _q(replacement)))
+        col += len(replacement)
+        labels.append((col, "divider"))
+    else:
+        labels.append((col, "divider · empty replacement → delete"))
+    col += 1
+    for flag in flags:
+        labels.append((col, _FLAG_WORDS.get(flag, "%s: flag" % flag)))
+        col += 1
+    rows = [" " + text]
+    columns = [c for c, _t in labels]
+    for index in range(len(labels) - 1, -1, -1):
+        c, label = labels[index]
+        line = [" "] * (c + 1)
+        for other in columns[:index]:
+            line[other] = "│"
+        line[c] = "└"
+        rows.append(" " + "".join(line).rstrip("│ ").ljust(c) + "└ " + label
+                    if False else " " + "".join(line[:c]) + "└ " + label)
+    parts = pattern_parts(pattern)
+    words = []
+    index = 0
+    while index < len(parts):
+        piece, meaning = parts[index]
+        if index + 1 < len(parts) and parts[index + 1][0] == "\\+":
+            words.append("one or more of: %s" % meaning)
+            index += 2
+            continue
+        words.append("at the end of the line" if piece == "$" else
+                     "at the start of the line" if piece == "^" else meaning)
+        index += 1
+    finds = ", ".join(words)
+    where = _range_words(rng)
+    what = ('replace it with %s' % _q(replacement)) if replacement else "delete it"
+    how_many = "every match on each line" if "g" in flags else "the first match on each line"
+    english = "In plain English: %s, find %s and %s (%s)." % (where, finds, what, how_many)
+    return rows, english

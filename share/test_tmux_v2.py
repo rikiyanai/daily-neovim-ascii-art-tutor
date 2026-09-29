@@ -633,13 +633,13 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             if control not in held_flat:
                 raise AssertionError("held result omitted %r:\n%s" % (control, held_after))
 
-        # VD-35: `f` on the held result records a feedback message with the
+        # VD-43: `f` on the held result records a feedback message with the
         # lesson context, then returns to the same held controls.
         tmux(outer_socket, "send-keys", "-t", outer_pane, "f", "Enter")
         asked = capture_until(outer_socket, outer_pane, ["what is wrong or confusing"])
         if "what is wrong or confusing" not in " ".join(asked.split()):
             raise AssertionError("feedback control did not ask for a message:\n" + asked)
-        # A pasted multi-line message must stay one message; before VD-38 only
+        # A pasted multi-line message must stay one message; before VD-46 only
         # its first line was saved and the rest leaked into later prompts.
         tmux(outer_socket, "set-buffer", "headed feedback probe\nsecond pasted line\nthird line")
         tmux(outer_socket, "paste-buffer", "-t", outer_pane)

@@ -3480,8 +3480,8 @@
     "S0"
    ],
    "lesson_benefit": "perform whitespace-column-audit with visible keys",
-   "prompt": "One Skully row ends in an invisible space. Turn on list to see which row, then delete only that space. Every skull cell stays put.",
-   "roadmap_contract": "One Skully row ends in an invisible space. Turn on list to see which row, then delete only that space. Every skull cell stays put.",
+   "prompt": "Only ONE of the three Skully rows ends in an invisible space. Turn on list to see which row it is, then delete only that space. Every skull cell stays put.",
+   "roadmap_contract": "Only ONE of the three Skully rows ends in an invisible space. Turn on list to see which row it is, then delete only that space. Every skull cell stays put.",
    "start": [
     "     ,--.",
     "    (_o,o) ",
@@ -3523,9 +3523,11 @@
     3
    ],
    "method_requirement": {
-    "label": "use the taught whitespace-column-audit path",
+    "label": "reveal the whitespace with list, then remove the tail",
     "exact_any_of": [
-     ":set list<CR>2G$x"
+     ":set list<CR>2G$x",
+     ":set list<CR>:%s/\\s\\+$//e<CR>",
+     ":set list<CR>2G:s/\\s\\+$//e<CR>"
     ]
    },
    "preserve_trailing_whitespace": true,
@@ -56758,7 +56760,7 @@
   },
   {
    "card_id": "M11.LS",
-   "label": "use the taught whitespace-column-audit path",
+   "label": "reveal the whitespace with list, then remove the tail",
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {

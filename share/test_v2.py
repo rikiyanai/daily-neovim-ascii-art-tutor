@@ -1231,7 +1231,8 @@ with tempfile.TemporaryDirectory() as tmp:
              "answer": 3, "right": False},
             completed=False,
         )
-    sl_rendered = output.getvalue()
+    # VD-49: explanations wrap instead of clipping; compare text, not rows.
+    sl_rendered = " ".join(output.getvalue().split())
     assert "s replaces matching text, not the whole current line" in sl_rendered
     assert "cursor supplies the line scope" in sl_rendered
     assert "g supplies all matches within that scope" in sl_rendered
@@ -1817,7 +1818,7 @@ for mutator in (
     except ValueError:
         pass
 
-# VD-40: a symbol that changes job is named in its role, with a contrast
+# VD-48: a symbol that changes job is named in its role, with a contrast
 # against the job the learner already met; the recipe notation is read once.
 def _alert_text(cid):
     return " ".join(" ".join(v2._new_concept_alert(card_by_id[cid], cur, width=66)).split())

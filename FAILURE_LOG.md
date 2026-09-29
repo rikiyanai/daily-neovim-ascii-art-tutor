@@ -5462,7 +5462,7 @@ These are real-user-config compatibility repairs. Clean-Neovim success alone
 did not predict them, which is why the three-size headed proof remains required.
 No source archive, remote, or publication state changed.
 
-## VD-34 · 2026-09-29 13:00 — M11.WS taught four ideas with no explanation; no reinforcement before retrieval
+## VD-42 · 2026-09-29 13:00 — M11.WS taught four ideas with no explanation; no reinforcement before retrieval
 
 **Status:** IMPLEMENTED in the working tree (not committed); verified below.
 
@@ -5539,7 +5539,7 @@ M11.UT failed with target-mismatch.
 - M11.UT (failed 12:43) has not been reviewed for the same bundling.
 - The remediation queue (M0.08 check, M0.01/SL/06 reviews) is unchanged.
 
-## VD-35 · 2026-09-29 13:15 — no way to report what is wrong from inside a lesson
+## VD-43 · 2026-09-29 13:15 — no way to report what is wrong from inside a lesson
 
 **Status:** IMPLEMENTED and verified (headed).
 
@@ -5580,7 +5580,7 @@ and shows me lesson complete or whatever."
   popup, types a message, waits for "feedback saved", and asserts the
   `feedback.jsonl` row has `card_id` M0.01 and `screen` lesson-end.
 
-## VD-36 · 2026-09-29 13:25 — readability audit and fixes (headings, concept alert, progress)
+## VD-44 · 2026-09-29 13:25 — readability audit and fixes (headings, concept alert, progress)
 
 **Audit:** `share/audits/READABILITY_AUDIT_2026-09-29.md` (17 prioritised
 findings from headed captures at 80×24 and 188×49).
@@ -5616,7 +5616,7 @@ findings from headed captures at 80×24 and 188×49).
 **Not yet done:** audit #7 (heading-word standardisation; tests assert the
 current words), #9 (brief width sizing at 188 columns) and #11–#17.
 
-## VD-37 · 2026-09-29 13:30 — concept-overload audit: first fixes (parser meanings, M11 splits, wrong content)
+## VD-45 · 2026-09-29 13:30 — concept-overload audit: first fixes (parser meanings, M11 splits, wrong content)
 
 **Audit:** `share/audits/CONCEPT_OVERLOAD_AUDIT_2026-09-29.md` (221 cards).
 - 7 cards introduce 3 or more new ideas.
@@ -5679,7 +5679,7 @@ current words), #9 (brief width sizing at 188 columns) and #11–#17.
 - 9 missing FAMILY_TEACH and 20 missing EXAMPLES entries.
 - Recipe placeholders (`C...`).
 
-## VD-38 · 2026-09-29 13:40 — pasted feedback was split into several rows and leaked into the next prompts
+## VD-46 · 2026-09-29 13:40 — pasted feedback was split into several rows and leaked into the next prompts
 
 **Operator:** "so pasting on feedback seems broken". The saved rows show the
 13:37 message cut mid-line at "edit│ │". The 13:35 and 13:37 rows came from a
@@ -5713,7 +5713,7 @@ touched. The prompt says "paste or type".
   alternate changed-art edit variant …") instead of a learner's bird's-eye
   view of what was learned and the journey.
 
-## VD-39 · 2026-09-29 13:50 — dashboard showed validator prose instead of the learner's journey
+## VD-47 · 2026-09-29 13:50 — dashboard showed validator prose instead of the learner's journey
 
 **Operator (feedback 13:37 and 13:33):**
 - "clean up this dashboard: access what I have learned so far". The
@@ -5760,7 +5760,7 @@ touched. The prompt says "paste or type".
 - "Post to GitHub?" for feedback, later.
 - The M11.TR "art was offset" report, not yet reproduced.
 
-## VD-40 · 2026-09-29 — context-dependent symbols and recipe notation were never taught
+## VD-48 · 2026-09-29 — context-dependent symbols and recipe notation were never taught
 
 **Operator (feedback after M11.TR, `:%s/\s\+$//e`):** "what are these called?
 what is the concept diff between / and \ i thought \ was an escape seq or
@@ -5771,7 +5771,7 @@ things? a reminder line about the syntax maybe helpful".
 recipe meta-notation, without ever naming the job. Before M11.TR the learner
 had met `\` as an art glyph (`/!\`, M0.O) and `$` as the last-line address
 (`:1,3t$`, M0.T). In M11.WS both changed job (`\s` prefix, `$` row-end
-anchor) and nothing said so. The VD-39 note even said "\ ... it is not a key
+anchor) and nothing said so. The VD-47 note even said "\ ... it is not a key
 you press", which is wrong: the learner types it.
 
 **Measured (audit `share/audits/SYMBOL_NOTATION_AUDIT_2026-09-29.md`, 226
@@ -5818,13 +5818,13 @@ the card):**
     (`learned_symbols`): the reminder line the operator asked for.
 - `share/gen_curriculum_v2.py`: `<CR>` recipe rows say "press Enter to run
   the whole : command line" instead of "execute the complete Ex statement".
-- `share/test_v2.py`: VD-40 assertions (M0.01 block, M0.T/M11.LS/M11.TR/
+- `share/test_v2.py`: VD-48 assertions (M0.01 block, M0.T/M11.LS/M11.TR/
   M11.VE/M11.05/M16.05 symbol lines, M11.UR de-duplication, no echo on
   M4.DIFF, the learned-symbols deck).
 
 **Evidence (all run after the last code change):**
 - `share/test_v2.py` exit 0: "226/226 executable lessons present; 185/185
-  primary edit recipes passable". The VD-40 assertions pass.
+  primary edit recipes passable". The VD-48 assertions pass.
 - `test_question_quality.py` PASS on 406; `test_feedback.py` PASS;
   `test_stone_story_variants.py` exit 0.
 - `test_tmux_v2.py` PASS at 80×24 and 188×49 (real user config).
@@ -5842,3 +5842,86 @@ the card):**
   key_vocabulary. The `:` symbol line now defines "Ex commands".
 - M0.01 recipe rows still omit the `0` that `expected` uses (overload audit
   F7).
+
+## VD-49 · 2026-09-29 15:45 — operator feedback 13:58–15:30: clipped wrong-answer page, method failures read as plain failures, the `:s` explanation folded in; duplicate FL ids fixed
+
+**FL numbering correction:** a concurrent session had already used VD-34…VD-41
+(03:28 onward). This session's entries of 13:00–15:00 reused those numbers.
+They are renumbered in this file and in code comments:
+- VD-34→VD-42, VD-35→VD-43, VD-36→VD-44, VD-37→VD-45, VD-38→VD-46,
+  VD-39→VD-47, VD-40 (symbols)→VD-48.
+- Commit messages `94ec213`, `5f76730`, `0a1240a`, `097469e`, `4710d8b`,
+  `66ca46c` and `0a2cd74` still cite the old numbers.
+- Before appending, check the highest existing id:
+  `command grep -o '^## VD-[0-9]*' FAILURE_LOG.md | sort -t- -k2 -n | tail -1`.
+- VD-12 was already duplicated earlier (not touched here).
+
+**Operator feedback (`feedback.jsonl`):**
+- 13:58 M11.LS: "set list … just highlights right? … wouldn't the goal be to
+  delete all the whitespace … s/\s\+$//e?"
+- 14:58: "cant read the full sentence" (wrong-answer page clipped with …).
+- 15:05 M11.CUC: "this one was hard … some unrelated stuff; we need a style
+  guide color coding".
+- 15:29 M0.SL: "it should acknowledge that the destination was correct but I
+  still failed because I did not use the concept being taught".
+- 15:30: "stages can be collapsed, color code / stylize progress and level …
+  gamifying, the skill tree can be an expandable viewing mode — this needs
+  to be a design discussion".
+- In chat, the operator asked that the `:%s/\s\+$//e` tree diagram be folded
+  into the curriculum.
+
+**Implemented:**
+- The wrong-answer page (`_print_choice_explanation`) no longer clips. YOUR
+  ANSWER, WHY IT MISSES, CORRECT ANSWER and CONCEPT wrap at the popup width
+  with a hanging indent, and paired answers print ANIM and VIM on separate
+  lines. The METHOD CHECK line wraps too.
+- New `_method_goal` and `_method_miss_message` produce this wording:
+  "✓ Your result matches the target. ✗ Not counted yet: this lesson is
+  practising <commands in words>, and your keys did not use it. Try again
+  with that method (any correct method is fine outside this lesson)." The
+  old messages printed internal labels such as "use the taught
+  whitespace-column-audit path".
+- M11.LS: the prompt now says only ONE of the three rows has the space. It
+  accepts `:set list` followed by `2G$x`, `:%s/\s\+$//e` or
+  `2G:s/\s\+$//e`, because the lesson's idea is `list`.
+- The `:s` diagram is folded in:
+  - `v2_keys.substitute_anatomy` draws any visible `:[range]s/pat/rep/flags`
+    recipe as the labelled `│ └` tree (range, s, dividers, each pattern
+    piece, replacement or "empty replacement → delete", flags), then a
+    plain-English sentence and the "remember the shape, not the characters"
+    line.
+  - `_substitute_anatomy_lines` shows it as HOW TO READ IT in the NEW
+    CONCEPT ALERT and REMEMBER · HOW TO READ IT on reinforcement cards,
+    replacing the piece list. It appears only when the recipe is visible.
+- Plans written for the design discussion:
+  - `share/audits/DASHBOARD_UI_DESIGN_PROPOSAL_2026-09-29.md`: style guide
+    roles, the unrelated brief sections, collapsible and expandable tree
+    options, and motivation elements with mock-ups.
+  - `share/audits/MEMORY_SPACED_REVIEW_PLAN_2026-09-29.md`: the general
+    anatomy renderer, a flashcard deck with anchors, contrast pairs and
+    Leitner spacing, a daily warm-up, the 8 quiz-misconception items, and
+    method tiers.
+
+**Chat quiz (2026-09-29) weak spots:**
+- `{N}G` is absolute (not "blocks"); G alone = last line of the file.
+- `f` searches the current row only; `/` searches the file.
+- `3yy G p` has three parts.
+- No range means the current line only; `%` goes before `s`.
+- Pattern `$` is an anchor.
+- The undo branch / `g-`.
+These are the first items for the deck plan.
+
+**Evidence, after the last change:**
+- `share/test_v2.py` exit 0 (226/226 lessons, 185/185 recipes). Its SL
+  replay check now compares whitespace-collapsed text, because explanations
+  wrap.
+- `test_question_quality.py` PASS on 406; `test_feedback.py` PASS;
+  `test_stone_story_variants.py` exit 0.
+- `share/test_tmux_v2.py` PASS at 80×24, 100×36 and 188×49.
+- `share/test_tmux_v2_routes.py` 28/28 PASS at 80×24.
+- Headed M11.LS, M0.SL and M11.TR routes PASS at 80×24.
+- 0 orphaned `nvim --embed`.
+
+**Not verified:** a headed run of M11.LS with the `:%s` alternative, and the
+reworded method-miss page on a real failed attempt. The wording is covered
+only by direct function output.

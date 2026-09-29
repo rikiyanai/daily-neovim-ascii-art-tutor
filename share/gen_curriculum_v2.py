@@ -5336,7 +5336,7 @@ def mastery_extension_cards(module):
         return row
 
     def _with_hint(hint, row):
-        """VD-34: a reinforcement lesson names its own acting cells."""
+        """VD-42: a reinforcement lesson names its own acting cells."""
         row["hint"] = hint
         return row
 
@@ -5995,13 +5995,13 @@ def mastery_extension_cards(module):
                 "whitespace-column-audit", 3.6,
                 "official-Games/TowerDefense res18 missile frame 3", guided=True,
                 preserve_trailing_whitespace=True)),
-            # VD-37 (overload audit #5): list and cursorcolumn each get a
+            # VD-45 (overload audit #5): list and cursorcolumn each get a
             # single-idea step too, before the colorcolumn and cleanup steps.
             ("M11.04", _with_hint(
                 "With list on, the invisible space at a row end shows as a mark. $ lands on that last cell; x deletes it.",
                 card(
                 "LS", "Make one invisible trailing space visible with list",
-                "One Skully row ends in an invisible space. Turn on list to see which row, then delete only that space. Every skull cell stays put.",
+                "Only ONE of the three Skully rows ends in an invisible space. Turn on list to see which row it is, then delete only that space. Every skull cell stays put.",
                 [ss.SKULLY_IDLE[0], ss.SKULLY_IDLE[1] + " ", ss.SKULLY_IDLE[2]],
                 list(ss.SKULLY_IDLE), ":set list<CR>2G$x",
                 [[":set list<CR>", "show invisible characters; the trailing space becomes a visible mark"],
@@ -6009,7 +6009,11 @@ def mastery_extension_cards(module):
                  ["x", "delete that one space; it was the last cell, so nothing shifts"]],
                 "whitespace-column-audit", 3.65,
                 "official-Pets/Skully res01 + one tutor trailing space", guided=True,
-                preserve_trailing_whitespace=True))),
+                preserve_trailing_whitespace=True)) | {"method_requirement": require_method(
+                    "reveal the whitespace with list, then remove the tail",
+                    exact_any_of=[":set list<CR>2G$x",
+                                  ":set list<CR>:%s/\\s\\+$//e<CR>",
+                                  ":set list<CR>2G:s/\\s\\+$//e<CR>"])}),
             ("M11.04", _with_hint(
                 "cursorcolumn lights the cursor's column on every row. Put the cursor on copy 1's cape and look down: copy 2's cape is one cell right.",
                 card(
@@ -6022,7 +6026,7 @@ def mastery_extension_cards(module):
                  ["x", "delete the one extra leading space so the cape lines up with copy 1"]],
                 "whitespace-column-audit", 3.66,
                 "official-Pets/Dracula res01 stand + walk frame 2 with one tutor offset", guided=True))),
-            # VD-34: WS introduces four ideas at once. Two single-idea
+            # VD-42: WS introduces four ideas at once. Two single-idea
             # reinforcements follow it before any hidden retrieval: the
             # colorcolumn ruler alone, then the end-anchored cleanup alone.
             ("M11.04", _with_hint('Painted column 8 is outside the pose: find the one row whose last glyph sits on it, jump to that end with $, delete it with x.', card(
@@ -6086,7 +6090,7 @@ def mastery_extension_cards(module):
                       ss.SNOWBUNNY_IDLE[1].replace("n", "-", 1),
                       ss.SNOWBUNNY_IDLE[2]]
         rows.extend([
-            # VD-37 (overload audit #4): UT bundled branching, g-/g+ and
+            # VD-45 (overload audit #4): UT bundled branching, g-/g+ and
             # :earlier. Each idea is now its own guided step first.
             ("M11.04", _with_hint(
                 "u steps back before the ! take. The next change (r,) starts a new branch; the ! take is kept in history, not deleted.",

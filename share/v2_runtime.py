@@ -52,7 +52,7 @@ LAST_RUN_CARD_ID = None
 LAST_RUN_KIND = None
 
 
-# VD-35: the learner can send a message about what is wrong from any
+# VD-43: the learner can send a message about what is wrong from any
 # question prompt or result page (`f`). Rows go to <state>/feedback.jsonl with
 # the lesson context so a maintainer can reproduce the exact screen.
 FEEDBACK = {"path": None, "context": {}}
@@ -1033,24 +1033,44 @@ def _concept_text(value):
 
 
 def _print_choice_explanation(q, chosen, *, compact=False):
-    """Explain a selected choice without exposing curriculum/runtime metadata."""
+    """Explain a selected choice without exposing curriculum/runtime metadata.
+
+    VD-49: the operator could not read clipped sentences ("…") here. Every
+    field now wraps with a hanging indent at the real popup width, and paired
+    answers print their ANIMATION and NEOVIM halves on separate lines.
+    """
     correct = q["correct_choice"]
     choices = q.get("choices", [])
     feedback = q.get("feedback", [])
-    clip_width = 64 if compact else 120
+    width = max(40, shutil.get_terminal_size((80, 24)).columns - 4)
+
+    def field(label, text):
+        text = " ".join(str(text).split())
+        halves = text.split(" | NEOVIM: ", 1) if " | NEOVIM: " in text else [text]
+        if len(halves) == 2:
+            halves = ["ANIM: " + halves[0].removeprefix("ANIMATION: "),
+                      "VIM: " + halves[1]]
+        head = "  %s  " % label
+        indent = " " * 4
+        for index, half in enumerate(halves):
+            first = head if index == 0 else indent
+            for row in textwrap.wrap(half, width=width, initial_indent=first,
+                                     subsequent_indent=indent + "  ") or [first]:
+                print(row)
+
     if not isinstance(chosen, int) or chosen < 0 or chosen >= len(choices):
         print("  YOUR ANSWER  (not recorded)")
         return
-    print("  YOUR ANSWER  %s" % _clip(choices[chosen], clip_width))
+    field("YOUR ANSWER", choices[chosen])
     if chosen != correct:
         why_missed = (feedback[chosen] if chosen < len(feedback)
                       else "That choice does not match the shown result.")
-        print("  WHY IT MISSES  %s" % _clip(_concept_text(why_missed), clip_width))
-        print("  CORRECT ANSWER  %s" % _clip(choices[correct], clip_width))
+        field("WHY IT MISSES", _concept_text(why_missed))
+        field("CORRECT ANSWER", choices[correct])
     concept = feedback[correct] if correct < len(feedback) else ""
     concept = _concept_text(concept)
     if concept:
-        print("  CONCEPT  %s" % _clip(concept, clip_width))
+        field("CONCEPT", concept)
 
 
 def _question_answer_guidance(form):
@@ -1383,9 +1403,9 @@ def _new_concepts(card, cur):
 
 
 def _new_concept_banner(card, cur, width=66):
-    """VD-34: one-line compact banner naming each new idea."""
+    """VD-42: one-line compact banner naming each new idea."""
     new = _new_concepts(card, cur)
-    # VD-40: a symbol taking a new job ($ as the last line, @ as a divider)
+    # VD-48: a symbol taking a new job ($ as the last line, @ as a divider)
     # is announced like a new command, so the learner scrolls to its line.
     K = _keys_module()
     met = _symbols_met_before(cur, card) or {}
@@ -1431,7 +1451,7 @@ SLASH_NOTE = [
 
 
 def _symbols_met_before(cur, card):
-    """VD-40: (symbol, role) -> first card id, over every earlier card's answer."""
+    """VD-48: (symbol, role) -> first card id, over every earlier card's answer."""
     if not cur:
         return None
     K = _keys_module()
@@ -1455,7 +1475,7 @@ def _first_recipe_card(cur):
 
 
 def _symbol_lines(card, cur, wrap):
-    """VD-40: name a symbol's job when it changes meaning with context.
+    """VD-48: name a symbol's job when it changes meaning with context.
 
     The learner met `$` as a line address (:1,3t$), then as a pattern anchor
     (\\s\\+$), then as the end-of-row motion (2G$), and `\\` as an art glyph
@@ -1508,8 +1528,27 @@ def _symbol_lines(card, cur, wrap):
     return lines, covered
 
 
+def _substitute_anatomy_lines(card, wrap, heading):
+    """VD-49: the operator's favourite chat explanation, folded into lessons.
+
+    Any visible :s recipe is drawn as a labelled tree, then read back in plain
+    English, then reduced to its reusable shape.
+    """
+    K = _keys_module()
+    anatomy = K.substitute_anatomy(card.get("expected", ""))
+    if not anatomy:
+        return []
+    rows, english = anatomy
+    lines = [heading]
+    lines += rows
+    lines += wrap(english, "  ")
+    lines += wrap("Remember the shape, not the characters: :s/find/replace/flags is a "
+                  "fill-in-the-blanks form; a range before s picks the lines.", "  ")
+    return lines
+
+
 def _new_concept_alert(card, cur, width=None):
-    """VD-34: explain every first-time idea before the learner edits.
+    """VD-42: explain every first-time idea before the learner edits.
 
     A guided lesson used to print a recipe such as `:%s/\\s\\+$//e` with the
     generic hint "follow the visible grammar once"; four new ideas arrived with
@@ -1522,19 +1561,14 @@ def _new_concept_alert(card, cur, width=None):
                                               subsequent_indent=indent + "   ")
             ) if width else (lambda text, indent: [indent + text])
     symbols, covered = _symbol_lines(card, cur, wrap)
-    # VD-40: the SYMBOLS block already says what / and \\ do, with a contrast.
+    # VD-48: the SYMBOLS block already says what / and \\ do, with a contrast.
     slash_note = [line for line, pair in zip(SLASH_NOTE, (("/", "separator"), ("\\", "special")))
                   if pair not in covered]
     if not new:
         # A reinforcement lesson reuses an earlier idea: remind, do not alert.
         lines = []
         if card.get("show_recipe"):
-            for pattern in re.findall(r":[^:<]*?s/((?:\\/|[^/])+)/", card.get("expected", "")):
-                parts = K.pattern_parts(pattern)
-                if any(not meaning.startswith("the literal ") for _p, meaning in parts):
-                    lines += wrap("REMEMBER · PATTERN %s, piece by piece:" % pattern, "")
-                    lines += ["     %-4s %s" % (piece, meaning) for piece, meaning in parts]
-                    lines += slash_note
+            lines += _substitute_anatomy_lines(card, wrap, "REMEMBER · HOW TO READ IT")
         return lines + symbols
     lines = ["★ NEW CONCEPT ALERT · %d new idea%s · %s" % (
         len(new), "" if len(new) == 1 else "s",
@@ -1543,7 +1577,7 @@ def _new_concept_alert(card, cur, width=None):
     for family, meaning in new:
         base = family.replace('"{reg}', "")
         teach = K.FAMILY_TEACH.get(base) or K.FAMILY_TEACH.get(base.replace("[count]", "")) or meaning
-        # VD-40: u and Ctrl-r share one teaching line; print it once.
+        # VD-48: u and Ctrl-r share one teaching line; print it once.
         if teach in [t for t, _f in taught]:
             continue
         taught.append((teach, family))
@@ -1553,12 +1587,7 @@ def _new_concept_alert(card, cur, width=None):
         if example:
             lines += wrap("example: " + example, "     ")
     if card.get("show_recipe"):
-        for pattern in re.findall(r":[^:<]*?s/((?:\\/|[^/])+)/", card.get("expected", "")):
-            parts = K.pattern_parts(pattern)
-            if any(not meaning.startswith("the literal ") for _piece, meaning in parts):
-                lines += wrap("PATTERN %s, piece by piece:" % pattern, "  ")
-                lines += ["     %-4s %s" % (piece, meaning) for piece, meaning in parts]
-                lines += slash_note
+        lines += _substitute_anatomy_lines(card, wrap, "HOW TO READ IT")
     return lines + symbols
 
 
@@ -1809,7 +1838,7 @@ def _write_session_lesson(cfg, cur, progress, card):
         header.append("INDEPENDENT ATTEMPT")
     header.append("WHY THIS EXISTS")
     header.extend("  " + line for line in context["why"])
-    # VD-34: the full alert follows the task, target and why block so those
+    # VD-42: the full alert follows the task, target and why block so those
     # stay on the first screen; the banner under DO THIS points down here.
     alert = _new_concept_alert(card, cur, width=78)
     if alert:
@@ -2251,6 +2280,29 @@ def _contains_ordered_tokens(tokens, wanted):
     return False
 
 
+def _method_goal(card):
+    """VD-49: the commands a lesson practises, in the learner's words."""
+    K = _keys_module()
+    names = []
+    for family, _meaning in K.families(card.get("expected", "")):
+        if family in ("j", "k", "h", "l", "[count]j", "[count]k", "0", "^", "$",
+                      "[count]G", "gg", "<CR>"):
+            continue
+        base = family.replace('"{reg}', "")
+        teach = K.FAMILY_TEACH.get(base) or K.FAMILY_TEACH.get(base.replace("[count]", ""))
+        name = teach.split("  ", 1)[0] if teach else base
+        if name not in names:
+            names.append(name)
+    return ", ".join(names) or "the method shown in the recipe"
+
+
+def _method_miss_message(card, detail=None):
+    return ("✓ Your result matches the target. ✗ Not counted yet: this lesson is "
+            "practising %s, and your keys did not use it. Try again with that method "
+            "(any correct method is fine outside this lesson).%s" % (
+                _method_goal(card), (" " + detail) if detail else ""))
+
+
 def _required_method_error(cfg, card, replay):
     """Grade declared method evidence separately from the final buffer."""
     rule = card.get("method_requirement")
@@ -2271,18 +2323,15 @@ def _required_method_error(cfg, card, replay):
     ]
     if exact_paths and not any(_contains_ordered_tokens(actual, path)
                                for path in exact_paths):
-        return ("The target matches, but the required command path was not demonstrated: %s."
-                % rule["label"])
+        return _method_miss_message(card)
     if alternatives and not any(_contains_tokens(actual, wanted) for wanted in alternatives):
-        return ("The target matches, but the required method was not demonstrated: %s."
-                % rule["label"])
+        return _method_miss_message(card)
     if required and not all(_contains_tokens(actual, wanted) for wanted in required):
-        return ("The target matches, but the required method was not demonstrated: %s."
-                % rule["label"])
+        return _method_miss_message(card)
     maximum = rule.get("max_tokens")
     if maximum is not None and len(actual) > maximum:
-        return ("The target matches, but this constrained transfer used %d keys; "
-                "the limit for '%s' is %d." % (len(actual), rule["label"], maximum))
+        return ("✓ Your result matches the target. ✗ Not counted yet: this lesson allows at "
+                "most %d keys and you used %d; try a shorter path." % (maximum, len(actual)))
     return None
 
 
@@ -2451,8 +2500,10 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
                 _clip(replay.get("actual_keys", "(unavailable)"), 24),
                 _clip(replay.get("taught_keys", card.get("expected", "(none)")), 24)))
         if replay.get("method_evidence_error"):
-            print("METHOD CHECK  %s" % _clip(
-                replay["method_evidence_error"], 68))
+            for row in textwrap.wrap("METHOD CHECK  " + replay["method_evidence_error"],
+                                     width=max(40, shutil.get_terminal_size((80, 24)).columns - 4),
+                                     subsequent_indent="  "):
+                print(row)
         elif replay.get("method_family"):
             print("METHOD CHECK  demonstrated: %s" % replay["method_family"])
             for method in card.get("method_alternatives", []):
@@ -3517,7 +3568,7 @@ def _module_card_map(cur, progress, module_id):
 
 
 def _revisit_rows(cur, progress):
-    """VD-39: remediation in the learner's words, not validator ids."""
+    """VD-47: remediation in the learner's words, not validator ids."""
     cards = {card["id"]: card for card in cur["cards"]}
     rows = []
     for card_id, row in progress.get("active_remediations", {}).items():
@@ -3535,7 +3586,7 @@ def _revisit_rows(cur, progress):
 
 
 def learned_deck(cur, progress):
-    """VD-39: every command family the learner has passed, oldest first.
+    """VD-47: every command family the learner has passed, oldest first.
 
     Returns [(family, reminder, times_used, first_card_id)]. This is the
     learner's flashcard deck: what they are expected to know already.
@@ -3583,7 +3634,7 @@ def print_learned(cur, progress):
 
 
 def learned_symbols(cur, progress):
-    """VD-40: one reminder line per symbol the learner has met in 2+ jobs."""
+    """VD-48: one reminder line per symbol the learner has met in 2+ jobs."""
     K = _keys_module()
     passed = set(progress.get("passed_cards", []))
     cards = {card["id"]: card for card in cur["cards"]}
