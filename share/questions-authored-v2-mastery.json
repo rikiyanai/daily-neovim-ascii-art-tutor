@@ -945,30 +945,30 @@
     ]
   },
   "M15.06.V2.P01": {
-    "prompt": "ANIMATION\nThis unfamiliar texture study has dither on top, a brace-brick band in the middle, and a wave shadow below. Only the middle band offsets one cell to the right; its glyph pattern and both neighbouring layers stay unchanged.\n\n  BEFORE          AFTER\n  │++..++..++│    │++..++..++│\n  │{}__{}__{}│ →  │ {}__{}__{}│\n  │\\~~~~~~~~/│    │\\~~~~~~~~/│\n\nNEOVIM\nWhich account explains why `shiftwidth=1` is part of the material operation?",
-    "compact_prompt": "ANIMATION\nOffset only the brace-brick band by one cell.\n\n  │++..++..++│\n  │{}__{}__{}│ → │ {}__{}__{}│\n  │\\~~~~~~~~/│\n\nNEOVIM\nWhat does `j:set shiftwidth=1` then `>>` do?",
-    "animation_prompt": "ANIMATION\nM15.06 variant 2 applies a one-cell brick offset while preserving dither and shadow registration.",
-    "animation_answer": "The complete middle material row gains one leading space; its internal pattern and the top and bottom layers do not change.",
-    "neovim_prompt": "NEOVIM\nDecode `j:set shiftwidth=1<CR>>>` on the three-row texture study.",
-    "neovim_answer": "j selects the middle row, the option makes one indent step equal one cell, and >> shifts only that current row by exactly that step.",
+    "prompt": "ANIMATION\nThe CaveParty lava phase advances one cell right while the figure's head and torso remain registered above it. Only the bottom wave band gains one leading space.\n\n  BEFORE                AFTER\n  │   o│                 │   o│\n  │  /|\\│                │  /|\\│\n  │   ~ ~ ~ ~ ~ ~ ~│  →  │    ~ ~ ~ ~ ~ ~ ~│\n\nNEOVIM\nWhich path selects the bottom material row and offsets it by exactly one cell?",
+    "compact_prompt": "ANIMATION\nAdvance only the CaveParty lava band one cell.\n\n  │   ~ ~ ~ ~ ~ ~ ~│ → │    ~ ~ ~ ~ ~ ~ ~│\n\nNEOVIM\nWhy `2j:set shiftwidth=1` then `>>`?",
+    "animation_prompt": "ANIMATION\nM15.06 variant 2 changes the lava phase without moving the figure above it.",
+    "animation_answer": "Only the complete wave band shifts right by one cell; the head, torso, and internal wave spacing remain unchanged.",
+    "neovim_prompt": "NEOVIM\nDecode the two-row motion, one-cell shift setting, and row-local indent.",
+    "neovim_answer": "2j moves from the head to the lava row, shiftwidth=1 binds one indent to one cell, and >> offsets only that current line.",
     "choices": [
-      "ANIMATION: All three material layers move right together. | NEOVIM: >> always indents the complete buffer.",
-      "ANIMATION: Brace glyphs are replaced with spaces. | NEOVIM: shiftwidth controls substitution width, not indentation.",
-      "ANIMATION: Only the brace-brick band offsets one cell; dither and shadow stay registered. | NEOVIM: j chooses that row, `shiftwidth=1` defines the step, and >> applies one row-local indent.",
-      "ANIMATION: The middle pattern stretches by one cell between every brick. | NEOVIM: >> inserts one space after each text object."
+      "ANIMATION: Head, torso, and lava all shift right. | NEOVIM: 2j selects three rows for >>.",
+      "ANIMATION: Wave glyphs spread farther apart. | NEOVIM: shiftwidth adds a space after every tilde.",
+      "ANIMATION: Only the lava band advances one cell; the figure stays registered. | NEOVIM: 2j reaches that row, `shiftwidth=1` defines the step, and one >> applies it locally.",
+      "ANIMATION: The first wave glyph is deleted to move the band left. | NEOVIM: >> is a delete-and-put operation."
     ],
     "compact_choices": [
-      "A: all layers shift · V: >> indents buffer",
-      "A: braces erased · V: shiftwidth substitutes",
-      "A: middle row +1 cell · V: row-local one-step indent",
-      "A: gaps stretch · V: >> spaces every object"
+      "A: whole figure shifts · V: 2j selects rows",
+      "A: wave gaps stretch · V: shiftwidth spaces tildes",
+      "A: lava +1 cell · V: row, unit 1, one >>",
+      "A: wave deleted left · V: >> deletes/puts"
     ],
     "correct_choice": 2,
     "feedback": [
-      ">> operates on the current line unless given a larger linewise scope; the top and shadow rows are not selected.",
-      "shiftwidth sets indentation size. It does not identify or replace brace glyphs.",
-      "Correct: an explicit one-cell step produces the intended offset without rewriting the material pattern.",
-      "Indentation adds a prefix to the acting line; it does not modify gaps inside the row."
+      "2j is a cursor motion to the third line; it does not create a multi-line selection.",
+      "shiftwidth defines the indent unit and does not alter spacing inside the lava spelling.",
+      "Correct: one row-local indentation step advances the material phase while the figure remains fixed.",
+      ">> adds indentation at the row start; it is not a delete-and-put command."
     ]
   },
   "M16.06.V2.P01": {

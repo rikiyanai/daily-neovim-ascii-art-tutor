@@ -4840,3 +4840,21 @@ M14.06 source-backed palette routes pass with the real user config at 80x24.
 **Still open.** Twelve module transfers still use tutor-authored primary
 variants. These excerpts remain local-tutor use only; no push or publication
 occurred.
+
+### VD-45 follow-through · revision `.53` — M15 primary transfer now uses real tread and lava materials
+
+- M15.06 variant 1 uses the official Drill tread crop: only the repeated tread
+  band pans one cell right while the machine edge and angled support row remain
+  registered.
+- Variant 2 uses the CaveParty lava crop's one-cell phase change: only the
+  bottom wave band advances while the figure's head and torso stay fixed.
+- Both questions print the full source-backed crop and explicitly connect the
+  animation-cell offset to `shiftwidth=1`, cursor row scope, and one `>>`.
+
+**Proof:** revision `.53` writes 215 cards / 395 questions; question quality,
+all 215 cards / 174 primary recipes, and every changed-art replay pass. Both
+M15.06 source-material routes pass with the real user config at 80x24.
+
+**Still open.** Eleven module transfers still use tutor-authored primary
+variants. These excerpts remain local-tutor use only; no push or publication
+occurred.

@@ -2213,24 +2213,38 @@ MODULES = [
                 ],
             ),
         ],
-        "transfer": step(
-            ["!!::!!::!!", "<>__<>__<>", "\\========/"],
-            ["!!::!!::!!", " <>__<>__<>", "\\========/"],
+        "transfer": dict(step(
+            stone_story_variants.DRILL_TREAD_SCENE,
+            [stone_story_variants.DRILL_TREAD_SCENE[0],
+             " " + stone_story_variants.DRILL_TREAD_SCENE[1],
+             stone_story_variants.DRILL_TREAD_SCENE[2]],
             "j:set shiftwidth=1<CR>>>",
-            [["shiftwidth=1 / >>", "move the unfamiliar repeated material exactly one cell"]],
+            [["j", "select only the Drill's repeated tread band"],
+             [":set shiftwidth=1<CR>", "bind one indent step to one animation cell"],
+             [">>", "pan the complete tread band right by that one-cell step"]],
             method_requirement=require_method(
-                "transfer the explicit one-cell material offset",
+                "pan the source tread with an explicit one-cell indent",
                 exact_any_of=["j:set shiftwidth=1<CR>>>"]),
-        ),
-        "transfer_alt": step(
-            ["++..++..++", "{}__{}__{}", "\\~~~~~~~~/"],
-            ["++..++..++", " {}__{}__{}", "\\~~~~~~~~/"],
-            "j:set shiftwidth=1<CR>>>",
-            [["shiftwidth=1 / >>", "move the alternate repeated material exactly one cell"]],
+        ), source="official-Cosmetics/Drill res26 tread shimmer layer",
+           prompt=(
+               "Pan only the Drill's repeated tread band one cell right; keep the machine "
+               "edge above and the angled support row below registered."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.CAVE_LAVA_B,
+            stone_story_variants.CAVE_LAVA_A,
+            "2j:set shiftwidth=1<CR>>>",
+            [["2j", "select only the CaveParty lava band"],
+             [":set shiftwidth=1<CR>", "bind one indent step to one animation cell"],
+             [">>", "advance the lava phase right by that one-cell step"]],
             method_requirement=require_method(
-                "transfer the alternate one-cell material offset",
-                exact_any_of=["j:set shiftwidth=1<CR>>>"]),
-        ),
+                "advance the source lava phase with an explicit one-cell indent",
+                exact_any_of=["2j:set shiftwidth=1<CR>>>"]),
+        ), source="official-Cosmetics/CaveParty res06 lava frame 2 to frame 1 crop",
+           prompt=(
+               "Advance only the CaveParty lava band one cell right; keep the figure's "
+               "head and torso rows registered above it."
+           )),
     },
     {
         "id": "M16", "title": "Key-pose plan", "node": "A0/V16",
@@ -6378,7 +6392,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.52",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.53",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

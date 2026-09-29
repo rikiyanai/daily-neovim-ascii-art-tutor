@@ -2187,30 +2187,30 @@
     ]
   },
   "M15.06.P01": {
-    "prompt": "ANIMATION\nThe unfamiliar texture transfers the one-cell offset while keeping its dither and shadow fixed.\n\n    BEFORE          AFTER\n    │!!::!!::!! │   │!!::!!::!! │\n    │<>__<>__<> │   │ <>__<>__<>│\n    │\\========/ │   │\\========/ │\n\nNEOVIM\nWhich bounded path reaches TARGET exactly?",
-    "compact_prompt": "ANIMATION\nUnfamiliar brick shifts one cell.\n\n    │!!::!!::!! │\n    │<>__<>__<> │   │ <>__<>__<>│\n    │\\========/ │\n\nNEOVIM\nTransfer one `>>` with unit 1.",
-    "animation_prompt": "The new brick material shifts one cell right; dither and angled shadow retain their columns.\n\n    BEFORE          AFTER\n    │!!::!!::!! │   │!!::!!::!! │\n    │<>__<>__<> │   │ <>__<>__<>│\n    │\\========/ │   │\\========/ │",
-    "animation_answer": "One-cell row offset transfers to the unfamiliar material without changing its supports.",
-    "neovim_prompt": "Which command path reaches the target?",
-    "neovim_answer": "Set `shiftwidth=1`, move to the brick row, and apply `>>` once.",
+    "prompt": "ANIMATION\nThe Drill's repeated tread band pans one cell right. The machine edge above and angled support below stay registered, so only the middle material layer gains one leading space.\n\n  BEFORE             AFTER\n  │'  |---------|~~.│ │'  |---------|~~.│\n  │ - - - - - -│  → │  - - - - - -│\n  │\\ _ _ _ _ _ /│   │\\ _ _ _ _ _ /│\n\nNEOVIM\nWhich row-local path makes one indentation step equal one animation cell?",
+    "compact_prompt": "ANIMATION\nPan only the Drill tread one cell right.\n\n  │ - - - - - -│ → │  - - - - - -│\n  │\\ _ _ _ _ _ /│  │\\ _ _ _ _ _ /│\n\nNEOVIM\nDecode `j:set shiftwidth=1` then `>>`.",
+    "animation_prompt": "The complete repeated tread row offsets by one cell while its two neighbouring structural rows do not move.",
+    "animation_answer": "Only the tread band gains one leading space; the machine edge, tread spelling, and support row remain unchanged.",
+    "neovim_prompt": "Explain the row motion, one-cell indent setting, and single linewise shift.",
+    "neovim_answer": "j moves to the tread row, shiftwidth=1 defines one indent step as one cell, and >> applies that step to the current row only.",
     "choices": [
-      "ANIMATION: Unfamiliar brick shifts one cell while supports stay fixed. | NEOVIM: `shiftwidth=1` and one row-bounded `>>` reaches TARGET.",
-      "ANIMATION: Unfamiliar brick needs two cells to match its symbols. | NEOVIM: use `shiftwidth=2`.",
-      "ANIMATION: All three rows shift as a new material block. | NEOVIM: indent the complete block.",
-      "ANIMATION: Only glyph substitution matters; position is unchanged. | NEOVIM: replace `<>` with spaces and skip `>>`."
+      "ANIMATION: The whole Drill crop moves right together. | NEOVIM: >> always indents every row in the buffer.",
+      "ANIMATION: Only the tread band pans one cell; edge and support stay fixed. | NEOVIM: j selects that row, `shiftwidth=1` sets the unit, and one >> applies it locally.",
+      "ANIMATION: Every dash is replaced with a space. | NEOVIM: shiftwidth controls substitute width.",
+      "ANIMATION: The tread stretches between each repeated dash. | NEOVIM: >> inserts one space after every glyph."
     ],
     "compact_choices": [
-      "A: brick one cell; supports fixed · V: unit 1 + one `>>`",
-      "A: two cells · V: `shiftwidth=2`",
-      "A: full block shifts · V: indent all rows",
-      "A: recolor only · V: skip `>>`"
+      "A: whole crop shifts · V: >> affects buffer",
+      "A: tread +1 cell · V: row, unit 1, one >>",
+      "A: dashes erased · V: shiftwidth substitutes",
+      "A: gaps stretch · V: >> spaces each glyph"
     ],
-    "correct_choice": 0,
+    "correct_choice": 1,
     "feedback": [
-      "Correct: the transfer invariant is the one-cell offset, not the glyph vocabulary.",
-      "The target still calls for one cell.",
-      "Supports remain fixed in the target.",
-      "Position is the visible change and cannot be skipped."
+      ">> acts on the current line unless a larger linewise scope is selected; the two support rows are visibly fixed.",
+      "Correct: the option defines the animation-cell unit before applying one bounded tread-row pan.",
+      "shiftwidth controls indentation size; it does not search for or replace material glyphs.",
+      "Indentation adds a prefix to the row and leaves all internal tread spacing unchanged."
     ]
   },
   "M15.MAC.P01": {
