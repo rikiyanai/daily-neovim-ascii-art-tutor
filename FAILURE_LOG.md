@@ -4592,3 +4592,25 @@ correct card and pass with the real user config at 80x24.
 questions. Stone Story primary-art migration, provenance intake, the full
 headed route matrix, and publication decision remain open. No third-party art
 was pushed.
+
+### VD-40 follow-through · revision `.42` — M11/M12/M13 alternates own redraw, symmetry, and WORD scope
+
+- `M11.06` variant 2 prints both unfamiliar shells and asks why `R==<Esc>`
+  redraws exactly the first two roof cells without widening the shell or
+  spilling into the second roof.
+- `M12.06` variant 2 prints both top-row colon joints, the fixed axis, and the
+  untouched lower joints. Its question explains the paired `t:`/`T:` stops and
+  the final one-cell steps into the symmetric targets.
+- `M13.06` variant 2 prints all three texture clusters and support rows. Its
+  question makes whitespace-delimited WORD ends the transferable structure:
+  `E` reaches cluster 1's end and `2E` reaches cluster 3's end.
+
+**Proof:** generator `.42` writes 215 cards / 389 manually authored questions;
+question quality passes 389; clean Neovim remains **215/215 cards and 174/174
+primary recipes**; and all three alternate routes pass with the real user
+config at 80x24.
+
+**Still open.** Six `.06` cards still lack manually authored variant-2
+questions. Stone Story primary-art migration, provenance intake, the full
+headed route matrix, and publication decision remain open. No third-party art
+was pushed.
