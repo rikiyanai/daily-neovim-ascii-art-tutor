@@ -2958,13 +2958,14 @@ STILL_PROMPT_REWRITES = {
     "M15.07": "Diagnose the displayed texture-and-ground study, then choose the repair that preserves dither density, offset, and shadow rules.",
 }
 
-# Vertical slice for variant-accurate transfer questioning.  Each listed
-# card's second changed-art variant owns its own manually authored question;
-# runtime card.update(variant) then selects that question before the editor.
+# Variant-accurate transfer questioning.  Every transfer card's second
+# changed-art variant owns its own manually authored question; runtime
+# card.update(variant) selects that question before the editor.
 ALT_VARIANT_QUESTION_CARDS = {
     "M0.06", "M1.06", "M2.06", "M3.06", "M4.06", "M5.06",
     "M6.06", "M7.06", "M8.06", "M9.06", "M10.06", "M11.06",
-    "M12.06", "M13.06", "M14.06", "M15.06", "M16.06",
+    "M12.06", "M13.06", "M14.06", "M15.06", "M16.06", "M17.06",
+    "M18.06", "M19.06",
 }
 
 FIRST_READING_DISTRACTORS = {
@@ -6322,7 +6323,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.43",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.44",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,
@@ -6802,6 +6803,9 @@ def validate(cur):
                    for variant in variants):
                 errors.append(f"{card['id']}: incomplete transfer variant")
             for index, variant in enumerate(variants, 1):
+                if index > 1 and not variant.get("paired_question_ids"):
+                    errors.append(
+                        f"{card['id']}: transfer variant {index} inherits a mismatched question")
                 for qid in variant.get("paired_question_ids", []):
                     if qid not in qids:
                         errors.append(

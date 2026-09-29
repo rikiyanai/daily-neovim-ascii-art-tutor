@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.43",
+ "revision": "2026-09-29.44",
  "review_intervals_hours": [
   4,
   24,
@@ -6169,7 +6169,10 @@
       "exact_any_of": [
        "0gR|   /o\\   |<Esc>j0gR|    /!\\_ |<Esc>j0gR|   /|\\-->|<Esc>"
       ]
-     }
+     },
+     "paired_question_ids": [
+      "M19.06.V2.P01"
+     ]
     }
    ],
    "required_before_mastery": true,
@@ -20469,7 +20472,10 @@
       "exact_any_of": [
        "/x<CR>ron.n."
       ]
-     }
+     },
+     "paired_question_ids": [
+      "M17.06.V2.P01"
+     ]
     }
    ],
    "required_before_mastery": true,
@@ -26614,7 +26620,10 @@
       "exact_any_of": [
        "0C|....<---+|<Esc>j0C|......|/.|<Esc>j0C|.....\\./.|<Esc>"
       ]
-     }
+     },
+     "paired_question_ids": [
+      "M18.06.V2.P01"
+     ]
     }
    ],
    "required_before_mastery": true,
@@ -50605,6 +50614,103 @@
    "authorship": "manual"
   },
   {
+   "id": "M19.06.V2.P01",
+   "card_id": "M19.06",
+   "module_id": "M19",
+   "grammar_family": "virtual-replace",
+   "grammar_breakdown_id": "virtual-replace",
+   "grammar_breakdown": [
+    "gR enters Virtual Replace; typed glyphs overwrite display cells until <Esc>",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
+   ],
+   "paired_invariant": "a mirrored animation extreme is a newly authored still: exchange directional glyphs and spacing by eye instead of reversing stored bytes",
+   "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThis fixed-rail still must face right. The head and lower body stay centred, but the shoulder underscore, arrow, slash directions, and internal spacing change across the first three rows; both outer rails stay in their columns.\n\n  BEFORE         AFTER\n  │|   /o\\   |│   │|   /o\\   |│\n  │| _/!\\    |│ → │|    /!\\_ |│\n  │|<--/|\\   |│   │|   /|\\-->|│\n  │|   / \\   |│   │|   / \\   |│\n  │|__/___\\__|│   │|__/___\\__|│\n\nNEOVIM\nWhich method permits a glyph-aware full-row redraw while preserving fixed rails?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: New right-facing glyphs are inserted beside the old pose. | NEOVIM: gR preserves old cells by shifting them right.",
+    "ANIMATION: The upper pose is byte-reversed, so slash identities need no judgement. | NEOVIM: gR automatically reverses a row when entered at column zero.",
+    "ANIMATION: Only the arrowheads swap; shoulder and limb spacing stay left-facing. | NEOVIM: one `r>` changes the complete directional pose.",
+    "ANIMATION: The first three rows are hand-redrawn into a coherent right-facing pose while rails and lower rows stay fixed. | NEOVIM: each `0gR...<Esc>` overwrites a bounded display row without insertion."
+   ],
+   "correct_choice": 3,
+   "feedback": [
+    "Virtual Replace overwrites display cells; it does not preserve old text by inserting a second pose.",
+    "gR is an editing mode, not a reversal algorithm. The learner still authors slash direction and spacing explicitly.",
+    "The target changes the shoulder, limbs, arrow shaft, and gaps as well as the arrowhead.",
+    "Correct: full-row authored targets handle the non-mechanical mirror while fixed rails provide an immediate registration check."
+   ],
+   "animation_prompt": "ANIMATION\nM19.06 variant 2 uses a hand-authored fixed-rail mirror rather than byte reversal or insertion.",
+   "animation_answer": "The upper pose faces right with corrected arrow, slash, underscore, and spacing; rails and lower two rows remain registered.",
+   "neovim_prompt": "NEOVIM\nExplain the three `0gR...<Esc>` passes on the five-row still.",
+   "neovim_answer": "0 starts each row at its left rail, gR enters Virtual Replace for the supplied full-row target, Escape bounds the pass, and j advances only through the three directional rows.",
+   "compact_prompt": "ANIMATION\nMirror the directional top three rows; keep both rails and lower body fixed.\n\n  │| _/!\\    |│ → │|    /!\\_ |│\n  │|<--/|\\   |│ → │|   /|\\-->|│\n\nNEOVIM\nWhy use bounded gR rows?",
+   "compact_choices": [
+    "A: insert beside old pose · V: gR shifts cells",
+    "A: byte reverse · V: gR auto-reverses",
+    "A: arrowheads only · V: one r changes pose",
+    "A: authored top-three redraw · V: bounded Virtual Replace rows"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "0gR|   /o\\   |<Esc>j0gR|    /!\\_ |<Esc>j0gR|   /|\\-->|<Esc>",
+    "required_term_groups": [
+     [
+      "virtual replace",
+      "gR"
+     ],
+     [
+      "display cell",
+      "overwrite"
+     ],
+     [
+      "escape",
+      "normal"
+     ],
+     [
+      "width",
+      "rail",
+      "registered"
+     ],
+     [
+      "search",
+      "find",
+      "landmark"
+     ],
+     [
+      "pattern",
+      "character"
+     ],
+     [
+      "cursor",
+      "cell"
+     ],
+     [
+      "motion",
+      "move",
+      "cursor"
+     ],
+     [
+      "landmark",
+      "row",
+      "column",
+      "cell"
+     ]
+    ],
+    "sample_answer": "virtual replace display cell escape width search pattern cursor motion landmark"
+   },
+   "authorship": "manual"
+  },
+  {
    "id": "M2.06.V2.P01",
    "card_id": "M2.06",
    "module_id": "M2",
@@ -51415,6 +51521,99 @@
    "authorship": "manual"
   },
   {
+   "id": "M17.06.V2.P01",
+   "card_id": "M17.06",
+   "module_id": "M17",
+   "grammar_family": "normal-replace",
+   "grammar_breakdown_id": "normal-replace",
+   "grammar_breakdown": [
+    "r + replacement glyph; overwrite one cell without shifting the row",
+    ". repeats the last change; n/N and ;/, repeat searches or character finds",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+   ],
+   "paired_invariant": "unchanged glyphs are temporal anchors: batch-edit only a proven homologous landmark, then inspect every frame for collateral changes before playback",
+   "source_ref": "ascii-art-authoring §§7.3,7.4,8.1; Neovim help /, n, ., :global, :normal, q, @",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThree unfamiliar shells use different roof, bracket, and base vocabularies, but each eye anchor is the same x. Every x becomes o; no shell glyph changes.\n\n  BEFORE         AFTER\n  │|  /+\\  |│     │|  /+\\  |│\n  │| <x> |│     │| <o> |│\n  │| \\-_/ |│     │| \\-_/ |│\n  │|  /^\\  |│     │|  /^\\  |│\n  │| <x> |│  →  │| <o> |│\n  │| /__\\ |│     │| /__\\ |│\n  │|  \\+/  |│     │|  \\+/  |│\n  │| <x> |│     │| <o> |│\n  │| /-\\ |│     │| /-\\ |│\n\nNEOVIM\nHow do search repeat and dot separate repeated anchors from varied shells?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: The first shell is copied over the other two for consistency. | NEOVIM: n repeats the entire previous buffer transformation.",
+    "ANIMATION: Only the first x changes because later shells use different brackets. | NEOVIM: search cannot find a character surrounded by different glyphs.",
+    "ANIMATION: Every x anchor becomes o while each shell keeps its own vocabulary. | NEOVIM: n repeats the x search and dot repeats the one-cell `ro` change at each found anchor.",
+    "ANIMATION: All angle brackets become parentheses. | NEOVIM: dot repeats changes on neighbouring delimiter cells automatically."
+   ],
+   "correct_choice": 2,
+   "feedback": [
+    "n repeats the search destination, not a whole-buffer copy or shell replacement.",
+    "The search pattern is x itself; its surrounding bracket vocabulary does not prevent a match.",
+    "Correct: search owns anchor discovery and dot owns the repeated edit, so varied context is preserved.",
+    "Dot applies the last one-cell replacement at the cursor only; it does not expand to delimiters."
+   ],
+   "animation_prompt": "ANIMATION\nM17.06 variant 2 keeps three different shell vocabularies coherent by changing only their corresponding eye anchors.",
+   "animation_answer": "All three x anchors become o; every roof, bracket, limb, base, and row width remains unchanged.",
+   "neovim_prompt": "NEOVIM\nExplain `/x<CR>ron.n.` across the nine-row study.",
+   "neovim_answer": "/x finds the first anchor, ro records a one-cell replacement, each n finds the next x despite different surrounding art, and each dot repeats only ro there.",
+   "compact_prompt": "ANIMATION\nIn three different shells, each `<x>` eye becomes `<o>`; shells stay fixed.\n\n  │<x>│  │<x>│  │<x>│\n    ↓      ↓      ↓\n  │<o>│  │<o>│  │<o>│\n\nNEOVIM\nDecode `/x`, `ro`, then `n.` twice.",
+   "compact_choices": [
+    "A: copy first shell · V: n repeats transformation",
+    "A: first eye only · V: context blocks search",
+    "A: all eyes only · V: n finds anchor, dot repeats ro",
+    "A: brackets change · V: dot edits neighbours"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "/x<CR>ron.n.",
+    "required_term_groups": [
+     [
+      "replace",
+      "overwrite",
+      "r"
+     ],
+     [
+      "cell",
+      "glyph"
+     ],
+     [
+      "width",
+      "shift",
+      "registered"
+     ],
+     [
+      "repeat",
+      "dot",
+      "next"
+     ],
+     [
+      "change",
+      "search",
+      "find"
+     ],
+     [
+      "search",
+      "find",
+      "landmark"
+     ],
+     [
+      "pattern",
+      "character"
+     ],
+     [
+      "cursor",
+      "cell"
+     ]
+    ],
+    "sample_answer": "replace cell width repeat change search pattern cursor"
+   },
+   "authorship": "manual"
+  },
+  {
    "id": "M13.06.V2.P01",
    "card_id": "M13.06",
    "module_id": "M13",
@@ -51529,7 +51728,7 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
-   "prompt": "ANIMATION\nTwo complete five-row build frames already form a hold. Only the x eye brightens to X in each frame; roofs, hatch rows, and baselines must remain unchanged.\n\n  FRAME 1       FRAME 2\n  │  /\\   │     │  /\\   │\n  │ (x)   │     │ (x)   │\n  │ /==\\  │     │ /==\\  │\n  │/====\\ │     │/====\\ │\n  │------ │     │------ │\n\n  TARGET: both `(x)` rows become `(X)`; every other cell stays fixed.\n\nNEOVIM\nAfter the first `rX`, why does `5j.` repeat the right edit on the right part?",
+   "prompt": "ANIMATION\nTwo complete five-row build frames already form a hold. Only the x eye brightens to X in each frame; roofs, hatch rows, and baselines must remain unchanged.\n\n  BEFORE F1     BEFORE F2\n  │  /\\   │     │  /\\   │\n  │ (x)   │     │ (x)   │\n  │ /==\\  │     │ /==\\  │\n  │/====\\ │     │/====\\ │\n  │------ │     │------ │\n\n  AFTER F1      AFTER F2\n  │  /\\   │     │  /\\   │\n  │ (X)   │     │ (X)   │\n  │ /==\\  │     │ /==\\  │\n  │/====\\ │     │/====\\ │\n  │------ │     │------ │\n\nNEOVIM\nAfter the first `rX`, why does `5j.` repeat the right edit on the right part?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
@@ -51681,6 +51880,104 @@
      ]
     ],
     "sample_answer": "range move destination"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M18.06.V2.P01",
+   "card_id": "M18.06",
+   "module_id": "M18",
+   "grammar_family": "change-to-end",
+   "grammar_breakdown_id": "change-to-end",
+   "grammar_breakdown": [
+    "C is c$; change from the cursor through row end, type replacement text, then <Esc>",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
+   ],
+   "paired_invariant": "never reverse stored bytes to mirror ASCII art; redraw directional glyphs and spacing by eye, validate the result separately, then reuse approved frames in reverse when the motion physically returns",
+   "source_ref": "ascii-art-authoring §§7.2,7.5,8.2; Neovim help :sub-replace-expression, getline(), :copy",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThis unfamiliar actor travels from the left end of three fixed-width rows to the right. Arrow direction, arm slash, leg spacing, and dot gaps must be hand-mirrored together; `CHECK=0` is metadata and stays unchanged.\n\n  BEFORE         AFTER\n  │|+--->....|│   │|....<---+|│\n  │|.\\|......|│   │|......|/.|│\n  │|.\\./.....|│ → │|.....\\./.|│\n  │CHECK=0│       │CHECK=0│\n\nNEOVIM\nWhy are three explicit row overwrites safer here than reversing bytes or editing only the actor?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Only + moves to the right; arrow and limbs remain left-facing. | NEOVIM: replacing the actor cell is sufficient for a mirror.",
+    "ANIMATION: The three art rows are deliberately mirrored together while CHECK=0 remains metadata. | NEOVIM: each `0C...<Esc>` owns one complete row, and j advances between the three bounded rewrites.",
+    "ANIMATION: Every byte is reversed mechanically, including slash identities. | NEOVIM: C reverses the selected suffix automatically.",
+    "ANIMATION: CHECK changes to 1 as proof of success. | NEOVIM: the final C continues into the next line after Escape."
+   ],
+   "correct_choice": 1,
+   "feedback": [
+    "A coherent mirror must also reverse arrow direction and exchange slash roles and gaps; one actor cell cannot do that.",
+    "Correct: explicit row targets preserve rails while allowing glyph-aware mirroring, and Escape prevents the edit from reaching metadata.",
+    "C changes a suffix using text supplied by the learner; it has no automatic reverse operation.",
+    "Escape ends each change before j moves. The fourth metadata row is never entered by a C command."
+   ],
+   "animation_prompt": "ANIMATION\nM18.06 variant 2 hand-authors a mirrored return pose whose directional glyphs and spacing cannot be produced by naive byte reversal.",
+   "animation_answer": "Actor, arrow, arm, legs, and gaps all change consistently across the three art rows; the metadata row remains untouched.",
+   "neovim_prompt": "NEOVIM\nExplain the three `0C...<Esc>` overwrites in the shown four-row buffer.",
+   "neovim_answer": "Each 0C replaces exactly one complete art-row suffix with its deliberately authored mirror, Escape bounds that row, and j advances to the next art row before metadata.",
+   "compact_prompt": "ANIMATION\nHand-mirror actor, arrow, arm, legs, and spacing; keep CHECK=0.\n\n  │|+--->....|│ → │|....<---+|│\n  │|.\\|......|│ → │|......|/.|│\n  │|.\\./.....|│ → │|.....\\./.|│\n\nNEOVIM\nWhat does row-local C own?",
+   "compact_choices": [
+    "A: actor only · V: one-cell edit mirrors pose",
+    "A: three authored rows · V: row-local C, Escape, j",
+    "A: reverse bytes · V: C auto-reverses",
+    "A: set CHECK=1 · V: C crosses line"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "0C|....<---+|<Esc>j0C|......|/.|<Esc>j0C|.....\\./.|<Esc>",
+    "required_term_groups": [
+     [
+      "change",
+      "operator",
+      "C"
+     ],
+     [
+      "end",
+      "row",
+      "line"
+     ],
+     [
+      "escape",
+      "normal"
+     ],
+     [
+      "width",
+      "shift"
+     ],
+     [
+      "search",
+      "find",
+      "landmark"
+     ],
+     [
+      "pattern",
+      "character"
+     ],
+     [
+      "cursor",
+      "cell"
+     ],
+     [
+      "motion",
+      "move",
+      "cursor"
+     ],
+     [
+      "landmark",
+      "row",
+      "column",
+      "cell"
+     ]
+    ],
+    "sample_answer": "change end escape width search pattern cursor motion landmark"
    },
    "authorship": "manual"
   },

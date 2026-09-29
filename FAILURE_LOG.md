@@ -4636,3 +4636,34 @@ config at 80x24.
 questions. Stone Story primary-art migration, provenance intake, the full
 headed route matrix, and publication decision remain open. No third-party art
 was pushed.
+
+### VD-40 follow-through · revision `.44` — all 20 alternate transfers now own manual visual questions
+
+- `M17.06` variant 2 prints three complete, deliberately different shells and
+  asks how `/x`, `n`, and dot preserve varied contexts while changing only
+  corresponding anchors.
+- `M18.06` variant 2 prints all three directional rows plus `CHECK=0` and asks
+  why three bounded, hand-authored `C` rewrites are required instead of actor-
+  only editing or byte reversal.
+- `M19.06` variant 2 prints the fixed-rail five-row still and pairs the
+  glyph-aware mirror with three bounded Virtual Replace rows.
+- `test_v2.py` now requires all 20 transfer cards to give variant 2 its exact
+  `<card>.V2.P01` manually authored question. It also checks that every START
+  and TARGET row appears verbatim in that question's full prompt. This caught
+  and repaired two pre-commit defects: M17 had omitted literal shell rails and
+  M7 described, rather than drew, its AFTER frames.
+- Generator validation rejects any later transfer variant that inherits the
+  first variant's question instead of declaring its own question ids.
+
+**Proof completed:** generator `.44` writes 215 cards / 395 manually authored
+questions; question quality passes 395; clean Neovim passes **215/215 cards and
+174/174 primary recipes**; M17.06 and M18.06 alternate routes pass with the
+real user config at 80x24; animation-pack, live integration, and all 70
+changed-art review-bank tests pass.
+
+**Proof still pending:** the M19.06 alternate headed route was still running
+when this entry was written, so it is not claimed here. The revision-wide full
+headed route matrix is also not claimed. Stone Story primary-art migration,
+archive provenance intake, and the publication decision remain open. The
+rights audit keeps the 86-set extracted corpus research-only because no
+redistribution permission was found; no third-party art was pushed.
