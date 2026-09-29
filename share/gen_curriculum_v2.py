@@ -1705,25 +1705,34 @@ MODULES = [
                     exact_any_of=[":1,3t$<CR>13G0t!lr:$T:hr!"]),
             ),
         ],
-        "transfer": step(
-            ["/..+..|..+..\\", " /.+..|..+.\\ ", "  /_x_|_x_\\  "],
-            ["/..*..|..*..\\", " /.+..|..+.\\ ", "  /_x_|_x_\\  "],
-            "0t+lr*$T+hr*",
-            [["0t+lr*", "approach and replace the unfamiliar left joint"],
-             ["$T+hr*", "approach and replace its right mirrored partner"]],
+        "transfer": dict(step(
+            stone_story_variants.SNOWMAN_OPEN_CROP,
+            stone_story_variants.SNOWMAN_BLINK_CROP,
+            "2j0t•lr-$T•hr-",
+            [["2j0t•lr-", "approach the left eye from the row start and close it"],
+             ["$T•hr-", "approach the right eye from the row end and close it"]],
             method_requirement=require_method(
-                "transfer forward and backward till motions to unfamiliar joints",
-                exact_any_of=["0t+lr*$T+hr*"]),
-        ),
-        "transfer_alt": step(
-            ["<..:..|..:..>", " <.:..|..:.> ", "  <_o_|_o_>  "],
-            ["<..!..|..!..>", " <.:..|..:.> ", "  <_o_|_o_>  "],
-            "0t:lr!$T:hr!",
-            [["t: / T:", "approach both changed-shell joints from opposite directions"]],
+                "close both Snowman eyes with forward and backward till motions",
+                exact_any_of=["2j0t•lr-$T•hr-"]),
+        ), source="official-Pets/Snowman res01 face crop + res08 blink overlay",
+           prompt=(
+               "Close both Snowman eyes from bullet to dash; preserve the hat, comma, "
+               "parentheses, cheek punctuation, and row width."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.SNOWMAN_BLINK_CROP,
+            stone_story_variants.SNOWMAN_CHEER_CROP,
+            "2j0t-lr^$T-hr^",
+            [["2j0t-lr^", "approach the left closed eye from the row start and lift it"],
+             ["$T-hr^", "approach the right closed eye from the row end and lift it"]],
             method_requirement=require_method(
-                "transfer both till directions to the alternate shell",
-                exact_any_of=["0t:lr!$T:hr!"]),
-        ),
+                "lift both Snowman eyes with paired till motions",
+                exact_any_of=["2j0t-lr^$T-hr^"]),
+        ), source="official-Pets/Snowman res01 face crop + res08 blink overlay to res06 raised-eye overlay",
+           prompt=(
+               "Lift both Snowman eyes from dash to caret; preserve the hat, comma, "
+               "parentheses, cheek punctuation, and row width."
+           )),
     },
     {
         "id": "M13", "title": "Texture pulse", "node": "A4/V13", "project": "texture-pulse",

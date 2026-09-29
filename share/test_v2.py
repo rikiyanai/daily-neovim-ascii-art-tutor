@@ -71,6 +71,13 @@ def answer_question(question):
     return question["answer_contract"]["sample_answer"]
 
 
+# Captured from a real headed M12.06 run: Neovim escapes the 0x80 UTF-8
+# continuation byte in U+2022 and appends its internal f/t key marker.
+assert legacy_gate.decode_keylog(
+    bytes.fromhex("326a3074e280fe58a280fd356c722d")
+) == list("2j0t•lr-")
+
+
 with (HERE / "curriculum-v2.json").open(encoding="utf-8") as f:
     cur = json.load(f)
 v2.validate_curriculum(cur)
@@ -781,7 +788,9 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "OVERRIDE V2 TITLE" in listed.stdout
 
 basic = set("`~!^*()-_+=;:'\",.\\/|<>[]{}")
-extended = set("´‾¯¡·")
+# Every extended art glyph here is a one-display-cell glyph in Neovim.  The
+# Snowman source face uses U+2022 BULLET for its paired eyes.
+extended = set("´‾¯¡·•")
 alnum = set("oOvVTL7UcCxXn")
 allowed = basic | extended | alnum | {" "}
 for card in cur["cards"]:

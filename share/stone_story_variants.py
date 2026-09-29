@@ -146,6 +146,9 @@ SKULLY_O_PALETTE_LOOK = [" ,--. [O]", "(_O,o)", "  `\"´"]
 SKULLY_OE_PALETTE = [" ,--. [o=]", "(_o,o)", "  `\"´"]
 SNOWBUNNY_FACE_PALETTE = ["   (\\(\\ [n-]", "  ( n.n)", "o(,`_\"_)"]
 SNOWBUNNY_FACE_PALETTE_BLINK = ["   (\\(\\ [n-]", "  ( -.-)", "o(,`_\"_)"]
+SNOWMAN_OPEN_CROP = ["    __", "  _|__|_", ". ( •,•) ,."]
+SNOWMAN_BLINK_CROP = ["    __", "  _|__|_", ". ( -,-) ,."]
+SNOWMAN_CHEER_CROP = ["    __", "  _|__|_", ". ( ^,^) ,."]
 
 
 # card id -> {"review_variants": [...]}

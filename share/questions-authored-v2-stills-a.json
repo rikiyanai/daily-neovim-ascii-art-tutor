@@ -2214,30 +2214,30 @@
     ]
   },
   "M12.06.P01": {
-    "prompt": "ANIMATION\nUnfamiliar mirrored shells need both + joints changed to *.\n\n    │/..+..|..+..\\│   │/..*..|..*..\\│\n    │ /.+..|..+.\\ │   │ /.+..|..+.\\ │\n    │  /_x_|_x_\\  │   │  /_x_|_x_\\  │\n\nNEOVIM\nWhich bounded path reaches TARGET exactly?",
-    "compact_prompt": "ANIMATION\nBoth paired + landmarks become *; shell stays.\n\n    │/..+..|..+..\\│   │/..*..|..*..\\│\n\nNEOVIM\nWhich path transfers till directions?",
-    "animation_prompt": "ANIMATION\nOnly the paired + landmarks change in unfamiliar art.\n\n    │/..+..|..+..\\│  →  │/..*..|..*..\\│",
-    "animation_answer": "Transfer forward and backward till motions to the two visible joints; preserve all other art.",
-    "neovim_prompt": "NEOVIM\nWhich path matches TARGET?\n\n    │/..+..|..+..\\│\n    │ /.+..|..+.\\ │",
-    "neovim_answer": "0t+lr*$T+hr* replaces the left + from before it and the right + from after it.",
+    "prompt": "ANIMATION\nSnowman's face closes both bullet eyes into dashes. The hat, comma nose, parentheses, cheek punctuation, and fixed row width do not move.\n\n  BEFORE          AFTER\n  │    __│         │    __│\n  │  _|__|_│      │  _|__|_│\n  │. ( •,•) ,.│ → │. ( -,-) ,.│\n\nNEOVIM\nWhich path uses the visible eye glyph from both directions and replaces exactly those two cells?",
+    "compact_prompt": "ANIMATION\nClose only Snowman's two eyes.\n\n  │. ( •,•) ,.│ → │. ( -,-) ,.│\n\nNEOVIM\nDecode `2j0t•lr-$T•hr-`.",
+    "animation_prompt": "ANIMATION\nThe Snowman blink changes the two homologous eye cells while every framing and facial punctuation cell stays registered.",
+    "animation_answer": "Replace both bullet eyes with dashes; preserve the full three-row crop and all punctuation around them.",
+    "neovim_prompt": "NEOVIM\nExplain the forward till-plus-step and backward till-plus-step in `2j0t•lr-$T•hr-`.",
+    "neovim_answer": "2j reaches the face row; 0t• stops before the left eye and l enters it for r-. From row end, T• stops after the right eye and h enters it for the second r-.",
     "choices": [
-      "ANIMATION: Change both paired joints and retain the unfamiliar shell. | NEOVIM: 0t+lr*$T+hr* reaches TARGET exactly.",
-      "ANIMATION: Change only the left joint. | NEOVIM: navigation alone leaves both + glyphs unchanged.",
-      "ANIMATION: Reverse the shell's bytes. | NEOVIM: T+ mirrors the whole row before r*.",
-      "ANIMATION: Shift both joints toward the axis. | NEOVIM: i* inserts new landmarks beside +."
+      "ANIMATION: Close both eyes without moving the face. | NEOVIM: `t•` plus l enters the left eye, while `$T•` plus h enters the right eye; each `r-` overwrites one cell.",
+      "ANIMATION: Close only the left eye. | NEOVIM: t and T replace their targets automatically, so no r command is needed.",
+      "ANIMATION: Reverse the face to create the return pose. | NEOVIM: backward T mirrors every byte between the cursor and its target.",
+      "ANIMATION: Add dashes beside both bullets. | NEOVIM: r- inserts a new cell and keeps each old eye."
     ],
     "compact_choices": [
-      "A: both unfamiliar joints · V: forward/backward till path",
-      "A: left only · V: navigation without edit",
-      "A: shell reversed · V: T mirrors row",
-      "A: joints shift · V: insert beside"
+      "A: blink both cells · V: till, step in, replace",
+      "A: left only · V: till replaces by itself",
+      "A: reverse face · V: T mirrors bytes",
+      "A: add beside eyes · V: r inserts"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the exact path edits both landmarks from opposite directions.",
-      "TARGET visibly contains two changed joints; navigation alone cannot make that art.",
-      "Backward till is navigation, not a mirror operation.",
-      "Insertion would leave the + cells and shift the shell."
+      "Correct: the two till directions address homologous landmarks from opposite edges, and r preserves the registered width.",
+      "t and T are motions only. Without each r-, the eyes remain bullets and the blink never occurs.",
+      "T is backward cursor motion on the current line; it does not reorder or mirror any face cells.",
+      "Normal-mode r overwrites the existing eye. It does not insert a dash or widen the face."
     ]
   },
   "M12.08.P01": {

@@ -4914,3 +4914,38 @@ headed routes at 80x24.
 variants. Full same-process route coverage at all three viewport sizes remains
 unclaimed. The Fireworks excerpts remain local-tutor use only; no push or
 publication occurred.
+
+### VD-48 follow-through · revision `.56` — M12 uses Snowman's real expression overlays; Unicode method evidence fixed
+
+- M12.06 variant 1 now combines the exact first three rows of
+  `official-Pets/Snowman` res01 with the res08 blink overlay. Both `•` eyes
+  become dashes while the hat, comma nose, parentheses, cheek punctuation, and
+  row width remain registered. `2j0t•lr-$T•hr-` deliberately approaches the
+  homologous eye landmarks from opposite directions.
+- Variant 2 is visibly distinct: it begins at the closed-eye state and applies
+  the res06 raised-eye overlay. `2j0t-lr^$T-hr^` changes the two dashes to
+  carets without moving the face. Both paired questions print the complete
+  three-row states and explain that `t`/`T` are motions, the inward `l`/`h`
+  reaches the landmark itself, and `r` preserves column registration.
+- Clean Neovim reached both targets, but the first real popup initially
+  reported missing method evidence even though its saved target was exact.
+  The captured raw keylog encoded U+2022 as `e2 80 fe 58 a2`: Neovim had
+  escaped the literal UTF-8 `0x80` continuation byte as `80 fe 58`. The
+  decoder incorrectly consumed `e2 80 fe` as one malformed scalar, losing the
+  bullet token used by method matching.
+- `decode_keylog` now reconstructs an escaped `0x80` continuation inside a
+  multibyte scalar before decoding it. `test_v2.py` contains the captured byte
+  sequence as a regression assertion. The primary-art alphabet also admits
+  U+2022 after direct Neovim evidence that `strdisplaywidth('•') == 1`; the
+  legacy corpus test already classified it as an observed plate glyph.
+
+**Proof:** revision `.56` writes 215 cards / 395 questions; question quality
+passes all 395; clean Neovim passes **215/215 cards and 174/174 primary
+recipes**; every changed-art replay passes; the captured Unicode keylog
+regression passes; and both M12.06 Snowman variants pass their real-user-config
+headed routes at 80x24.
+
+**Still open.** Eight module transfers still use tutor-authored primary
+variants. Full same-process route coverage at all three viewport sizes remains
+unclaimed. The Snowman excerpts remain local-tutor use only; no push or
+publication occurred.

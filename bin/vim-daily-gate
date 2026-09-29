@@ -140,14 +140,24 @@ def decode_keylog(raw: bytes):
         elif b < 0x7F:
             out.append(_apply_mod(mod, chr(b)))
         elif 0xC2 <= b <= 0xF4:
-            # A UTF-8 lead byte. The art uses multibyte glyphs (\u00b4 \u203e \u00a1 \u00b7),
-            # so `r\u00b4` logs C2 B4 and must decode as ONE key, not two replacement
-            # characters. 0x80 is K_SPECIAL and is handled above; it is never a
-            # UTF-8 lead byte, so the two cases cannot collide.
+            # A UTF-8 lead byte.  Neovim escapes a literal 0x80 continuation
+            # byte inside scriptout as K_SPECIAL KS_SPECIAL KE_FILLER
+            # (80 FE 58).  U+2022 BULLET therefore logs E2 80 FE 58 A2 rather
+            # than contiguous E2 80 A2.  Reassemble the scalar before decoding;
+            # a later 80 FD 35 remains an injected key marker handled above.
             n_cont = 1 if b < 0xE0 else (2 if b < 0xF0 else 3)
-            out.append(_apply_mod(mod, raw[i:i + 1 + n_cont].decode("utf-8", "replace")))
+            encoded, j = bytearray([b]), i + 1
+            while len(encoded) < 1 + n_cont and j < n:
+                if (raw[j] == 0x80 and j + 2 < n
+                        and raw[j + 1:j + 3] == b"\xfeX"):
+                    encoded.append(0x80)
+                    j += 3
+                else:
+                    encoded.append(raw[j])
+                    j += 1
+            out.append(_apply_mod(mod, bytes(encoded).decode("utf-8", "replace")))
             mod = ""
-            i += 1 + n_cont
+            i = j
             continue
         else:
             out.append(_apply_mod(mod, raw[i:i + 1].decode("utf-8", "replace")))

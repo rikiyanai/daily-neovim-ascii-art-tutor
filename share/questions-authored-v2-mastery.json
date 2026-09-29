@@ -1026,30 +1026,30 @@
     ]
   },
   "M12.06.V2.P01": {
-    "prompt": "ANIMATION\nThe top row of this mirrored shell has two centred `:` joints around a fixed `|` axis. Both top-row joints become `!`; the lower row's colons and both o markers are not part of the edit.\n\n  BEFORE          AFTER\n  │<..:..|..:..>│   │<..!..|..!..>│\n  │ <.:..|..:.> │ → │ <.:..|..:.> │\n  │  <_o_|_o_>  │   │  <_o_|_o_>  │\n\nNEOVIM\nWhich account correctly pairs forward `t` with backward `T` around the axis?",
-    "compact_prompt": "ANIMATION\nOnly the two top-row `:` joints become `!`.\n\n  │<..:..|..:..>│ → │<..!..|..!..>│\n\nNEOVIM\nWhy `0t:lr!$T:hr!`?",
-    "animation_prompt": "ANIMATION\nM12.06 variant 2 edits a symmetric joint pair while preserving the axis and the shell's lower materials.",
-    "animation_answer": "The two top-row colons become exclamation marks; all other colons, o markers, and delimiters remain fixed.",
-    "neovim_prompt": "NEOVIM\nDecode the paired till motions in `0t:lr!$T:hr!`.",
-    "neovim_answer": "From the left, t: stops before the first colon and l enters it; from row end, T: stops after the last colon and h enters it. Each r! then overwrites one joint.",
+    "prompt": "ANIMATION\nSnowman's alternate expression lifts both closed dash eyes into carets. The same hat, comma nose, parentheses, cheek punctuation, and row width remain registered.\n\n  BEFORE          AFTER\n  │    __│         │    __│\n  │  _|__|_│      │  _|__|_│\n  │. ( -,-) ,.│ → │. ( ^,^) ,.│\n\nNEOVIM\nWhy does `2j0t-lr^$T-hr^` change only the two homologous eye cells?",
+    "compact_prompt": "ANIMATION\nLift only Snowman's two closed eyes.\n\n  │. ( -,-) ,.│ → │. ( ^,^) ,.│\n\nNEOVIM\nDecode the paired till motions.",
+    "animation_prompt": "ANIMATION\nThe alternate Snowman expression changes both eye landmarks while the face registration remains fixed.",
+    "animation_answer": "Replace the two dashes with carets and preserve every surrounding cell in the three-row crop.",
+    "neovim_prompt": "NEOVIM\nDecode `2j0t-lr^$T-hr^` from the face's left and right edges.",
+    "neovim_answer": "After 2j, 0t- plus l enters the left dash and r^ lifts it; $T- plus h enters the right dash and the second r^ lifts it.",
     "choices": [
-      "ANIMATION: Every colon in all three rows becomes `!`. | NEOVIM: t and T search vertically through the buffer.",
-      "ANIMATION: The two top joints move toward the axis. | NEOVIM: till motions delete the cells they cross.",
-      "ANIMATION: Only the two top-row joints change and symmetry is preserved. | NEOVIM: `t:` plus l enters the left joint, while `$T:` plus h enters the right joint before one-cell replacements.",
-      "ANIMATION: The axis becomes an exclamation mark. | NEOVIM: both till motions stop on `|` rather than on the colons."
+      "ANIMATION: Both eyes lift while the face stays registered. | NEOVIM: each till motion stops beside a dash, one inward step enters it, and r^ overwrites exactly that cell.",
+      "ANIMATION: The comma nose changes into a caret too. | NEOVIM: t- continues searching after r^ and edits punctuation automatically.",
+      "ANIMATION: The whole face shifts toward the centre. | NEOVIM: till motions pull the text they cross along with the cursor.",
+      "ANIMATION: Only the right eye lifts. | NEOVIM: backward T also undoes the earlier left-eye replacement."
     ],
     "compact_choices": [
-      "A: every colon · V: t/T cross rows",
-      "A: joints move · V: till deletes",
-      "A: top pair only · V: till then one step into each joint",
-      "A: axis changes · V: till targets bar"
+      "A: lift both cells · V: till, step in, replace",
+      "A: nose changes · V: t auto-edits punctuation",
+      "A: face shifts · V: till drags text",
+      "A: right only · V: T undoes left"
     ],
-    "correct_choice": 2,
+    "correct_choice": 0,
     "feedback": [
-      "t and T search only the current line; the lower-row colons are never addressed.",
-      "Till motions only move the cursor. The later r commands overwrite in place, so no joint shifts.",
-      "Correct: the two directions use the visible joint glyph itself while the fixed axis remains untouched.",
-      "Both motions name `:` as their target character; the bar is only a visual symmetry axis."
+      "Correct: both directions use the visible dash as their landmark, and r^ preserves all column positions.",
+      "t- is a current-line motion to one named glyph. It neither continues after the replacement nor targets the comma.",
+      "Till motions move only the cursor; the two r commands overwrite without moving any face text.",
+      "T is backward motion, not undo. The left caret remains while the cursor addresses the right dash."
     ]
   },
   "M13.06.V2.P01": {
