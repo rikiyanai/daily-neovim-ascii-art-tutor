@@ -190,12 +190,24 @@ for card in cur["cards"]:
 assert [card["id"] for card in cur["cards"] if card["module_id"] == "M0"] == [
     "M0.P0", "M0.01", "M0.YP", "M0.O", "M0.SR", "M0.02", "M0.03", "M0.04",
     "M0.T", "M0.05", "M0.SL", "M0.06", "M0.07", "M0.08"]
+m0_edits = [card for card in cur["cards"]
+            if card["module_id"] == "M0" and card.get("expected")]
+assert len(m0_edits) == 11
+assert all(card.get("source", "").startswith("official-Cosmetics/Fireworks")
+           for card in m0_edits)
+assert not any("\\|/" in line or "/|\\" in line
+               for card in m0_edits
+               for line in card.get("start", []) + card.get("target", []))
+primary_edits = [card for card in cur["cards"] if card.get("expected")]
+assert sum(str(card.get("source", "")).startswith(("official-", "aahub-"))
+           for card in primary_edits) == 55
+assert sum(not card.get("source") for card in primary_edits) == 120
 # The beginner must perform each concrete prerequisite visibly before the old
 # combined card or any hidden retrieval can demand it.  M0.O is intentionally
 # one open-line action, not a second-frame typing test.
 assert card_by_id["M0.YP"]["expected"] == "gg3yyGp"
 assert card_by_id["M0.YP"]["show_recipe"] is True
-assert card_by_id["M0.O"]["expected"] == "Go  /|\\<Esc>"
+assert card_by_id["M0.O"]["expected"] == "Go    /!\\<Esc>"
 assert "<C-u>" not in card_by_id["M0.O"]["expected"]
 assert "<C-u>" not in json.dumps(cur, ensure_ascii=False)
 assert len(card_by_id["M0.O"]["start"]) == 5
@@ -262,8 +274,8 @@ assert all(contains_ascii_visual(q["prompt"])
                or not contains_ascii_visual(q["compact_prompt"])
            ]
 compact_m004 = v2._compact_question_text(question_by_id["M0.04.P01"]["compact_prompt"])
-assert "BEFORE" in compact_m004 and compact_m004.count("\n") >= 6
-assert "│       │   │  \\|/  │" in compact_m004
+assert "Fireworks states" in compact_m004 and compact_m004.count("\n") >= 4
+assert "│-—O—-│ → copied │=—O—=│" in compact_m004
 assert all("Not yet" not in feedback and "one or both halves" not in feedback.lower()
            for q in mc_questions for feedback in q["feedback"])
 assert all(q.get("authorship") == "manual" for q in mc_questions), [
@@ -1084,7 +1096,7 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "Streak extended to 1 day." in rendered
     assert "best 1" in rendered and "1 drill all time" in rendered
     assert "SKILL TREE / MODULE PROGRESS" in rendered
-    assert "M0  Spark loop" in rendered and "1/14" in rendered
+    assert "M0  Fireworks radial loop" in rendered and "1/14" in rendered
     assert "XP: 10" in rendered and "today: 1/12 lessons" in rendered
     assert "next: M0.P0" in rendered
     assert v2.project(cur, v2.read_events(cfg))["passed_cards"] == ["M0.01"]

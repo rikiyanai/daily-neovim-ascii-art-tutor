@@ -1,15 +1,15 @@
 {
   "M0.P0.P01": {
-    "prompt": "ANIMATION\nThe cursor begins on the figure's head. You only want to inspect the ground row; no glyph should change.\n\n    START       RESULT\n  1 │  @  │     │  @  │\n  2 │ /|\\ │     │ /|\\ │\n  3 │ / \\ │     │ / \\ │\n  4 │.....│     │.....│\n\nNEOVIM\nYou already used 4j to move down four rows. What does 5j mean?",
-    "compact_prompt": "ANIMATION\nMove the cursor; do not edit the figure.\n\n    START       RESULT\n  1 │  @  │     │  @  │\n  2 │ /|\\ │     │ /|\\ │\n  3 │ / \\ │     │ / \\ │\n  4 │.....│     │.....│\n\nNEOVIM\nWhat does 5j mean?",
-    "animation_prompt": "The art is identical before and after because this is cursor movement only.\n\n    START       RESULT\n  1 │  @  │     │  @  │\n  2 │ /|\\ │     │ /|\\ │\n  3 │ / \\ │     │ / \\ │\n  4 │.....│     │.....│",
+    "prompt": "ANIMATION\nThe cursor begins on the top of a five-row Fireworks canopy. You only want to inspect lower rows; no glyph should change.\n\n    START          RESULT\n  1 │ .''.'.''.│   │ .''.'.''.│\n  2 │  .,,*,,.│    │  .,,*,,.│\n  3 │'  .'.'. '│   │'  .'.'. '│\n  4 │ ,  .  ,│     │ ,  .  ,│\n  5 │  '  .  '│    │  '  .  '│\n\nNEOVIM\nYou already used 4j to move down four rows. What does 5j mean?",
+    "compact_prompt": "ANIMATION\nMove the cursor through the Fireworks canopy; do not edit it.\n\n  │ .''.'.''.│\n  │  .,,*,,.│\n  │'  .'.'. '│\n  │ ,  .  ,│\n  │  '  .  '│\n\nNEOVIM\nWhat does 5j mean?",
+    "animation_prompt": "The Fireworks canopy is identical before and after because this is cursor movement only.\n\n  │ .''.'.''.│\n  │  .,,*,,.│\n  │'  .'.'. '│\n  │ ,  .  ,│\n  │  '  .  '│",
     "animation_answer": "Move through the art without changing any cell.",
     "neovim_prompt": "Read 5j as count plus motion.",
     "neovim_answer": "5 is the count; j is move down one row; together they move down five rows.",
     "choices": [
-      "ANIMATION: Five crossed cells are erased. | NEOVIM: 5 is a line address and j deletes that line.",
+      "ANIMATION: Five canopy cells are erased. | NEOVIM: 5 is a line address and j deletes that line.",
       "ANIMATION: The art stays unchanged while the cursor moves. | NEOVIM: 5 is a count and j is the down-one-row motion, so 5j moves down five rows.",
-      "ANIMATION: The whole figure moves down five rows. | NEOVIM: 5j inserts five blank lines below the cursor.",
+      "ANIMATION: The whole canopy moves down five rows. | NEOVIM: 5j inserts five blank lines below the cursor.",
       "ANIMATION: Only the fifth row is replaced. | NEOVIM: j is an editing operator that uses 5 as its target row."
     ],
     "compact_choices": [
@@ -22,28 +22,28 @@
     "feedback": [
       "j is movement, not deletion; no buffer cell changes.",
       "Correct. Vim reads this left to right as count 5 plus motion j.",
-      "The cursor moves; the figure and its rows do not move.",
+      "The cursor moves; the canopy and its rows do not move.",
       "j is a motion, and 5 repeats that motion rather than naming row 5."
     ]
   },
   "M0.01.P01": {
-    "prompt": "ANIMATION\nCompare the registered three-row spark. Only the centre cell should change.\n\n    BEFORE      AFTER\n  1 │  \\|/  │   │  \\|/  │\n  2 │-- . --│   │-- o --│\n  3 │  /|\\  │   │  /|\\  │\n\nNEOVIM\nWhich reading explains the edit you just made?",
-    "compact_prompt": "ANIMATION\nOnly the centre cell changes.\n\n    BEFORE      AFTER\n  1 │  \\|/  │   │  \\|/  │\n  2 │-- . --│   │-- o --│\n  3 │  /|\\  │   │  /|\\  │\n\nNEOVIM\nWhich command changed one cell without shifting the rays?",
-    "animation_prompt": "The core changes from . to o while all ray columns remain fixed.\n\n    BEFORE      AFTER\n  1 │  \\|/  │   │  \\|/  │\n  2 │-- . --│   │-- o --│\n  3 │  /|\\  │   │  /|\\  │",
+    "prompt": "ANIMATION\nCompare the sourced three-row Fireworks radial shell. Only its star core should dim; `\\¡/`, `/!\\`, both em-dash spokes, and both outer rays stay fixed.\n\n    BEFORE       AFTER\n  1 │    \\¡/│    │    \\¡/│\n  2 │   -—*—-│    │   -—o—-│\n  3 │    /!\\│    │    /!\\│\n\nNEOVIM\nWhich reading explains the edit you just made?",
+    "compact_prompt": "ANIMATION\nDim only the Fireworks star core.\n\n  │-—*—-│ → │-—o—-│\n\nNEOVIM\nWhich command changes one cell without shifting either spoke?",
+    "animation_prompt": "The core changes from * to o while every Fireworks accent and ray remains registered.\n\n  │    \\¡/│    │    \\¡/│\n  │   -—*—-│ →  │   -—o—-│\n  │    /!\\│    │    /!\\│",
     "animation_answer": "Replace only the core; preserve all surrounding cells.",
     "neovim_prompt": "Identify the one-cell overwrite operation.",
-    "neovim_answer": "f. finds the core and ro replaces that one character without changing row width.",
+    "neovim_answer": "f* finds the source star and ro replaces that one character without changing row width.",
     "choices": [
-      "ANIMATION: The core changes and every ray remains registered. | NEOVIM: f. finds the dot and ro overwrites that one cell with o.",
-      "ANIMATION: The right rays move one column right. | NEOVIM: f. only moves to the dot; stopping there cannot change or shift any cell.",
+      "ANIMATION: The star core dims and every accent remains registered. | NEOVIM: f* finds the star and ro overwrites that one cell with o.",
+      "ANIMATION: The right spoke moves one column right. | NEOVIM: f* only moves to the star; stopping there cannot change or shift any cell.",
       "ANIMATION: The entire acting row disappears. | NEOVIM: j only moves down one row; it cannot delete the acting row.",
-      "ANIMATION: A second spark is added below. | NEOVIM: ro overwrites one cursor cell; it cannot create three new rows."
+      "ANIMATION: A second Fireworks frame is added below. | NEOVIM: ro overwrites one cursor cell; it cannot create three new rows."
     ],
     "compact_choices": [
-      "A: core only; rays fixed · V: find dot, replace one cell",
-      "A: right rays shift · V: find motion only",
+      "A: star dims; accents fixed · V: find star, replace one cell",
+      "A: right spoke shifts · V: find motion only",
       "A: acting row deleted · V: down motion only",
-      "A: second spark added · V: one-cell replace"
+      "A: second frame added · V: one-cell replace"
     ],
     "correct_choice": 0,
     "feedback": [
@@ -54,14 +54,14 @@
     ]
   },
   "M0.YP.P01": {
-    "prompt": "ANIMATION\nA frame is the complete three-row spark, not just its centre row.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │-- o --│\n  6 │       │     │  /|\\│\n\nNEOVIM\nWhat object does 3yy copy, and where does p put it?",
-    "compact_prompt": "ANIMATION\nCopy one complete three-row frame.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │-- o --│\n  6 │       │     │  /|\\│\n\nNEOVIM\nDecode 3yy then p.",
-    "animation_prompt": "AFTER contains two complete registered sparks.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │-- o --│\n  6 │       │     │  /|\\│",
+    "prompt": "ANIMATION\nA frame is the complete three-row Fireworks shell, not only its core row.\n\n    BEFORE       AFTER\n  1 │    \\¡/│    │    \\¡/│\n  2 │   -—o—-│    │   -—o—-│\n  3 │    /!\\│    │    /!\\│\n  4 │         │    │    \\¡/│\n  5 │         │    │   -—o—-│\n  6 │         │    │    /!\\│\n\nNEOVIM\nWhat object does 3yy copy, and where does p put it?",
+    "compact_prompt": "ANIMATION\nCopy one complete Fireworks frame.\n\n  │    \\¡/│      │    \\¡/│\n  │   -—o—-│  →   │   -—o—-│ ×2\n  │    /!\\│      │    /!\\│\n\nNEOVIM\nDecode 3yy then p.",
+    "animation_prompt": "AFTER contains two complete registered Fireworks radial shells.\n\n  │    \\¡/│      │    \\¡/│\n  │   -—o—-│  →   │   -—o—-│ ×2\n  │    /!\\│      │    /!\\│",
     "animation_answer": "Duplicate all three rows as one frame.",
     "neovim_prompt": "Decode count plus linewise yank, followed by put.",
     "neovim_answer": "3yy yanks three whole lines; p puts those lines below the cursor line.",
     "choices": [
-      "ANIMATION: Duplicate only the middle ray row. | NEOVIM: 3yy copies three characters and p inserts them inside the line.",
+      "ANIMATION: Duplicate only the core row. | NEOVIM: 3yy copies three characters and p inserts them inside the line.",
       "ANIMATION: Duplicate the complete three-row frame below the original. | NEOVIM: 3yy yanks three whole lines and p puts the linewise block below.",
       "ANIMATION: Move the original frame instead of copying it. | NEOVIM: 3yy followed by p removes the source while placing it below.",
       "ANIMATION: Add three empty timing rows. | NEOVIM: p ignores the yanked text and creates blank lines."
@@ -81,16 +81,16 @@
     ]
   },
   "M0.O.P01": {
-    "prompt": "ANIMATION\nThe second pose is missing only its lower-ray row.\n\n    BEFORE      AFTER\n  4 │  \\|/│     │  \\|/│\n  5 │-- O --│   │-- O --│\n  6 │       │     │  /|\\│\n\nNEOVIM\nWhich operation adds one row below row 5 and enters Insert mode there?",
-    "compact_prompt": "ANIMATION\nFinish only the missing lower-ray row.\n\n    BEFORE      AFTER\n  4 │  \\|/│     │  \\|/│\n  5 │-- O --│   │-- O --│\n  6 │       │     │  /|\\│\n\nNEOVIM\nWhich key opens a new line below?",
-    "animation_prompt": "Only row 6 is added; the first five rows stay untouched.\n\n    BEFORE      AFTER\n  4 │  \\|/│     │  \\|/│\n  5 │-- O --│   │-- O --│\n  6 │       │     │  /|\\│",
-    "animation_answer": "Add the one missing lower-ray row beneath the bright core.",
+    "prompt": "ANIMATION\nThe second Fireworks pose is missing only its lower `/!\\` accent row.\n\n    BEFORE       AFTER\n  4 │    \\¡/│    │    \\¡/│\n  5 │   -—O—-│    │   -—O—-│\n  6 │         │    │    /!\\│\n\nNEOVIM\nWhich operation adds one row below row 5 and enters Insert mode there?",
+    "compact_prompt": "ANIMATION\nFinish only the missing lower accent.\n\n  │   -—O—-│\n  │         │ → │    /!\\│\n\nNEOVIM\nWhich key opens a new line below?",
+    "animation_prompt": "Only row 6 is added; the first five Fireworks rows stay untouched.\n\n  │    \\¡/│    │    \\¡/│\n  │   -—O—-│    │   -—O—-│\n  │         │ →  │    /!\\│",
+    "animation_answer": "Add the one missing lower-accent row beneath the bright core.",
     "neovim_prompt": "Choose the below-current-line open command.",
     "neovim_answer": "o opens a new line below and enters Insert mode; Escape returns to Normal mode.",
     "choices": [
-      "ANIMATION: Add the missing lower rays beneath the bright core. | NEOVIM: o opens a line below; type the row, then press Escape.",
-      "ANIMATION: Put the lower rays above the bright core. | NEOVIM: O opens a line above the current line.",
-      "ANIMATION: Replace the bright core with lower rays. | NEOVIM: r changes one existing cell and cannot create the missing row.",
+      "ANIMATION: Add the missing `/!\\` row beneath the bright core. | NEOVIM: o opens a line below; type the row, then press Escape.",
+      "ANIMATION: Put `/!\\` above the bright core. | NEOVIM: O opens a line above the current line.",
+      "ANIMATION: Replace the bright core with `/!\\`. | NEOVIM: r changes one existing cell and cannot create the missing row.",
       "ANIMATION: Copy the entire first frame again. | NEOVIM: 3yy followed by p duplicates three existing rows."
     ],
     "compact_choices": [
@@ -108,9 +108,9 @@
     ]
   },
   "M0.SR.P01": {
-    "prompt": "ANIMATION\nOnly the core on row 2 changes; both contour rows remain identical.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- O --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nRead :2s/o/O/g from left to right.",
-    "compact_prompt": "ANIMATION\nChange every o on row 2 only.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- O --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nDecode :2s/o/O/g.",
-    "animation_prompt": "The addressed acting row changes while the upper and lower rays stay registered.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- O --│\n  3 │  /|\\│     │  /|\\│",
+    "prompt": "ANIMATION\nOnly the Fireworks core on row 2 brightens; `\\¡/`, `/!\\`, the em-dash spokes, and outer rays remain identical.\n\n    BEFORE       AFTER\n  1 │    \\¡/│    │    \\¡/│\n  2 │   -—o—-│    │   -—O—-│\n  3 │    /!\\│    │    /!\\│\n\nNEOVIM\nRead :2s/o/O/g from left to right.",
+    "compact_prompt": "ANIMATION\nBrighten the o on row 2 only.\n\n  │-—o—-│ → │-—O—-│\n\nNEOVIM\nDecode :2s/o/O/g.",
+    "animation_prompt": "The addressed core brightens while both contour rows and both em-dash spokes stay registered.\n\n  │    \\¡/│    │    \\¡/│\n  │   -—o—-│ →  │   -—O—-│\n  │    /!\\│    │    /!\\│",
     "animation_answer": "Brighten every matching core on only row 2.",
     "neovim_prompt": "Decode address, substitute, pattern, replacement, and flag.",
     "neovim_answer": "2 addresses row 2; s substitutes; o is the pattern; O is the replacement; g means every match on that row.",
@@ -135,9 +135,9 @@
     ]
   },
   "M0.02.P01": {
-    "prompt": "ANIMATION\nThe strip grows from one dim frame to a dim frame followed by a bright frame.\n\n    BEFORE      AFTER\n  1 │  \\|/  │   │  \\|/  │\n  2 │-- o --│   │-- o --│\n  3 │  /|\\  │   │  /|\\  │\n  4 │       │   │  \\|/  │\n  5 │       │   │-- O --│\n  6 │       │   │  /|\\  │\n\nNEOVIM\nWhich explanation matches gg3yyGp:4,6s/o/O/g?",
-    "compact_prompt": "ANIMATION\nCopy the dim frame; brighten only the copy.\n\n    BEFORE      AFTER\n  3 │  /|\\  │   │  /|\\  │\n  4 │       │   │  \\|/  │\n  5 │       │   │-- O --│\n  6 │       │   │  /|\\  │\n\nNEOVIM\nDecode the copy, then the addressed substitute.",
-    "animation_prompt": "The new pose retains the complete contour and changes only its core.\n\n    BEFORE      AFTER\n  1 │  \\|/  │   │  \\|/  │\n  2 │-- o --│   │-- o --│\n  3 │  /|\\  │   │  /|\\  │\n  4 │       │   │  \\|/  │\n  5 │       │   │-- O --│\n  6 │       │   │  /|\\  │",
+    "prompt": "ANIMATION\nThe strip grows from one dim Fireworks frame to dim followed by bright. The copied shell must keep every source accent.\n\n    BEFORE       AFTER\n  1 │    \\¡/│    │    \\¡/│\n  2 │   -—o—-│    │   -—o—-│\n  3 │    /!\\│    │    /!\\│\n  4 │         │    │    \\¡/│\n  5 │         │    │   -—O—-│\n  6 │         │    │    /!\\│\n\nNEOVIM\nWhich explanation matches gg3yyGp:4,6s/o/O/g?",
+    "compact_prompt": "ANIMATION\nCopy the dim Fireworks shell; brighten only the copy.\n\n  │-—o—-│\n       ↓ copy + bounded edit\n  │-—o—-│ │-—O—-│\n\nNEOVIM\nDecode the copy, then the addressed substitute.",
+    "animation_prompt": "The new Fireworks pose retains `\\¡/`, `/!\\`, and both em-dash spokes; only its core brightens.\n\n  │   -—o—-│ → │   -—o—-│ │   -—O—-│",
     "animation_answer": "Append a full copy, then brighten the copied core only.",
     "neovim_prompt": "Separate the Normal-mode frame copy from the Ex range edit.",
     "neovim_answer": "gg3yyGp copies the first three rows below; :4,6s/o/O/g limits substitution to copied rows 4–6.",
@@ -162,17 +162,17 @@
     ]
   },
   "M0.04.P01": {
-    "prompt": "ANIMATION\nThe AFTER strip must add one complete flare frame without changing either existing frame.\n\n    BEFORE      AFTER\n  6 │  /|\\  │   │  /|\\  │\n  7 │       │   │  \\|/  │\n  8 │       │   │== O ==│\n  9 │       │   │  /|\\  │\n\nNEOVIM\nWhich option copies the complete bright frame, appends it, and widens only the new middle row?",
-    "compact_prompt": "ANIMATION\nAdd one complete flare frame. Keep both earlier frames unchanged.\n\n    BEFORE      AFTER\n  6 │  /|\\  │   │  /|\\  │\n  7 │       │   │  \\|/  │\n  8 │       │   │== O ==│\n  9 │       │   │  /|\\  │\n\nNEOVIM\nWhich edit copies rows 4–6, appends them, then changes every - on new row 8 to =?",
-    "animation_prompt": "The AFTER strip appends rows 7–9 as one registered flare frame; rows 1–6 remain unchanged.\n\n    BEFORE      AFTER\n  6 │  /|\\  │   │  /|\\  │\n  7 │       │   │  \\|/  │\n  8 │       │   │== O ==│\n  9 │       │   │  /|\\  │",
+    "prompt": "ANIMATION\nThe AFTER strip must add one complete Fireworks flare without changing the dim or bright frames. Only the copied frame's two outer ASCII rays strengthen from - to =; its em-dash spokes stay fixed.\n\n    BEFORE       AFTER\n  6 │    /!\\│    │    /!\\│\n  7 │         │    │    \\¡/│\n  8 │         │    │   =—O—=│\n  9 │         │    │    /!\\│\n\nNEOVIM\nWhich option copies rows 4–6, appends them, and substitutes only on new row 8?",
+    "compact_prompt": "ANIMATION\nAppend a complete flare; preserve both earlier Fireworks states.\n\n  │-—O—-│ → copied │=—O—=│\n\nNEOVIM\nWhich edit copies rows 4–6 and changes every ASCII - on row 8 to =?",
+    "animation_prompt": "Rows 7–9 become one complete flare; rows 1–6 and the inner em-dash spokes remain unchanged.\n\n  │    \\¡/│\n  │   -—O—-│ → copied as │   =—O—=│\n  │    /!\\│",
     "animation_answer": "Append the complete three-row flare while preserving rows 1–6.",
     "neovim_prompt": "Copy rows 4–6 below the strip; then replace every - on row 8 with =.",
     "neovim_answer": "Use a complete three-line frame copy, then an all-matches substitute scoped only to the appended middle row.",
     "choices": [
       "ANIMATION: Redraw the existing bright frame in place, so the strip still has only two frames. | NEOVIM: Edit the old bright row without making a frame copy.",
       "ANIMATION: Append the complete three-row flare and leave rows 1–6 registered exactly where they were. | NEOVIM: Copy the complete bright frame, then substitute every dash only on the appended middle row.",
-      "ANIMATION: Append only the widened middle row, leaving the new pose without upper or lower rays. | NEOVIM: Open and type one row instead of copying the complete frame object.",
-      "ANIMATION: Append the complete frame, then widen the rays in every frame, including the old dim frame. | NEOVIM: Use whole-file substitution instead of limiting the edit to the appended row."
+      "ANIMATION: Append only the widened middle row, leaving the new pose without upper or lower accents. | NEOVIM: Open and type one row instead of copying the complete frame object.",
+      "ANIMATION: Append the complete frame, then strengthen the outer rays in every frame, including the old dim state. | NEOVIM: Use whole-file substitution instead of limiting the edit to the appended row."
     ],
     "compact_choices": [
       "A: alter old frame; no third frame · V: edit row 5 only",
@@ -183,15 +183,15 @@
     "correct_choice": 1,
     "feedback": [
       "That edits the old bright frame. The motion needs a new three-row extreme after it.",
-      "Correct. The frame copy preserves the complete pose, and the row-scoped substitute changes only the appended frame's horizontal rays.",
+      "Correct. The frame copy preserves the complete source shell, and the row-scoped substitute changes only the appended frame's two ASCII rays.",
       "That creates a one-row fragment, not a registered three-row animation frame.",
       "That copy is complete, but % scopes the substitute to the whole file and damages earlier frames."
     ]
   },
   "M0.T.P01": {
-    "prompt": "ANIMATION\nThe flare is a complete three-row object and the AFTER strip contains two identical flare frames.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │== O ==│   │== O ==│\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │== O ==│\n  6 │       │     │  /|\\│\n\nNEOVIM\nWhat does :1,3t$ do?",
-    "compact_prompt": "ANIMATION\nCopy the complete flare as a hold frame.\n\n    BEFORE      AFTER\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │== O ==│\n  6 │       │     │  /|\\│\n\nNEOVIM\nDecode :1,3t$.",
-    "animation_prompt": "The complete flare is duplicated below as a deliberate hold.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │== O ==│   │== O ==│\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │== O ==│\n  6 │       │     │  /|\\│",
+    "prompt": "ANIMATION\nThe Fireworks flare is a complete three-row object. AFTER contains two identical sourced contours as a deliberate timing hold.\n\n    BEFORE       AFTER\n  1 │    \\¡/│    │    \\¡/│\n  2 │   =—O—=│    │   =—O—=│\n  3 │    /!\\│    │    /!\\│\n  4 │         │    │    \\¡/│\n  5 │         │    │   =—O—=│\n  6 │         │    │    /!\\│\n\nNEOVIM\nWhat does :1,3t$ do?",
+    "compact_prompt": "ANIMATION\nCopy the complete Fireworks flare as a hold.\n\n  │=—O—=│ → │=—O—=│ │=—O—=│\n\nNEOVIM\nDecode :1,3t$.",
+    "animation_prompt": "The complete radial flare is duplicated below as a deliberate hold; its accents remain part of the copied object.\n\n  │    \\¡/│\n  │   =—O—=│ ×2\n  │    /!\\│",
     "animation_answer": "Duplicate rows 1–3 after the final row.",
     "neovim_prompt": "Decode the Ex source range, copy command, and destination.",
     "neovim_answer": "1,3 is the source range; t copies it; $ is the destination after the last line.",
@@ -216,9 +216,9 @@
     ]
   },
   "M0.05.P01": {
-    "prompt": "ANIMATION\nA second identical flare is intentional here: two consecutive flare frames create a brief hold before the settle.\n\n    BEFORE      AFTER\n  7 │  \\|/  │   │  \\|/  │\n  8 │== O ==│   │== O ==│\n  9 │  /|\\  │   │  /|\\  │\n 10 │       │   │  \\|/  │\n 11 │       │   │== O ==│\n 12 │       │   │  /|\\  │\n\nNEOVIM\nYou were asked to use ONE method. Which statement correctly compares the accepted methods?",
-    "compact_prompt": "ANIMATION\nThe duplicate flare is a timed hold, not an accidental dead frame.\n\n    BEFORE      AFTER\n  9 │  /|\\  │   │  /|\\  │\n 10 │       │   │  \\|/  │\n 11 │       │   │== O ==│\n 12 │       │   │  /|\\  │\n\nNEOVIM\nCompare counted yank/put with addressed :t. Use one, not both.",
-    "animation_prompt": "The added complete flare intentionally extends its screen time by one frame.\n\n    BEFORE      AFTER\n  7 │  \\|/  │   │  \\|/  │\n  8 │== O ==│   │== O ==│\n  9 │  /|\\  │   │  /|\\  │\n 10 │       │   │  \\|/  │\n 11 │       │   │== O ==│\n 12 │       │   │  /|\\  │",
+    "prompt": "ANIMATION\nA second identical Fireworks flare is intentional: two consecutive complete radial shells create a brief hold before the settle.\n\n    BEFORE       AFTER\n  7 │    \\¡/│    │    \\¡/│\n  8 │   =—O—=│    │   =—O—=│\n  9 │    /!\\│    │    /!\\│\n 10 │         │    │    \\¡/│\n 11 │         │    │   =—O—=│\n 12 │         │    │    /!\\│\n\nNEOVIM\nYou were asked to use ONE method. Which statement correctly compares the accepted methods?",
+    "compact_prompt": "ANIMATION\nThe duplicate radial shell is a timed hold, not an accidental dead frame.\n\n  │=—O—=│ → │=—O—=│ │=—O—=│\n\nNEOVIM\nCompare counted yank/put with addressed :t. Use one, not both.",
+    "animation_prompt": "The added complete Fireworks flare intentionally extends its screen time by one frame.\n\n  │    \\¡/│\n  │   =—O—=│ ×2\n  │    /!\\│",
     "animation_answer": "Add exactly one complete duplicate flare as an intentional hold.",
     "neovim_prompt": "Compare 7G3yyGp with :7,9t$ without performing both.",
     "neovim_answer": "Both copy rows 7–9 after the file; yank/put is cursor-oriented, while :7,9t$ states source and destination directly.",
@@ -243,21 +243,21 @@
     ]
   },
   "M0.SL.P01": {
-    "prompt": "ANIMATION\nOnly the two eyes on the current middle row brighten. The shell outline must not change.\n\n    BEFORE       AFTER\n  1 │| /---\\ |│   │| /---\\ |│\n  2 │| o o   |│   │| O O   |│\n  3 │| \\---/ |│   │| \\---/ |│\n\nNEOVIM\nWhat scope does :s/o/O/g use when no line number or range appears before s?",
-    "compact_prompt": "ANIMATION\nBrighten both eyes; preserve the shell.\n\n    BEFORE       AFTER\n  1 │| /---\\ |│   │| /---\\ |│\n  2 │| o o   |│   │| O O   |│\n  3 │| \\---/ |│   │| \\---/ |│\n\nNEOVIM\nDecode :s/o/O/g on row 2.",
-    "animation_prompt": "Both matches on the current acting row change; surrounding rows stay fixed.\n\n    BEFORE       AFTER\n  1 │| /---\\ |│   │| /---\\ |│\n  2 │| o o   |│   │| O O   |│\n  3 │| \\---/ |│   │| \\---/ |│",
-    "animation_answer": "Change both eyes on only the current line.",
+    "prompt": "ANIMATION\nOn this sourced Fireworks canopy, only the repeated commas on row 2 become colons. The star, dots, and neighbouring rows stay fixed.\n\n    BEFORE         AFTER\n  1 │ .''.'.''.│   │ .''.'.''.│\n  2 │  .,,*,,.│    │  .::*::.│\n  3 │'  .'.'. '│   │'  .'.'. '│\n\nNEOVIM\nWhat scope does :s/,/:/g use when no line number or range appears before s?",
+    "compact_prompt": "ANIMATION\nChange every comma on the current canopy row.\n\n  │. ,,*,, .│ → │. ::*:: .│\n\nNEOVIM\nDecode :s/,/:/g on row 2.",
+    "animation_prompt": "All four comma cells on the current material row change; both neighbouring Fireworks rows stay fixed.\n\n  │  .,,*,,.│ → │  .::*::.│",
+    "animation_answer": "Change every comma on only the current line.",
     "neovim_prompt": "Explain the implicit current-line address and g flag.",
-    "neovim_answer": "With no explicit address, :s uses the current line; g replaces every o on that line.",
+    "neovim_answer": "With no explicit address, :s uses the current line; g replaces every comma on that line.",
     "choices": [
-      "ANIMATION: Brighten both eyes and leave the shell unchanged. | NEOVIM: :s uses the current line implicitly, and g replaces every match on that line.",
-      "ANIMATION: Brighten the first eye only. | NEOVIM: g means stop after the first match.",
-      "ANIMATION: Brighten every o in the entire file. | NEOVIM: an omitted address means all lines.",
+      "ANIMATION: Change all four commas and preserve every other canopy cell. | NEOVIM: :s uses the current line implicitly, and g replaces every match on that line.",
+      "ANIMATION: Change only the first comma. | NEOVIM: g means stop after the first match.",
+      "ANIMATION: Change punctuation throughout the complete file. | NEOVIM: an omitted address means all lines.",
       "ANIMATION: Replace the complete middle row. | NEOVIM: s is a whole-line rewrite command."
     ],
     "compact_choices": [
-      "A: both eyes only · V: current line, every match",
-      "A: first eye only · V: g stops",
+      "A: all commas only · V: current line, every match",
+      "A: first comma only · V: g stops",
       "A: whole file · V: omitted address means all lines",
       "A: whole row replaced · V: s rewrites line"
     ],
@@ -280,13 +280,13 @@
       "ANIMATION: Brighten the core and both outer rays while preserving inner spokes and vertical accents. | NEOVIM: rO overwrites the found star, then current-row :s/-/=/g changes both ASCII hyphens.",
       "ANIMATION: Insert O beside the star and widen the shell. | NEOVIM: iO preserves the old star and adds a column.",
       "ANIMATION: Change every dash in every firework frame. | NEOVIM: an omitted range means whole-file scope.",
-      "ANIMATION: Replace the shell with the earlier tutor spark. | NEOVIM: p pastes an old subject instead of editing this source frame."
+      "ANIMATION: Replace this shell with a different saved pose. | NEOVIM: p pastes an old subject instead of editing the visible source frame."
     ],
     "compact_choices": [
       "A: core + outer rays · V: r then current-line substitute",
       "A: insert beside core · V: keep old star",
       "A: every frame dash · V: omitted range = whole file",
-      "A: paste tutor spark · V: reuse old subject"
+      "A: paste another pose · V: reuse old subject"
     ],
     "correct_choice": 0,
     "feedback": [
@@ -297,9 +297,9 @@
     ]
   },
   "M0.08.P01": {
-    "prompt": "ANIMATION\nThe loop needs a final dim settle frame. It must differ from the opening frame at the core so the seam reads as a transition, not an accidental duplicate.\n\n    BEFORE      AFTER\n 12 │  /|\\  │   │  /|\\  │\n 13 │       │   │  \\|/  │\n 14 │       │   │-- . --│\n 15 │       │   │  /|\\  │\n\nNEOVIM\nWhich plan copies a complete registered frame and then lowers only the settle core?",
-    "compact_prompt": "ANIMATION\nAppend a complete dim settle with a . core.\n\n    BEFORE      AFTER\n 12 │  /|\\  │   │  /|\\  │\n 13 │       │   │  \\|/  │\n 14 │       │   │-- . --│\n 15 │       │   │  /|\\  │\n\nNEOVIM\nChoose a bounded whole-frame copy plus one-cell core edit.",
-    "animation_prompt": "The appended settle retains all six rays and changes only its core to a low-energy dot.\n\n    BEFORE      AFTER\n 12 │  /|\\  │   │  /|\\  │\n 13 │       │   │  \\|/  │\n 14 │       │   │-- . --│\n 15 │       │   │  /|\\  │",
+    "prompt": "ANIMATION\nThe Fireworks loop needs a final settle. Copy the complete dim radial shell, then lower only its core from o to .; every accent and spoke remains registered.\n\n    BEFORE       AFTER\n 12 │    /!\\│    │    /!\\│\n 13 │         │    │    \\¡/│\n 14 │         │    │   -—.—-│\n 15 │         │    │    /!\\│\n\nNEOVIM\nWhich plan copies one complete frame and then replaces only the new core?",
+    "compact_prompt": "ANIMATION\nAppend a complete Fireworks settle with a . core.\n\n  │-—o—-│ → copied │-—.—-│\n\nNEOVIM\nChoose a whole-frame copy plus one-cell edit.",
+    "animation_prompt": "The appended settle keeps the sourced Fireworks contour and changes only its core to a low-energy dot.\n\n  │    \\¡/│\n  │   -—.—-│\n  │    /!\\│",
     "animation_answer": "Append the complete dim frame, then change only its new core to a dot.",
     "neovim_prompt": "Choose the plan whose scopes are a three-line frame followed by one character.",
     "neovim_answer": "Copy the complete three-row source frame, then find and overwrite only the appended core cell.",
@@ -307,7 +307,7 @@
       "ANIMATION: Append only the middle settle row. | NEOVIM: Open and type one row without copying its contour.",
       "ANIMATION: Append the complete settle and change only its core to a dot. | NEOVIM: Copy all three source rows, then find and overwrite only the new frame's core cell.",
       "ANIMATION: Change the opening core to a dot and add nothing. | NEOVIM: Edit the first frame in place instead of appending a settle.",
-      "ANIMATION: Append a settle but erase its lower rays. | NEOVIM: copying two lines is sufficient because blank space counts as the third contour row."
+      "ANIMATION: Append a settle but erase its lower `/!\\` accent. | NEOVIM: copying two lines is sufficient because blank space counts as the third contour row."
     ],
     "compact_choices": [
       "A: middle row only · V: open and type one row",
@@ -320,21 +320,21 @@
       "A one-row fragment is not a registered animation frame.",
       "Correct. The frame copy owns three lines; the settle edit owns one core cell.",
       "That damages the opening pose and leaves the loop without a settle frame.",
-      "Blank space cannot stand in for the missing lower-ray row; the frame must stay complete."
+      "Blank space cannot stand in for the missing `/!\\` accent row; the frame must stay complete."
     ]
   },
   "M0.Q01": {
-    "prompt": "ANIMATION\nRead the visible change before choosing any keys.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- . --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nWhich edit has exactly the same one-cell scope as the animation change?",
-    "compact_prompt": "ANIMATION\nWhat changed?\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- . --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nChoose the operation with matching scope.",
-    "animation_prompt": "The core changes from . to o; every ray remains in the same column.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- . --│   │-- o --│\n  3 │  /|\\│     │  /|\\│",
+    "prompt": "ANIMATION\nRead the sourced Fireworks change before choosing keys. Only the star core dims.\n\n    BEFORE       AFTER\n  1 │    \\¡/│    │    \\¡/│\n  2 │   -—*—-│    │   -—o—-│\n  3 │    /!\\│    │    /!\\│\n\nNEOVIM\nWhich edit has exactly the same one-cell scope?",
+    "compact_prompt": "ANIMATION\nWhat changed?\n\n  │-—*—-│ → │-—o—-│\n\nNEOVIM\nChoose the operation with matching scope.",
+    "animation_prompt": "The Fireworks core changes from * to o; every accent and ray remains in the same column.\n\n  │-—*—-│ → │-—o—-│",
     "animation_answer": "Only the centre cell changes.",
     "neovim_prompt": "Match the one-cell visual scope with a one-cell overwrite.",
-    "neovim_answer": "Find the dot and use r to replace that cell without shifting the row.",
+    "neovim_answer": "Find the star and use r to replace that cell without shifting the row.",
     "choices": [
-      "ANIMATION: Only the centre cell changes. | NEOVIM: Find the dot and use r to overwrite that one cell.",
+      "ANIMATION: Only the star core changes. | NEOVIM: Find the star and use r to overwrite that one cell.",
       "ANIMATION: Both horizontal rays change along with the core. | NEOVIM: A row-2 substitute that matches dashes has broader scope than the one core cell.",
       "ANIMATION: A second frame is added. | NEOVIM: 3yy followed by p copies three complete lines.",
-      "ANIMATION: A new lower-ray row is added. | NEOVIM: o opens a new row instead of changing the existing core cell."
+      "ANIMATION: A new `/!\\` row is added. | NEOVIM: o opens a new row instead of changing the existing core cell."
     ],
     "compact_choices": [
       "A: centre only · V: one-cell r overwrite",
@@ -351,10 +351,10 @@
     ]
   },
   "M0.Q02": {
-    "prompt": "ANIMATION\nThe ray columns are registration landmarks. The core may change, but the row width may not.\n\n    SAFE         SHIFTED\n  2 │-- o --│     │-- o. --│\n\nNEOVIM\nWhy is an in-place r replacement safer here than adding another character?",
-    "compact_prompt": "ANIMATION\nKeep the ray columns fixed.\n\n    SAFE         SHIFTED\n  2 │-- o --│     │-- o. --│\n\nNEOVIM\nWhy use r for this replacement?",
-    "animation_prompt": "A fixed-width replacement preserves registration; insertion can shift the right half of the pose.\n\n    SAFE         SHIFTED\n  2 │-- o --│     │-- o. --│",
-    "animation_answer": "Preserve the row width and the ray columns.",
+    "prompt": "ANIMATION\nThe em-dash spokes and outer rays are registration landmarks. The core may change, but the row width may not.\n\n    SAFE          SHIFTED\n  2 │   -—o—-│     │   -—o.—-│\n\nNEOVIM\nWhy is an in-place r replacement safer here than inserting another character?",
+    "compact_prompt": "ANIMATION\nKeep both Fireworks spokes fixed.\n\n  │-—o—-│ versus │-—o.—-│\n\nNEOVIM\nWhy use r?",
+    "animation_prompt": "A one-cell replacement preserves Fireworks registration; insertion shifts the right em-dash spoke and outer ray.\n\n  │-—o—-│ versus │-—o.—-│",
+    "animation_answer": "Preserve row width and both spoke/ray columns.",
     "neovim_prompt": "Compare one-cell overwrite scope with adding a new cell.",
     "neovim_answer": "r overwrites one existing cell and returns to Normal mode; adding a character would grow the row and shift later cells.",
     "choices": [
@@ -378,15 +378,15 @@
     ]
   },
   "M0.Q03": {
-    "prompt": "ANIMATION\nThe new flare should be a full frame. Diagnose this broken result.\n\n    REQUIRED     BROKEN\n  1 │  \\|/│     │       │\n  2 │== O ==│   │== O ==│\n  3 │  /|\\│     │       │\n\nNEOVIM\nWhich repair restores the frame object without disturbing earlier frames?",
-    "compact_prompt": "ANIMATION\nThe flare has only its middle row.\n\n    REQUIRED     BROKEN\n  1 │  \\|/│     │       │\n  2 │== O ==│   │== O ==│\n  3 │  /|\\│     │       │\n\nNEOVIM\nChoose the bounded repair.",
-    "animation_prompt": "The broken result is a one-row fragment; a valid pose needs upper rays, core row, and lower rays.\n\n    REQUIRED     BROKEN\n  1 │  \\|/│     │       │\n  2 │== O ==│   │== O ==│\n  3 │  /|\\│     │       │",
+    "prompt": "ANIMATION\nThe new Fireworks flare should be a complete radial frame. Diagnose this one-row fragment.\n\n    REQUIRED      BROKEN\n  1 │    \\¡/│     │         │\n  2 │   =—O—=│     │   =—O—=│\n  3 │    /!\\│     │         │\n\nNEOVIM\nWhich repair restores the complete frame without disturbing earlier frames?",
+    "compact_prompt": "ANIMATION\nThe flare has only its core row.\n\n  │\\¡/│          │   │\n  │=—O—=│ versus  │=—O—=│\n  │/!\\│          │   │\n\nNEOVIM\nChoose the bounded repair.",
+    "animation_prompt": "The broken result is a one-row fragment; a valid Fireworks pose needs upper accent, core row, and lower accent.\n\n  │\\¡/│          │   │\n  │=—O—=│ versus  │=—O—=│\n  │/!\\│          │   │",
     "animation_answer": "Restore the two missing contour rows around the flare core.",
     "neovim_prompt": "Choose a local repair rather than a project-wide redraw.",
     "neovim_answer": "Undo the fragment and copy the complete three-row bright frame, then widen only the copied middle row.",
     "choices": [
       "ANIMATION: Keep the fragment; the blank contour rows imply motion blur. | NEOVIM: Submit because the centre row alone proves a flare.",
-      "ANIMATION: Restore the upper and lower ray rows around the flare core. | NEOVIM: Undo the fragment, copy the complete three-row frame, then edit only its new middle row.",
+      "ANIMATION: Restore the upper and lower accent rows around the flare core. | NEOVIM: Undo the fragment, copy the complete three-row frame, then edit only its new middle row.",
       "ANIMATION: Delete every earlier frame so the fragment stands alone. | NEOVIM: Use a whole-file delete and retype the project.",
       "ANIMATION: Add two copies of the middle row above and below. | NEOVIM: Yank only the core row twice even though those rows need different glyphs."
     ],
@@ -405,21 +405,21 @@
     ]
   },
   "M0.Q04": {
-    "prompt": "ANIMATION\nPredict the result of finding the dot and pressing ro on the middle row.\n\n    START       ?\n  1 │  \\|/│    │       │\n  2 │-- . --│  │       │\n  3 │  /|\\│    │       │\n\nNEOVIM\nWhat does the command do to row width and mode?",
-    "compact_prompt": "ANIMATION\nPredict ro on the dot.\n\n    START       ?\n  1 │  \\|/│    │       │\n  2 │-- . --│  │       │\n  3 │  /|\\│    │       │\n\nNEOVIM\nChoose the exact result.",
-    "animation_prompt": "The missing result must be inferred from a one-cell overwrite.\n\n    START       ?\n  1 │  \\|/│    │       │\n  2 │-- . --│  │       │\n  3 │  /|\\│    │       │",
-    "animation_answer": "The middle row becomes -- o -- and the contour is unchanged.",
+    "prompt": "ANIMATION\nPredict the result of finding the star and pressing ro on the Fireworks core row.\n\n    START        ?\n  1 │    \\¡/│    │         │\n  2 │   -—*—-│    │         │\n  3 │    /!\\│    │         │\n\nNEOVIM\nWhat does the command do to row width and mode?",
+    "compact_prompt": "ANIMATION\nPredict ro on the star.\n\n  │-—*—-│ → ?\n\nNEOVIM\nChoose the exact result.",
+    "animation_prompt": "Infer the missing Fireworks result from a one-cell overwrite.\n\n  │-—*—-│ → ?",
+    "animation_answer": "The core row becomes -—o—- and the contour is unchanged.",
     "neovim_prompt": "Predict r plus replacement character.",
     "neovim_answer": "ro replaces the character under the cursor with o, keeps row width constant, and remains in Normal mode.",
     "choices": [
-      "ANIMATION: The middle row becomes -- o --; all rays stay fixed. | NEOVIM: ro overwrites one cell with o and returns immediately to Normal mode.",
+      "ANIMATION: The core row becomes -—o—-; all accents stay fixed. | NEOVIM: ro overwrites one cell with o and returns immediately to Normal mode.",
       "ANIMATION: The middle row becomes -- o. -- and grows. | NEOVIM: r enters Insert mode and keeps both old and new characters.",
       "ANIMATION: The middle row becomes --  -- after deletion. | NEOVIM: r removes the cursor character without replacement.",
       "ANIMATION: Every dot in the file becomes o. | NEOVIM: r is a whole-file replacement command."
     ],
     "compact_choices": [
-      "A: -- o --; rays fixed · V: overwrite one cell",
-      "A: -- o. --; row grows · V: insert and retain dot",
+      "A: -—o—-; accents fixed · V: overwrite one cell",
+      "A: -—o*—-; row grows · V: insert and retain star",
       "A: core deleted · V: remove character",
       "A: all dots change · V: whole-file replace"
     ],
@@ -432,16 +432,16 @@
     ]
   },
   "M0.Q05": {
-    "prompt": "ANIMATION\nYou need a second complete frame, not a partial row.\n\n    SOURCE      REQUIRED COPY\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nWhich description correctly uses the linewise object you have already learned?",
-    "compact_prompt": "ANIMATION\nCopy all three frame rows.\n\n    SOURCE      COPY\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nWhich method owns the full frame?",
-    "animation_prompt": "Source and copy must contain the same three registered rows.\n\n    SOURCE      REQUIRED COPY\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│",
+    "prompt": "ANIMATION\nYou need a second complete Fireworks frame, not a partial core row.\n\n    SOURCE         REQUIRED COPY\n  1 │    \\¡/│      │    \\¡/│\n  2 │   -—o—-│      │   -—o—-│\n  3 │    /!\\│      │    /!\\│\n\nNEOVIM\nWhich description correctly uses the linewise object you already learned?",
+    "compact_prompt": "ANIMATION\nCopy all three Fireworks rows.\n\n  │\\¡/│      │\\¡/│\n  │-—o—-│  →  │-—o—-│ ×2\n  │/!\\│      │/!\\│\n\nNEOVIM\nWhich method owns the full frame?",
+    "animation_prompt": "Source and copy must contain the same three registered Fireworks rows.\n\n  │\\¡/│      │\\¡/│\n  │-—o—-│  →  │-—o—-│ ×2\n  │/!\\│      │/!\\│",
     "animation_answer": "Copy the complete three-row pose as one object.",
     "neovim_prompt": "Choose counted linewise yank followed by linewise put.",
     "neovim_answer": "3yy copies three entire lines; p creates those three lines below the cursor.",
     "choices": [
       "ANIMATION: Copy all three pose rows together. | NEOVIM: 3yy yanks three whole lines and p puts that block below.",
       "ANIMATION: Copy only the core row. | NEOVIM: yy on row 2 is enough because the contour is implied.",
-      "ANIMATION: Copy three characters from the top ray row. | NEOVIM: the count before yy measures characters.",
+      "ANIMATION: Copy three characters from the upper-accent row. | NEOVIM: the count before yy measures characters.",
       "ANIMATION: Move the source pose and leave its old location blank. | NEOVIM: yy removes the source before p places it."
     ],
     "compact_choices": [
@@ -459,21 +459,21 @@
     ]
   },
   "M0.Q06": {
-    "prompt": "ANIMATION\nTransfer the learned idea to a comet: brighten its core and widen only its two-cell tail.\n\n    BEFORE      TARGET\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │\n\nNEOVIM\nWhich plan reuses the learned grammar without assuming the spark's old coordinates?",
-    "compact_prompt": "ANIMATION\nApply the core-and-rays idea to a comet.\n\n    BEFORE      TARGET\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │\n\nNEOVIM\nChoose the local, landmark-based plan.",
-    "animation_prompt": "The subject changes, but the intended scopes remain one core cell and the tail matches on its acting row.\n\n    BEFORE      TARGET\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │",
-    "animation_answer": "Brighten the core and widen the tail without altering the contour.",
+    "prompt": "ANIMATION\nTransfer the learned method to the wider radial Fireworks pose. Brighten its star core and strengthen only the outer ASCII rays; preserve bullets, em dashes, and accents.\n\n    BEFORE         TARGET\n  1 │   .\\¡/.│     │   .\\¡/.│\n  2 │  •-—*—-•│     │  •=—O—=•│\n  3 │   '/!\\' │    │   '/!\\' │\n\nNEOVIM\nWhich plan reuses the grammar without assuming the earlier pose's coordinates?",
+    "compact_prompt": "ANIMATION\nTransfer core-and-outer-ray editing to the wider Fireworks pose.\n\n  │•-—*—-•│ → │•=—O—=•│\n\nNEOVIM\nChoose the local, landmark-based plan.",
+    "animation_prompt": "The pose changes, but the intended scopes remain one core cell and two ASCII-ray matches on its acting row.\n\n  │•-—*—-•│ → │•=—O—=•│",
+    "animation_answer": "Brighten the core and strengthen the two outer ASCII rays without altering bullets, em dashes, or accents.",
     "neovim_prompt": "Use visible landmarks and current-line scope rather than memorized row 8.",
-    "neovim_answer": "Find the visible o, replace it with O, then substitute every dash on that current row.",
+    "neovim_answer": "Find the visible star, replace it with O, then substitute every ASCII dash on that current row.",
     "choices": [
-      "ANIMATION: Change the comet core and tail while preserving its outline. | NEOVIM: Find the visible core, overwrite it, then use a current-line all-matches substitute for the tail.",
-      "ANIMATION: Paste the earlier spark over the comet. | NEOVIM: Reusing a method means reusing the previous yank contents unchanged.",
-      "ANIMATION: Change only the first tail dash. | NEOVIM: Omit the g flag even though two matches must change.",
+      "ANIMATION: Change the wider core and two outer rays while preserving its bullets and accents. | NEOVIM: Find the visible core, overwrite it, then use a current-line all-matches substitute for the ASCII rays.",
+      "ANIMATION: Paste the narrower Fireworks pose over this one. | NEOVIM: Reusing a method means reusing previous yank contents unchanged.",
+      "ANIMATION: Change only the first outer dash. | NEOVIM: Omit the g flag even though two matches must change.",
       "ANIMATION: Change every dash in the project. | NEOVIM: Use % because transfer always means whole-file scope."
     ],
     "compact_choices": [
-      "A: comet core + tail · V: landmarks and current line",
-      "A: paste old spark · V: reuse old yank",
+      "A: wider core + rays · V: landmarks and current line",
+      "A: paste old pose · V: reuse old yank",
       "A: first dash only · V: omit g",
       "A: all project dashes · V: use %"
     ],
@@ -486,9 +486,9 @@
     ]
   },
   "M0.Q07": {
-    "prompt": "ANIMATION\nThe two identical flare frames are consecutive. Decide whether the duplicate has a timing purpose.\n\n    F1           F2           F3\n    │  \\|/│      │  \\|/│      │  \\|/│\n    │-- O --│    │== O ==│    │== O ==│\n    │  /|\\│      │  /|\\│      │  /|\\│\n\nNEOVIM\nWhich edit creates exactly one extra full flare frame?",
-    "compact_prompt": "ANIMATION\nF2 and F3 are an intentional two-frame hold.\n\n    F1        F2        F3\n    │-- O --│  │== O ==│  │== O ==│\n\nNEOVIM\nChoose one complete-frame copy.",
-    "animation_prompt": "F2 and F3 are identical complete poses whose declared role is a brief flare hold.\n\n    F1           F2           F3\n    │  \\|/│      │  \\|/│      │  \\|/│\n    │-- O --│    │== O ==│    │== O ==│\n    │  /|\\│      │  /|\\│      │  /|\\│",
+    "prompt": "ANIMATION\nThe two identical Fireworks flare frames are consecutive. Decide whether the duplicate has a timing purpose.\n\n    BRIGHT       FLARE        HOLD\n    │-—O—-│      │=—O—=│      │=—O—=│\n\nNEOVIM\nWhich edit creates exactly one extra complete flare frame?",
+    "compact_prompt": "ANIMATION\nFLARE and HOLD are an intentional two-frame pause.\n\n  │-—O—-│  │=—O—=│  │=—O—=│\n\nNEOVIM\nChoose one complete-frame copy.",
+    "animation_prompt": "The final two complete radial shells are identical because their declared role is a brief flare hold.\n\n  │-—O—-│ → │=—O—=│ │=—O—=│",
     "animation_answer": "Treat the duplicate as one deliberate hold frame, not accidental repetition.",
     "neovim_prompt": "Copy one complete three-line range once.",
     "neovim_answer": "Either a three-line yank/put or one addressed :t copy creates the single added hold.",
@@ -513,14 +513,14 @@
     ]
   },
   "M0.Q08": {
-    "prompt": "ANIMATION\nThe right ray must remain in column 7 while the core changes.\n\n    REGISTERED   SHIFTED\n    │-- O --│     │-- O  --│\n\nNEOVIM\nWhich editing principle prevents the shifted result?",
-    "compact_prompt": "ANIMATION\nDo not move the right ray.\n\n    REGISTERED   SHIFTED\n    │-- O --│     │-- O  --│\n\nNEOVIM\nChoose the width-preserving operation.",
-    "animation_prompt": "Stable landmarks must remain in the same display columns between frames.\n\n    REGISTERED   SHIFTED\n    │-- O --│     │-- O  --│",
-    "animation_answer": "Overwrite within the existing cells instead of inserting or deleting before stable rays.",
+    "prompt": "ANIMATION\nThe right em-dash spoke and outer ray must stay registered while the core changes.\n\n    REGISTERED    SHIFTED\n    │   -—O—-│     │   -—O —-│\n\nNEOVIM\nWhich editing principle prevents the shifted result?",
+    "compact_prompt": "ANIMATION\nDo not move the right Fireworks spoke.\n\n  │-—O—-│ versus │-—O —-│\n\nNEOVIM\nChoose the width-preserving operation.",
+    "animation_prompt": "Stable Fireworks accents must remain in the same display columns between frames.\n\n  │-—O—-│ versus │-—O —-│",
+    "animation_answer": "Overwrite within existing cells instead of inserting or deleting before stable spokes and rays.",
     "neovim_prompt": "Choose an overwrite whose scope matches one existing cell.",
     "neovim_answer": "r replaces one cell without changing the number of cells in the row.",
     "choices": [
-      "ANIMATION: Preserve the ray columns between frames. | NEOVIM: Use r when one existing cell must change without altering row width.",
+      "ANIMATION: Preserve the spoke and ray columns between frames. | NEOVIM: Use r when one existing cell must change without altering row width.",
       "ANIMATION: Let the ray drift to suggest speed. | NEOVIM: o opens a separate row, so it cannot replace the core in the existing row.",
       "ANIMATION: Ignore columns as long as line count matches. | NEOVIM: 3yy and p copy whole rows, so they are a substitute for a one-cell change.",
       "ANIMATION: Redraw every stable cell on each frame. | NEOVIM: A row-scoped substitute should change ray characters even though only the core is acting."
@@ -540,22 +540,22 @@
     ]
   },
   "M0.Q09": {
-    "prompt": "ANIMATION\nPredict the exact middle row after this current-line command runs on the comet: :s/-/=/g\n\n    BEFORE      RESULT ?\n  2 │< O >--│   │       │\n\nNEOVIM\nWhich output follows from pattern -, replacement =, and flag g?",
-    "compact_prompt": "ANIMATION\nPredict the comet's middle row.\n\n    BEFORE      RESULT ?\n  2 │< O >--│   │       │\n\nNEOVIM\nRun :s/-/=/g mentally.",
-    "animation_prompt": "Only the two tail dashes match; the core and brackets do not.\n\n    BEFORE      RESULT ?\n  2 │< O >--│   │       │",
-    "animation_answer": "The result is < O >==.",
+    "prompt": "ANIMATION\nPredict the wider Fireworks core row after :s/-/=/g. The bullets and em-dash spokes are different glyphs and must not match.\n\n    BEFORE          RESULT ?\n  2 │  •-—O—-•│     │          │\n\nNEOVIM\nWhich output follows from pattern -, replacement =, and flag g?",
+    "compact_prompt": "ANIMATION\nPredict the Fireworks row.\n\n  │•-—O—-•│ → ?\n\nNEOVIM\nRun :s/-/=/g mentally.",
+    "animation_prompt": "Only the two ASCII hyphens match; bullets, em dashes, and the core do not.\n\n  │•-—O—-•│ → ?",
+    "animation_answer": "The result is •=—O—=•.",
     "neovim_prompt": "Predict current-line substitution with the all-matches flag.",
-    "neovim_answer": "Every - on the current row becomes =, producing < O >==.",
+    "neovim_answer": "Every ASCII - on the current row becomes =, producing •=—O—=•.",
     "choices": [
-      "ANIMATION: The row becomes < O >=-. | NEOVIM: Only the first dash changes because g stops after one match.",
-      "ANIMATION: The row becomes < O >==. | NEOVIM: g applies the - to = substitution to both matches on the current line.",
-      "ANIMATION: The row becomes < = >--. | NEOVIM: The replacement targets the core between angle brackets.",
+      "ANIMATION: The row becomes •=—O—-•. | NEOVIM: Only the first dash changes because g stops after one match.",
+      "ANIMATION: The row becomes •=—O—=•. | NEOVIM: g applies the - to = substitution to both ASCII-hyphen matches on the current line.",
+      "ANIMATION: The row becomes •-—=—-•. | NEOVIM: The replacement targets the O core.",
       "ANIMATION: The entire row becomes ==. | NEOVIM: s discards all nonmatching characters on the line."
     ],
     "compact_choices": [
-      "A: < O >=- · V: first match only",
-      "A: < O >== · V: every dash on current line",
-      "A: < = >-- · V: replace core",
+      "A: •=—O—-• · V: first match only",
+      "A: •=—O—=• · V: every ASCII dash",
+      "A: •-—=—-• · V: replace core",
       "A: == · V: discard nonmatches"
     ],
     "correct_choice": 1,
@@ -567,9 +567,9 @@
     ]
   },
   "M0.Q10": {
-    "prompt": "ANIMATION\nOnly the new flare's middle row should widen. Compare the intended scope with a whole-file substitution.\n\n    INTENDED     OVERBROAD\n  2 │-- o --│     │== o ==│\n  8 │== O ==│     │== O ==│\n\nNEOVIM\nWhich scope protects earlier frames?",
-    "compact_prompt": "ANIMATION\nRow 2 must stay -- o --; row 8 becomes == O ==.\n\n    KEEP         CHANGE\n  2 │-- o --│     │-- o --│\n  8 │-- O --│     │== O ==│\n\nNEOVIM\nChoose row scope, not whole-file scope.",
-    "animation_prompt": "The flare edit owns row 8 only; changing row 2 destroys the dim keyframe.\n\n    INTENDED     OVERBROAD\n  2 │-- o --│     │== o ==│\n  8 │== O ==│     │== O ==│",
+    "prompt": "ANIMATION\nOnly the new Fireworks flare's outer ASCII rays should strengthen. A whole-file substitute would also damage the dim state.\n\n    KEEP             CHANGE\n  2 │   -—o—-│\n  8 │   -—O—-│  →   │   =—O—=│\n\nNEOVIM\nWhich scope protects earlier frames?",
+    "compact_prompt": "ANIMATION\nKeep the dim row; strengthen only the new flare.\n\n  row 2 │-—o—-│ stays\n  row 8 │-—O—-│ → │=—O—=│\n\nNEOVIM\nChoose row scope, not whole-file scope.",
+    "animation_prompt": "The outer-ray edit owns row 8 only; changing row 2 destroys the dim Fireworks state.\n\n  row 2 │-—o—-│ stays\n  row 8 │-—O—-│ → │=—O—=│",
     "animation_answer": "Widen the new flare row and preserve the earlier dim row.",
     "neovim_prompt": "Distinguish an explicit row address from % whole-file scope.",
     "neovim_answer": ":8s/-/=/g changes all dashes on row 8 only; :%s/-/=/g changes matching dashes throughout the file.",

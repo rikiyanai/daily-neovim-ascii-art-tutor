@@ -420,100 +420,101 @@ ACRONIAN_LEFT_MID_RAILS = stone_story_variants.fixed_rails(
 ACRONIAN_RIGHT_MID_RAILS = stone_story_variants.fixed_rails(
     stone_story_variants.ACRONIAN_WING_RIGHT_MID, 14)
 
+# M0 is one continuous Fireworks project, not a generic tutor sun.  The shell
+# contour is the official radial frame-3 crop; only the named energy cells are
+# authored as teaching states.
+M0_RADIAL_SOURCE = stone_story_variants.FIREWORK_RADIAL_F3
+M0_RADIAL_DIM = [M0_RADIAL_SOURCE[0], "   -—o—-", M0_RADIAL_SOURCE[2]]
+M0_RADIAL_BRIGHT = [M0_RADIAL_SOURCE[0], "   -—O—-", M0_RADIAL_SOURCE[2]]
+M0_RADIAL_FLARE = [M0_RADIAL_SOURCE[0], "   =—O—=", M0_RADIAL_SOURCE[2]]
+M0_RADIAL_SETTLE = [M0_RADIAL_SOURCE[0], "   -—.—-", M0_RADIAL_SOURCE[2]]
+M0_PRIMARY_SOURCE = (
+    "official-Cosmetics/Fireworks res06 radial frame 3 crop; "
+    "authored core/outer-ray energy states"
+)
+
 
 MODULES = [
     {
-        "id": "M0", "title": "Spark loop", "node": "A1/V0", "project": "spark-loop",
+        "id": "M0", "title": "Fireworks radial loop", "node": "A1/V0", "project": "fireworks-radial-loop",
         "skill": "modes, whole-frame copying, and readable change", "frame_rows": 3,
         "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
-        "meaning": "a registered three-row spark brightens into a wider flare, holds, then settles",
-        "first_reading": "the core changes from a placeholder point to a dim spark while every ray stays registered",
+        "meaning": "a registered Fireworks radial shell ignites, brightens, flares, holds, then settles",
+        "first_reading": "the source star becomes a dim core while its asymmetrical accents and rays stay registered",
         "principle": "test the smallest readable multi-row subject before adding frames",
-        "defect": "only the centre glyph changes while the surrounding rays drift or a duplicate has no timing purpose",
-        "basic": "find and replace one feature inside a readable three-row frame",
-        "scaled": "duplicate the complete three-row frame before changing only the copy",
+        "defect": "the energy cell changes while the Fireworks accents drift, or a duplicate has no timing purpose",
+        "basic": "find and replace one energy cell inside the sourced three-row radial shell",
+        "scaled": "duplicate the complete Fireworks frame before changing only the copy",
         "steps": [
-            step(
-                ["  \\|/  ", "-- . --", "  /|\\  "],
-                ["  \\|/  ", "-- o --", "  /|\\  "],
-                "j0f.ro",
+            dict(step(
+                M0_RADIAL_SOURCE,
+                M0_RADIAL_DIM,
+                "j0f*ro",
                 [["j", "move to the acting row"],
-                 ["f.", "find the visible placeholder without padding the path with unused word motions"],
-                 ["ro", "replace only the core while keeping all six rays registered"]],
+                 ["f*", "find the visible source star without padding the path with unused word motions"],
+                 ["ro", "replace only the core while keeping every Fireworks accent registered"]],
                 method_requirement=require_method(
                     "find the visible core, then replace it in place",
-                    exact_any_of=["j0f.ro"]),
+                    exact_any_of=["j0f*ro"]),
                 review_variants=[
-                    step(["  /|\\  ", "== ? ==", "  \\|/  "],
-                         ["  /|\\  ", "== * ==", "  \\|/  "],
-                         "j0f?r*", [["j0f?r*", "find and replace the changed core in place"]],
-                         method_requirement=require_method(
-                             "find the changed core, then replace it in place",
-                             exact_any_of=["j0f?r*"])),
-                    step(["  \\!/  ", "-- x --", "  /!\\  "],
-                         ["  \\!/  ", "-- O --", "  /!\\  "],
-                         "j0fxrO", [["j0fxrO", "find and replace the alternate core in place"]],
-                         method_requirement=require_method(
-                             "find the alternate core, then replace it in place",
-                             exact_any_of=["j0fxrO"])),
+                    dict(step(
+                        stone_story_variants.FIREWORK_RADIAL_F4,
+                        [stone_story_variants.FIREWORK_RADIAL_F4[0], "  •-—o—-•", stone_story_variants.FIREWORK_RADIAL_F4[2]],
+                        "j0f*ro", [["j0f*ro", "find and dim the wider radial core in place"]],
+                        method_requirement=require_method(
+                            "find the changed core, then replace it in place",
+                            exact_any_of=["j0f*ro"])),
+                        source="official-Cosmetics/Fireworks res06 radial frame 4 crop; authored dim core"),
+                    dict(step(
+                        stone_story_variants.FIREWORK_RADIAL_NODES,
+                        [*stone_story_variants.FIREWORK_RADIAL_NODES[:2], "  •-—o—-•"],
+                        "2j0f*ro", [["2j0f*ro", "reach the lower radial node and dim its core in place"]],
+                        method_requirement=require_method(
+                            "find the alternate core, then replace it in place",
+                            exact_any_of=["2j0f*ro"])),
+                        source="official-Cosmetics/Fireworks res03 radial nodes; authored dim core"),
                 ],
-            ),
-            step(
-                ["  \\|/  ", "-- o --", "  /|\\  "],
-                ["  \\|/  ", "-- o --", "  /|\\  ",
-                 "  \\|/  ", "-- O --", "  /|\\  "],
+            ), source=M0_PRIMARY_SOURCE),
+            dict(step(
+                M0_RADIAL_DIM,
+                M0_RADIAL_DIM + M0_RADIAL_BRIGHT,
                 "gg3yyGp:4,6s/o/O/g<CR>",
-                [["gg3yy", "copy the complete three-row dim keyframe"],
+                [["gg3yy", "copy the complete three-row dim Fireworks keyframe"],
                  ["Gp", "put the copy after the original"],
                  [":4,6s/o/O/g", "on rows 4 through 6 substitute O for every o; only the copied core matches, and g means every match on each addressed row"]],
                 key_vocabulary=[
                     "{count}yy then p/P — yank complete frame rows and put them below/above",
                     ":{start},{end}s/old/new/g — across addressed rows replace every match; g means all matches per row",
                 ],
-            ),
-            step(
-                ["  \\|/  ", "-- o --", "  /|\\  ",
-                 "  \\|/  ", "-- O --", "  /|\\  "],
-                ["  \\|/  ", "-- o --", "  /|\\  ",
-                 "  \\|/  ", "-- O --", "  /|\\  ",
-                 "  \\|/  ", "== O ==", "  /|\\  "],
+            ), source=M0_PRIMARY_SOURCE),
+            dict(step(
+                M0_RADIAL_DIM + M0_RADIAL_BRIGHT,
+                M0_RADIAL_DIM + M0_RADIAL_BRIGHT + M0_RADIAL_FLARE,
                 "4G3yyGp:8s/-/=/g<CR>",
-                [["4G3yyGp", "copy the bright three-row keyframe as the flare extreme"],
-                 [":8s/-/=/g", "widen only the new frame's horizontal rays"]],
+                [["4G3yyGp", "copy the bright three-row Fireworks keyframe as the flare extreme"],
+                 [":8s/-/=/g", "strengthen only the new frame's two outer ASCII rays"]],
                 key_vocabulary=[
                     "{count}yy then p/P — yank complete frame rows and put them below/above",
                     ":{start},{end}s/old/new/g — across addressed rows replace every match; a one-line address is the bounded form",
                 ],
-            ),
-            step(
-                ["  \\|/  ", "-- o --", "  /|\\  ",
-                 "  \\|/  ", "-- O --", "  /|\\  ",
-                 "  \\|/  ", "== O ==", "  /|\\  "],
-                ["  \\|/  ", "-- o --", "  /|\\  ",
-                 "  \\|/  ", "-- O --", "  /|\\  ",
-                 "  \\|/  ", "== O ==", "  /|\\  ",
-                 "  \\|/  ", "== O ==", "  /|\\  "],
+            ), source=M0_PRIMARY_SOURCE),
+            dict(step(
+                M0_RADIAL_DIM + M0_RADIAL_BRIGHT + M0_RADIAL_FLARE,
+                M0_RADIAL_DIM + M0_RADIAL_BRIGHT + M0_RADIAL_FLARE + M0_RADIAL_FLARE,
                 ":7,9t$<CR>",
                 [[":7,9t$", "copy the whole flare extreme to create a deliberate two-frame hold"]], alternatives=[
                 method("counted yank and put", "7G3yyGp", "copy the three-row flare from its first row",
                        {"kind": "linewise_yank_put", "rows": 3}),
                 method("addressed copy", ":7,9t$<CR>", "copy the exact flare range without relying on cursor position",
                        {"kind": "ex_copy", "start": 7, "end": 9, "destination": "$"}),
-            ]),
-            step(
-                ["  \\|/  ", "-- o --", "  /|\\  ",
-                 "  \\|/  ", "-- O --", "  /|\\  ",
-                 "  \\|/  ", "== O ==", "  /|\\  ",
-                 "  \\|/  ", "== O ==", "  /|\\  "],
-                ["  \\|/  ", "-- o --", "  /|\\  ",
-                 "  \\|/  ", "-- O --", "  /|\\  ",
-                 "  \\|/  ", "== O ==", "  /|\\  ",
-                 "  \\|/  ", "== O ==", "  /|\\  ",
-                 "  \\|/  ", "-- . --", "  /|\\  "],
+            ]), source=M0_PRIMARY_SOURCE),
+            dict(step(
+                M0_RADIAL_DIM + M0_RADIAL_BRIGHT + M0_RADIAL_FLARE + M0_RADIAL_FLARE,
+                M0_RADIAL_DIM + M0_RADIAL_BRIGHT + M0_RADIAL_FLARE + M0_RADIAL_FLARE + M0_RADIAL_SETTLE,
                 ":1,3t$<CR>14Gfor.",
-                [[":1,3t$", "copy the registered dim frame as a settle scaffold"],
+                [[":1,3t$", "copy the registered dim Fireworks frame as a settle scaffold"],
                  ["14Gfor.", "lower only the settle core so the loop seam is a transition, not a dead duplicate"]],
-            ),
+            ), source=M0_PRIMARY_SOURCE),
         ],
         "transfer": dict(step(
             stone_story_variants.FIREWORK_RADIAL_F3,
@@ -3131,7 +3132,7 @@ STRICT_HIDDEN_RETRIEVALS = {
 # source cards remain useful still-authoring work, but their old wording falsely
 # described candidates, paragraphs, or working copies as playback artifacts.
 STILL_PROMPT_REWRITES = {
-    "M0.SL": "On one changed still, replace every small core on the current line with one line-scoped substitute; leave the two contour rows alone.",
+    "M0.SL": "On the sourced Fireworks canopy, change every comma on the current material row to a colon with one line-scoped substitute; leave both neighbouring spark rows alone.",
     "M11.02": "Copy the complete three-row machine as a second redraw candidate.",
     "M11.WS": "Inspect the padded missile still with visible whitespace and column guides, then remove only trailing spaces. Every visible missile and exhaust glyph must remain unchanged.",
     "M11.UT": "Try ! as an exaggerated left-eye take, undo it, author the chosen O look, visit the abandoned ! take with chronological history, then return to and submit the O-eye still.",
@@ -4730,7 +4731,7 @@ def m0_extra_cards(module):
     }
     primer = dict(base, **{
         "id": "M0.P0", "ordinal": 0, "kind": "concept",
-        "title": "Spark loop · Vim grammar primer", "project_id": module["project"],
+        "title": "Fireworks radial loop · Vim grammar primer", "project_id": module["project"],
         "variant_group": "M0.grammar-primer", "lesson_benefit": (
             "distinguish operator sentences, standalone Normal commands, and Ex statements"
         ),
@@ -4751,18 +4752,17 @@ def m0_extra_cards(module):
     })
     yank_put = dict(base, **{
         "id": "M0.YP", "ordinal": 1.5, "kind": "guided_edit",
-        "title": "Spark loop · Copy one complete frame with yy/p",
+        "title": "Fireworks radial loop · Copy one complete frame with yy/p",
         "project_id": "m0-yank-put-lab", "artifact": "transfer",
         "variant_group": "M0.yank-put", "lesson_benefit": (
-            "copy a complete fixed-width frame without retyping any of its rows"
+            "copy a complete fixed-width Fireworks frame without retyping any row"
         ),
         "prompt": (
-            "Copy the complete three-row spark once below itself. Do not redraw the rays "
+            "Copy the complete three-row Fireworks radial shell once below itself. Do not redraw its accents "
             "character by character."
         ),
-        "start": ["  \\|/", "-- o --", "  /|\\"],
-        "target": ["  \\|/", "-- o --", "  /|\\",
-                   "  \\|/", "-- o --", "  /|\\"],
+        "start": M0_RADIAL_DIM,
+        "target": M0_RADIAL_DIM + M0_RADIAL_DIM,
         "expected": "gg3yyGp",
         "recipe": [["gg", "go to the first row"],
                    ["3yy", "copy three whole rows into Vim's yank register"],
@@ -4774,6 +4774,7 @@ def m0_extra_cards(module):
             "you do not need Insert mode or literal retyping."
         ),
         "frame_slices": [3, 3],
+        "source": M0_PRIMARY_SOURCE,
         "grammar_families": ["linewise-yank-put", "normal-motion"],
         "grammar_stage": "guided",
         "duplicate_frames": [{
@@ -4784,21 +4785,21 @@ def m0_extra_cards(module):
     })
     open_line = dict(base, **{
         "id": "M0.O", "ordinal": 1.75, "kind": "guided_edit",
-        "title": "Spark loop · Open one missing row",
+        "title": "Fireworks radial loop · Open one missing row",
         "project_id": "m0-open-line-lab", "artifact": "transfer",
         "variant_group": "M0.open-line", "lesson_benefit": (
             "open one registered row below the cursor and return to Normal mode"
         ),
         "prompt": (
-            "Finish the second spark by adding only its missing lower-ray row. The first five "
+            "Finish the second Fireworks shell by adding only its missing lower-accent row. The first five "
             "rows are already correct; do not retype them."
         ),
-        "start": ["  \\|/", "-- o --", "  /|\\", "  \\|/", "-- O --"],
-        "target": ["  \\|/", "-- o --", "  /|\\", "  \\|/", "-- O --", "  /|\\"],
-        "expected": "Go  /|\\<Esc>",
+        "start": M0_RADIAL_DIM + M0_RADIAL_BRIGHT[:2],
+        "target": M0_RADIAL_DIM + M0_RADIAL_BRIGHT,
+        "expected": "Go    /!\\<Esc>",
         "recipe": [["G", "go to the last existing row"],
                    ["o", "open one new row below and enter Insert mode"],
-                   ["  /|\\", "type the missing registered lower-ray row exactly"],
+                   ["    /!\\", "type the missing registered lower-accent row exactly"],
                    ["<Esc>", "leave Insert mode and return to Normal"]],
         "cursor": "^", "show_target": True, "show_recipe": True,
         "hint": (
@@ -4807,6 +4808,7 @@ def m0_extra_cards(module):
         ),
         "frame_slices": [3, 3], "grammar_families": ["normal-open-line"],
         "grammar_stage": "guided",
+        "source": M0_PRIMARY_SOURCE,
         "accepted_legacy_starts": [["  \\|/", "-- o --", "  /|\\"]],
         "incomplete_start_frame": {
             "frame": 2, "missing_rows": 1,
@@ -4815,16 +4817,16 @@ def m0_extra_cards(module):
     })
     addressed_substitute = dict(base, **{
         "id": "M0.SR", "ordinal": 1.9, "kind": "guided_edit",
-        "title": "Spark loop · Address one row and substitute",
+        "title": "Fireworks radial loop · Address one row and substitute",
         "project_id": "m0-addressed-substitute-lab", "artifact": "transfer",
         "variant_group": "M0.addressed-substitute", "lesson_benefit": (
             "read an Ex substitute as address + command + old/new arguments + flag + Enter"
         ),
         "prompt": (
-            "On row 2 only, replace every small core o with O. Keep both ray rows unchanged."
+            "On row 2 only, replace the dim core o with O. Keep the Fireworks accents unchanged."
         ),
-        "start": ["  \\|/", "-- o --", "  /|\\"],
-        "target": ["  \\|/", "-- O --", "  /|\\"],
+        "start": M0_RADIAL_DIM,
+        "target": M0_RADIAL_BRIGHT,
         "expected": ":2s/o/O/g<CR>",
         "recipe": [[":2", "address row 2 only"],
                    ["s", "start the substitute command"],
@@ -4838,19 +4840,20 @@ def m0_extra_cards(module):
         ),
         "frame_slices": [3], "grammar_families": ["ex-substitute-range"],
         "grammar_stage": "guided",
+        "source": M0_PRIMARY_SOURCE,
     })
     ex_copy = dict(base, **{
         "id": "M0.T", "ordinal": 4.5, "kind": "guided_edit",
-        "title": "Spark loop · Addressed whole-frame copy",
+        "title": "Fireworks radial loop · Addressed whole-frame copy",
         "project_id": "m0-ex-copy-lab", "artifact": "transfer",
         "variant_group": "M0.ex-copy", "lesson_benefit": (
             "work out source range, copy command, destination, and Enter before M0.05 hides them"
         ),
         "prompt": (
-            "Copy the complete three-row flare after the file with one addressed Ex statement."
+            "Copy the complete three-row Fireworks flare after the file with one addressed Ex statement."
         ),
-        "start": ["  \\|/", "== O ==", "  /|\\"],
-        "target": ["  \\|/", "== O ==", "  /|\\", "  \\|/", "== O ==", "  /|\\"],
+        "start": M0_RADIAL_FLARE,
+        "target": M0_RADIAL_FLARE + M0_RADIAL_FLARE,
         "expected": ":1,3t$<CR>",
         "recipe": [[":1,3", "source range: all three frame rows"],
                    ["t$", "copy that range after the last line"],
@@ -4862,6 +4865,7 @@ def m0_extra_cards(module):
         ),
         "frame_slices": [3, 3], "grammar_families": ["ex-copy"],
         "grammar_stage": "guided",
+        "source": M0_PRIMARY_SOURCE,
         "duplicate_frames": [{
             "frames": [1, 2], "role": "scaffold",
             "reason": "a working whole-frame copy used to learn addressed Ex scope",
@@ -4918,15 +4922,22 @@ def guided_bridge_cards(module):
     mid = module["id"]
     rows = []
     if mid == "M0":
-        rows.append(("M0.06", bridge(
+        current_line = bridge(
             "SL", "Scope a substitute to the current line",
-            "On one changed frame, replace every small core on the current line with one line-scoped substitute; leave the two contour rows alone.",
-            ["| /---\\ |", "| o o   |", "| \\---/ |"],
-            ["| /---\\ |", "| O O   |", "| \\---/ |"],
-            "2G:s/o/O/g<CR>",
+            "On the sourced Fireworks canopy, replace every comma on row 2 with a colon; preserve the star and every dot on all three rows.",
+            stone_story_variants.FIREWORK_CANOPY[:3],
+            [stone_story_variants.FIREWORK_CANOPY[0],
+             stone_story_variants.FIREWORK_CANOPY[1].replace(",", ":"),
+             stone_story_variants.FIREWORK_CANOPY[2]],
+            "2G:s/,/:/g<CR>",
             [["2G", "land on the row whose repeated material changes"],
-             [":s/o/O/g<CR>", "use the current row as the implicit address and replace every o there"]],
-            "ex-substitute-line", 5.5)))
+             [":s/,/:/g<CR>", "use the current row as the implicit address and replace every comma there"]],
+            "ex-substitute-line", 5.5)
+        current_line["source"] = (
+            "official-Cosmetics/Fireworks res03 willow frame 5 canopy rows 1-3; "
+            "authored comma-to-colon material pass"
+        )
+        rows.append(("M0.06", current_line))
     elif mid == "M1":
         rows.append(("M1.04", bridge(
             "DD", "Delete one complete redundant frame",
@@ -6718,7 +6729,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.61",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.62",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

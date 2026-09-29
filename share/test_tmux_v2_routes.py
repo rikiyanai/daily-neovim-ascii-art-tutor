@@ -374,7 +374,8 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             else:
                 assert ("LESSON COMPLETE" in feedback_screen
                         or ("verified outcome" in feedback_screen
-                            and "exact target" in feedback_screen)), feedback_screen
+                            and "exact target" in feedback_screen)
+                        or "RESULT COMPARISON exact target" in feedback_screen), feedback_screen
             if route == "concept":
                 assert "ANSWER EXPLANATION" in feedback_screen
                 assert "QUESTION REPLAY" not in feedback_screen

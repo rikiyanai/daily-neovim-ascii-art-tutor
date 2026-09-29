@@ -5268,3 +5268,81 @@ claim even though recipe tests remained green.
 archive ingestion, push, or publication occurred. This checkpoint closes the
 command-review proof loophole; it does not turn automated prose checks into a
 new manual editorial review of all 399 questions.
+
+## VD-55 · 2026-09-29 — source-backed transfers did not replace the primary lesson art
+
+**Finding:** the claim that transfer/review variety solved the invented-art
+problem was too broad. The current `.61` curriculum has 178 executable cards,
+but only 45 primary cards identify an official Stone Story or AAHub source.
+Another three have non-official source metadata. **130 executable cards have
+no source metadata at all.** Every comparison card (20/20) and every module
+check (20/20) remains unsourced; only 11/81 guided cards and 17/37 independent
+cards are source-backed. This is why the operator can still spend most of the
+course editing the old spark, boxes, and stick figures even though every
+`.06` transfer now uses different sourced art.
+
+Exact unsourced primary-card inventory by module:
+
+- M0 (10): `M0.01`, `M0.YP`, `M0.O`, `M0.SR`, `M0.02`, `M0.04`, `M0.T`,
+  `M0.05`, `M0.SL`, `M0.08`.
+- M11 (7): `M11.01`, `M11.02`, `M11.UR`, `M11.04`, `M11.05`, `M11.VE`,
+  `M11.08`.
+- M1 (6): `M1.01`, `M1.02`, `M1.DD`, `M1.04`, `M1.05`, `M1.08`.
+- M19 (5): `M19.01`, `M19.02`, `M19.04`, `M19.05`, `M19.08`.
+- M2 (5): `M2.01`, `M2.02`, `M2.04`, `M2.05`, `M2.08`.
+- M12 (9): `M12.AA`, `M12.JH`, `M12.01`, `M12.02`, `M12.FIND`, `M12.04`,
+  `M12.05`, `M12.GV`, `M12.08`.
+- M14 (6): `M14.01`, `M14.02`, `M14.04`, `M14.PARA`, `M14.05`, `M14.08`.
+- M10 (5): `M10.01`, `M10.02`, `M10.04`, `M10.05`, `M10.08`.
+- M5 (6): `M5.01`, `M5.02`, `M5.C`, `M5.04`, `M5.05`, `M5.08`.
+- M15 (8): `M15.01`, `M15.02`, `M15.04`, `M15.BA`, `M15.05`, `M15.MAC`,
+  `M15.GLOBAL`, `M15.08`.
+- M16 (6): `M16.01`, `M16.02`, `M16.04`, `M16.MOVE`, `M16.05`, `M16.08`.
+- M3 (8): `M3.01`, `M3.02`, `M3.CI`, `M3.04`, `M3.05`, `M3.REG`, `M3.DI`,
+  `M3.08`.
+- M4 (6): `M4.01`, `M4.02`, `M4.VB`, `M4.04`, `M4.05`, `M4.08`.
+- M17 (5): `M17.01`, `M17.02`, `M17.04`, `M17.05`, `M17.08`.
+- M13 (6): `M13.01`, `M13.02`, `M13.BE`, `M13.04`, `M13.05`, `M13.08`.
+- M7 (9): `M7.01`, `M7.02`, `M7.DOT`, `M7.MAC`, `M7.VIS`, `M7.04`,
+  `M7.GLOBAL`, `M7.05`, `M7.08`.
+- M6 (7): `M6.01`, `M6.02`, `M6.D`, `M6.04`, `M6.05`, `M6.MOVE`, `M6.08`.
+- M18 (6): `M18.01`, `M18.02`, `M18.04`, `M18.EXPR`, `M18.05`, `M18.08`.
+- M8 (5): `M8.01`, `M8.02`, `M8.04`, `M8.05`, `M8.08`.
+- M9 (5): `M9.01`, `M9.02`, `M9.04`, `M9.05`, `M9.08`.
+
+**Required repair order:** convert one module at a time into a coherent sourced
+project strip, beginning with M0 because it is the first-run experience. For
+each changed card, rewrite its paired question manually against the actual
+visible frames, rerun the clean Neovim recipe, and prove the popup at all three
+viewports. Do not bulk-label old tutor art as sourced and do not regenerate
+question prose from a template. The local-only publication boundary remains in
+force.
+
+### VD-55 follow-through · revision `.62` — M0 is now one sourced Fireworks project
+
+M0 no longer teaches through the generic `\\|/`, `-- o --`, `/|\\` sun. Its
+eleven executable cards now use `official-Cosmetics/Fireworks`: the radial
+frame-3 shell is carried through source-star, dim, bright, flare, deliberate
+hold, and settle states; the current-line substitute lab uses three rows of the
+willow canopy. Only the named energy cells are authored teaching states. The
+source contour's `¡`, `!`, em-dash spokes, asymmetrical accents, and widths
+remain visible registration evidence throughout.
+
+All 22 M0 question records were edited individually against those actual
+states. They now print the relevant Fireworks rows for cursor motion,
+star-to-dim overwrite, whole-frame copy, missing `/!\\` row, addressed
+brightening, flare construction, Ex copy, hold timing, canopy material
+substitution, wider-radial transfer, registration, prediction, and settle.
+No question generator or token-replacement template authored those records.
+
+The sourced-primary count rises from 45/178 to **55/178**; M0 is 11/11 and the
+unsourced count falls from 130 to **120**. This closes the first-run module,
+not the remaining nineteen-module inventory above.
+
+**Proof:** question quality passes all 399 questions; clean Neovim passes all
+219 cards and 178 primary recipes. Every one of M0's fourteen routes (primer,
+two concept groups, eleven executable cards including transfer and module
+check) passes the real-user-config headed popup at **80×24, 100×36, and
+188×49**. The first concurrent 80×24 `M0.YP` driver run recorded an incorrect
+bright copied core; the same route passed immediately in isolation and at both
+larger sizes, so no product pass is claimed from that anomalous run itself.
