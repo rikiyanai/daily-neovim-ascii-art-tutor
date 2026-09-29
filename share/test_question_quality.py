@@ -28,6 +28,15 @@ BANNED = [
     "stated scope stays", "This visible failure occurs",
     "performs the bounded edit", "registration contract",
 ]
+# Curriculum-author and runtime labels are not teaching language. These were
+# found only after reading the authored records and seeing the operator's
+# failed-result page; this gate prevents those exact regressions after the
+# manual corrections, rather than attempting to judge prose quality itself.
+INTERNAL_BANNED = [
+    "question replay", "concept replay", "hidden artifact recipe",
+    "hidden recipe", "mastery strip", "checkpoint statement",
+    "checkpoint claim", "this card exists",
+]
 # Popup interior widths: 90% of an 80, 100 and 188 column client.
 POPUP_COLUMNS = (72, 90, 169)
 MAX_WRONG_HALF_REUSE = 3
@@ -86,6 +95,14 @@ for q in cur["questions"]:
     for phrase in BANNED:
         if phrase in text:
             failures["template phrase"].append("%s: %r" % (qid, phrase))
+            break
+    learner_text = " ".join(str(q.get(field, "")) for field in (
+        "prompt", "compact_prompt", "animation_prompt", "animation_answer",
+        "neovim_prompt", "neovim_answer",
+    )) + " " + text
+    for phrase in INTERNAL_BANNED:
+        if phrase in learner_text.casefold():
+            failures["internal workflow prose"].append("%s: %r" % (qid, phrase))
             break
     for columns in POPUP_COLUMNS:
         width = max(42, min(78, columns - 8))

@@ -54,9 +54,9 @@
     ]
   },
   "M11.Q03": {
-    "prompt": "ANIMATION\nThe roof's right wall is two columns farther right after the redraw.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhat explains the registration failure?",
-    "compact_prompt": "ANIMATION\nA roof redraw moved a wall.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich editing family would have kept width fixed?",
-    "animation_prompt": "ANIMATION\nThe acting roof changed, but the right wall drifted.\n\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
+    "prompt": "ANIMATION\nThe first roof's right wall is two columns farther right after the redraw; the wall no longer meets the row below.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==  \\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhat explains the registration failure?",
+    "compact_prompt": "ANIMATION\nThe first roof redraw moved its right wall two columns.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==  \\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich editing family would have kept width fixed?",
+    "animation_prompt": "ANIMATION\nThe acting roof changed, but insertion pushed its right wall away from the wall below.\n\n    │/--\\  /--\\│   │/==  \\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
     "animation_answer": "Two inserted cells increased row length and pushed the right wall, breaking frame registration.",
     "neovim_prompt": "NEOVIM\nWhy prefer Replace mode for an existing roof run?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
     "neovim_answer": "R overwrites existing cells; i would insert and push the remainder unless old cells were removed.",
@@ -162,7 +162,7 @@
     ]
   },
   "M11.Q07": {
-    "prompt": "ANIMATION\nTwo short rows receive the same blur-trail column.\n\n    BEFORE        AFTER\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n\nNEOVIM\nWhy must the trail column match in every row?",
+    "prompt": "ANIMATION\nThree short rows receive the same blur-trail column.\n\n    BEFORE        AFTER\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n\nNEOVIM\nWhy must the trail column match in every row?",
     "compact_prompt": "ANIMATION\nThe vertical trail is aligned.\n\n    BEFORE        AFTER\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n\nNEOVIM\nWhat does one shared virtual column prevent?",
     "animation_prompt": "ANIMATION\nThe three new bars form one straight secondary effect.\n\n    │| o|   |│\n    │| o|   |│\n    │| o|   |│",
     "animation_answer": "Homologous trail glyphs share one display column, so the blur reads as a stable line rather than jitter.",
@@ -243,9 +243,9 @@
     ]
   },
   "M11.Q10": {
-    "prompt": "ANIMATION\nTwo homologous rows need a blur bar at the same display column.\n\n    BEFORE        AFTER\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n\nNEOVIM\nWhich workflow explicitly revisits that column?",
-    "compact_prompt": "ANIMATION\nThe blur bars align across rows.\n\n    BEFORE        AFTER\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n\nNEOVIM\nWhich workflow names the shared column?",
-    "animation_prompt": "ANIMATION\nThe bars occupy one shared display column.\n\n    │| o|   |│\n    │| o|   |│\n    │| o|   |│",
+    "prompt": "ANIMATION\nRows 2 and 5 need a blur bar at the same display column.\n\n      BEFORE        AFTER\n    2 │| o|│        │| o|   |│\n    5 │| o|│        │| o|   |│\n\nNEOVIM\nWhich workflow explicitly revisits that column?",
+    "compact_prompt": "ANIMATION\nThe blur bars on rows 2 and 5 align.\n\n      BEFORE        AFTER\n    2 │| o|│        │| o|   |│\n    5 │| o|│        │| o|   |│\n\nNEOVIM\nWhich workflow names the shared column?",
+    "animation_prompt": "ANIMATION\nThe bars on rows 2 and 5 occupy one shared display column.\n\n    2 │| o|   |│\n    5 │| o|   |│",
     "animation_answer": "The repeated bars share one exact column, so the secondary motion does not jitter.",
     "neovim_prompt": "NEOVIM\nWhich motion-plus-insert workflow targets that column twice?\n\n    │| o|   |│\n    │| o|   |│",
     "neovim_answer": "2G13|i|<Esc>3j13|i|<Esc> addresses column 14 explicitly in both rows.",
@@ -265,14 +265,14 @@
     "feedback": [
       "Correct: explicit column motion and a row jump place homologous bars together.",
       "Alternating columns read as jitter, not the authored blur.",
-      "The second row must be edited too; 3j reaches it from row 2 in the shown strip.",
+      "The second bar must be inserted too; 3j moves from row 2 to row 5 before the same column address is reused.",
       "Row duplication does not place a single bar at a shared column."
     ]
   },
   "M11.01.P01": {
     "prompt": "ANIMATION\nAfter the guided redraw, which cells changed?\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nChoose the explanation of the completed bounded edit.",
     "compact_prompt": "ANIMATION\nThe first roof tightens and the walls stay fixed.\n\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhat did the guided Replace edit do?",
-    "animation_prompt": "ANIMATION\nThe first roof's two dashes become ==; all other cells retain their columns.\n\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │\\__|  |__/│",
+    "animation_prompt": "ANIMATION\nThe first roof's two dashes become ==; all other cells retain their columns.\n\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
     "animation_answer": "The guided edit overwrote two roof cells without changing row width.",
     "neovim_prompt": "NEOVIM\nWhich summary matches the completed command?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
     "neovim_answer": "0lR==<Esc> moved to the roof and replaced exactly two cells.",
@@ -459,8 +459,8 @@
     ]
   },
   "M11.08.P01": {
-    "prompt": "ANIMATION\nThe mastery task adds a blur bar at the same column on both complete frames.\n\n    BEFORE        AFTER\n    │/==\\  /--\\│  │/==\\  /--\\│\n    │| o|  |o |│    │| o|  |o |  |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich reusable grammar completes the task?",
-    "compact_prompt": "ANIMATION\nAligned blur bars are added without changing either frame's core art.\n\n    │| o|  |o |│    │| o|  |o |  |│\n    │| O|  |O |│    │| O|  |O |  |│\n\nNEOVIM\nWhat grammar must be completed?",
+    "prompt": "ANIMATION\nAdd a blur bar at the same column on both complete frames.\n\n      BEFORE          AFTER\n    1 │/==\\  /--\\│    │/==\\  /--\\│\n    2 │| o|  |o |│    │| o|  |o |  |│\n    3 │\\__|  |__/│    │\\__|  |__/│\n    4 │/~~\\  /--\\│    │/~~\\  /--\\│\n    5 │| O|  |O |│    │| O|  |O |  |│\n    6 │\\__|  |__/│    │\\__|  |__/│\n\nNEOVIM\nWhich reusable grammar completes the task?",
+    "compact_prompt": "ANIMATION\nAligned blur bars are added on rows 2 and 5 without changing either frame's core art.\n\n    2 │| o|  |o |│    │| o|  |o |  |│\n    5 │| O|  |O |│    │| O|  |O |  |│\n\nNEOVIM\nWhat grammar must be completed?",
     "animation_prompt": "ANIMATION\nBoth homologous frame rows receive the same-column bar; roof and indicators remain as shown.\n\n    │/==\\  /--\\│\n    │| o|  |o |  |│\n    │\\__|  |__/│",
     "animation_answer": "Use the same virtual-column placement on each corresponding row so the blur aligns across frames.",
     "neovim_prompt": "NEOVIM\nWhich missing grammar piece makes an Ex setting execute?\n\n    │| o|  |o |  |│\n    │| O|  |O |  |│",
@@ -540,30 +540,30 @@
     ]
   },
   "M1.Q03": {
-    "prompt": "ANIMATION\nA punctuation word must be removed without consuming the anchored row.\n\n    BEFORE       AFTER\n    │ /---\\ │   │ /---\\ │\n    │|  o  |│    │|     |│\n    │ \\---/ │   │ \\---/ │\n\nNEOVIM\nWhich motion matches one punctuation WORD?",
-    "compact_prompt": "ANIMATION\nThe annotation-sized punctuation run disappears; the contour remains.\n\n    │ /---\\ │   │ /---\\ │\n    │|  o  |│    │|     |│\n    │ \\---/ │   │ \\---/ │\n\nNEOVIM\nWhich operator scope avoids deleting the frame?",
+    "prompt": "ANIMATION\nThe pose stays intact while its obsolete timing label is removed from the plan line.\n\n    BEFORE              AFTER\n    │ /---\\ │           │ /---\\ │\n    │|  o  |│            │|  o  |│\n    │ \\---/ │           │ \\---/ │\n    PLAN HOLD            PLAN\n\nNEOVIM\nWith the cursor on HOLD, which motion deletes that whole whitespace-delimited WORD without deleting an art row?",
+    "compact_prompt": "ANIMATION\nRemove the obsolete HOLD label; keep the pose.\n\n    BEFORE              AFTER\n    │ /---\\ │           │ /---\\ │\n    │|  o  |│            │|  o  |│\n    │ \\---/ │           │ \\---/ │\n    PLAN HOLD            PLAN\n\nNEOVIM\nWhich operator owns one whitespace-delimited WORD?",
     "animation_prompt": "ANIMATION\nOnly the selected punctuation run is removed; the anchor and rails remain.\n\n    │ /---\\ │  →  │ /---\\ │\n    │|  o  |│      │|     |│\n    │ \\---/ │      │ \\---/ │",
     "animation_answer": "Delete one punctuation WORD while preserving the row's anchor and contour bounds.",
     "neovim_prompt": "NEOVIM\nWhich operator-plus-motion deletes one whitespace-delimited punctuation word?\n\n    │|  o  |│",
     "neovim_answer": "dW deletes one WORD-sized punctuation run; dw may stop inside punctuation art.",
     "choices": [
-      "ANIMATION: Remove only the punctuation run and keep the anchor row registered. | NEOVIM: dW owns one punctuation WORD.",
-      "ANIMATION: Delete the complete middle row, including the contour anchor. | NEOVIM: dd is the precise punctuation-word edit.",
-      "ANIMATION: Remove the whole three-row frame. | NEOVIM: 3dd deletes only the punctuation word.",
-      "ANIMATION: Replace every punctuation mark with spaces. | NEOVIM: :%s/[^a-z]/ /g is bounded to the row."
+      "ANIMATION: Remove only the obsolete HOLD timing label and keep the pose. | NEOVIM: dW owns one whitespace-delimited WORD.",
+      "ANIMATION: Delete the complete middle art row. | NEOVIM: dd is the precise one-WORD edit.",
+      "ANIMATION: Remove the whole three-row pose. | NEOVIM: 3dd deletes only the timing label.",
+      "ANIMATION: Erase punctuation throughout the file. | NEOVIM: :%s/[^a-z]/ /g is bounded to HOLD."
     ],
     "compact_choices": [
-      "A: punctuation run only · V: dW",
-      "A: middle row deleted · V: dd",
-      "A: whole frame deleted · V: 3dd as one word",
-      "A: all punctuation spaces · V: global class substitute"
+      "A: remove HOLD only; pose stays · V: dW",
+      "A: middle art row deleted · V: dd",
+      "A: whole pose deleted · V: 3dd as one word",
+      "A: punctuation erased globally · V: broad class substitute"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: dW matches the intended larger punctuation-word boundary.",
-      "dd removes the entire row, including art that should remain.",
-      "3dd is a three-line delete, not a one-word operation.",
-      "A global class substitution has an uncontrolled blast radius."
+      "Correct: uppercase W treats HOLD as one whitespace-delimited WORD, while the three art rows remain untouched.",
+      "dd removes the entire plan line or art row, not just the HOLD word under the cursor.",
+      "3dd is a three-line delete, not a one-WORD operation.",
+      "A whole-file character-class substitution would damage punctuation in the pose instead of removing one label."
     ]
   },
   "M1.Q04": {
@@ -702,41 +702,41 @@
     ]
   },
   "M1.Q09": {
-    "prompt": "ANIMATION\nA substitution is considered over two authored contour frames.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.:   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhat does % add to a substitute range?",
+    "prompt": "ANIMATION\nThis art buffer contains exactly two three-row contour frames, and both colon joints should become semicolons.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.:   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhat scope does % give :s?",
     "compact_prompt": "ANIMATION\nAll nominated frame joints change; unrelated text should not.\n\n    │    _.: │   │    _.; │\n    │ `-.:   │   │ `-.;   │\n\nNEOVIM\nWhat is the blast radius of %?",
     "animation_prompt": "ANIMATION\nThe two contour frames receive the same joint-material change.\n\n    │    _.: │  →  │    _.; │\n    │ `-.:   │      │ `-.;   │",
     "animation_answer": "The intended scope is the authored contour frames, not unrelated lesson prose or other modules.",
     "neovim_prompt": "NEOVIM\nHow does % differ from a current-row substitute?\n\n    │    _.: │\n    │ `-.:   │",
     "neovim_answer": "% supplies the whole-file range; an explicit smaller range is safer when only contour frames are owned.",
     "choices": [
-      "ANIMATION: Change the nominated contour joints and leave unrelated text alone. | NEOVIM: % addresses the whole file, so a smaller range is safer here.",
+      "ANIMATION: Change both colon joints in this six-line art buffer. | NEOVIM: % addresses every line in the current buffer.",
       "ANIMATION: Change only the current row. | NEOVIM: % means current line and cannot touch other frames.",
       "ANIMATION: Change every glyph in the contour. | NEOVIM: % limits :s to punctuation cells only.",
       "ANIMATION: Duplicate both frames. | NEOVIM: % is the Ex copy command for a complete frame."
     ],
     "compact_choices": [
-      "A: nominated frames only · V: % is whole-file; narrow range safer",
+      "A: both joints in this buffer · V: % addresses every line",
       "A: current row only · V: % means current line",
       "A: every contour glyph · V: % limits punctuation",
       "A: duplicate frames · V: % copies frame"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: % is broad; use it only when the whole file is genuinely owned by the edit.",
+      "Correct: % supplies the whole-buffer range; here the entire six-line buffer is intentionally in scope.",
       "% is not the current-line address; a bare :s is current-line scope.",
       "The substitution pattern, not %, determines matching glyphs, and the range is still broad.",
       "% is a range marker, not an Ex copy command."
     ]
   },
   "M1.Q10": {
-    "prompt": "ANIMATION\nOnly the six owned contour rows may receive the joint-material substitution.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.:   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich range communicates that boundary?",
+    "prompt": "ANIMATION\nOnly the first six contour rows may change; the calibration colon on row 7 must remain unchanged.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.:   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n  7 │CALIBRATE:│  │CALIBRATE:│\n\nNEOVIM\nWhich range communicates that boundary?",
     "compact_prompt": "ANIMATION\nThe substitution stays inside two three-row frames.\n\n    │    _.: │   │    _.; │\n    │ `-.:   │   │ `-.;   │\n\nNEOVIM\nWhich Ex range is bounded?",
     "animation_prompt": "ANIMATION\nBoth complete contour frames change only at their nominated joints.\n\n    │    _.: │  →  │    _.; │\n    │ `-.:   │      │ `-.;   │",
     "animation_answer": "The range contains exactly the six authored frame rows and excludes surrounding prose.",
     "neovim_prompt": "NEOVIM\nWhich substitute is explicitly limited to those six lines?\n\n    │    _.: │\n    │ `-.:   │",
     "neovim_answer": ":1,6s/:/;/g confines the material change to lines 1 through 6.",
     "choices": [
-      "ANIMATION: Change nominated joints in both six-row frames only. | NEOVIM: :1,6s/:/;/g scopes the replacement to owned lines.",
+      "ANIMATION: Change the joints in both three-row frames (six rows total) and preserve row 7. | NEOVIM: :1,6s/:/;/g scopes the replacement to rows 1–6.",
       "ANIMATION: Change every colon in the lesson file. | NEOVIM: :%s/:/;/g is equivalent because the frames are first.",
       "ANIMATION: Change the current joint and every later row. | NEOVIM: :s/:/;/g automatically follows the contour.",
       "ANIMATION: Remove the six rows and append a new frame. | NEOVIM: :1,6d then p is a substitution."
@@ -837,11 +837,11 @@
     ]
   },
   "M1.04.P01": {
-    "prompt": "ANIMATION\nThe copied rising contour is replaced with a hand-authored descending one.\n\n    BEFORE       AFTER\n    │       ´│   │´       │\n    │    _.: │   │ `-.:   │\n    │o_.-    │   │o_.-    │\n    │       ´│   │       │\n    │    _.: │   │       │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich result preserves the anchor while exchanging direction?",
+    "prompt": "ANIMATION\nKeep the original rising contour and replace only its copied frame with a hand-authored descending one.\n\n    BEFORE       AFTER\n  1 │       ´│   │       ´│\n  2 │    _.: │   │    _.: │\n  3 │o_.-    │   │o_.-    │\n  4 │       ´│   │´       │\n  5 │    _.: │   │ `-.:   │\n  6 │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich result preserves the anchor while exchanging direction?",
     "compact_prompt": "ANIMATION\nA new descending frame is authored by hand.\n\n    │       ´│   │´       │\n    │    _.: │   │ `-.:   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhat remains registered?",
     "animation_prompt": "ANIMATION\nThe copied frame changes direction but keeps the o anchor and row width.\n\n    │       ´│  →  │´       │\n    │    _.: │      │ `-.:   │\n    │o_.-    │      │o_.-    │",
     "animation_answer": "Author the descending glyph sequence by hand while retaining the anchor and fixed row width.",
-    "neovim_prompt": "NEOVIM\nWhich scope describes the hidden edit?\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
+    "neovim_prompt": "NEOVIM\nWhich scope describes the edit?\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
     "neovim_answer": "Delete only the copied three-row frame, open its replacement, and type each descending row deliberately.",
     "choices": [
       "ANIMATION: Hand-author a descending contour while keeping o and row width fixed. | NEOVIM: remove only the copied frame, then type its replacement rows.",
@@ -918,8 +918,8 @@
     ]
   },
   "M1.08.P01": {
-    "prompt": "ANIMATION\nThe checkpoint returns to the rising contour and changes one joint material.\n\n    │       ´│\n    │    _.; │\n    │o_.-    │\n    │´       │\n    │ `-.;   │\n    │o_.-    │\n    │         │\n    │    _.: │\n    │o_.-    │\n\nNEOVIM\nWhich choice preserves the registered frames and completes the grammar?",
-    "compact_prompt": "ANIMATION\nA three-row rising contour is appended with one colon joint.\n\n    │    _.; │\n    │o_.-    │\n    │         │\n    │    _.: │\n    │o_.-    │\n\nNEOVIM\nWhat final grammar piece executes the Ex copy?",
+    "prompt": "ANIMATION\nAppend a complete rising contour, then change only its joint from semicolon to colon.\n\n  1 │       ´│\n  2 │    _.; │\n  3 │o_.-    │\n  4 │´       │\n  5 │ `-.;   │\n  6 │o_.-    │\n  7 │       ´│\n  8 │    _.: │\n  9 │o_.-    │\n\nNEOVIM\nWhich choice preserves the registered frames and completes the command?",
+    "compact_prompt": "ANIMATION\nA complete three-row rising contour is appended with one colon joint.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n\nNEOVIM\nWhat final grammar piece executes the Ex copy?",
     "animation_prompt": "ANIMATION\nThe return pose is a complete three-row contour; only its nominated joint differs.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
     "animation_answer": "Keep each contour frame complete and return with the intended joint material, without shifting its anchor.",
     "neovim_prompt": "NEOVIM\nWhich command grammar is completed by the missing piece?\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
@@ -938,7 +938,7 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the checkpoint still operates on a complete frame and requires Ex execution.",
+      "Correct: the edit still operates on a complete frame and the Ex copy does not run until Enter.",
       "A one-cell fragment is not a registered contour frame, and Ex waits for <CR>.",
       "The return is authored from the visible contour; deletion and put do not perform the intended copy grammar.",
       "The substitution changes material, not frame structure."
@@ -999,7 +999,7 @@
     ]
   },
   "M19.Q03": {
-    "prompt": "ANIMATION\nA directional row must be redrawn deliberately, with no rail drift.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich mode makes each directional glyph an in-place choice?",
+    "prompt": "ANIMATION\nThe arrow row is mirrored deliberately while both outer rail columns stay fixed.\n\n    BEFORE         AFTER\n    │<--/|\\   │   │   /|\\-->|\n\nNEOVIM\nWhich mode makes each directional glyph an in-place choice?",
     "compact_prompt": "ANIMATION\nThe directional row is authored in place.\n\n    │<--/|\\   │   │<--/|\\   │\n\nNEOVIM\nWhich mode avoids shifting the rails?",
     "animation_prompt": "ANIMATION\nThe row's arrows and slashes may change, but its fixed rails and width do not.\n\n    │<--/|\\   │  →  │   /|\\-->|",
     "animation_answer": "Hand-author the directional row while preserving the fixed frame rails.",
@@ -1593,7 +1593,7 @@
     ]
   },
   "M2.Q09": {
-    "prompt": "ANIMATION\nTwo four-row faces are reviewed; only their eye spellings change to O.\n\n    BEFORE          AFTER\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│       │|  O  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n    │ /---\\ │      │ /---\\ │\n    │|  o  |│       │|  O  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n\nNEOVIM\nWhat does an explicit 1,8 range change compared with %?",
+    "prompt": "ANIMATION\nOnly the eyes in two four-row faces change to O; the lowercase o in the note on row 9 must remain.\n\n    BEFORE          AFTER\n  1 │ /---\\ │      │ /---\\ │\n  2 │|  .  |│       │|  O  |│\n  3 │ \\_/ |│       │ \\_/ |│\n  4 │ \\___/│       │ \\___/│\n  5 │ /---\\ │      │ /---\\ │\n  6 │|  o  |│       │|  O  |│\n  7 │ \\_/ |│       │ \\_/ |│\n  8 │ \\___/│       │ \\___/│\n  9 │note: o│       │note: o│\n\nNEOVIM\nWhat does an explicit 1,8 range change compared with %?",
     "compact_prompt": "ANIMATION\nThe two face frames receive bounded eye changes.\n\n    │|  .  |│   │|  O  |│\n    │|  o  |│   │|  O  |│\n\nNEOVIM\nWhy use an explicit 1,8 range?",
     "animation_prompt": "ANIMATION\nOnly eye candidates in the two four-row faces are changed; surrounding text is excluded.\n\n    │|  .  |│  →  │|  O  |│\n    │|  o  |│  →  │|  O  |│",
     "animation_answer": "The explicit eight-line range contains both faces and no surrounding lesson prose.",
@@ -2197,7 +2197,7 @@
       "ANIMATION: Only the two copied-row bases change. | NEOVIM: choose repeated search or row-scoped substitution; both stay within that row.",
       "ANIMATION: All frames' bases change. | NEOVIM: whole-file substitution is equivalent because every base is homologous.",
       "ANIMATION: The axis changes with the bases. | NEOVIM: navigation alone edits the row without replacement.",
-      "ANIMATION: Both methods must be performed to prove mastery. | NEOVIM: running both is required by the compare card."
+      "ANIMATION: Apply both accepted methods to the same two cells. | NEOVIM: running both is required even though the first method already reaches the target."
     ],
     "compact_choices": [
       "A: two copied bases only · V: choose one bounded method",
@@ -2210,7 +2210,7 @@
       "Correct: both methods can be bounded to the copied row, but only one should be executed.",
       "Whole-file scope changes earlier frames and risks registration.",
       "Navigation does not replace o with O; an edit is still required.",
-      "The compare card explicitly asks the learner to choose one method."
+      "Once one bounded method reaches the target, running the second repeats work without producing a different animation result."
     ]
   },
   "M12.06.P01": {
@@ -2222,7 +2222,7 @@
     "neovim_answer": "0t+lr*$T+hr* replaces the left + from before it and the right + from after it.",
     "choices": [
       "ANIMATION: Change both paired joints and retain the unfamiliar shell. | NEOVIM: 0t+lr*$T+hr* reaches TARGET exactly.",
-      "ANIMATION: Change only the left joint. | NEOVIM: navigation alone is equivalent because final art is not graded.",
+      "ANIMATION: Change only the left joint. | NEOVIM: navigation alone leaves both + glyphs unchanged.",
       "ANIMATION: Reverse the shell's bytes. | NEOVIM: T+ mirrors the whole row before r*.",
       "ANIMATION: Shift both joints toward the axis. | NEOVIM: i* inserts new landmarks beside +."
     ],
@@ -2241,7 +2241,7 @@
     ]
   },
   "M12.08.P01": {
-    "prompt": "ANIMATION\nThe mastery return copies a complete pose, then exchanges its left accent for the right mirror.\n\n    │\\..!..|..:../│\n    │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │\n    │             │  →  │\\..:..|..!../│\n\nNEOVIM\nWhich choice preserves the complete return and finishes the grammar?",
+    "prompt": "ANIMATION\nThe final return copies a complete pose, then exchanges its left accent for the right mirror.\n\n    │\\..!..|..:../│\n    │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │\n    │             │  →  │\\..:..|..!../│\n\nNEOVIM\nWhich choice preserves the complete return and finishes the grammar?",
     "compact_prompt": "ANIMATION\nA complete copied pose exits with the accent on the opposite side.\n\n    │\\..!..|..:../│  →  │\\..:..|..!../│\n\nNEOVIM\nWhat executes the addressed copy?",
     "animation_prompt": "ANIMATION\nThe return frame keeps its three-row shell and moves the acting accent from left to right.\n\n    │\\..!..|..:../│  →  │\\..:..|..!../│",
     "animation_answer": "Copy the complete first pose, clear its left accent, and place one mirrored right accent.",

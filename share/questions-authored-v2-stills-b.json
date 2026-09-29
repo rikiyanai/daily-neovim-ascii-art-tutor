@@ -324,14 +324,14 @@
     ]
   },
   "M5.04.P01": {
-    "prompt": "ANIMATION\nBefore the hidden independent edit, what must remain registered in the copied scene?\n\n    BEFORE         AFTER\n    │  /       │   │  /       │\n    │   /      │   │   /      │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │  /       │   │      \\   │\n    │   /      │   │     \\    │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n\nNEOVIM\nWhich answer predicts the bounded target without exposing the hidden key path?",
-    "compact_prompt": "ANIMATION\nSwing only the copied blade.\n\n    │  /       │\n    │----o-----│\n    │.... .....│\n    │      \\   │\n    │----o-----│\n\nNEOVIM\nWhat scope must the hidden edit use?",
+    "prompt": "ANIMATION\nBefore editing the copied scene, what must remain registered?\n\n    BEFORE         AFTER\n    │  /       │   │  /       │\n    │   /      │   │   /      │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │  /       │   │      \\   │\n    │   /      │   │     \\    │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n\nNEOVIM\nWhich answer predicts the bounded target while preserving every unchanged row?",
+    "compact_prompt": "ANIMATION\nSwing only the copied blade.\n\n    │  /       │\n    │----o-----│\n    │.... .....│\n    │      \\   │\n    │----o-----│\n\nNEOVIM\nWhat scope must the edit use?",
     "animation_prompt": "The copied foreground changes sides, while its pivot, negative-space break, texture, and ground stay registered with the source frame.\n\n    BEFORE         AFTER\n    │  /       │   │  /       │\n    │   /      │   │   /      │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │  /       │   │      \\   │\n    │   /      │   │     \\    │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│",
     "animation_answer": "Only the copied blade rows swing; the pivot and all supporting rows remain fixed.",
-    "neovim_prompt": "Which scope is safe for the hidden command?",
+    "neovim_prompt": "Which scope is safe for the edit?",
     "neovim_answer": "Redraw the copied foreground rows through their row ends, leaving the contact, seam, texture, and ground rows untouched.",
     "choices": [
-      "ANIMATION: Copied blade swings while pivot, break, and supports stay fixed. | NEOVIM: limit the hidden redraw to the copied foreground rows.",
+      "ANIMATION: Copied blade swings while pivot, break, and supports stay fixed. | NEOVIM: limit the redraw to the copied foreground rows.",
       "ANIMATION: Both frames rotate including the ground. | NEOVIM: apply a change-to-end across all fourteen rows.",
       "ANIMATION: The negative-space break moves with the blade. | NEOVIM: include the seam row in the redraw.",
       "ANIMATION: The copied scene is replaced by a new seven-row frame. | NEOVIM: delete the old copy before editing."
@@ -378,7 +378,7 @@
     ]
   },
   "M5.06.P01": {
-    "prompt": "ANIMATION\nOn the unfamiliar triangular scene, what visible relationship must the repair restore?\n\n    BEFORE         AFTER\n    │  /\\      │   │  /\\      │\n    │ /  \\     │   │ /  \\     │\n    │/____o----│   │/____o----│\n    │.....|....│   │..... ....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n\nNEOVIM\nWhich bounded transfer explanation is correct after the hidden edit?",
+    "prompt": "ANIMATION\nOn the unfamiliar triangular scene, what visible relationship must the repair restore?\n\n    BEFORE         AFTER\n    │  /\\      │   │  /\\      │\n    │ /  \\     │   │ /  \\     │\n    │/____o----│   │/____o----│\n    │.....|....│   │..... ....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n\nNEOVIM\nWhich bounded transfer explanation is correct after the edit?",
     "compact_prompt": "ANIMATION\nBreak the new pivot/background contact.\n\n    │/____o----│\n    │..... ....│\n\nNEOVIM\nKeep the unfamiliar frame registered.",
     "animation_prompt": "The triangular foreground remains intact while the one background bar below its pivot becomes blank; texture and ground do not move.\n\n    BEFORE         AFTER\n    │  /\\      │   │  /\\      │\n    │ /  \\     │   │ /  \\     │\n    │/____o----│   │/____o----│\n    │.....|....│   │..... ....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│",
     "animation_answer": "Transfer the one-cell seam repair to the new pivot without changing the unfamiliar foreground or supports.",
@@ -405,11 +405,11 @@
     ]
   },
   "M5.08.P01": {
-    "prompt": "ANIMATION\nThe checkpoint shows three complete layered frames with a changed middle pivot. What evidence must remain true?\n\n    BEFORE         AFTER\n    │  /       │   │  /       │\n    │   /      │   │   /      │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │    |     │   │    |     │\n    │    |     │   │    |     │\n    │----o-----│   │----O-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │      \\   │   │      \\   │\n    │     \\    │   │     \\    │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n\nNEOVIM\nWhich checkpoint summary is valid without exposing the hidden artifact recipe?",
+    "prompt": "ANIMATION\nThe final strip has three complete layered frames with a changed middle pivot. What must remain true?\n\n    BEFORE         AFTER\n    │  /       │   │  /       │\n    │   /      │   │   /      │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │    |     │   │    |     │\n    │    |     │   │    |     │\n    │----o-----│   │----O-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │      \\   │   │      \\   │\n    │     \\    │   │     \\    │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n\nNEOVIM\nWhich summary describes the visible result and its bounded edit?",
     "compact_prompt": "ANIMATION\nThree complete seven-row frames; only middle pivot differs.\n\n    │----o-----│ │----O-----│ │----o-----│\n    │.... .....│ │.... .....│ │.... .....│\n\nNEOVIM\nWhat must the artifact checks verify?",
     "animation_prompt": "The strip contains three complete frames; each pivot retains a blank directly below it, and only the middle pivot is accented.\n\n    BEFORE         AFTER\n    │  /       │   │  /       │\n    │   /      │   │   /      │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │    |     │   │    |     │\n    │    |     │   │    |     │\n    │----o-----│   │----O-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │      \\   │   │      \\   │\n    │     \\    │   │     \\    │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│",
-    "animation_answer": "The checkpoint must preserve three complete registered frames and the negative-space break under every pivot.",
-    "neovim_prompt": "What reusable grammar should the checkpoint test?",
+    "animation_answer": "The finished sequence must preserve three complete registered frames and the negative-space break under every pivot.",
+    "neovim_prompt": "What reusable grammar preserves that result?",
     "neovim_answer": "It should test complete-frame selection, fixed-width one-cell replacement, and bounded scope—not a memorised coordinate recipe.",
     "choices": [
       "ANIMATION: Three complete frames and three aligned breaks survive; only the middle pivot changes. | NEOVIM: verify full-frame selection plus one-cell replacement with bounded scope.",
@@ -425,9 +425,9 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the checkpoint proves both animation registration and Neovim scope.",
+      "Correct: the result proves both animation registration and one-cell Neovim scope.",
       "Omitting a support row creates an incomplete frame even if the pivot is right.",
-      "A filled seam is precisely the layered-scene defect the checkpoint must catch.",
+      "A filled seam is precisely the layered-scene defect this comparison must catch.",
       "Matching line counts do not prove material ownership or visual registration."
     ]
   },
@@ -486,7 +486,7 @@
     ]
   },
   "M10.Q03": {
-    "prompt": "ANIMATION\nThe shoulder widens but the bowl stays narrow. What defect appears?\n\n    BEFORE    AFTER\n    │　　⌒? │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n\nNEOVIM\nWhich scope redraws one copied pose as a wider extreme?",
+    "prompt": "ANIMATION\nThe top contour widens but the bowl and base stay narrow. What defect appears?\n\n    COHERENT       BROKEN\n    │　　⌒ヽ │     │／￣￣＼ │\n    │　（　　）│     │　（　　）│\n    │　　ヽ_ノ│     │　　ヽ_ノ│\n\nNEOVIM\nWhich scope redraws one copied pose as a wider extreme?",
     "compact_prompt": "ANIMATION\nTop wide, bowl narrow: diagnose it.\n\n    │　　⌒ヽ │\n    │　（　　）│\n    │　　ヽ_ノ│\n\nNEOVIM\nRedraw the whole copied pose.",
     "animation_prompt": "A wide shoulder over a narrow bowl shears the puff; the three rows no longer describe one proportional extreme.\n\n    BEFORE    AFTER\n    │　　⌒? │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│",
     "animation_answer": "The pose shears because its top and lower contour were authored at different widths.",
@@ -513,7 +513,7 @@
     ]
   },
   "M10.Q04": {
-    "prompt": "ANIMATION\nWhat does the paired ￣ and ＿ relationship contribute to the wider puff?\n\n    BEFORE    AFTER\n    │　　⌒? │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n\nNEOVIM\nWhich editing decision keeps those horizontal contours on separate rows?",
+    "prompt": "ANIMATION\nWhat does the paired ￣ and ＿ relationship contribute to the wider puff?\n\n    WIDER PUFF\n    │　／￣＼ │\n    │（　　　）│\n    │　＼＿／ │\n\nNEOVIM\nWhich editing decision keeps those horizontal contours on separate rows?",
     "compact_prompt": "ANIMATION\nRead the paired horizontal contours.\n\n    │　／￣＼ │\n    │（　　　）│\n    │　＼＿／ │\n\nNEOVIM\nPreserve vertical row ownership.",
     "animation_prompt": "The upper ￣ and lower ＿ occupy different rows, so together they describe the puff's vertical envelope rather than one joined string.\n\n    BEFORE    AFTER\n    │　　⌒? │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│",
     "animation_answer": "Keep the complementary horizontal contours vertically registered on their own rows.",
@@ -540,7 +540,7 @@
     ]
   },
   "M10.Q05": {
-    "prompt": "ANIMATION\nWhy may an identical hatched impact frame hold for two beats?\n\n    BEFORE    AFTER\n    │　　⌒? │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n\nNEOVIM\nWhich addressed range copies the complete three-row impact pose?",
+    "prompt": "ANIMATION\nWhy may an identical hatched impact frame hold for two beats?\n\n    IMPACT 1       IMPACT 2\n    │／￣￣＼ │     │／￣￣＼ │\n    │|ﾆ二ニ|│     │|ﾆ二ニ|│\n    │＼＿＿／ │     │＼＿＿／ │\n\nNEOVIM\nWhich addressed range copies the complete three-row impact pose?",
     "compact_prompt": "ANIMATION\nA duplicate can be a timing hold.\n\n    │／￣￣＼ │\n    │|ﾆ二ニ|│\n    │＼＿＿／ │\n\nNEOVIM\nCopy the complete impact block.",
     "animation_prompt": "The duplicate is intentional timing: it holds the hatched impact before the settle while preserving the same three-row outline.\n\n    BEFORE    AFTER\n    │　　⌒? │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│",
     "animation_answer": "A complete identical impact frame can hold the action for a second beat.",
@@ -756,11 +756,11 @@
     ]
   },
   "M10.04.P01": {
-    "prompt": "ANIMATION\nBefore the hidden independent edit, what must the impact addition contain?\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │　／￣＼ │   │　／￣＼ │\n    │（　　　）│   │（　　　）│\n    │　＼＿／ │   │　＼＿／ │\n    │     │   │／￣￣＼ │\n    │     │   │|ﾆ二ニ|│\n    │     │   │＼＿＿／ │\n\nNEOVIM\nWhich answer predicts the target while keeping its exact hidden path undisclosed?",
+    "prompt": "ANIMATION\nBefore adding the impact, what must the new frame contain?\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │　／￣＼ │   │　／￣＼ │\n    │（　　　）│   │（　　　）│\n    │　＼＿／ │   │　＼＿／ │\n    │     │   │／￣￣＼ │\n    │     │   │|ﾆ二ニ|│\n    │     │   │＼＿＿／ │\n\nNEOVIM\nWhich answer predicts the target while preserving the existing complete frames?",
     "compact_prompt": "ANIMATION\nAppend a contained three-row impact.\n\n    │／￣￣＼ │\n    │|ﾆ二ニ|│\n    │＼＿＿／ │\n\nNEOVIM\nKeep hatching inside its outline.",
     "animation_prompt": "The new impact is a complete three-row pose: top and bottom contours contain the `ﾆ二ニ` material row.\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │　／￣＼ │   │　／￣＼ │\n    │（　　　）│   │（　　　）│\n    │　＼＿／ │   │　＼＿／ │\n    │     │   │／￣￣＼ │\n    │     │   │|ﾆ二ニ|│\n    │     │   │＼＿＿／ │",
     "animation_answer": "Append one complete impact pose with its hatching bounded by the outline.",
-    "neovim_prompt": "What scope must the hidden authoring action have?",
+    "neovim_prompt": "What scope must the authoring action have?",
     "neovim_answer": "Add exactly three new rows for the impact; do not alter either existing three-row pose.",
     "choices": [
       "ANIMATION: Three new rows form a contained hatched impact. | NEOVIM: append three rows only, preserving both existing poses.",
@@ -810,7 +810,7 @@
     ]
   },
   "M10.06.P01": {
-    "prompt": "ANIMATION\nThe unfamiliar transfer shoulder must change while its body stays registered.\n\n    BEFORE    AFTER\n    │　　｀? │   │　　｀ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n\nNEOVIM\nWhich bounded path would reach TARGET after the hidden edit?",
+    "prompt": "ANIMATION\nThe unfamiliar transfer shoulder must change while its body stays registered.\n\n    BEFORE    AFTER\n    │　　｀? │   │　　｀ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n\nNEOVIM\nWhich bounded path would reach TARGET after the edit?",
     "compact_prompt": "ANIMATION\nOne shoulder glyph is missing.\n\n    │　　｀? │   │　（　　）│\n    │　　ヽ_ノ│\n\nNEOVIM\nChoose a one-cell row-end path.",
     "animation_prompt": "The transfer target adds ヽ to the shoulder and leaves both lower rows exactly as they were.\n\n    BEFORE    AFTER\n    │　　｀? │   │　　｀ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│",
     "animation_answer": "Complete only the missing shoulder partner; preserve the registered body.",
@@ -837,12 +837,12 @@
     ]
   },
   "M10.08.P01": {
-    "prompt": "ANIMATION\nThe mastery strip returns from two impact frames to the complete lobe settle.\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │　／￣＼ │   │　／￣＼ │\n    │（　　　）│   │（　　　）│\n    │　＼＿／ │   │　＼＿／ │\n    │／￣￣＼ │   │／￣￣＼ │\n    │|ﾆ二ニ|│   │|ﾆ二ニ|│\n    │＼＿＿／ │   │＼＿＿／ │\n    │／￣￣＼ │   │／￣￣＼ │\n    │|ﾆ二ニ|│   │|ﾆ二ニ|│\n    │＼＿＿／ │   │＼＿＿／ │\n    │     │   │　　⌒ヽ │\n    │     │   │　（　　）│\n    │     │   │　　ヽ_ノ│\n\nNEOVIM\nWhich checkpoint claim is answerable before the hidden artifact recipe?",
+    "prompt": "ANIMATION\nThe final strip returns from two impact frames to the complete lobe settle.\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │　／￣＼ │   │　／￣＼ │\n    │（　　　）│   │（　　　）│\n    │　＼＿／ │   │　＼＿／ │\n    │／￣￣＼ │   │／￣￣＼ │\n    │|ﾆ二ニ|│   │|ﾆ二ニ|│\n    │＼＿＿／ │   │＼＿＿／ │\n    │／￣￣＼ │   │／￣￣＼ │\n    │|ﾆ二ニ|│   │|ﾆ二ニ|│\n    │＼＿＿／ │   │＼＿＿／ │\n    │     │   │　　⌒ヽ │\n    │     │   │　（　　）│\n    │     │   │　　ヽ_ノ│\n\nNEOVIM\nWhich explanation accounts for the displayed result?",
     "compact_prompt": "ANIMATION\nImpact, hold, then lobe settle.\n\n    │／￣￣＼ │   │　　⌒ヽ │\n    │|ﾆ二ニ|│   │　（　　）│\n    │＼＿＿／ │   │　　ヽ_ノ│\n\nNEOVIM\nCheck complete frames and true-advance evidence.",
     "animation_prompt": "The final three rows return to the complete narrow lobe after two full impact frames, preserving the intended expansion-and-settle arc.\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │　／￣＼ │   │　／￣＼ │\n    │（　　　）│   │（　　　）│\n    │　＼＿／ │   │　＼＿／ │\n    │／￣￣＼ │   │／￣￣＼ │\n    │|ﾆ二ニ|│   │|ﾆ二ニ|│\n    │＼＿＿／ │   │＼＿＿／ │\n    │／￣￣＼ │   │／￣￣＼ │\n    │|ﾆ二ニ|│   │|ﾆ二ニ|│\n    │＼＿＿／ │   │＼＿＿／ │\n    │     │   │　　⌒ヽ │\n    │     │   │　（　　）│\n    │     │   │　　ヽ_ノ│",
-    "animation_answer": "The checkpoint must show two complete impact poses followed by a complete lobe settle.",
-    "neovim_prompt": "What reusable grammar should be tested without naming the hidden key sequence?",
-    "neovim_answer": "Verify complete-frame copying, row-bounded Unicode edits, and true-advance visual evidence; the exact hidden route is not part of the before-question.",
+    "animation_answer": "The final sequence must show two complete impact poses followed by a complete lobe settle.",
+    "neovim_prompt": "What reusable grammar preserves those complete frames?",
+    "neovim_answer": "Verify complete-frame copying, row-bounded Unicode edits, and true-advance visual evidence; judge the edit by its bounded result, not by a memorised recipe.",
     "choices": [
       "ANIMATION: Two complete impacts resolve to a complete lobe settle. | NEOVIM: test frame scope, bounded row edits, and true-advance evidence.",
       "ANIMATION: The settle may omit its lower contour because its shoulder is complete. | NEOVIM: test only the final row-end key.",
@@ -918,7 +918,7 @@
     ]
   },
   "M13.Q03": {
-    "prompt": "ANIMATION\nA delete closes a gap between texture clusters. What defect does that create?\n\n    BEFORE             AFTER\n    │..:: ..:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nWhy must a WORD edit use replacement rather than deletion?",
+    "prompt": "ANIMATION\nDeleting the gap before the centre cluster shifts that cluster and everything after it one column left.\n\n    REGISTERED         BROKEN\n    │..:: ..:: ..::│   │..::..:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nWhy must a WORD edit use replacement rather than deletion?",
     "compact_prompt": "ANIMATION\nDo not close the cluster gap.\n\n    │..:: ..:: ..::│\n    │.:::..|..:::. │\n\nNEOVIM\nPreserve fixed-width spacing.",
     "animation_prompt": "Deleting a cell collapses the whitespace boundary, so later clusters shift left and the pulse loses its registered timing.\n\n    BEFORE             AFTER\n    │..:: ..:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │",
     "animation_answer": "A delete closes the cluster gap and shifts every later texture landmark.",
@@ -945,7 +945,7 @@
     ]
   },
   "M13.Q04": {
-    "prompt": "ANIMATION\nAfter the right-only pulse, what does a three-edge expansion communicate?\n\n    BEFORE             AFTER\n    │..:: ..:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nHow do end and WORD motions address the three landmarks?",
+    "prompt": "ANIMATION\nAfter the right-only pulse, three edge accents expand the flash without moving either support row.\n\n    BEFORE             AFTER\n    │..:: ..:: !.::│   │..:! !.:: ..:!│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nHow do end and WORD motions address the three landmarks?",
     "compact_prompt": "ANIMATION\nRead the expanded edge pulse.\n\n    │..:! !.:: ..:!│\n    │.:::..|..:::. │\n    │_____.|._____ │\n\nNEOVIM\nUse E, counted W, and B by landmark.",
     "animation_prompt": "The accent visits the right edge, the centre/right WORD boundary, and the left edge, making a deliberate three-landmark spread rather than a drift.\n\n    BEFORE             AFTER\n    │..:: ..:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │",
     "animation_answer": "Three bounded texture landmarks expand the pulse across distinct edges while supports remain fixed.",
@@ -972,7 +972,7 @@
     ]
   },
   "M13.Q05": {
-    "prompt": "ANIMATION\nWhy can three `!` cells become `*` in one copied frame without touching supports?\n\n    BEFORE             AFTER\n    │..:: ..:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nWhen are repeated landmark replacements equivalent to a row-scoped substitute?",
+    "prompt": "ANIMATION\nOnly the three acting accents change from ! to *; both support rows remain identical.\n\n    BEFORE             AFTER\n    │..:! !.:: ..:!│   │..:* *.:: ..:*│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nWhen are repeated landmark replacements equivalent to a row-scoped substitute?",
     "compact_prompt": "ANIMATION\nChange three accents; supports stay fixed.\n\n    │..:* *.:: ..:*│\n    │.:::..|..:::. │\n    │_____.|._____ │\n\nNEOVIM\nCompare repeated `r` with row scope.",
     "animation_prompt": "A copied frame can recolor three acting texture cells at their existing columns; the supports are outside the acting row.\n\n    BEFORE             AFTER\n    │..:: ..:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │",
     "animation_answer": "Three fixed columns change material while the support rows and their widths remain identical.",
@@ -1107,7 +1107,7 @@
     ]
   },
   "M13.Q10": {
-    "prompt": "ANIMATION\nA flash edits every `*`-eligible glyph in the file. What scope failure appears?\n\n    BEFORE             AFTER\n    │..:: ..:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nWhich bounded scope protects support rows and earlier poses?",
+    "prompt": "ANIMATION\nA file-wide flash changes the acting frame correctly but also changes an earlier frame that should remain a centre pulse.\n\n       BEFORE             OVERBROAD\n    F1 │..:: !.:: ..::│   │..:: *.:: ..::│  unwanted\n    F2 │..:! !.:: ..:!│   │..:* *.:: ..:*│  intended\n       │.:::..|..:::. │   │.:::..|..:::. │\n       │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nWhich bounded scope protects support rows and earlier poses?",
     "compact_prompt": "ANIMATION\nA file-wide flash is too broad.\n\n    │..:: ..:: ..::│\n    │.:::..|..:::. │\n    │_____.|._____ │\n\nNEOVIM\nUse current-row or explicit-range scope.",
     "animation_prompt": "A file-wide flash changes matching material outside the acting first row, corrupting support rows and earlier frames.\n\n    BEFORE             AFTER\n    │..:: ..:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │",
     "animation_answer": "The defect is scope leakage: earlier frames and support rows receive an edit meant for one acting row.",
@@ -1188,7 +1188,7 @@
     ]
   },
   "M13.BE.P01": {
-    "prompt": "ANIMATION\nThree bounded middle-row clusters are retouched while the other two rows are identical.\n\n    BEFORE           AFTER\n    │| aa bb cc |│   │| a! +b ?c |│\n    │| aa bb cc |│   │| aa bb cc |│\n    │| aa bb cc |│   │| aa bb cc |│\n\nNEOVIM\nWhich explanation correctly separates WORD starts, ends, and one-cell replacement?",
+    "prompt": "ANIMATION\nThree landmarks on the middle row are retouched while the upper and lower rows remain identical.\n\n    BEFORE           AFTER\n    │| aa bb cc |│   │| aa bb cc |│\n    │| aa bb cc |│   │| a! +b ?c |│\n    │| aa bb cc |│   │| aa bb cc |│\n\nNEOVIM\nWhich explanation correctly separates WORD starts, ends, and one-cell replacement?",
     "compact_prompt": "ANIMATION\nMiddle row only: three landmarks change.\n\n    │| aa bb cc |│\n    │| a! +b ?c |│\n    │| aa bb cc |│\n\nNEOVIM\nUse WORD landmarks; preserve rows 1 and 3.",
     "animation_prompt": "Only the middle row's three named clusters change; the first and third rows remain exact copies.\n\n    BEFORE           AFTER\n    │| aa bb cc |│   │| a! +b ?c |│\n    │| aa bb cc |│   │| aa bb cc |│\n    │| aa bb cc |│   │| aa bb cc |│",
     "animation_answer": "Three one-cell material edits occur on the middle row, with both support rows untouched.",
@@ -1215,11 +1215,11 @@
     ]
   },
   "M13.04.P01": {
-    "prompt": "ANIMATION\nBefore the hidden independent edit, what must the three-edge expansion preserve?\n\n    BEFORE             AFTER\n    │..:: !.:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:: ..:: !.::│   │..:: ..:: !.::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │              │   │..:! !.:: ..:!│\n    │              │   │.:::..|..:::. │\n    │              │   │_____.|._____ │\n\nNEOVIM\nWhich prediction is answerable from the taught WORD-boundary principle without naming the hidden key sequence?",
-    "compact_prompt": "ANIMATION\nAdd a complete expanded-edge frame.\n\n    │..:! !.:: ..:!│\n    │.:::..|..:::. │\n    │_____.|._____ │\n\nNEOVIM\nUse bounded WORD landmarks; exact path stays hidden.",
+    "prompt": "ANIMATION\nBefore adding the three-edge expansion, what must remain unchanged?\n\n    BEFORE             AFTER\n    │..:: !.:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:: ..:: !.::│   │..:: ..:: !.::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │              │   │..:! !.:: ..:!│\n    │              │   │.:::..|..:::. │\n    │              │   │_____.|._____ │\n\nNEOVIM\nWhich prediction follows from the taught WORD-boundary principle while preserving every unchanged cell?",
+    "compact_prompt": "ANIMATION\nAdd a complete expanded-edge frame.\n\n    │..:! !.:: ..:!│\n    │.:::..|..:::. │\n    │_____.|._____ │\n\nNEOVIM\nUse bounded WORD landmarks; keep the edit on the owned cells.",
     "animation_prompt": "The new frame contains three accents at distinct texture edges, while every support row remains registered with the copied scaffold.\n\n    BEFORE             AFTER\n    │..:: !.:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:: ..:: !.::│   │..:: ..:: !.::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │              │   │..:! !.:: ..:!│\n    │              │   │.:::..|..:::. │\n    │              │   │_____.|._____ │",
     "animation_answer": "Author a complete third frame with three edge accents and unchanged support rows.",
-    "neovim_prompt": "What scope principle should guide the hidden edit?",
+    "neovim_prompt": "What scope principle should guide the edit?",
     "neovim_answer": "Copy the complete frame first, then use WORD landmarks and fixed-width replacements only within its acting first row.",
     "choices": [
       "ANIMATION: Three edge accents appear in a complete frame; supports stay fixed. | NEOVIM: copy a full frame, then keep WORD/replacement edits on its acting row.",
@@ -1296,11 +1296,11 @@
     ]
   },
   "M13.08.P01": {
-    "prompt": "ANIMATION\nThe mastery strip adds a left-exit frame after the centre, right, edge, and flash poses.\n\n    BEFORE             AFTER\n    │..:: !.:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:: ..:: !.::│   │..:: ..:: !.::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:! !.:: ..:!│   │..:! !.:: ..:!│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:* *.:: ..:*│   │..:* *.:: ..:*│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │              │   │!.:: ..:: ..::│\n    │              │   │.:::..|..:::. │\n    │              │   │_____.|._____ │\n\nNEOVIM\nWhich checkpoint statement is answerable before the hidden artifact path?",
+    "prompt": "ANIMATION\nThe final strip adds a left-exit frame after the centre, right, edge, and flash poses.\n\n    BEFORE             AFTER\n    │..:: !.:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:: ..:: !.::│   │..:: ..:: !.::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:! !.:: ..:!│   │..:! !.:: ..:!│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:* *.:: ..:*│   │..:* *.:: ..:*│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │              │   │!.:: ..:: ..::│\n    │              │   │.:::..|..:::. │\n    │              │   │_____.|._____ │\n\nNEOVIM\nWhich explanation accounts for the displayed result?",
     "compact_prompt": "ANIMATION\nComplete loop ends with a left-exit frame.\n\n    │!.:: ..:: ..::│\n    │.:::..|..:::. │\n    │_____.|._____ │\n\nNEOVIM\nVerify full frame and fixed supports.",
     "animation_prompt": "The final frame is a complete three-row left exit; all earlier pulse, edge, and flash frames remain intact and the supports never drift.\n\n    BEFORE             AFTER\n    │..:: !.:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:: ..:: !.::│   │..:: ..:: !.::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:! !.:: ..:!│   │..:! !.:: ..:!│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │..:* *.:: ..:*│   │..:* *.:: ..:*│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n    │              │   │!.:: ..:: ..::│\n    │              │   │.:::..|..:::. │\n    │              │   │_____.|._____ │",
     "animation_answer": "The loop closes with a complete left-exit frame and unchanged support registration.",
-    "neovim_prompt": "What reusable grammar should the checkpoint test without naming the hidden sequence?",
+    "neovim_prompt": "What reusable grammar preserves the frame boundary and edit scope?",
     "neovim_answer": "It should test complete-frame copy, WORD-boundary material edits, and support-row protection rather than a memorised coordinate string.",
     "choices": [
       "ANIMATION: A complete left-exit frame closes the pulse loop; supports remain fixed. | NEOVIM: verify full-frame scope, landmark replacement, and protected support rows.",
@@ -1316,7 +1316,7 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the checkpoint tests the reusable boundary-and-scope grammar.",
+      "Correct: the result demonstrates the reusable boundary-and-scope grammar.",
       "A one-row exit is not a complete animation frame.",
       "Earlier poses are part of the sequence and must remain unchanged.",
       "The exit's meaning depends on its support rows and fixed registration."
@@ -1377,8 +1377,8 @@
     ]
   },
   "M14.Q03": {
-    "prompt": "ANIMATION\nThe eye changes, but the right wall moves one column. What fixed-grid error occurred?\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|o|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhy is Replace-mode retrieval safer than ordinary insertion here?",
-    "compact_prompt": "ANIMATION\nEye right; wall drifted: diagnose.\n\n    │|o|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n\nNEOVIM\nPreserve the face width.",
+    "prompt": "ANIMATION\nThe eye changes, but insertion pushes the right wall one column away from the base below it.\n\n    BEFORE         BROKEN\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|o|       │   │|* |      │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhy is Replace-mode retrieval safer than ordinary insertion here?",
+    "compact_prompt": "ANIMATION\nThe changed eye pushed its right wall away from the base.\n\n    │|o|       │   │|* |      │\n    │\\_/       │   │\\_/       │\n\nNEOVIM\nPreserve the face width.",
     "animation_prompt": "The eye material changed but insertion pushed the wall, so the face no longer has the same fixed outline width.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|o|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │",
     "animation_answer": "Insertion caused a one-column wall drift; the eye should be overwritten in place.",
     "neovim_prompt": "What does `<C-r>a` in Replace mode avoid?",
@@ -1404,7 +1404,7 @@
     ]
   },
   "M14.Q04": {
-    "prompt": "ANIMATION\nA copied face changes its eye from star to plus while its silhouette stays identical. What is the reading?\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|o|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhich sequence uses a palette register without insertion?",
+    "prompt": "ANIMATION\nA copied face changes its eye from star to plus while its silhouette stays identical.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhich sequence uses a palette register without insertion?",
     "compact_prompt": "ANIMATION\nStar → plus; silhouette fixed.\n\n    │|*|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n\nNEOVIM\nStore plus, then retrieve in Replace mode.",
     "animation_prompt": "The copied face is a distinct material variant only: its roof, walls, mouth, and spacing are unchanged while the eye becomes `+`.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|o|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │",
     "animation_answer": "Only the eye material changes from the first palette glyph to the second.",
@@ -1431,7 +1431,7 @@
     ]
   },
   "M14.Q05": {
-    "prompt": "ANIMATION\nWhy can paragraph-object copy and an addressed four-line copy yield the same third variant?\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|o|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhat must both methods own?",
+    "prompt": "ANIMATION\nEither copy method must preserve one complete face block and its blank separator before the eye is varied.\n\n    SOURCE          COMPLETE COPY\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhat must both methods own?",
     "compact_prompt": "ANIMATION\nA face paragraph includes its separator.\n\n    │/^\\  [*+] │\n    │|+|       │\n    │\\_/       │\n    │          │\n\nNEOVIM\nCompare `yap` with an explicit four-line range.",
     "animation_prompt": "Both methods produce the same complete face object because each carries three art rows plus the blank separator into the third variant.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|o|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │",
     "animation_answer": "The valid object is the complete four-line face paragraph, including its separator.",
@@ -1647,11 +1647,11 @@
     ]
   },
   "M14.04.P01": {
-    "prompt": "ANIMATION\nBefore the hidden independent edit, the copied face must become a plus-eye variant without moving its walls.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhich prediction names the material scope without exposing the hidden command path?",
+    "prompt": "ANIMATION\nBefore editing, the copied face must become a plus-eye variant without moving its walls.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhich prediction names the material scope while keeping the source face unchanged?",
     "compact_prompt": "ANIMATION\nCopied eye becomes plus; frame fixed.\n\n    │|*|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n\nNEOVIM\nUse the stored palette material in place.",
     "animation_prompt": "Only the second paragraph's eye changes from star to plus; its roof, walls, mouth, and separator remain exact.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │",
     "animation_answer": "The copied frame becomes a plus-eye variant through one fixed-width eye replacement.",
-    "neovim_prompt": "What scope principle should guide the hidden edit?",
+    "neovim_prompt": "What scope principle should guide the edit?",
     "neovim_answer": "Retrieve the palette glyph in Replace mode at the copied eye; leave both face paragraphs and all non-eye cells untouched.",
     "choices": [
       "ANIMATION: Only the copied eye changes; both frame outlines and separators stay fixed. | NEOVIM: use named-register retrieval in Replace mode at one eye cell.",
@@ -1674,9 +1674,9 @@
     ]
   },
   "M14.PARA.P01": {
-    "prompt": "ANIMATION\nAfter the paragraph-boundary guided edit, the stored first face is put above the next face.\n\n    BEFORE        AFTER\n    │| /^\\  | │   │| /^\\  | │\n    │| |o|   |│   │| |o|   |│\n    │| \\_/   |│   │| \\_/   |│\n    │         │   │         │\n    │| /^\\  | │   │| /^\\  | │\n    │| |+|   |│   │| |o|   |│\n    │| \\_/   |│   │| \\_/   |│\n    │         │   │         │\n    │         │   │| /^\\  | │\n    │         │   │| |+|   |│\n    │         │   │| \\_/   |│   │| \\_/   |│\n    │         │   │         │\n\nNEOVIM\nWhich decomposition preserves paragraph boundaries and insertion order?",
+    "prompt": "ANIMATION\nAfter the paragraph-boundary guided edit, the stored first face is put above the next face.\n\n    BEFORE        AFTER\n    │| /^\\  | │   │| /^\\  | │\n    │| |o|   |│   │| |o|   |│\n    │| \\_/   |│   │| \\_/   |│\n    │         │   │         │\n    │| /^\\  | │   │| /^\\  | │\n    │| |+|   |│   │| |o|   |│\n    │| \\_/   |│   │| \\_/   |│\n    │         │   │         │\n    │         │   │| /^\\  | │\n    │         │   │| |+|   |│\n    │         │   │| \\_/   |│\n    │         │   │         │\n\nNEOVIM\nWhich decomposition preserves paragraph boundaries and insertion order?",
     "compact_prompt": "ANIMATION\nA stored face is inserted above the next paragraph.\n\n    │| |o|   |│\n    │         │\n    │| |+|   |│\n\nNEOVIM\nUse paragraph object, `}`, and put-above.",
-    "animation_prompt": "The first complete face object is inserted at the paragraph boundary above the next frame; separators keep all faces independent.\n\n    BEFORE        AFTER\n    │| /^\\  | │   │| /^\\  | │\n    │| |o|   |│   │| |o|   |│\n    │| \\_/   |│   │| \\_/   |│\n    │         │   │         │\n    │| /^\\  | │   │| /^\\  | │\n    │| |+|   |│   │| |o|   |│\n    │| \\_/   |│   │| \\_/   |│\n    │         │   │         │\n    │         │   │| /^\\  | │\n    │         │   │| |+|   |│\n    │         │   │| \\_/   |│   │| \\_/   |│\n    │         │   │         │",
+    "animation_prompt": "The first complete face object is inserted at the paragraph boundary above the next frame; separators keep all faces independent.\n\n    BEFORE        AFTER\n    │| /^\\  | │   │| /^\\  | │\n    │| |o|   |│   │| |o|   |│\n    │| \\_/   |│   │| \\_/   |│\n    │         │   │         │\n    │| /^\\  | │   │| /^\\  | │\n    │| |+|   |│   │| |o|   |│\n    │| \\_/   |│   │| \\_/   |│\n    │         │   │         │\n    │         │   │| /^\\  | │\n    │         │   │| |+|   |│\n    │         │   │| \\_/   |│\n    │         │   │         │",
     "animation_answer": "A complete paragraph frame is put above the next frame without merging their separators.",
     "neovim_prompt": "What grammar did the guided boundary edit demonstrate?",
     "neovim_answer": "Yank the paragraph, use `}` to cross to the next object, then put the stored block above with `P`.",
@@ -1728,7 +1728,7 @@
     ]
   },
   "M14.06.P01": {
-    "prompt": "ANIMATION\nThe transfer face uses a new shell and palette but keeps one fixed eye cell.\n\n    BEFORE         AFTER\n    │/--\\ [xo] │   │/--\\ [xo] │\n    │| .|      │   │| x|      │\n    │\\__/      │   │\\__/      │\n    │          │   │          │\n\nNEOVIM\nWhich bounded path reaches TARGET after the hidden transfer?",
+    "prompt": "ANIMATION\nThe transfer face uses a new shell and palette but keeps one fixed eye cell.\n\n    BEFORE         AFTER\n    │/--\\ [xo] │   │/--\\ [xo] │\n    │| .|      │   │| x|      │\n    │\\__/      │   │\\__/      │\n    │          │   │          │\n\nNEOVIM\nWhich bounded path reaches TARGET after the edit?",
     "compact_prompt": "ANIMATION\nUnfamiliar shell; one eye cell changes.\n\n    │/--\\ [xo] │\n    │| .|      │   │| x|      │\n    │\\__/      │\n\nNEOVIM\nUse palette register + Replace.",
     "animation_prompt": "The transfer changes only the eye from `.` to the palette's `x`; shell and separator stay fixed.\n\n    BEFORE         AFTER\n    │/--\\ [xo] │   │/--\\ [xo] │\n    │| .|      │   │| x|      │\n    │\\__/      │   │\\__/      │\n    │          │   │          │",
     "animation_answer": "One unfamiliar palette glyph replaces the eye in place; the shell remains fixed-width.",
@@ -1755,11 +1755,11 @@
     ]
   },
   "M14.08.P01": {
-    "prompt": "ANIMATION\nThe mastery strip returns to its first eye material in the third complete paragraph.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|+|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|+|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhich checkpoint claim is answerable before the hidden artifact path?",
+    "prompt": "ANIMATION\nThe final strip returns to its first eye material in the third complete paragraph.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|+|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|+|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhich explanation accounts for the displayed result?",
     "compact_prompt": "ANIMATION\nStar → plus → star across full paragraphs.\n\n    │|*|       │   │|+|       │   │|*|       │\n    │\\_/       │   │\\_/       │   │\\_/       │\n\nNEOVIM\nCheck object boundaries and register reuse.",
     "animation_prompt": "Three complete paragraph frames preserve the face outline while the eye cycles star to plus and back to star.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|+|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|+|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │",
     "animation_answer": "The complete three-frame sequence returns to its initial palette material with every face boundary intact.",
-    "neovim_prompt": "What reusable grammar should the checkpoint test without revealing its key-hidden route?",
+    "neovim_prompt": "What reusable grammar preserves complete face objects and the palette?",
     "neovim_answer": "It should test paragraph ownership, `}` traversal, named-register retrieval, and one-cell Replace scope.",
     "choices": [
       "ANIMATION: Full star/plus/star paragraphs form a registered material cycle. | NEOVIM: verify paragraph boundaries, `}` navigation, register reuse, and one-cell Replace.",
@@ -1775,7 +1775,7 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the checkpoint combines complete object boundaries with reusable palette grammar.",
+      "Correct: the result combines complete object boundaries with reusable palette grammar.",
       "Eye rows alone cannot prove face registration or paragraph separation.",
       "The outline remains identical across the return.",
       "Order and scope are what make the material cycle causal rather than coincidental."
@@ -1836,9 +1836,9 @@
     ]
   },
   "M15.Q03": {
-    "prompt": "ANIMATION\nThe brick motifs move two cells, but the plan called for one. What defect appears?\n\n    BEFORE          AFTER\n    │..::..::.. │   │..::..::.. │\n    │[]__[]__[] │   │ []__[]__[]│\n    │\\________/ │   │\\________/ │\n\nNEOVIM\nWhich setting and operation establish the intended one-cell offset?",
+    "prompt": "ANIMATION\nThe brick motifs move two cells, but the plan called for one. What defect appears?\n\n    BEFORE           AFTER\n    │..::..::..  │   │..::..::..  │\n    │[]__[]__[]  │   │  []__[]__[]│\n    │\\________/  │   │\\________/  │\n\nNEOVIM\nWhich setting and operation establish the intended one-cell offset?",
     "compact_prompt": "ANIMATION\nTwo-cell lurch: diagnose it.\n\n    │[]__[]__[] │   │  []__[]__[]│\n    │\\________/ │\n\nNEOVIM\nSet one-cell indentation before `>>`.",
-    "animation_prompt": "A two-cell lurch breaks the intended shallow material phase; the brick row no longer aligns with the fixed dither and shadow.\n\n    BEFORE          AFTER\n    │..::..::.. │   │..::..::.. │\n    │[]__[]__[] │   │ []__[]__[]│\n    │\\________/ │   │\\________/ │",
+    "animation_prompt": "A two-cell lurch breaks the intended shallow material phase; the brick row no longer aligns with the fixed dither and shadow.\n\n    BEFORE           AFTER\n    │..::..::..  │   │..::..::..  │\n    │[]__[]__[]  │   │  []__[]__[]│\n    │\\________/  │   │\\________/  │",
     "animation_answer": "The brick is over-offset; the repair is exactly one fixed-grid cell, not two.",
     "neovim_prompt": "What Neovim condition prevents that lurch?",
     "neovim_answer": "Set `shiftwidth=1` before one `>>` on the brick row; the indent unit must equal one art cell.",
@@ -1863,9 +1863,9 @@
     ]
   },
   "M15.Q04": {
-    "prompt": "ANIMATION\nHow does replacing colons with dots change material without changing the silhouette?\n\n    BEFORE          AFTER\n    │..::..::.. │   │..::..::.. │\n    │[]__[]__[] │   │ []__[]__[]│\n    │\\________/ │   │\\________/ │\n\nNEOVIM\nWhich range keeps the substitution on the copied dither band?",
+    "prompt": "ANIMATION\nHow does replacing colons with dots change material without changing the silhouette?\n\n    BEFORE          AFTER\n    │..::..::.. │   │.......... │\n    │[]__[]__[] │   │[]__[]__[] │\n    │\\________/ │   │\\________/ │\n\nNEOVIM\nWhich range keeps the substitution on the copied dither band?",
     "compact_prompt": "ANIMATION\nDense dither → light dither; outline fixed.\n\n    │..::..::..  │\n    │..........  │\n    │\\________/  │\n\nNEOVIM\nUse a row-bounded substitute.",
-    "animation_prompt": "The top dither band becomes lighter while brick geometry and the angled shadow remain unchanged, so the silhouette is preserved.\n\n    BEFORE          AFTER\n    │..::..::.. │   │..::..::.. │\n    │[]__[]__[] │   │ []__[]__[]│\n    │\\________/ │   │\\________/ │",
+    "animation_prompt": "The top dither band becomes lighter while brick geometry and the angled shadow remain unchanged, so the silhouette is preserved.\n\n    BEFORE          AFTER\n    │..::..::.. │   │.......... │\n    │[]__[]__[] │   │[]__[]__[] │\n    │\\________/ │   │\\________/ │",
     "animation_answer": "A material-only substitution changes dither density while preserving brick and shadow geometry.",
     "neovim_prompt": "What range keeps that material edit bounded?",
     "neovim_answer": "Address the copied dither row only and substitute its colons with dots; do not run the pattern over the brick or shadow rows.",
@@ -1890,9 +1890,9 @@
     ]
   },
   "M15.Q05": {
-    "prompt": "ANIMATION\nWhy can blockwise `$A` and `:4,6s/$/|/` create the same occluding edge?\n\n    BEFORE          AFTER\n    │..::..::.. │   │..::..::.. │\n    │[]__[]__[] │   │ []__[]__[]│\n    │\\________/ │   │\\________/ │\n\nNEOVIM\nWhat scope must both methods share?",
+    "prompt": "ANIMATION\nWhy can blockwise `$A` and `:4,6s/$/|/` create the same occluding edge?\n\n    BEFORE          AFTER\n    │..::..::.. │   │..::..::..|│\n    │[]__[]__[] │   │[]__[]__[]|│\n    │\\________/ │   │\\________/|│\n\nNEOVIM\nWhat scope must both methods share?",
     "compact_prompt": "ANIMATION\nThree rows gain one end edge.\n\n    │|..........|   │   │|..........||  │\n    │| []__[]__[]|  │   │| []__[]__[]||│\n\nNEOVIM\nCompare block append with bounded range append.",
-    "animation_prompt": "Both accepted methods append one `|` at the true end of each selected row; no existing cell shifts and the shadow remains intact.\n\n    BEFORE          AFTER\n    │..::..::.. │   │..::..::.. │\n    │[]__[]__[] │   │ []__[]__[]│\n    │\\________/ │   │\\________/ │",
+    "animation_prompt": "Both accepted methods append one `|` at the true end of each selected row; no existing cell shifts and the shadow remains intact.\n\n    BEFORE          AFTER\n    │..::..::.. │   │..::..::..|│\n    │[]__[]__[] │   │[]__[]__[]|│\n    │\\________/ │   │\\________/|│",
     "animation_answer": "Block append and bounded range append are equivalent when they own exactly the same three row ends.",
     "neovim_prompt": "What is the method-risk comparison?",
     "neovim_answer": "`<C-v>...$A|` follows a visible rectangle; `:4,6s/$/|/` states a line range. Either is safe only with the correct three-row scope.",
@@ -2106,11 +2106,11 @@
     ]
   },
   "M15.04.P01": {
-    "prompt": "ANIMATION\nBefore the hidden independent edit, what must happen to the copied frame?\n\n    BEFORE           AFTER\n    │..::..::..  │   │..::..::..  │\n    │ []__[]__[] │   │ []__[]__[] │\n    │\\________/  │   │\\________/  │\n    │..::..::..  │   │..........  │\n    │ []__[]__[] │   │  []__[]__[]│\n    │\\________/  │   │\\________/  │\n\nNEOVIM\nWhich prediction states the target scope without exposing the hidden exact path?",
+    "prompt": "ANIMATION\nBefore editing the copied frame, what must happen?\n\n    BEFORE           AFTER\n    │..::..::..  │   │..::..::..  │\n    │ []__[]__[] │   │ []__[]__[] │\n    │\\________/  │   │\\________/  │\n    │..::..::..  │   │..........  │\n    │ []__[]__[] │   │  []__[]__[]│\n    │\\________/  │   │\\________/  │\n\nNEOVIM\nWhich prediction states the target scope while keeping the source frame unchanged?",
     "compact_prompt": "ANIMATION\nCopied brick shifts one more cell; copied dither lightens.\n\n    │..........  │\n    │  []__[]__[]│\n    │\\________/  │\n\nNEOVIM\nKeep edits on copied rows only.",
     "animation_prompt": "The copied brick row gains one further cell of offset and only the copied top dither row changes from colons to dots; source frame and copied shadow stay fixed.\n\n    BEFORE           AFTER\n    │..::..::..  │   │..::..::..  │\n    │ []__[]__[] │   │ []__[]__[] │\n    │\\________/  │   │\\________/  │\n    │..::..::..  │   │..........  │\n    │ []__[]__[] │   │  []__[]__[]│\n    │\\________/  │   │\\________/  │",
     "animation_answer": "On the copied frame, offset brick once more and lighten only its top dither band.",
-    "neovim_prompt": "What scope principle should guide the hidden edit?",
+    "neovim_prompt": "What scope principle should guide the edit?",
     "neovim_answer": "Keep the indent on the copied brick row and the substitute on the copied dither row; leave both shadows and the source frame untouched.",
     "choices": [
       "ANIMATION: Copied brick shifts one cell and copied dither lightens; shadows/source stay fixed. | NEOVIM: use separate row-bounded scopes for indent and substitute.",
@@ -2237,7 +2237,7 @@
       "Correct: the macro stores one bounded landmark edit and replays it twice on the same row.",
       "The file-wide scope would alter support text outside the material row.",
       "Border and shadow are visibly unchanged.",
-      "This card exists to make the small repeated edit explicit and replayable."
+      "The bounded landmark edit can be recorded once and replayed on matching cells."
     ]
   },
   "M15.GLOBAL.P01": {
@@ -2268,11 +2268,11 @@
     ]
   },
   "M15.08.P01": {
-    "prompt": "ANIMATION\nThe mastery strip appends a registered frame, then builds a lighter settle row from repeated dither landmarks.\n\n    BEFORE            AFTER\n    │..::..::..   │   │..::..::..   │\n    │ []__[]__[]  │   │ []__[]__[]  │\n    │\\________/   │   │\\________/   │\n    │..........|  │   │..........|  │\n    │  []__[]__[]|│   │  []__[]__[]|│\n    │\\________/|  │   │\\________/|  │\n    │             │   │..........   │\n    │             │   │ []__[]__[]  │\n    │             │   │\\________/   │\n\nNEOVIM\nWhich checkpoint statement is answerable before the hidden recipe?",
+    "prompt": "ANIMATION\nThe final strip appends a registered frame, then builds a lighter settle row from repeated dither landmarks.\n\n    BEFORE            AFTER\n    │..::..::..   │   │..::..::..   │\n    │ []__[]__[]  │   │ []__[]__[]  │\n    │\\________/   │   │\\________/   │\n    │..........|  │   │..........|  │\n    │  []__[]__[]|│   │  []__[]__[]|│\n    │\\________/|  │   │\\________/|  │\n    │             │   │..........   │\n    │             │   │ []__[]__[]  │\n    │             │   │\\________/   │\n\nNEOVIM\nWhich explanation accounts for the displayed result?",
     "compact_prompt": "ANIMATION\nA complete frame is appended; lighter settle follows.\n\n    │..........   │\n    │ []__[]__[]  │\n    │\\________/   │\n\nNEOVIM\nVerify frame scope, landmarks, and supports.",
     "animation_prompt": "The settle is a complete three-row material frame whose lighter dither derives from repeated homologous edits; the angled shadow remains registered.\n\n    BEFORE            AFTER\n    │..::..::..   │   │..::..::..   │\n    │ []__[]__[]  │   │ []__[]__[]  │\n    │\\________/   │   │\\________/   │\n    │..........|  │   │..........|  │\n    │  []__[]__[]|│   │  []__[]__[]|│\n    │\\________/|  │   │\\________/|  │\n    │             │   │..........   │\n    │             │   │ []__[]__[]  │\n    │             │   │\\________/   │",
     "animation_answer": "A complete copied frame and a lighter three-row settle are built while each shadow and row boundary stays registered.",
-    "neovim_prompt": "What reusable grammar should this checkpoint test without naming the hidden key sequence?",
+    "neovim_prompt": "What reusable grammar preserves complete frames and bounded replay?",
     "neovim_answer": "Verify complete-frame copy, one bounded landmark replacement, exact replay count, and support-row protection.",
     "choices": [
       "ANIMATION: Complete frame copy leads to lighter settle; shadows remain fixed. | NEOVIM: test full-frame scope, bounded landmark edit, exact replay count, and protected supports.",
@@ -2288,7 +2288,7 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the checkpoint verifies both animation object completeness and bounded macro replay.",
+      "Correct: the result verifies both animation object completeness and bounded macro replay.",
       "A settle without brick and shadow is not a complete material frame.",
       "The shadow is the fixed depth anchor and must remain unchanged.",
       "Replay count is part of scope correctness; excess replays damage supports."

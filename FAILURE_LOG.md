@@ -3753,3 +3753,217 @@ tmux-yank is not installed.
   `test_tmux_v2.py`.
 - Its claim that the worktree was clean was false at the time:
   `questions-authored-v2-motion-a.json` was being modified again.
+
+## VD-32 · 2026-09-28 21:40 — question-copy key made answer c impossible; route test asserted deleted template prose
+
+**Operator evidence:** in a live four-choice question, pressing `c` copied
+the page instead of selecting answer `c`; normal drag also did not create a
+terminal selection.
+
+**Root cause:** `ask_question()` lowercased input and handled `answer == "c"`
+before its `answer in "abcd"` branch. The copy affordance therefore shadowed
+one quarter of the answer alphabet. Separately,
+`share/test_tmux_v2_routes.py` still required generated phrases (`DO THIS`,
+`both`, `TEACH FIRST`, `complete`, and `Spaced review`) that the manually
+authored bank intentionally removed. Its compact-choice check also expected
+the old one-line `· V:` renderer after choices had moved to separate `ANIM:`
+and `VIM:` rows.
+
+**Fix in the working tree:**
+- question copy moves from `c` to `y`, matching Vim's yank mnemonic; `c`
+  remains a normal answer letter;
+- unit coverage submits `c` as the correct third choice and separately uses
+  `y` to copy without recording an attempt;
+- the headed popup test uses `y` and checks the new learner-visible title;
+- the route test now verifies authored prompt content, paired headings, four
+  `ANIM:`/`VIM:` choices, and the answer prompt instead of template wording;
+  its forced choice order records `raw_answer == "c"` when the correct
+  semantic answer is displayed third;
+- `curriculum-v2.json` was rebuilt from the current authored sources, closing
+  the drift recorded in VD-31.
+
+**Drag root cause and boundary:** the live tmux server deliberately keeps
+`mouse on`, so tmux owns an unmodified drag. More importantly, tmux 3.6a's
+`tty.c` sends `CSI ? 7727 h` (`XTSHIFTESCAPE`) for VT100-like terminals.
+Ghostty's default `mouse-shift-capture = false` allows an application to
+override Shift selection with that mode, so the previous report's inference
+that default Ghostty would preserve Shift-drag was false. Both of the
+operator's identical Ghostty config files now set
+`mouse-shift-capture = never`, the documented mode that applications cannot
+override. This reserves Shift-drag for terminal selection while leaving plain
+mouse gestures available to tmux. `ghostty +show-config` reports the active
+value as `never`. Ghostty must reload its config (`Cmd-Shift-,`) before an
+already-open window uses the change. The computer-use surface is not permitted
+to control Ghostty, so the physical Shift-drag remains a manual acceptance
+check. `y` remains the deterministic whole-question copy route.
+
+**Evidence so far:** `share/test_question_quality.py` passes 347/347;
+`share/test_v2.py` passes 187/187 lessons and 146/146 recipes; the
+client-attached popup test passes at 80×24, 100×36 and 188×49. The route
+matrix is being rerun after removal of its stale assertions.
+
+## VD-33 · 2026-09-28 21:54 — wrong-answer page replayed internal question metadata; popup selection still unusable
+
+**Operator evidence:** after choosing a wrong answer, the held result page was
+headed `QUESTION REPLAY` and repeated internal/course-author prose instead of
+teaching the concept. The operator also reported that popup text still could
+not be selected and copied, and required another manual review of every
+question rather than another generated-prose or validator-only claim.
+
+**Exact failed question:** the live event at 21:54:05 records
+`M0.SL.P01`, displayed choices `[0,1,2,3]`, raw answer `d`, semantic choice
+3. The selected claim was that `s` rewrites a whole line. The correct concept
+is narrower: with no explicit address, `:s` owns the current line; its `g`
+flag replaces every matching `o` on that line. The authored feedback already
+contained both explanations, but the result renderer foregrounded replay
+metadata and did not present the selected misconception beside the correct
+concept.
+
+**Wrong-answer UI fix in the working tree:** both full and compact result
+routes now use the learner-facing heading `ANSWER EXPLANATION`. A wrong
+multiple-choice result prints, in order:
+
+1. `YOUR ANSWER` — the option actually selected;
+2. `WHY IT MISSES` — that option's authored misconception-specific feedback;
+3. `CORRECT ANSWER` — the correct animation + Neovim statement;
+4. `CONCEPT` — the correct answer's authored explanation;
+5. `GRAMMAR BREAKDOWN` — the command parts and, when quoted, their key-by-key
+   meanings.
+
+Question form, placement, placement rationale, and the phrases `QUESTION
+REPLAY` / `CONCEPT REPLAY` are no longer printed to the learner. The
+regression test requires those five learner-facing sections and explicitly
+rejects the old heading and `placement:` prose.
+
+The question-result route also no longer follows the answer with generic
+course-author advice such as “retain the principle” or the card's design
+rationale. The authored misconception, correct choice, concept explanation,
+and grammar breakdown are the teaching content; only those, the source, and
+the learner's next action remain on that result page.
+
+**Copy/selection path:** `y` copies the full prompt and all four choices while
+`a`–`d` remain answers. For arbitrary text selection, both layers that can
+capture an ordinary drag are now released only for the live popup:
+
+- the tutor Neovim process sets `mouse=''`, after the user configuration has
+  loaded, so Neovim does not request terminal mouse reports;
+- each popup launcher sets `mouse off` only on the target tmux session while
+  its synchronous popup exists, then restores the exact inherited/local state
+  in its exit trap. Global tmux options and key tables remain untouched.
+
+At 22:26, a direct inspection after the operator's popup had closed found the
+real `main` session in a bad state: global `mouse on`, local `mouse off`,
+effective `mouse off`, and no active popup. The local override was removed
+immediately; the effective value returned to `on`. This proves the first
+session-local trap was not sufficient. The launchers now record a session-local
+owner PID and the exact inherited/local base state. A concurrent live owner
+causes a second launcher to exit without touching mouse state; a later
+attach/hourly/forced invocation detects a dead owner, restores its recorded
+base before the due check, and clears both ownership markers. Normal and
+handled-signal exits restore only when the current process still owns the
+override. The headed test starts from a stale owner marker and stale local
+`mouse off`, then requires a new owner while open and no local override or
+owner/base marker after close.
+
+The headed acceptance test now checks both the effective session option and
+the actual post-plugin `&mouse` value. A physical Ghostty drag and Cmd-C still
+requires operator acceptance; it must not be reported as observed by an
+automated key test.
+
+**Manual question audit, source records rather than generated JSON:**
+
+- M0/core: 22/22 read individually. `M0.SL.P01` is clear and its four feedback
+  branches teach current-line scope, `g`, `%`, and substitution rather than
+  whole-line rewrite; the defect was the result renderer.
+- stills-a: 84/84 read individually. Corrections include M11.Q03/Q07/Q10,
+  M11.01/M11.08, M1.Q03/Q04/Q08/Q09/Q10, M19.Q03, M2.Q09, M12.05, M12.06,
+  and M12.08. These repair contradictory pictures, phantom rows, missing
+  frame rows, over-broad `%` examples, and learner-facing workflow jargon.
+- stills-b: 85/85 read individually. Corrections include M10.Q03/Q04/Q05,
+  M13.Q03/Q04/Q05/Q10/M13.BE.P01, M14.Q03/Q04/Q05/M14.PARA.P01, and
+  M15.Q03/Q04/Q05. In particular, each printed AFTER panel now visibly shows
+  the change its stem asks about. Learner-facing `hidden recipe`, `checkpoint`,
+  and `mastery strip` wording was replaced with the actual object, scope, and
+  animation result.
+- motion-b: 67/67 read individually. Corrections include M6.Q05 ambiguity,
+  M18.EXPR.P01's duplicate CHECK row, M9.08.P01's malformed squash row, and
+  removal of hidden/checkpoint authoring jargon from M6.04/M6.06/M6.08,
+  M18.04/M18.08, M8.04, and M9.04.
+- motion-a: 89/89 were read individually by the assigned manual reviewer.
+  Corrections cover internal/meta wording, fixed-width prompt art, hidden-key
+  leaks, scope clarity, misconception-specific feedback, and exact copy/edit
+  semantics across M16, M3, M4, M17, and M7. Integration then caught one
+  duplicate stem: M3.Q10's compact prompt had copied M3.02.P01 and no longer
+  depicted its missing-body diagnosis. M3.Q10 now shows the floating eye and
+  missing torso/feet/baseline in both sizes and asks for complete-pose repair.
+
+**Verification to this point:** the authored sources rebuild to 20 modules,
+187 cards, and 347 questions. `test_question_quality.py` passes all 347;
+`test_v2.py` passes all 187 executable lessons and 146 primary edit recipes;
+the 46 legacy drills and 42 integrated Stone Story review variants pass. The
+headed main popup passes at 80×24, 100×36, and 188×49 with the user's real
+config, including stale-owner healing, live `&mouse=''`, answer `c`, question
+copy `y`, and cleanup of local tmux state. A first 80×24 route run additionally
+found that the review result was one row too tall and scrolled the `REVIEW
+RETRIEVED` header away; the feedback budget now reserves one more trailer row
+and its route rerun is pending. Physical Ghostty drag remains operator
+acceptance, and this entry does not close the broader curriculum audit.
+
+**Owner-liveness hardening:** a numeric owner marker is not enough evidence
+that the popup still exists because the operating system can reuse a dead
+process ID. All three launchers now inspect the marked PID's command and treat
+it as live only when it is one of the three tutor popup launchers. A reused PID
+therefore cannot strand `mouse off` indefinitely. The headed acceptance setup
+uses its own live Python PID as the stale marker, rather than an impossible
+dead PID, and requires the launcher to replace it. Shell syntax and repository
+diff checks pass after this change.
+
+**Route-harness finding:** the 80×24 matrix passed its first nine routes, then
+opened no popup for `M1.06`. The product had not failed to launch: the test's
+synthetic progress wrote card-pass rows but omitted the now-required stage-1
+review evidence, leaving M0 `review_pending` and M1 locked. Progress-targeted
+fixtures now seed the required review rows for every fully completed prior
+module. This keeps the route test subject to the same mastery contract as the
+real scheduler instead of bypassing or accidentally contradicting it.
+
+After that repair, `M2.06` exposed a second harness-only race: the ledger saw
+`jforO`, but the buffer was unchanged because the driver injected the entire
+string as one terminal-byte burst through the user's asynchronous Flash
+`f`-motion mapping. The route driver now emits discrete keys with a 30 ms
+human-like interval. This preserves the real user config while avoiding a
+machine-only input shape that a learner cannot physically produce.
+
+The delay alone did not make synthetic `j` reliable under that stack. The
+lesson now accepts two explicit, bounded command paths that produce the same
+one-cell edit: `jforO` (relative row motion) and `2GforO` (exact line address),
+then still requires `fo` + `rO`. The popup driver uses the exact-line variant;
+the curriculum retains and teaches the relative variant. This is a real
+multiple-method contract, not ungraded answer-key padding.
+
+**Final evidence for this entry:**
+
+- `test_question_quality.py`: 347/347 manually authored questions pass the
+  visible-art, four-choice, feedback, compact-layout, and internal-prose gates.
+- `test_v2.py`: 187/187 executable lessons and 146/146 primary recipes pass,
+  including the exact `M0.SL.P01` wrong-answer explanation.
+- The direct client-attached popup passes with the real user config at 80×24,
+  100×36, and 188×49. It verifies the live session-local mouse release,
+  post-plugin Neovim `mouse=''`, answer `c`, full-question copy on `y`, and
+  cleanup/restore ownership.
+- The final question-result route passes at all three sizes and rejects
+  `QUESTION REPLAY`, `CONCEPT REPLAY`, and “retain the principle”. Isolated
+  `M1.06` and `M2.06` transfer routes pass at 80×24 after the fixture and
+  input-path corrections above.
+- A full 80×24 matrix run before the M2 correction passed ten consecutive
+  routes through `M1.06`, then reproduced the synthetic M2 input failure. It
+  was not rerun in full after that correction; this entry does not claim a
+  final all-transfer matrix pass.
+- At 23:40 the real `main` session had one legitimate open M0.06 popup owned
+  by `vim-drill-hourly.sh`; its session-local `mouse off` and base `inherit`
+  markers were therefore expected. It was left open and untouched for the
+  operator. The three isolated acceptance runs left no additional tutor
+  process or tmux server behind.
+
+Physical drag selection in Ghostty remains an operator acceptance check. The
+currently open popup is already using the revised launcher/runtime, so it is
+the correct live surface on which to try ordinary drag followed by Cmd-C.

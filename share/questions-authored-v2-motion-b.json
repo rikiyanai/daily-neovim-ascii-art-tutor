@@ -108,7 +108,7 @@
     ]
   },
   "M6.Q05": {
-    "prompt": "ANIMATION\nWhen the five-row pose is already approved, an addressed copy and a counted yank can preserve the same complete scaffold.\n\n    SOURCE RANGE          COPY\n  1 │    ^    │          6 │    ^    │\n  2 │   /_\\   │          7 │   /_\\   │\n  3 │  /---\\  │          8 │  /---\\  │\n  4 │ /-----\\ │          9 │ /-----\\ │\n  5 │/-------\\│         10 │/-------\\│\n\nNEOVIM\nWhen is an explicit range safer than a count?",
+    "prompt": "ANIMATION\nWhen the five-row pose is already approved, an addressed copy and a counted yank can preserve the same complete scaffold.\n\n    SOURCE RANGE          COPY\n  1 │    ^    │          6 │    ^    │\n  2 │   /_\\   │          7 │   /_\\   │\n  3 │  /---\\  │          8 │  /---\\  │\n  4 │ /-----\\ │          9 │ /-----\\ │\n  5 │/-------\\│         10 │/-------\\│\n\nNEOVIM\nIf the cursor may be outside row 1, which option explains why the addressed copy is safer?",
     "compact_prompt": "ANIMATION\nBoth paths preserve a complete five-row scaffold.\n\n    SOURCE       COPY\n      ^            ^\n     /_\\          /_\\\n    /---\\        /---\\\n   /-----\\      /-----\\\n  /-------\\    /-------\\\n\nNEOVIM\nCompare their scope.",
     "animation_prompt": "The complete frame stays intact before any later subtractive variation; the method choice is about expressing the block boundary.\n\n    SOURCE RANGE          COPY\n  1 │    ^    │          6 │    ^    │\n  2 │   /_\\   │          7 │   /_\\   │\n  3 │  /---\\  │          8 │  /---\\  │\n  4 │ /-----\\ │          9 │ /-----\\ │\n  5 │/-------\\│         10 │/-------\\│",
     "animation_answer": "Both methods can preserve the complete five-row pose; the addressed form makes its source range explicit.",
@@ -116,7 +116,7 @@
     "neovim_answer": ":1,5t$ names rows 1–5 directly; 5yyGp uses the cursor and a count to copy five lines.",
     "choices": [
       "ANIMATION: Preserve the full frame before later variation. | NEOVIM: :1,5t$ states the complete source range explicitly.",
-      "ANIMATION: Preserve the full frame by cursor-relative counting. | NEOVIM: 5yyGp copies five lines from the cursor.",
+      "ANIMATION: Preserve the full frame by cursor-relative counting. | NEOVIM: 5yyGp is just as safe because it ignores the cursor's starting row.",
       "ANIMATION: Copy an incomplete upper fragment. | NEOVIM: :1,3t$ omits the base.",
       "ANIMATION: Relocate the approved frame instead of copying it. | NEOVIM: :1,5m$ leaves no source scaffold."
     ],
@@ -129,7 +129,7 @@
     "correct_choice": 0,
     "feedback": [
       "Correct: the addressed range makes the five-line boundary visible and explicit.",
-      "The counted yank is valid, but its scope depends on cursor position and count.",
+      "A counted yank can work, but it starts at the cursor; it does not ignore the cursor's row.",
       "Three rows omit the base and cannot be the complete Pyramid frame.",
       "m moves the source instead of preserving an approved copy."
     ]
@@ -351,7 +351,7 @@
     ]
   },
   "M6.04.P01": {
-    "prompt": "ANIMATION\nThe copied apex row becomes empty, but its shoulder and lower layers stay on their original rows.\n\n    BEFORE        AFTER\n  6 │    ^    │   6 │         │\n  7 │   /_\\   │   7 │   /_\\   │\n  8 │  /---\\  │   8 │  /---\\  │\n  9 │ /-----\\ │   9 │ /-----\\ │\n 10 │/-------\\│  10│/-------\\│\n\nNEOVIM\nBefore entering the hidden edit, which scope should you predict?",
+    "prompt": "ANIMATION\nThe copied apex row becomes empty, but its shoulder and lower layers stay on their original rows.\n\n    BEFORE        AFTER\n  6 │    ^    │   6 │         │\n  7 │   /_\\   │   7 │   /_\\   │\n  8 │  /---\\  │   8 │  /---\\  │\n  9 │ /-----\\ │   9 │ /-----\\ │\n 10 │/-------\\│  10│/-------\\│\n\nNEOVIM\nBefore editing, which scope should you preserve?",
     "compact_prompt": "ANIMATION\nOnly copied row 6 loses content; rows 7–10 stay.\n\n    ^        \n   /_\\      \n  /---\\     \n\nNEOVIM\nPredict the safe scope.",
     "animation_prompt": "The target is a five-row frame with an empty first row and unchanged lower layers.\n\n    BEFORE        AFTER\n  6 │    ^    │   6 │         │\n  7 │   /_\\   │   7 │   /_\\   │\n  8 │  /---\\  │   8 │  /---\\  │\n  9 │ /-----\\ │   9 │ /-----\\ │\n 10 │/-------\\│  10│/-------\\│",
     "animation_answer": "Clear the copied apex content only; do not delete the row or touch lower layers.",
@@ -432,7 +432,7 @@
     ]
   },
   "M6.06.P01": {
-    "prompt": "ANIMATION\nThe unfamiliar finished pyramid should follow its reduced predecessor, so the two five-row blocks swap order.\n\n    BEFORE          AFTER\n    │   ^   │       │   .   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│\n    │   .   │       │   ^   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│\n\nNEOVIM\nAfter the hidden transfer, which bounded path reaches TARGET?",
+    "prompt": "ANIMATION\nThe unfamiliar finished pyramid should follow its reduced predecessor, so the two five-row blocks swap order.\n\n    BEFORE          AFTER\n    │   ^   │       │   .   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│\n    │   .   │       │   ^   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│\n\nNEOVIM\nWhich bounded path reaches the displayed TARGET?",
     "compact_prompt": "ANIMATION\nReduced block first, finished block second.\n\n    ^-frame    .-frame\n       ↓          ↑\n    .-frame    ^-frame\n\nNEOVIM\nChoose a complete-range move.",
     "animation_prompt": "Both five-row blocks remain equal-height; only their playback order is corrected.\n\n    BEFORE          AFTER\n    │   ^   │       │   .   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│\n    │   .   │       │   ^   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│",
     "animation_answer": "Move the finished five-row block after the reduced block.",
@@ -459,7 +459,7 @@
     ]
   },
   "M6.08.P01": {
-    "prompt": "ANIMATION\nThe checkpoint must reorder complete equal-height frames so playback builds from the reduced pose to the finished pose.\n\n    BEFORE          TARGET\n    │    ^    │     │         │\n    │   /_\\   │     │         │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │         │\n    │   /_\\   │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │    ^    │\n    │         │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n\nNEOVIM\nWhich grammar piece completes an addressed Ex command?",
+    "prompt": "ANIMATION\nThe final sequence must reorder complete equal-height frames so playback builds from the reduced pose to the finished pose.\n\n    BEFORE          TARGET\n    │    ^    │     │         │\n    │   /_\\   │     │         │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │         │\n    │   /_\\   │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │    ^    │\n    │         │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n\nNEOVIM\nWhich grammar piece completes an addressed Ex command?",
     "compact_prompt": "ANIMATION\nTARGET reads reduced → shoulder → finished, with five rows each.\n\n    blank      /_\\       ^\n    /---\\     /---\\    /---\\\n    /-----\\   /-----\\  /-----\\\n\nNEOVIM\nWhat executes the Ex sentence?",
     "animation_prompt": "The check is about whole-frame order and equal bounds, not redrawing or deleting rows.\n\n    BEFORE          TARGET\n    │    ^    │     │         │\n    │   /_\\   │     │         │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │         │\n    │   /_\\   │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │    ^    │\n    │         │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│",
     "animation_answer": "Reorder complete five-row frames to show a readable bottom-up build.",
@@ -810,7 +810,7 @@
     ]
   },
   "M18.04.P01": {
-    "prompt": "ANIMATION\nThe copied return is varied by one cell: actor, arm, and legs all share the overshoot while CHECK remains 0.\n\n    BEFORE          AFTER\n    │|....<---o|│   │|...<---o.|│\n    │|......|\\.|│   │|.....|\\..|│\n    │|...../.\\.|│   │|..../.\\..|│\n    │CHECK=0    │   │CHECK=0    │\n\nNEOVIM\nBefore the hidden edit, what should change and what must stay?",
+    "prompt": "ANIMATION\nThe copied return is varied by one cell: actor, arm, and legs all share the overshoot while CHECK remains 0.\n\n    BEFORE          AFTER\n    │|....<---o|│   │|...<---o.|│\n    │|......|\\.|│   │|.....|\\..|│\n    │|...../.\\.|│   │|..../.\\..|│\n    │CHECK=0    │   │CHECK=0    │\n\nNEOVIM\nBefore editing, what should change and what must stay?",
     "compact_prompt": "ANIMATION\nShift the copied body one cell; preserve rails and CHECK.\n\n    <---o      <---o.\n    ...|\\.     .....|\\..\n    ../.\\.     ..../.\\..\n\nNEOVIM\nPredict the bounded scope.",
     "animation_prompt": "The target is a one-cell overshoot of the copied body; rail width and CHECK metadata remain stable.\n\n    BEFORE          AFTER\n    │|....<---o|│   │|...<---o.|│\n    │|......|\\.|│   │|.....|\\..|│\n    │|...../.\\.|│   │|..../.\\..|│\n    │CHECK=0    │   │CHECK=0    │",
     "animation_answer": "Shift all three authored body rows together by one cell; keep CHECK and frame height.",
@@ -837,9 +837,9 @@
     ]
   },
   "M18.EXPR.P01": {
-    "prompt": "ANIMATION\nThe art row is already hand-authored; only CHECK changes from 0 to 1.\n\n    BEFORE          AFTER\n    │CHECK=1    │   │CHECK=1    │\n    │|  o  |    │   │|  o  |    │\n    │CHECK=0    │   │CHECK=1    │\n\nNEOVIM\nWhich explanation keeps an expression limited to validation metadata?",
-    "compact_prompt": "ANIMATION\nArt stays fixed; one CHECK digit is validated.\n\n    CHECK=1 → CHECK=1\n    |  o  |     |  o  |\n    CHECK=0 → CHECK=1\n\nNEOVIM\nChoose metadata-only scope.",
-    "animation_prompt": "The lower CHECK marker is the only changed cell; the art line is untouched.\n\n    BEFORE          AFTER\n    │CHECK=1    │   │CHECK=1    │\n    │|  o  |    │   │|  o  |    │\n    │CHECK=0    │   │CHECK=1    │",
+    "prompt": "ANIMATION\nThe art row is already hand-authored; only CHECK changes from 0 to 1.\n\n    BEFORE          AFTER\n    │|  o  |    │   │|  o  |    │\n    │CHECK=0    │   │CHECK=1    │\n\nNEOVIM\nWhich explanation keeps an expression limited to validation metadata?",
+    "compact_prompt": "ANIMATION\nArt stays fixed; one CHECK digit changes.\n\n    |  o  |     |  o  |\n    CHECK=0  →  CHECK=1\n\nNEOVIM\nChoose metadata-only scope.",
+    "animation_prompt": "The CHECK marker is the only changed cell; the art line is untouched.\n\n    BEFORE          AFTER\n    │|  o  |    │   │|  o  |    │\n    │CHECK=0    │   │CHECK=1    │",
     "animation_answer": "Use the expression as a check on existing art, never as an art-row generator.",
     "neovim_prompt": "What does the validation-only substitution read and change?",
     "neovim_answer": "It targets the 0 on CHECK and may read an existing row with getline(); it does not synthesize art.",
@@ -918,9 +918,9 @@
     ]
   },
   "M18.08.P01": {
-    "prompt": "ANIMATION\nThe checkpoint strip is return, overshoot, overshoot, return: complete four-line frames with CHECK=1.\n\n    F1              F2              F3              F4\n    │|....<---o|│   │|...<---o.|│   │|...<---o.|│   │|....<---o|│\n    │|......|\\.|│   │|.....|\\..|│   │|.....|\\..|│   │|......|\\.|│\n    │|...../.\\.|│   │|..../.\\..|│   │|..../.\\..|│   │|...../.\\.|│\n    │CHECK=1    │   │CHECK=1    │   │CHECK=1    │   │CHECK=1    │\n\nNEOVIM\nWhich reusable grammar describes the final frame-building step?",
+    "prompt": "ANIMATION\nThe final strip is return, overshoot, overshoot, return: complete four-line frames with CHECK=1.\n\n    F1              F2              F3              F4\n    │|....<---o|│   │|...<---o.|│   │|...<---o.|│   │|....<---o|│\n    │|......|\\.|│   │|.....|\\..|│   │|.....|\\..|│   │|......|\\.|│\n    │|...../.\\.|│   │|..../.\\..|│   │|..../.\\..|│   │|...../.\\.|│\n    │CHECK=1    │   │CHECK=1    │   │CHECK=1    │   │CHECK=1    │\n\nNEOVIM\nWhich reusable grammar describes the final frame-building step?",
     "compact_prompt": "ANIMATION\nFour approved blocks form return→overshoot hold→return.\n\n    F1          F2          F2          F1\n    │<---o│     │<---o.│    │<---o.│    │<---o│\n    │CHECK=1│   │CHECK=1│   │CHECK=1│   │CHECK=1│\n\nNEOVIM\nChoose the reusable command grammar.",
-    "animation_prompt": "The checkpoint preserves complete validated blocks and a deliberate turnaround hold; no byte reversal is needed.\n\n    F1              F2              F3              F4\n    │|....<---o|│   │|...<---o.|│   │|...<---o.|│   │|....<---o|│\n    │|......|\\.|│   │|.....|\\..|│   │|.....|\\..|│   │|......|\\.|│\n    │|...../.\\.|│   │|..../.\\..|│   │|..../.\\..|│   │|...../.\\.|│\n    │CHECK=1    │   │CHECK=1    │   │CHECK=1    │   │CHECK=1    │",
+    "animation_prompt": "The final strip preserves complete validated blocks and a deliberate turnaround hold; no byte reversal is needed.\n\n    F1              F2              F3              F4\n    │|....<---o|│   │|...<---o.|│   │|...<---o.|│   │|....<---o|│\n    │|......|\\.|│   │|.....|\\..|│   │|.....|\\..|│   │|......|\\.|│\n    │|...../.\\.|│   │|..../.\\..|│   │|..../.\\..|│   │|...../.\\.|│\n    │CHECK=1    │   │CHECK=1    │   │CHECK=1    │   │CHECK=1    │",
     "animation_answer": "Reuse approved complete ranges in an explicit forward-and-reverse timing order.",
     "neovim_prompt": "Recall the addressed copy grammar used to append approved ranges.",
     "neovim_answer": "A source range, t/copy command, destination $, and <CR> append each complete block.",
@@ -1269,11 +1269,11 @@
     ]
   },
   "M8.04.P01": {
-    "prompt": "ANIMATION\nThe independent target adds a complete opposite-contact five-row pose after the passing pose; its torso stays registered.\n\n    BEFORE          AFTER\n    │  o/     │     │  o/     │\n    │ /|      │     │ /|      │\n    │  |      │     │  |      │\n    │ / \\     │     │ / \\     │\n    │/_  \\    │     │/_  \\    │\n    │  o\\     │     │  o\\     │\n    │ /|\\     │     │ /|\\     │\n    │  |      │     │  |      │\n    │  |\\     │     │  |\\     │\n    │ /  \\_   │     │ /  \\_   │\n    │          │     │ \\o      │\n    │          │     │  |\\     │\n    │          │     │  |      │\n    │          │     │ /|      │\n    │          │     │/  _\\    │\n\nNEOVIM\nBefore the hidden authoring path, what target scope is correct?",
+    "prompt": "ANIMATION\nThe target adds a complete opposite-contact five-row pose after the passing pose; its torso stays registered.\n\n    BEFORE          AFTER\n    │  o/     │     │  o/     │\n    │ /|      │     │ /|      │\n    │  |      │     │  |      │\n    │ / \\     │     │ / \\     │\n    │/_  \\    │     │/_  \\    │\n    │  o\\     │     │  o\\     │\n    │ /|\\     │     │ /|\\     │\n    │  |      │     │  |      │\n    │  |\\     │     │  |\\     │\n    │ /  \\_   │     │ /  \\_   │\n    │          │     │ \\o      │\n    │          │     │  |\\     │\n    │          │     │  |      │\n    │          │     │ /|      │\n    │          │     │/  _\\    │\n\nNEOVIM\nBefore editing, what target scope is correct?",
     "compact_prompt": "ANIMATION\nAppend one complete opposite-contact pose.\n\n    SOURCE      NEW POSE\n    │ o\\ │      │/o  │\n    │/|  │      │ |\\ │\n    │/_ \\│      │/ _\\│\n\nNEOVIM\nPredict the scope.",
     "animation_prompt": "The target adds one new complete pose, with five authored rows and no unrelated torso drift.\n\n    BEFORE          AFTER\n    │  o/     │     │  o/     │\n    │ /|      │     │ /|      │\n    │  |      │     │  |      │\n    │ / \\     │     │ / \\     │\n    │/_  \\    │     │/_  \\    │\n    │  o\\     │     │  o\\     │\n    │ /|\\     │     │ /|\\     │\n    │  |      │     │  |      │\n    │  |\\     │     │  |\\     │\n    │ /  \\_   │     │ /  \\_   │\n    │          │     │ \\o      │\n    │          │     │  |\\     │\n    │          │     │  |      │\n    │          │     │ /|      │\n    │          │     │/  _\\    │",
     "animation_answer": "Append five complete rows for the opposite contact and keep existing poses unchanged.",
-    "neovim_prompt": "State the hidden edit's scope rather than guessing a broad substitution.",
+    "neovim_prompt": "State the edit's scope rather than guessing a broad substitution.",
     "neovim_answer": "Author exactly five new rows at the end; preserve the torso's registered column and existing ten rows.",
     "choices": [
       "ANIMATION: Add one complete five-row opposite-contact pose. | NEOVIM: create five bounded rows at the end.",
@@ -1701,7 +1701,7 @@
     ]
   },
   "M9.04.P01": {
-    "prompt": "ANIMATION\nThe copied squash keeps its three rows but changes the temporary center to a three-cell bar.\n\n    BEFORE        AFTER\n    │  o  │       │  o  │\n    │     │       │     │\n    │_____│       │_____│\n    │     │       │     │\n    │ =O= │       │ === │\n    │_____│       │_____│\n\nNEOVIM\nBefore the hidden edit, what cell-local change should you predict?",
+    "prompt": "ANIMATION\nThe copied squash keeps its three rows but changes the temporary center to a three-cell bar.\n\n    BEFORE        AFTER\n    │  o  │       │  o  │\n    │     │       │     │\n    │_____│       │_____│\n    │     │       │     │\n    │ =O= │       │ === │\n    │_____│       │_____│\n\nNEOVIM\nBefore editing, what cell-local change should you predict?",
     "compact_prompt": "ANIMATION\nSquash center changes O → blank; rails stay.\n\n    BEFORE      AFTER\n    │ =O= │  →   │ === │\n    │_____│      │_____│\n\nNEOVIM\nPredict the local scope.",
     "animation_prompt": "The squash row loses only its temporary O; the three-cell bar, rails, and ground remain fixed.\n\n    BEFORE        AFTER\n    │ =O= │       │ === │\n    │_____│       │_____│",
     "animation_answer": "Remove the center subject from the squash bar without shortening the row.",
@@ -1782,9 +1782,9 @@
     ]
   },
   "M9.08.P01": {
-    "prompt": "ANIMATION\nThe final loop appends a rebound frame with a larger O after the high frame has been copied; the ground stays fixed.\n\n    BEFORE          AFTER\n    │  o  │         │  o  │\n    │     │         │     │\n    │_____│         │_____│\n    │     │         │     │\n    │  o  │         │  o  │\n    │_____│         │_____│\n    │          │    │     │\n    │  === │    │    │  === │\n    │_____│         │_____│\n    │          │    │  O  │\n    │          │    │     │\n    │          │    │_____│\n\nNEOVIM\nWhich complete-frame reuse and local variation matches the rebound?",
+    "prompt": "ANIMATION\nThe final loop appends a rebound frame with a larger O after the high frame has been copied; the ground stays fixed.\n\n    BEFORE          AFTER\n    │  o  │         │  o  │\n    │     │         │     │\n    │_____│         │_____│\n    │     │         │     │\n    │  o  │         │  o  │\n    │_____│         │_____│\n    │ === │         │ === │\n    │     │         │     │\n    │_____│         │_____│\n    │     │         │  O  │\n    │     │         │     │\n    │     │         │_____│\n\nNEOVIM\nWhich complete-frame reuse and local variation matches the rebound?",
     "compact_prompt": "ANIMATION\nAppend rebound O as an overshoot after the bounce arc.\n\n    SQUASH      REBOUND\n    │ === │  →   │  O  │\n    │_____│      │_____│\n\nNEOVIM\nChoose copy then local change.",
-    "animation_prompt": "The rebound is a complete three-row frame whose larger subject overshoots before settling back to the first high o.\n\n    BEFORE          AFTER\n    │  o  │         │  o  │\n    │     │         │     │\n    │_____│         │_____│\n    │     │         │     │\n    │  o  │         │  o  │\n    │_____│         │_____│\n    │          │    │     │\n    │  === │    │    │  === │\n    │_____│         │_____│\n    │          │    │  O  │\n    │          │    │     │\n    │          │    │_____│",
+    "animation_prompt": "The rebound is a complete three-row frame whose larger subject overshoots before settling back to the first high o.\n\n    BEFORE          AFTER\n    │  o  │         │  o  │\n    │     │         │     │\n    │_____│         │_____│\n    │     │         │     │\n    │  o  │         │  o  │\n    │_____│         │_____│\n    │ === │         │ === │\n    │     │         │     │\n    │_____│         │_____│\n    │     │         │  O  │\n    │     │         │     │\n    │     │         │_____│",
     "animation_answer": "Copy a complete high frame as the rebound scaffold, then enlarge only its subject.",
     "neovim_prompt": "Use range copy for the scaffold and a landmark replacement for O.",
     "neovim_answer": ":1,3t$ copies the high frame; 10GforO changes the copied rebound marker.",

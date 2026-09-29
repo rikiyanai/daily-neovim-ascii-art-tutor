@@ -65,7 +65,12 @@ def send_spec(socket, pane, spec):
                "<Tab>": "Tab", "<BS>": "BSpace"}
     def flush():
         if literal:
-            send_text(socket, pane, "".join(literal))
+            # Feed discrete human-like key events. Sending `jforO` as one
+            # terminal byte burst can outrun Flash's asynchronous f-motion
+            # mapping even after VeryLazy, yielding a keylog with no edit.
+            for char in literal:
+                send_text(socket, pane, char)
+                time.sleep(0.03)
             literal.clear()
     for token in tokens:
         if token in special or re.fullmatch(r"<C-[A-Za-z]>", token):
@@ -113,6 +118,24 @@ def seed(root, passed, *, artifact_card=None, due_review=False, progress_to=None
             "next_due": ("2026-09-20T13:00:00-04:00" if due_review and card_id == "M0.01"
                          else "2099-01-01T00:00:00-05:00"),
         })
+    # Progress-targeted route fixtures must satisfy the same mastery contract
+    # as a real learner. Card-pass rows alone leave every completed module in
+    # review_pending, which locks the next module and produces no popup.
+    seeded = set(seed_ids)
+    card_map = {card["id"]: card for card in CUR["cards"]}
+    for module in CUR["modules"]:
+        if not set(module["card_ids"]).issubset(seeded):
+            continue
+        for review_key in module.get("required_review_card_ids", []):
+            question_ids = card_map[review_key].get("question_ids", [])
+            rows.append({
+                "type": "review", "result": "pass", "review_key": review_key,
+                "review_stage": 1, "card_id": review_key,
+                "module_id": module["id"],
+                "question_id": question_ids[0] if question_ids else None,
+                "at": "2026-09-20T12:15:00-04:00",
+                "next_due": "2099-01-01T00:00:00-05:00",
+            })
     for _ in range(failed_attempts):
         rows.append({
             "type": "card", "result": "fail", "card_id": failed_card,
@@ -197,38 +220,56 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 wait_signal(inner, question)
                 prompt_raw = capture(outer, pane)
                 prompt = " ".join(prompt_raw.split())
-                assert "DO THIS" in prompt and "answer (a-d)" in prompt, prompt
-                assert "ANIMATION" in prompt and "NEOVIM" in prompt and "both" in prompt.lower(), prompt
+                # Authored questions no longer use one generated "DO THIS" /
+                # "choose both halves" stem. Assert the learner-visible
+                # contract instead: paired domains, four answer choices, and
+                # the actual answer prompt.
+                assert "answer (a-d)" in prompt, prompt
+                assert "ANIMATION" in prompt and "NEOVIM" in prompt, prompt
+                assert all("%s)" % letter in prompt for letter in "abcd"), prompt
 
                 def assert_compact_choices_fit(screen):
                     if ROWS >= 38:
                         return
                     choice_lines = [line for line in screen.splitlines()
-                                    if re.search(r"\s[abcd]\)\s", line)]
+                                    if re.search(r"\s[abcd]\)\s+ANIM:", line)]
+                    vim_lines = [line for line in screen.splitlines()
+                                 if "VIM:" in line]
                     assert len(choice_lines) >= 4, screen
-                    assert all("· V:" in line for line in choice_lines[-4:]), screen
+                    assert len(vim_lines) >= 4, screen
 
                 assert_compact_choices_fit(prompt_raw)
 
             if route == "concept":
                 question_id = CARDS[card_id]["question_ids"][
                     failed_attempts % len(CARDS[card_id]["question_ids"])]
-                assert card_id in prompt, prompt
-                if card_id == "M0.P0":
-                    assert "TEACH FIRST" in prompt and "4j" in prompt and "5j" in prompt, prompt
-                    assert all(token not in prompt for token in ("3daw", "rO", ":8s/")), prompt
-                else:
-                    assert "complete" in prompt.lower(), prompt
-                if question_id.endswith("Q07"):
-                    assert "FRAME 1" in prompt and "FRAME 5" in prompt, prompt
+                authored_prompt = (
+                    QUESTIONS[question_id].get(
+                        "compact_prompt", QUESTIONS[question_id]["prompt"])
+                    if ROWS < 38 else QUESTIONS[question_id]["prompt"]
+                )
+                stem = next(
+                    line.strip() for line in authored_prompt.splitlines()
+                    if line.strip() not in ("ANIMATION", "NEOVIM")
+                )
+                assert stem[:24] in prompt, prompt
                 if choice_order:
                     assert all("%s)" % letter in prompt for letter in "abcd")
                 send_text(outer, pane, answer_for(question_id,
                                                   choice_order or (0, 1, 2, 3)))
                 tmux(outer, "send-keys", "-t", pane, "Enter")
             elif route == "review":
-                assert "Spaced review" in prompt
-                send_text(outer, pane, answer_for("M0.Q01"))
+                review_question = QUESTIONS["M0.01.P01"]
+                review_authored = (
+                    review_question.get("compact_prompt", review_question["prompt"])
+                    if ROWS < 38 else review_question["prompt"]
+                )
+                review_stem = next(
+                    line.strip() for line in review_authored.splitlines()
+                    if line.strip() not in ("ANIMATION", "NEOVIM")
+                )
+                assert review_stem[:24] in prompt, prompt
+                send_text(outer, pane, answer_for("M0.01.P01"))
                 tmux(outer, "send-keys", "-t", pane, "Enter")
                 wait_signal(inner, ready)
                 review_brief = " ".join(capture(outer, pane).split())
@@ -256,7 +297,12 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 assert CARDS["M0.08"]["expected"] not in brief
                 send_spec(outer, pane, CARDS["M0.08"]["expected"] + "ZZ")
             else:
-                wait_signal(inner, ready)
+                try:
+                    wait_signal(inner, ready)
+                except AssertionError as exc:
+                    raise AssertionError(
+                        "popup did not reach editor-ready state:\n" + capture(outer, pane)
+                    ) from exc
                 brief_raw = capture(outer, pane)
                 brief = " ".join(brief_raw.split())
                 card = CARDS[card_id]
@@ -274,12 +320,27 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                     for method in card.get("method_alternatives", []):
                         assert method["keys"] not in brief
                 if route == "compare":
-                    assert "comparison appears after verification" in brief.lower(), brief
-                send_spec(outer, pane, key_sequence or card["expected"] + "ZZ")
+                    assert any(marker in brief.lower() for marker in (
+                        "compare after pass", "comparison appears after verification"
+                    )), brief
+                route_keys = key_sequence
+                # M2 explicitly accepts both a relative row motion and an
+                # exact line address. Use the latter in automation because
+                # the user's Hardtime/Flash stack can consume synthetic `j`
+                # even though a human-paced `j` remains a taught path.
+                if route_keys is None and card_id == "M2.06":
+                    route_keys = "2GforOZZ"
+                send_spec(outer, pane, route_keys or card["expected"] + "ZZ")
 
             if route not in ("concept", "review"):
                 for qid in CARDS[card_id].get("question_placement", {}).get("after", []):
-                    wait_signal(inner, question)
+                    try:
+                        wait_signal(inner, question)
+                    except AssertionError as exc:
+                        raise AssertionError(
+                            "popup did not open after-question %s:\n%s" %
+                            (qid, capture(outer, pane))
+                        ) from exc
                     post_prompt = " ".join(capture(outer, pane).split())
                     assert "ANIMATION" in post_prompt and "NEOVIM" in post_prompt
                     send_text(outer, pane, answer_for(qid))
@@ -288,12 +349,15 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             wait_signal(inner, feedback)
             feedback_screen = " ".join(capture(outer, pane).split())
             if route == "review":
-                assert "REVIEW RETRIEVED" in feedback_screen and "CONCEPT REPLAY" in feedback_screen
+                assert "REVIEW RETRIEVED" in feedback_screen and "ANSWER EXPLANATION" in feedback_screen, feedback_screen
                 assert "EDIT REPLAY" in feedback_screen and "exact target" in feedback_screen
             else:
                 assert "LESSON COMPLETE" in feedback_screen, feedback_screen
             if route == "concept":
-                assert "CONCEPT REPLAY" in feedback_screen
+                assert "ANSWER EXPLANATION" in feedback_screen
+                assert "QUESTION REPLAY" not in feedback_screen
+                assert "CONCEPT REPLAY" not in feedback_screen
+                assert "retain the principle" not in feedback_screen
             if route == "compare":
                 assert all(method["label"] in feedback_screen
                            for method in CARDS[card_id]["method_alternatives"]), feedback_screen
@@ -345,6 +409,9 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 assert evidence.get("displayed_choice_indices")
                 if route == "concept" and choice_order:
                     assert evidence["displayed_choice_indices"] == list(choice_order)
+                    semantic = QUESTIONS[question_id]["correct_choice"]
+                    expected_letter = "abcd"[list(choice_order).index(semantic)]
+                    assert evidence.get("raw_answer") == expected_letter
                 assert evidence.get("raw_answer") in "abcd"
                 assert isinstance(evidence.get("semantic_choice"), int)
             if route == "transfer":
@@ -363,6 +430,18 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
 
 if GATE.resolve() != ROOT / "bin" / "vim-daily-gate":
     raise AssertionError("installed gate does not resolve to this checkout")
+
+only_transfer = next((arg.split("=", 1)[1] for arg in sys.argv
+                      if arg.startswith("--only-transfer=")), None)
+if only_transfer:
+    if only_transfer not in CARDS or CARDS[only_transfer].get("kind") != "transfer":
+        raise AssertionError("unknown transfer card: " + only_transfer)
+    override_keys = os.environ.get("VIM_DAILY_TEST_KEYS")
+    exercise("%s live transfer" % only_transfer, passed=0, route="transfer",
+             card_id=only_transfer, artifact_card=only_transfer,
+             progress_to=only_transfer,
+             key_sequence=(override_keys + "ZZ") if override_keys else None)
+    raise SystemExit(0)
 
 if "--only-m005" in sys.argv:
     # Reproduce the operator's valid-but-non-pristine interaction: look around,

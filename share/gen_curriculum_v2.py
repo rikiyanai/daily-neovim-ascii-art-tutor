@@ -643,12 +643,18 @@ MODULES = [
             [" /---\\", "|  O  |", "|  _  |", " \\___/"],
             "jforO",
             [["jfo", "find the unfamiliar face's eye"], ["rO", "change only that feature"]],
+            method_requirement=require_method(
+                "reach the eye row, find the eye, and replace it in place",
+                exact_any_of=["jforO", "2GforO"]),
         ),
         "transfer_alt": step(
             [" /===\\", "|  o  |", "| --- |", " \\___/"],
             [" /===\\", "|  O  |", "| --- |", " \\___/"],
             "jforO",
             [["jfo", "find the eye inside the changed silhouette"], ["rO", "replace only it"]],
+            method_requirement=require_method(
+                "reach the eye row, find the eye, and replace it in place",
+                exact_any_of=["jforO", "2GforO"]),
         ),
     },
     {

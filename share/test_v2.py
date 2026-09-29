@@ -495,15 +495,23 @@ with contextlib.redirect_stdout(decode_output):
     right, answer = v2.ask_authored_question(
         decode_question, input_fn=lambda _prompt: next(decode_answers), shuffle=False)
 assert right and answer == decode_question["correct_choice"]
-assert "answer with a, b, c, d, or c to copy; this did not count as an attempt" in decode_output.getvalue()
+assert "answer with a, b, c, d, or y to copy; this did not count as an attempt" in decode_output.getvalue()
 
-# `c` copies the complete rendered question and all four choices, then keeps
+# Choice c must remain a valid answer; the copy control cannot claim any of
+# the four answer letters.
+choice_c_question = dict(decode_question, correct_choice=2)
+with contextlib.redirect_stdout(io.StringIO()):
+    right, answer = v2.ask_authored_question(
+        choice_c_question, input_fn=lambda _prompt: "c", shuffle=False)
+assert right and answer == 2
+
+# `y` copies the complete rendered question and all four choices, then keeps
 # the same question active without recording an attempt.
 copied_pages = []
 original_copy = v2._copy_text_to_clipboard
 v2._copy_text_to_clipboard = lambda value: copied_pages.append(value) or True
 try:
-    copy_answers = iter(["c", "abcd"[decode_question["correct_choice"]]])
+    copy_answers = iter(["y", "abcd"[decode_question["correct_choice"]]])
     copy_output = io.StringIO()
     with contextlib.redirect_stdout(copy_output):
         right, answer = v2.ask_authored_question(
@@ -528,7 +536,11 @@ with contextlib.redirect_stdout(held_correction):
         {"source": "test"},
         False, None, "", "")
 assert "ONE WORKING ANSWER" not in held_correction.getvalue()
-assert "correct:" in held_correction.getvalue()
+assert "ANSWER EXPLANATION" in held_correction.getvalue()
+assert "YOUR ANSWER" in held_correction.getvalue()
+assert "CORRECT ANSWER" in held_correction.getvalue()
+assert "WHY IT MISSES" in held_correction.getvalue()
+assert "CONCEPT" in held_correction.getvalue()
 question_only = v2.project(cur, [{
     "type": "question", "result": "pass", "card_id": "M0.01",
     "module_id": "M0", "question_id": typed_question["id"],
@@ -986,8 +998,30 @@ with tempfile.TemporaryDirectory() as tmp:
                         completed=False)
     rendered = output.getvalue()
     assert "ATTEMPT NOT PASSED" in rendered and "conceptual choice was incorrect" in rendered
-    assert "CONCEPT REPLAY" in rendered and "you chose:" in rendered and "correct:" in rendered
-    assert "retain the principle" in rendered and "shuffled answer letter" in rendered
+    assert "ANSWER EXPLANATION" in rendered
+    assert "YOUR ANSWER" in rendered and "CORRECT ANSWER" in rendered
+    assert "WHY IT MISSES" in rendered and "CONCEPT" in rendered
+    assert "QUESTION REPLAY" not in rendered and "placement:" not in rendered
+    assert "retain the principle" not in rendered and "shuffled answer letter" not in rendered
+
+    # Reproduce the operator's exact 21:54 failure. The result must explain
+    # why "s rewrites the whole line" is wrong and then teach the current-line
+    # address plus g flag; replay/framework vocabulary is not an explanation.
+    sl_card = next(c for c in cur["cards"] if c["id"] == "M0.SL")
+    sl_question = next(q for q in cur["questions"] if q["id"] == "M0.SL.P01")
+    output = io.StringIO()
+    with contextlib.redirect_stdout(output):
+        v2._post_lesson(
+            cfg, cur, sl_card, v2.project(cur, v2.read_events(cfg)),
+            {"type": "paired_question", "question": sl_question,
+             "answer": 3, "right": False},
+            completed=False,
+        )
+    sl_rendered = output.getvalue()
+    assert "s replaces matching text, not the whole current line" in sl_rendered
+    assert "cursor supplies the line scope" in sl_rendered
+    assert "g supplies all matches within that scope" in sl_rendered
+    assert "QUESTION REPLAY" not in sl_rendered and "placement:" not in sl_rendered
 
 # Three active days restore the legacy flame, best streak, all-time total, and
 # bold status treatment in both briefs and progress output.
@@ -1366,7 +1400,7 @@ with tempfile.TemporaryDirectory() as tmp:
             assert v2.run_review(cfg, cur, v2.rebuild(cfg, cur), "M0.01", review) == 0
         review_text = output.getvalue()
         assert "REVIEW RETRIEVED" in review_text
-        assert "CONCEPT REPLAY" in review_text and "CHANGED-ART EDIT REPLAY" in review_text
+        assert "ANSWER EXPLANATION" in review_text and "CHANGED-ART EDIT REPLAY" in review_text
         assert "exact saved target verified" in review_text
         assert "SKILL TREE / MODULE PROGRESS" in review_text
         latest_review = [row for row in v2.read_events(cfg)

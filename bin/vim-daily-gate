@@ -658,10 +658,11 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
         task_label = (task or "Edit the art to match TARGET").replace("%", "%%")
         hint_label = (hint or "Use F1 for movement and editing help").replace("%", "%%")
         ui_lua = (
-            # VD-28/VD-31: popup text is copied with the terminal's own
-            # Shift-drag selection (tmux settings are never changed). A user
-            # config with mouse=a would claim mouse events for Visual mode,
-            # so the lesson editor leaves the mouse to the terminal.
+            # VD-28/VD-31/VD-33: the popup temporarily releases tmux's mouse
+            # at session scope. A user config with mouse=a would still claim
+            # drag events for Visual mode, so this tutor Neovim process also
+            # leaves the mouse to the terminal. The learner's config files and
+            # Neovim processes outside the popup remain untouched.
             "vim.o.mouse='';"
             "vim.o.laststatus=3;vim.o.showmode=false;"
             "_G.VimDailyMode=function() local m=vim.fn.mode(1);local t={n='NORMAL',no='OPERATOR',i='INSERT',"

@@ -29,6 +29,7 @@ CURRICULUM = json.loads((ROOT / "share" / "curriculum-v2.json").read_text(encodi
 M0_FIRST = next(card for card in CURRICULUM["cards"] if card["id"] == "M0.01")
 M0_FIRST_QUESTION = next(question for question in CURRICULUM["questions"]
                          if question["id"] == "M0.01.P01")
+QUESTION_ORDER = (1, 2, 0, 3)  # Put semantic choice 0 at displayed letter c.
 M0_CARD_IDS = next(module for module in CURRICULUM["modules"]
                    if module["id"] == "M0")["card_ids"]
 M0_TOTAL = len(M0_CARD_IDS)
@@ -106,7 +107,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         "VIM_DAILY_TMUX_FEEDBACK_SIGNAL": feedback,
         "VIM_DAILY_TMUX_POST_SIGNAL": post,
         "VIM_DAILY_TMUX_FINISHED_SIGNAL": done,
-        "VIM_DAILY_TEST_ORDERED_CHOICES": "1",
+        "VIM_DAILY_TEST_CHOICE_ORDER": "".join(str(value) for value in QUESTION_ORDER),
     }
     if CLEAN_MODE:
         lesson_env["VIM_DAILY_CLEAN"] = "1"
@@ -160,10 +161,19 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         run("tmux", "-L", inner_socket, "-f", "/dev/null", "new-session", "-d",
             "-s", inner_session, "-x", str(COLUMNS), "-y", str(ROWS),
             "/bin/zsh", "-f")
-        # Start from the user's common `mouse on` preference. VD-31: the popup
-        # must never change it (or any global option/key table), because a
-        # hung or overlapping popup would leave every normal pane changed.
+        # Start from the user's common global `mouse on` preference. The popup
+        # may override it only on this session while visible, and must remove
+        # that local override when it closes.
         tmux(inner_socket, "set-option", "-g", "mouse", "on")
+        # Reproduce a killed owner whose numeric PID has already been reused
+        # by an unrelated live process (this test runner). PID existence alone
+        # must not preserve the stale override.
+        stale_owner = str(os.getpid())
+        tmux(inner_socket, "set-option", "-t", inner_session, "mouse", "off")
+        tmux(inner_socket, "set-option", "-t", inner_session,
+             "@vim_daily_mouse_owner", stale_owner)
+        tmux(inner_socket, "set-option", "-t", inner_session,
+             "@vim_daily_mouse_base", "inherit")
         for key, value in lesson_env.items():
             tmux(inner_socket, "set-environment", "-g", key, value)
         tmux(inner_socket, "set-hook", "-g", "client-attached",
@@ -201,13 +211,29 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         ])
         if "mouse on" not in tmux_options:
             raise AssertionError("popup changed the global tmux mouse option: " + tmux_options)
+        popup_mouse = tmux(
+            inner_socket, "show-options", "-Av", "-t", inner_session, "mouse",
+            capture_output=True).stdout.strip()
+        if popup_mouse != "off":
+            raise AssertionError(
+                "popup did not release ordinary drag to the terminal: " + popup_mouse)
+        popup_owner = tmux(
+            inner_socket, "show-options", "-qv", "-t", inner_session,
+            "@vim_daily_mouse_owner", capture_output=True).stdout.strip()
+        popup_base = tmux(
+            inner_socket, "show-options", "-qv", "-t", inner_session,
+            "@vim_daily_mouse_base", capture_output=True).stdout.strip()
+        if not popup_owner.isdigit() or popup_owner == stale_owner:
+            raise AssertionError("popup did not replace the stale mouse owner: " + popup_owner)
+        if popup_base != "inherit":
+            raise AssertionError("popup did not preserve the inherited mouse base: " + popup_base)
         copy_bindings = tmux(
             inner_socket, "list-keys", "-T", "copy-mode-vi",
             capture_output=True).stdout
         if "pbcopy" in copy_bindings:
             raise AssertionError("popup rebound the global copy-mode-vi table:\n" + copy_bindings)
         required = [
-            "vim drill · c copies a question · Shift-drag selects · Cmd-V pastes",
+            "vim drill · drag selects · Cmd-C copies · questions: y copies all",
             "NEOVIM × ASCII ANIMATION",
             "M0.01",
             "DO THIS",
@@ -291,6 +317,20 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             print("--- SCROLLED TEACHING BRIEF pane=%s ---" % outer_pane)
             print(lower_brief.rstrip())
         tmux(outer_socket, "send-keys", "-t", outer_pane, "C-w", "w")
+
+        # tmux releasing the mouse is only half the selection path: Neovim
+        # must not request terminal mouse reporting either. Verify the actual
+        # headed tutor process after the learner's plugins have loaded.
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l",
+             ":echo empty(&mouse)?'VIM_DAILY_MOUSE_RELEASED':'VIM_DAILY_MOUSE_CAPTURED'")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        mouse_screen = capture_until(outer_socket, outer_pane,
+                                     ["VIM_DAILY_MOUSE_RELEASED"])
+        mouse_flat = " ".join(mouse_screen.split())
+        if "VIM_DAILY_MOUSE_RELEASED" not in mouse_flat:
+            raise AssertionError("tutor Neovim still captured drag events:\n" + mouse_screen)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", ":redraw")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
 
         # The personal config owns the default editor chrome. Only the explicit
         # clean fallback owns a TUTOR statusline and F1 help float.
@@ -475,7 +515,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         clipboard_before = subprocess.run(
             ["pbpaste"], text=True, capture_output=True, check=True).stdout
         try:
-            tmux(outer_socket, "send-keys", "-t", outer_pane, "c", "Enter")
+            tmux(outer_socket, "send-keys", "-t", outer_pane, "y", "Enter")
             copied_screen = capture_until(
                 outer_socket, outer_pane,
                 ["copied the complete question and choices"])
@@ -489,8 +529,13 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
                         "question clipboard omitted %r:\n%s" % (copied_text, copied_page))
         finally:
             subprocess.run(["pbcopy"], input=clipboard_before, text=True, check=True)
+        answer_letter = "abcd"[
+            QUESTION_ORDER.index(M0_FIRST_QUESTION["correct_choice"])
+        ]
+        if answer_letter != "c":
+            raise AssertionError("acceptance fixture must exercise answer choice c")
         tmux(outer_socket, "send-keys", "-t", outer_pane,
-             "abcd"[M0_FIRST_QUESTION["correct_choice"]], "Enter")
+             answer_letter, "Enter")
         if not (state / "vim-daily" / "last-prompt").exists():
             raise AssertionError("the submitted paired question did not record attempt evidence")
         try:
@@ -627,6 +672,19 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         if restored_mouse != "on":
             raise AssertionError(
                 "popup did not restore the user's tmux mouse preference: " + restored_mouse)
+        restored_local_mouse = tmux(
+            inner_socket, "show-options", "-q", "-t", inner_session, "mouse",
+            capture_output=True).stdout.strip()
+        if restored_local_mouse:
+            raise AssertionError(
+                "popup left a session-local mouse override: " + restored_local_mouse)
+        for option in ("@vim_daily_mouse_owner", "@vim_daily_mouse_base"):
+            leftover = tmux(
+                inner_socket, "show-options", "-qv", "-t", inner_session,
+                option, capture_output=True).stdout.strip()
+            if leftover:
+                raise AssertionError("popup left mouse ownership metadata: %s=%s" % (
+                    option, leftover))
 
         events = [
             json.loads(line)
@@ -635,6 +693,9 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         ]
         assert any(row.get("card_id") == "M0.01" and row.get("result") == "pass"
                    for row in events), events
+        question_event = next(row for row in events
+                              if row.get("question_id") == M0_FIRST_QUESTION["id"])
+        assert question_event["question_evidence"]["raw_answer"] == "c", question_event
         profile = "clean fallback" if CLEAN_MODE else "real user config"
         print("PASS client-attached hook rendered and completed the automatic popup (%dx%d, %s)" %
               (COLUMNS, ROWS, profile))

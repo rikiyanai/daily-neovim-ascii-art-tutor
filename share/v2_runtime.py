@@ -691,12 +691,12 @@ def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=Non
     while True:
         try:
             answer = input_fn(
-                "  answer (a-%s) · c copies this question: " % letters[-1]
+                "  answer (a-%s) · y copies this question: " % letters[-1]
             ).strip().lower()
         except (EOFError, KeyboardInterrupt):
             print()
             return None, None
-        if answer == "c":
+        if answer == "y":
             if _copy_text_to_clipboard(clipboard_page):
                 print("  copied the complete question and choices to the macOS clipboard")
             else:
@@ -704,7 +704,7 @@ def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=Non
             continue
         if answer in letters and len(answer) == 1:
             break
-        print("  answer with %s, or c to copy; this did not count as an attempt" %
+        print("  answer with %s, or y to copy; this did not count as an attempt" %
               ", ".join(letters))
     chosen = order[letters.index(answer)]
     if evidence is not None:
@@ -842,6 +842,39 @@ def _print_grammar_breakdown(q, missing=None):
                 print("    %s" % line)
     if missing:
         print("  Reconsider: %s" % "; ".join(" / ".join(group) for group in missing))
+
+
+def _concept_text(value):
+    """Turn answer feedback into a learner-facing explanation sentence."""
+    text = str(value or "").strip()
+    for prefix in ("Correct. ", "Correct: "):
+        if text.casefold().startswith(prefix.casefold()):
+            text = text[len(prefix):]
+            break
+    if text.casefold() in ("correct.", "correct:"):
+        text = ""
+    return text
+
+
+def _print_choice_explanation(q, chosen, *, compact=False):
+    """Explain a selected choice without exposing curriculum/runtime metadata."""
+    correct = q["correct_choice"]
+    choices = q.get("choices", [])
+    feedback = q.get("feedback", [])
+    clip_width = 64 if compact else 120
+    if not isinstance(chosen, int) or chosen < 0 or chosen >= len(choices):
+        print("  YOUR ANSWER  (not recorded)")
+        return
+    print("  YOUR ANSWER  %s" % _clip(choices[chosen], clip_width))
+    if chosen != correct:
+        why_missed = (feedback[chosen] if chosen < len(feedback)
+                      else "That choice does not match the shown result.")
+        print("  WHY IT MISSES  %s" % _clip(_concept_text(why_missed), clip_width))
+        print("  CORRECT ANSWER  %s" % _clip(choices[correct], clip_width))
+    concept = feedback[correct] if correct < len(feedback) else ""
+    concept = _concept_text(concept)
+    if concept:
+        print("  CONCEPT  %s" % _clip(concept, clip_width))
 
 
 def _question_answer_guidance(form):
@@ -1334,7 +1367,7 @@ def _write_session_lesson(cfg, cur, progress, card):
             header.extend("  " + _clip(line, 64) for line in paradigm.splitlines() if line.strip())
         header.extend([
             "BASIC HELP  o new line below · O above · Space waits for WhichKey · clean mode F1",
-            "COPY / PASTE  c copies a question · Shift-drag selects · Cmd-V pastes",
+            "COPY / PASTE  drag selects · Cmd-C copies · y copies a whole question · Cmd-V pastes",
             "READING THE RECIPE  <C-k>.M middle-dot digraph · <Esc> Escape",
             "SUBMIT / STUCK  :wq submits · :q! exits without submission",
         ])
@@ -1406,7 +1439,7 @@ def _write_session_lesson(cfg, cur, progress, card):
         "  :wq submits. :q! exits without submission. Retry restores this card's checkpoint.",
         "  The task brief is read-only. <C-w>w switches between the brief and art.",
         "  o opens a new line below; O opens one above.",
-        "  Press c at a question to copy it; Shift-drag selects any popup text; Cmd-V pastes.",
+        "  Drag to select popup text, then Cmd-C; press y to copy a whole question; Cmd-V pastes.",
         "  Personal config keeps Hardtime and WhichKey (press Space and wait); clean mode uses F1.",
     ])
     _write_lines_atomic(lesson, header)
@@ -1939,7 +1972,7 @@ def _clip(value, width=48):
 # Reserve the prompt plus both tmux popup border rows. Counting the outer
 # terminal height as fully printable let a compact five-question check scroll
 # its result header off an 80x24 popup by one row.
-_FEEDBACK_TRAILER_LINES = 4
+_FEEDBACK_TRAILER_LINES = 5
 
 
 def _post_feedback_ultra(card, replay, completed, context, concept_replay,
@@ -1976,28 +2009,23 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
             print("METHOD EVIDENCE  demonstrated: %s" % replay["method_family"])
     elif replay and replay.get("type") == "paired_question":
         q = replay["question"]
-        print("%sQUESTION REPLAY%s  %s · %s" % (
-            bold, off, q.get("form", "question"),
-            "correct" if replay.get("right") else "needs work"))
+        print("%sANSWER EXPLANATION%s  %s" % (
+            bold, off, "correct" if replay.get("right") else "needs work"))
         chosen = replay.get("answer")
         if q.get("choices") and isinstance(chosen, int):
-            correct = q["correct_choice"]
-            print("you:     %s" % _clip(q["choices"][chosen], 64))
-            print("correct: %s" % _clip(q["choices"][correct], 64))
-            print("why:     %s" % _clip(q["feedback"][correct], 64))
+            _print_choice_explanation(q, chosen, compact=True)
         else:
-            print("you: %s" % _clip(chosen if chosen is not None else "(none)", 64))
+            print("  YOUR ANSWER  %s" % _clip(
+                chosen if chosen is not None else "(none)", 64))
             _print_grammar_breakdown(q)
     elif replay and replay.get("type") in ("concept", "review"):
         q, chosen = replay["question"], replay["chosen"]
         if q.get("choices"):
-            correct = q["correct_choice"]
-            print("%sCONCEPT REPLAY%s  you: %s" % (bold, off, _clip(q["choices"][chosen])))
-            print("correct: %s · why: %s" % (
-                _clip(q["choices"][correct], 34), _clip(q["feedback"][correct], 34)))
+            print("%sANSWER EXPLANATION%s" % (bold, off))
+            _print_choice_explanation(q, chosen, compact=True)
         else:
-            print("%sCONCEPT REPLAY%s  %s" % (bold, off, q.get("form", "question")))
-            print("you: %s" % _clip(replay.get("answer", chosen), 64))
+            print("%sANSWER EXPLANATION%s" % (bold, off))
+            print("  YOUR ANSWER  %s" % _clip(replay.get("answer", chosen), 64))
             _print_grammar_breakdown(q)
             sample = q.get("answer_contract", {}).get("sample_answer")
             if sample:
@@ -2030,10 +2058,7 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
     if replay and replay.get("playback_verified"):
         print("%sPLAYBACK VERIFIED%s  automatic equal-height strip preview completed" % (
             bold, off))
-    if concept_replay:
-        print("%sDO / AVOID%s  retain the principle; do not guess from the answer letter." % (
-            bold, off))
-    else:
+    if not concept_replay:
         path = " → ".join(keys for keys, _why in card.get("recipe", [])
                           if keys != card.get("cursor"))
         print("%sDO / AVOID%s  %s · no out-of-scope or inexact edits" % (
@@ -2184,31 +2209,26 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
             print("  METHOD EVIDENCE: demonstrated %s" % replay["method_family"])
     elif replay and replay.get("type") == "paired_question":
         q = replay["question"]
-        print("\n%sQUESTION REPLAY%s" % (bold, off))
-        print("  form:      %s" % q.get("form", "question"))
-        print("  placement: %s — %s" % (
-            q.get("placement", "paired"), q.get("placement_reason", "")))
+        print("\n%sANSWER EXPLANATION%s" % (bold, off))
         chosen = replay.get("answer")
         if q.get("choices") and isinstance(chosen, int):
-            correct = q["correct_choice"]
-            print("  you chose: %s" % q["choices"][chosen])
-            print("  correct:   %s" % q["choices"][correct])
-            print("  why:       %s" % q["feedback"][correct])
+            _print_choice_explanation(q, chosen)
+            if chosen != q["correct_choice"]:
+                _print_grammar_breakdown(q)
         else:
-            print("  you wrote: %s" % (chosen if chosen is not None else "(none)"))
+            print("  YOUR ANSWER  %s" % (
+                chosen if chosen is not None else "(none)"))
             _print_grammar_breakdown(q)
     elif replay and replay.get("type") in ("concept", "review"):
         q = replay["question"]
         chosen = replay["chosen"]
-        print("\n%sCONCEPT REPLAY%s" % (bold, off))
-        print("  prompt: %s" % q["prompt"])
+        print("\n%sANSWER EXPLANATION%s" % (bold, off))
         if q.get("choices"):
-            correct = q["correct_choice"]
-            print("  you chose: %s" % q["choices"][chosen])
-            print("  correct:   %s" % q["choices"][correct])
-            print("  why:       %s" % q["feedback"][correct])
+            _print_choice_explanation(q, chosen)
+            if chosen != q["correct_choice"]:
+                _print_grammar_breakdown(q)
         else:
-            print("  you wrote: %s" % replay.get("answer", chosen))
+            print("  YOUR ANSWER  %s" % replay.get("answer", chosen))
             _print_grammar_breakdown(q)
             sample = q.get("answer_contract", {}).get("sample_answer")
             if sample:
@@ -2226,7 +2246,12 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
         print("\n%sPLAYBACK VERIFIED%s" % (bold, off))
         print("  The completed equal-height strip was played automatically in frame order.")
 
-    if compact and replay and replay.get("type") == "edit":
+    if concept_replay:
+        # The authored answer explanation is the lesson here. Card-design
+        # rationale and generic "retain the principle" advice are internal
+        # scaffolding; printing them repeats the VD-33 failure in new words.
+        pass
+    elif compact and replay and replay.get("type") == "edit":
         pass
     elif check_replay:
         print("\n%sCHECK PURPOSE%s  %s" % (bold, off, context["buys"]))
@@ -2237,30 +2262,28 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
         print("\n%sWHAT THIS LESSON BUYS YOU%s" % (bold, off))
         print("  " + context["buys"])
 
-    print("\n%sDO / AVOID%s" % (bold, off))
-    if concept_replay:
-        print("  DO    retain the principle and explanation, not the shuffled answer letter")
-        print("  AVOID guessing from key count or surface appearance without tracing the edit's effect")
-    elif compact:
-        path = " → ".join(keys for keys, _why in card.get("recipe", [])
-                          if keys != card.get("cursor"))
-        print("  DO    taught path: %s" % (path or card.get("expected", "(none)")))
-        if card.get("method_alternatives"):
+    if not concept_replay:
+        print("\n%sDO / AVOID%s" % (bold, off))
+        if compact:
+            path = " → ".join(keys for keys, _why in card.get("recipe", [])
+                              if keys != card.get("cursor"))
+            print("  DO    taught path: %s" % (path or card.get("expected", "(none)")))
+            if card.get("method_alternatives"):
+                for method in card["method_alternatives"]:
+                    print("  ALSO  %s: %s" % (method["label"], method["keys"]))
+            print("  AVOID out-of-scope cells or an inexact target.")
+        else:
+            for keys, why in card.get("recipe", []):
+                label = "START" if keys == card.get("cursor") and "cursor starts" in why else "DO"
+                print("  %-5s %-14s %s" % (label, keys, why))
+        if not compact and card.get("method_alternatives"):
             for method in card["method_alternatives"]:
-                print("  ALSO  %s: %s" % (method["label"], method["keys"]))
-        print("  AVOID out-of-scope cells or an inexact target.")
-    else:
-        for keys, why in card.get("recipe", []):
-            label = "START" if keys == card.get("cursor") and "cursor starts" in why else "DO"
-            print("  %-5s %-14s %s" % (label, keys, why))
-    if not concept_replay and not compact and card.get("method_alternatives"):
-        for method in card["method_alternatives"]:
-            print("  ALSO  %-18s %-18s %s" % (
-                method["label"], method["keys"], method["why"]))
-        print("  AVOID choosing by key count alone; choose by scope, repeatability, and error risk.")
-    elif not concept_replay and not compact:
-        print("  AVOID editing the read-only brief or changing cells outside the requested scope.")
-        print("  AVOID treating a similar-looking buffer as correct; the exact saved target is graded.")
+                print("  ALSO  %-18s %-18s %s" % (
+                    method["label"], method["keys"], method["why"]))
+            print("  AVOID choosing by key count alone; choose by scope, repeatability, and error risk.")
+        elif not compact:
+            print("  AVOID editing the read-only brief or changing cells outside the requested scope.")
+            print("  AVOID treating a similar-looking buffer as correct; the exact saved target is graded.")
 
     print("\n%sSOURCE%s  %s" % (bold, off, context["source"]))
     if review_replay:
