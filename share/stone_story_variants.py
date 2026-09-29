@@ -87,6 +87,16 @@ def _replace_column(rows, column, glyph):
     return [row[:column - 1] + glyph + row[column:] for row in rows]
 
 
+def _pad_pose(rows, height=5):
+    """Keep a complete source pose and add explicit timing rows to its height."""
+    return list(rows) + [""] * (height - len(rows))
+
+
+def _append_open_lines(rows):
+    """Normal-mode path that appends literal rows with o and returns to Normal."""
+    return "G" + "".join("o%s<Esc>" % row for row in rows)
+
+
 SNAKE_BARE = ["         .-.", "        ((`-'", "         \\\\"]       # official-Pets/Snake res01 rows 1-3
 SNAKE_TONGUE = ["         .-.", "        ((`-'-", "         \\\\"]    # res01 + res04/res06 tongue layer
 SNAKE_FORK = ["         .-.", "        ((`-'-<", "         \\\\"]     # res01 + res05 forked tongue
@@ -903,6 +913,58 @@ REPLACEMENTS = {
                  "append an edge to every row of the Skully blink frame",
                  "Skully comparison: append one right edge to all three rows of the blink frame; leave the open frame unchanged.",
                  "Use blockwise append so short and long rows each receive exactly one edge."),
+    ]},
+    "M7.04": {"review_variants": [
+        _variant(
+            _pad_pose(MISSILE_F1) + _pad_pose(MISSILE_F1),
+            _pad_pose(["  ===_/", MISSILE_F1[1], MISSILE_F1[2]])
+            + _pad_pose(["  ===_/", MISSILE_F1[1], MISSILE_F1[2]]),
+            "gg02lv2lr=5j.",
+            [["gg02lv2lr=", "select and replace the first three roof cells characterwise"],
+             ["5j.", "move one complete padded pose and repeat the same band change"]],
+            "official-Games/TowerDefense res18 missile frame 1 x2 + timing rows",
+            "change one three-cell material band with characterwise Visual mode and dot repeat",
+            "Two held missile poses: change the first three roof cells from underscores to equals in both; preserve both complete hulls and their timing rows.",
+            "Select exactly three roof cells with v, then repeat that bounded change one five-row pose later.",
+        ),
+        _variant(
+            _pad_pose(CHICK_EGG_F1) + _pad_pose(CHICK_EGG_F1),
+            _pad_pose(["      ~~~", CHICK_EGG_F1[1], CHICK_EGG_F1[2]])
+            + _pad_pose(["      ~~~", CHICK_EGG_F1[1], CHICK_EGG_F1[2]]),
+            "gg06lv2lr~5j.",
+            [["gg06lv2lr~", "select the three-cell egg roof and replace it with tildes"],
+             ["5j.", "repeat the same characterwise band change on the second held egg"]],
+            "official-Pets/Chick res01 egg frame 1 x2 + timing rows",
+            "change one three-cell egg-roof band with characterwise Visual mode and dot repeat",
+            "Two held Chick eggs: soften the complete three-cell roof to tildes in both while each shell and timing row stays registered.",
+            "The selected band is three characters wide; dot repeats only that replacement in the next padded pose.",
+        ),
+    ]},
+    "M8.04": {"review_variants": [
+        _variant(
+            _pad_pose(DRACULA_STAND) + _pad_pose(DRACULA_WALK_F2),
+            _pad_pose(DRACULA_STAND) + _pad_pose(DRACULA_WALK_F2)
+            + _pad_pose(DRACULA_WALK_F3),
+            _append_open_lines(_pad_pose(DRACULA_WALK_F3)),
+            [["G", "go to the end of the two-pose strip"],
+             ["o…<Esc> x5", "append the complete next Dracula pose and its two timing rows"]],
+            "official-Pets/Dracula res01 stand and walk frames 2-3 + timing rows",
+            "append the complete next five-row pose with open-line o",
+            "Dracula walk review: append the complete next contact pose, including its two timing rows, below the existing stand and first walk pose.",
+            "Use o for every new row; do not copy or substitute an existing pose.",
+        ),
+        _variant(
+            _pad_pose(BOO_HOVER_F2) + _pad_pose(BOO_HOVER_F3),
+            _pad_pose(BOO_HOVER_F2) + _pad_pose(BOO_HOVER_F3)
+            + _pad_pose(BOO_HOVER_F4),
+            _append_open_lines(_pad_pose(BOO_HOVER_F4)),
+            [["G", "go to the end of the two-pose hover strip"],
+             ["o…<Esc> x5", "append Boo's complete folded-skirt pose and timing rows"]],
+            "official-Pets/Boo res01 hover frames 2-4 + timing rows",
+            "append the complete next five-row hover pose with open-line o",
+            "Boo hover review: append the complete folded-skirt pose after the expanded and wide-skirt poses, preserving two timing rows per pose.",
+            "Every target row is new; retrieve open-line o rather than altering either existing pose.",
+        ),
     ]},
     "M4.VB": {"review_variants": [
         _variant(FIREWORK_SHELL[:3], _replace_column(FIREWORK_SHELL[:3], 5, "|"),

@@ -5198,3 +5198,73 @@ and 174 primary recipes. Question quality passes 395/395 and `test_v2.py`
 passes 215/215 cards plus 174/174 recipes. The real-user-config client-attached
 popup passes at 80×24, 100×36, and 188×49 with the new labels; the focused
 five-question headed route also passes at 80×24.
+
+## VD-54 · 2026-09-29 — command mastery was still inferred from permissive hidden cards
+
+**Finding:** the generated command-review table said that all visibly taught
+command families returned in hidden changed-art review, but its selector did
+not prove that the selected card required that command. Four selected cards
+had no method requirement at all: `M8.04` for open-line `o`, `M3.04` for an
+operator plus text object, `M3.08` for digraph entry, and `M7.04` for
+characterwise Visual mode. Seven other families could resolve to comparison
+cards where reaching the target with a different method still passed: Ex copy,
+paragraph motion, put-before, blockwise append, global Normal, Ex move, and dot
+repeat. Expression substitution also had only its guided/comparison path.
+Thus answer-key presence and a correct final buffer could still masquerade as
+retrieval of the named method.
+
+The stale review banks behind `M7.04` and `M8.04` exposed a second defect.
+Their nominal changed-art reviews were the old generic border-character swaps,
+not unfamiliar animation poses. This contradicted the earlier zero-border-swap
+claim even though recipe tests remained green.
+
+### Repair
+
+- `verified_command_review_coverage` now accepts only a later card that is
+  key-hidden, has an explicit method requirement, is required before module
+  mastery, and owns at least two source-linked method-enforced variants. The
+  runtime independently recomputes the same table and rejects stale generated
+  metadata.
+- Every hidden changed-art card with a method requirement is now a module
+  mastery prerequisite; completing the visible main path cannot bypass its
+  spaced reviews.
+- The four formerly unenforced existing cards now require their exact taught
+  family: open-line `o`, operator/text-object `ci(`, `<C-k>` digraph entry, and
+  characterwise `v` editing.
+- Four manually authored hidden mastery cards close families that had no
+  unambiguous retrieval route: `M14.PH` (`yap`, `}`, `P`), `M15.BAH`
+  (blockwise `$A`), `M17.GNH` (`:g…normal!`), and `M18.EXPRH` (row-bounded
+  expression substitution). Each has one individually written four-choice
+  animation-plus-Neovim question and two different official-source review
+  poses. Their prompts print the relevant art rather than asking about internal
+  tutor state.
+- `M7.04` reviews now use paired TowerDefense missile poses and Chick egg
+  poses. `M8.04` reviews now append complete Dracula walk and Boo hover poses.
+  All four source pairs preserve full-row registration and require the named
+  Visual/open-line method.
+- Regression tests pin the chosen review card for the twelve families that had
+  been vulnerable to no-method or alternate-method selection. A family cannot
+  move silently to an easier card while aggregate coverage remains green.
+
+### Evidence
+
+- Revision `.61` generates **219 cards, 399 manually authored questions, 178
+  executable primary recipes, and 74 changed-art variants**.
+- `test_v2.py` passes 219/219 cards and 178/178 primary recipes. Its generated
+  map contains 41 command families; every mapped review card is hidden,
+  method-required, mastery-required, and has at least two method-required
+  changed-art variants.
+- `test_question_quality.py` passes all 399 questions. Stone Story variant and
+  provenance checks, animation-pack and live integration checks, all 46 legacy
+  drills, and fresh/partial/LazyVim/read-only/idempotent installer fixtures
+  pass.
+- The four new mastery cards pass real-user-config headed popup routes at
+  **80×24, 100×36, and 188×49**.
+- The previously reported `M3.06` shell-drop does not reproduce: both its base
+  and alternate transfer variants pass headed routes at all three viewport
+  sizes.
+
+**Boundary:** the official-source excerpts remain local-tutor use only. No
+archive ingestion, push, or publication occurred. This checkpoint closes the
+command-review proof loophole; it does not turn automated prose checks into a
+new manual editorial review of all 399 questions.

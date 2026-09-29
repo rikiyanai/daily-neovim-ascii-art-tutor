@@ -103,10 +103,10 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["paradigm"] == concept["paradigm"]
 
 assert len(cur["modules"]) == 20
-assert len(cur["cards"]) == 215
-assert len(cur["questions"]) == 395
-assert len({card["title"] for card in cur["cards"]}) == 215
-assert len({card["prompt"] for card in cur["cards"]}) == 215
+assert len(cur["cards"]) == 219
+assert len(cur["questions"]) == 399
+assert len({card["title"] for card in cur["cards"]}) == 219
+assert len({card["prompt"] for card in cur["cards"]}) == 219
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
 transfer_cards = [card for card in cur["cards"] if card["kind"] == "transfer"]
@@ -127,7 +127,7 @@ def card_lines(card, lines):
 mc_questions = [question for question in cur["questions"]
                 if question["form"] == "multiple_choice"]
 assert {question["form"] for question in cur["questions"]} == {"multiple_choice"}
-assert len(mc_questions) == len(cur["questions"]) == 395
+assert len(mc_questions) == len(cur["questions"]) == 399
 assert not any(
     phrase in question["prompt"]
     for question in cur["questions"]
@@ -237,7 +237,7 @@ assert all("ANIMATION" in q["compact_prompt"] and "NEOVIM" in q["compact_prompt"
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == len(mc_questions) == 395
+            for q in mc_questions}) == len(mc_questions) == 399
 def contains_ascii_visual(value):
     if "│" in value:
         return True
@@ -362,28 +362,69 @@ assert [row["source_card_id"] for row in verified_reviews] == [
 assert all(row["method_family"] and row["changed_art_variants"] >= 2
            and row["evidence"] == "source-linked changed-art review bank"
            for row in verified_reviews)
-# This legacy family-level index proves only a later key-hidden changed target.
-# Required performed-method and pre-mastery evidence is the separate contract
-# below; do not infer it from broad grammar-family labels.
+# Each visibly taught family must return on a later key-hidden changed target,
+# require its own method, and schedule two method-enforced spaced variants
+# before the owning module may master.
 command_reviews = cur["verified_command_review_coverage"]
 assert command_reviews and all(
     row["grammar_family"] and row["guided_card_id"] and row["review_card_id"]
     and row["changed_art_variants"] >= 2 and row["keys_hidden"] is True
-    and row["evidence"] == "target-linked changed-art retrieval; method enforcement reported separately"
+    and row["evidence"] == "method-required hidden target plus source-linked spaced review"
     for row in command_reviews)
 assert {row["grammar_family"] for row in command_reviews} >= {
     "ex-substitute-line", "ex-substitute-range", "char-find-repeat",
     "paragraph-next", "put-before", "visual-characterwise", "block-append",
 }
-assert all(card_by_id[row["review_card_id"]].get("show_recipe") is False
-           for row in command_reviews)
+review_card_for_family = {
+    row["grammar_family"]: row["review_card_id"] for row in command_reviews
+}
+# These families previously passed through cards that either did not enforce
+# the named method or let a comparison card succeed through another method.
+# Pin the reviewed retrieval chosen for each so selector changes cannot reopen
+# that loophole while keeping the aggregate counts green.
+assert {family: review_card_for_family[family] for family in {
+    "normal-open-line", "operator-motion-object", "digraph",
+    "visual-characterwise", "ex-copy", "paragraph-next", "put-before",
+    "block-append", "global-normal", "ex-move", "repeat",
+    "expression-substitute",
+}} == {
+    "normal-open-line": "M8.04",
+    "operator-motion-object": "M3.04",
+    "digraph": "M3.08",
+    "visual-characterwise": "M7.04",
+    "ex-copy": "M15.08",
+    "paragraph-next": "M14.PH",
+    "put-before": "M14.PH",
+    "block-append": "M15.BAH",
+    "global-normal": "M17.GNH",
+    "ex-move": "M6.06",
+    "repeat": "M17.06",
+    "expression-substitute": "M18.EXPRH",
+}
+for row in command_reviews:
+    review_card = card_by_id[row["review_card_id"]]
+    assert review_card.get("show_recipe") is False
+    assert review_card.get("method_requirement")
+    assert review_card.get("required_before_mastery") is True
+    assert row["grammar_family"] in review_card["grammar_families"]
+    variants = review_card.get("review_variants") or review_card.get("variants") or []
+    assert len(variants) >= 2
+    assert all(variant.get("method_requirement") for variant in variants)
 required_reviews = cur["required_mastery_review_coverage"]
 extension_mastery_ids = {
-    "M13.WH", "M13.GH", "M14.DAPH", "M3.GAH",
-    "M4.BIH", "M4.BCH", "M4.GVH", "M4.DIFFH", "M15.ZPH", "M11.WSH",
-    "M11.UTH", "M12.JHH", "M5.S6C",
+    "M11.04", "M11.08", "M11.WSH", "M11.UTH",
+    "M12.04", "M12.JHH",
+    "M13.04", "M13.WH", "M13.GH",
+    "M14.04", "M14.08", "M14.DAPH", "M14.PH",
+    "M15.04", "M15.08", "M15.ZPH", "M15.BAH",
+    "M16.04", "M16.08",
+    "M17.08", "M17.GNH",
+    "M18.04", "M18.08", "M18.EXPRH",
+    "M3.04", "M3.08", "M3.GAH",
+    "M4.08", "M4.BIH", "M4.BCH", "M4.GVH", "M4.DIFFH",
+    "M5.S6C", "M6.04", "M7.04", "M8.04",
 }
-assert len(required_reviews) == len(cur["modules"]) + len(extension_mastery_ids) == 33
+assert len(required_reviews) == len(cur["modules"]) + len(extension_mastery_ids) == 56
 assert {row["source_card_id"] for row in required_reviews} == {
     "%s.06" % module["id"] for module in cur["modules"]} | extension_mastery_ids
 assert all(row["changed_art_variants"] >= 2 and row["keys_hidden"] is True
@@ -408,6 +449,10 @@ mastery_extension_contract = {
     "M11.WSH": ("whitespace-column-audit", ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=7<CR>:%s/\\s\\+$//e<CR>"),
     "M4.DIFFH": ("onion-diff-view", ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:bwipeout!<CR>"),
     "M11.UTH": ("undo-tree-travel", "2G0fnr!ur-g-g+:earlier 1<CR>g+"),
+    "M14.PH": ("put-before", "ggyapgg}jP"),
+    "M15.BAH": ("block-append", "4G0<C-v>2j$A|<Esc>"),
+    "M17.GNH": ("global-normal", ":g/:/normal! 0f.r'<CR>"),
+    "M18.EXPRH": ("expression-substitute", ":5s/0/\\=getline(1)[-1:]/<CR>"),
 }
 for card_id, (family, expected) in mastery_extension_contract.items():
     card = card_by_id[card_id]

@@ -258,7 +258,9 @@ def validate_curriculum(cur):
                        and family in candidate.get("grammar_families", [])
                        and (candidate.get("review_variants")
                             or candidate.get("kind") == "transfer")
-                       and candidate.get("show_recipe") is False), None)
+                       and candidate.get("show_recipe") is False
+                       and candidate.get("method_requirement")
+                       and candidate.get("required_before_mastery")), None)
         if review is None:
             raise ValueError("%s has no hidden changed-art review for %s" % (guided_id, family))
         variants = review.get("review_variants") or review.get("variants") or []
@@ -268,7 +270,7 @@ def validate_curriculum(cur):
             "review_card_id": review["id"],
             "changed_art_variants": len(variants),
             "keys_hidden": True,
-            "evidence": "target-linked changed-art retrieval; method enforcement reported separately",
+            "evidence": "method-required hidden target plus source-linked spaced review",
         })
     if cur.get("verified_command_review_coverage") != command_review_rows:
         raise ValueError("verified command review coverage does not match hidden changed-art retrieval")

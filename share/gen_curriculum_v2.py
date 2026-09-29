@@ -3116,6 +3116,17 @@ ARTIFACT_MODE_BY_STAGE = {
     "P": "optional-proportional",
 }
 
+# These existing independent/check cards had source-linked review art but only
+# graded the final buffer.  The master curriculum rule is stricter: the named
+# command family must be demonstrated with hidden keys before its spaced review
+# can count toward mastery.
+STRICT_HIDDEN_RETRIEVALS = {
+    "M8.04": ("normal-open-line", "append the complete opposite-contact pose with open-line o"),
+    "M3.04": ("operator-motion-object", "change the copied eye with the ci( text object"),
+    "M3.08": ("digraph", "enter the middle-dot guide with the taught digraph"),
+    "M7.04": ("visual-characterwise", "change the complete material band with characterwise Visual mode"),
+}
+
 # These are individually written dispositions, not a prose template.  Their
 # source cards remain useful still-authoring work, but their old wording falsely
 # described candidates, paragraphs, or working copies as playback artifacts.
@@ -5705,6 +5716,48 @@ def mastery_extension_cards(module):
                 ])),
         ])
 
+        put_label = "copy one complete pose paragraph and place it before the next with P"
+        skully_strip = ss.SKULLY_IDLE + [""] + ss.SKULLY_BLINK + [""]
+        skully_hold = ss.SKULLY_IDLE + [""] + ss.SKULLY_IDLE + [""] + ss.SKULLY_BLINK + [""]
+        bunny_strip = ss.SNOWBUNNY_IDLE + [""] + ss.SNOWBUNNY_BLINK + [""]
+        bunny_hold = ss.SNOWBUNNY_IDLE + [""] + ss.SNOWBUNNY_IDLE + [""] + ss.SNOWBUNNY_BLINK + [""]
+        frog_strip = ss.FROG_OPEN + [""] + ss.FROG_SHUT + [""]
+        frog_hold = ss.FROG_OPEN + [""] + ss.FROG_OPEN + [""] + ss.FROG_SHUT + [""]
+        put_hidden = card(
+            "PH", "Retrieve paragraph put-before on an unfamiliar blink strip",
+            "Copy the complete open-eyed Skully paragraph and place it immediately before the blink as an anticipation hold. Use the paragraph boundary and P; do not address four line numbers.",
+            skully_strip, skully_hold, "ggyapgg}jP",
+            [["ggyap", "yank the complete open-eyed pose and separator"],
+             ["gg}j", "cross to the next pose boundary"],
+             ["P", "place the stored pose immediately before the blink"]],
+            "put-before", 5.25,
+            "official-Pets/Skully res01 + res04 blink overlay", guided=False,
+            extra_families=["paragraph-next"],
+            reviews=[
+                review(
+                    bunny_strip, bunny_hold, "ggyapgg}jP",
+                    [["ggyap", "copy the complete open-eyed bunny paragraph"],
+                     ["gg}jP", "cross its separator and put the hold before the blink"]],
+                    "official-Pets/SnowBunny res01 + res03 blink overlay", put_label,
+                    "SnowBunny review: place one complete open-eyed hold immediately before the blink with the paragraph object and P.",
+                    "The ears, face, body, and blank separator move as one paragraph object.",
+                ),
+                review(
+                    frog_strip, frog_hold, "ggyapgg}jP",
+                    [["ggyap", "copy the complete open-eyed frog paragraph"],
+                     ["gg}jP", "place it before the shut-eye pose"]],
+                    "official-Pets/Frog res01 + res07 blink overlay", put_label,
+                    "Frog review: add one open-eye anticipation hold before the blink without reconstructing any pose row.",
+                    "Use P at the paragraph boundary so the copied pose remains complete.",
+                ),
+            ])
+        put_hidden["duplicate_frames"] = [{
+            "frames": [1, 2], "role": "hold",
+            "reason": "the copied open-eyed pose is an intentional anticipation hold before the blink",
+            "playback": True, "duration_frames": 2,
+        }]
+        rows.append(("M14.06", put_hidden))
+
     if module["id"] == "M15":
         def trimmed_copy_art(art):
             width = max(len(row) for row in art)
@@ -5754,6 +5807,129 @@ def mastery_extension_cards(module):
                            "The z-prefixed yank and put preserve the pose's ragged visible edge."),
                 ])),
         ])
+
+        def append_edge_pair(first, second):
+            start = first + second
+            target = first + [row + "|" for row in second]
+            return start, target
+
+        missile_pair, missile_edge = append_edge_pair(ss.MISSILE_F1, ss.MISSILE_F2)
+        skully_pair, skully_edge = append_edge_pair(ss.SKULLY_IDLE, ss.SKULLY_BLINK)
+        bunny_pair, bunny_edge = append_edge_pair(ss.SNOWBUNNY_IDLE, ss.SNOWBUNNY_BLINK)
+        block_append = "4G0<C-v>2j$A|<Esc>"
+        append_label = "append one right edge to every selected row with blockwise $A"
+        rows.append(("M15.06", card(
+            "BAH", "Retrieve blockwise end append on an unfamiliar pose",
+            "Add a right comparison edge to every row of the second missile pose. Its rows end at different columns, so use one blockwise $A append rather than a shared column or three separate edits.",
+            missile_pair, missile_edge, block_append,
+            [["4G0<C-v>2j", "select all three rows of the second missile pose"],
+             ["$A|<Esc>", "append one edge at each selected row's true end"]],
+            "block-append", 5.25,
+            "official-Games/TowerDefense res18 missile frames 1 -> 2", guided=False,
+            reviews=[
+                review(
+                    skully_pair, skully_edge, block_append,
+                    [["4G0<C-v>2j", "select the complete Skully blink"],
+                     ["$A|<Esc>", "append one edge at each uneven row end"]],
+                    "official-Pets/Skully res01 + res04 blink overlay", append_label,
+                    "Skully review: append one right edge to every row of the blink pose while the open pose remains unchanged.",
+                    "Blockwise $A follows each selected row to its own true end.",
+                ),
+                review(
+                    bunny_pair, bunny_edge, block_append,
+                    [["4G0<C-v>2j", "select all three SnowBunny blink rows"],
+                     ["$A|<Esc>", "append exactly one edge per selected row"]],
+                    "official-Pets/SnowBunny res01 + res03 blink overlay", append_label,
+                    "SnowBunny review: add a right comparison edge to the complete blink without padding or changing the open pose.",
+                    "Use the selected row ends; do not force the pose into one rectangular width.",
+                ),
+            ])))
+
+    if module["id"] == "M17":
+        global_label = "apply one bounded Normal edit to every row selected by :g"
+        missile_start = ss.MISSILE_F1 + ss.MISSILE_F1
+        missile_target = ss.MISSILE_F2 + ss.MISSILE_F2
+        chick_start = ss.CHICK_EGG_F3 + ss.CHICK_EGG_F3
+        chick_target = ss.CHICK_EGG_F4 + ss.CHICK_EGG_F4
+        skully_start = ss.SKULLY_IDLE + ss.SKULLY_IDLE
+        skully_target = ss.SKULLY_LOOK + ss.SKULLY_LOOK
+        global_hidden = card(
+            "GNH", "Retrieve a global Normal pass on coherent exhaust rows",
+            "Advance the exhaust in both held missile poses with one :g command. Only rows containing the exhaust colon may run the bounded Normal-mode replacement; hull rows must remain identical.",
+            missile_start, missile_target, ":g/:/normal! 0f.r'<CR>",
+            [[":g/:/", "select only the two exhaust rows"],
+             ["normal! 0f.r'", "advance the final puff on each selected row"],
+             ["<CR>", "execute the global command once"]],
+            "global-normal", 5.25,
+            "official-Games/TowerDefense res18 missile frame 1 x2 -> frame 2 x2",
+            guided=False,
+            reviews=[
+                review(
+                    chick_start, chick_target, ":g/;/normal! 0f;lr,<CR>",
+                    [[":g/;/", "select only the two cracked egg rows"],
+                     ["normal! 0f;lr,", "grow one crack cell on each selected row"]],
+                    "official-Pets/Chick res01 hatch frame 3 x2 -> frame 4 x2", global_label,
+                    "Chick review: grow the crack in both held eggs with one pattern-selected Normal pass; preserve every shell row.",
+                    "Only the acting rows contain the semicolon landmark.",
+                ),
+                review(
+                    skully_start, skully_target, ":g/o/normal! 0forO<CR>",
+                    [[":g/o/", "select the two eye rows"],
+                     ["normal! 0forO", "widen the first eye on each selected row"]],
+                    "official-Pets/Skully res01 x2 -> res02 look overlay x2", global_label,
+                    "Skully review: widen the left eye in both held poses with one global Normal pass while every contour row stays fixed.",
+                    "The pattern chooses eye rows; the Normal payload owns one eye cell per row.",
+                ),
+            ])
+        global_hidden["duplicate_frames"] = [{
+            "frames": [1, 2], "role": "hold",
+            "reason": "both complete missile poses deliberately hold while their exhaust advances coherently",
+            "playback": True, "duration_frames": 2,
+        }]
+        rows.append(("M17.06", global_hidden))
+
+    if module["id"] == "M18":
+        expr_label = "derive only the final check digit with expression substitution"
+        frog_start = ["CHECK 1", *ss.FROG_OPEN, "CHECK 0"]
+        frog_target = [*frog_start[:-1], "CHECK 1"]
+        fire_start = ["CHECK 2", *ss.FIREWORK_CANOPY[:3], "CHECK 0"]
+        fire_target = [*fire_start[:-1], "CHECK 2"]
+        missile_start = ["CHECK 3", *ss.MISSILE_F1, "CHECK 0"]
+        missile_target = [*missile_start[:-1], "CHECK 3"]
+        expr_hidden = card(
+            "EXPRH", "Retrieve expression substitution as validation only",
+            "Copy the leading check digit into the final CHECK row with an expression substitute. The complete Frog pose between them is already authored and must remain byte-for-byte unchanged.",
+            frog_start, frog_target, ":5s/0/\\=getline(1)[-1:]/<CR>",
+            [[":5s/0/", "address only the final CHECK row and its stale digit"],
+             ["\\=getline(1)[-1:]", "derive the replacement from the leading metadata row"],
+             ["<CR>", "update metadata without generating any art cell"]],
+            "expression-substitute", 5.25,
+            "official-Pets/Frog res01 open-eye pose + tutor validation rows",
+            guided=False,
+            reviews=[
+                review(
+                    fire_start, fire_target, ":5s/0/\\=getline(1)[-1:]/<CR>",
+                    [[":5s/0/", "address only the final Fireworks CHECK row"],
+                     ["\\=getline(1)[-1:]", "derive its digit from the leading metadata"]],
+                    "official-Cosmetics/Fireworks res03 willow frame 5 + validation rows", expr_label,
+                    "Fireworks review: update only the final CHECK digit from line 1; preserve all three shown canopy rows literally.",
+                    "Expression substitution validates metadata here; it never mirrors or generates the art.",
+                ),
+                review(
+                    missile_start, missile_target, ":5s/0/\\=getline(1)[-1:]/<CR>",
+                    [[":5s/0/", "address only the final missile CHECK row"],
+                     ["\\=getline(1)[-1:]", "copy the leading validation digit"]],
+                    "official-Games/TowerDefense res18 missile frame 1 + validation rows", expr_label,
+                    "Missile review: derive the trailing CHECK digit while every hull and exhaust cell remains unchanged.",
+                    "The expression's target is metadata, not a drawing row.",
+                ),
+            ])
+        expr_hidden["frame_rows"] = 5
+        expr_hidden["frame_slices"] = [5]
+        # CHECK rows are deliberately visible validation metadata, not art.
+        # Keep the fixed-width art glyph guard focused on the enclosed pose.
+        expr_hidden["labels"] = True
+        rows.append(("M18.06", expr_hidden))
 
     if module["id"] == "M11":
         def padded_cleanup_art(art, padding=3):
@@ -5876,10 +6052,12 @@ def command_review_contract(cards):
                        if card.get("grammar_stage") == "hidden"
                        and family in card.get("grammar_families", [])
                        and (card.get("review_variants") or card.get("kind") == "transfer")
-                       and card.get("show_recipe") is False), None)
+                       and card.get("show_recipe") is False
+                       and card.get("method_requirement")
+                       and card.get("required_before_mastery")), None)
         if review is None:
             raise ValueError(
-                "%s: taught family %s never returns as hidden changed art" %
+                "%s: taught family %s never returns as a method-required hidden changed-art review" %
                 (guided_card_id, family))
         variants = review.get("review_variants") or review.get("variants") or []
         rows.append({
@@ -5888,7 +6066,7 @@ def command_review_contract(cards):
             "review_card_id": review["id"],
             "changed_art_variants": len(variants),
             "keys_hidden": True,
-            "evidence": "target-linked changed-art retrieval; method enforcement reported separately",
+            "evidence": "method-required hidden target plus source-linked spaced review",
         })
     return rows
 
@@ -6326,6 +6504,23 @@ def build():
         # VD-29: real Stone Story frames replace same-subject "changed art".
         stone_story_variants.apply(module_cards)
         for card in module_cards:
+            strict = STRICT_HIDDEN_RETRIEVALS.get(card["id"])
+            if strict:
+                family, label = strict
+                card["method_requirement"] = require_method(
+                    label, exact_any_of=[card["expected"]])
+                card["review_source_card_id"] = card["id"]
+                card["review_method_family"] = family
+            if (card.get("grammar_stage") == "hidden"
+                    and card.get("method_requirement")
+                    and (card.get("review_variants") or card.get("kind") == "transfer")):
+                # A command is not mastered by reaching the same buffer through
+                # another path. Its method-required changed-art review must be
+                # completed before the owning module can award mastery.
+                card["required_before_mastery"] = True
+                card.setdefault("review_source_card_id", card["id"])
+                card.setdefault(
+                    "review_method_family", card["method_requirement"]["label"])
             if card["id"] in STILL_PROMPT_REWRITES:
                 card["prompt"] = STILL_PROMPT_REWRITES[card["id"]]
                 card["roadmap_contract"] = STILL_PROMPT_REWRITES[card["id"]]
@@ -6523,7 +6718,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.60",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.61",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

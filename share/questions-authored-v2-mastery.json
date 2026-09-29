@@ -1294,5 +1294,113 @@
       "The copy is inserted after row 3, pushing the later egg down while preserving it unchanged.",
       "Correct: full-frame scope establishes continuity, and the one-cell overwrite creates the first crack without shifting the shell."
     ]
+  },
+  "M14.PH.P01": {
+    "prompt": "ANIMATION\nA complete open-eyed Skully pose must become an anticipation hold immediately before the blink. The source pose remains first, and all three copied rows plus their separator stay together.\n\n  START                 TARGET\n  │     ,--.│           │     ,--.│\n  │    (_o,o)│          │    (_o,o)│\n  │      `\"´│          │      `\"´│\n  │     ,--.│           │     ,--.│\n  │    (_=,=)│          │    (_o,o)│\n  │      `\"´│          │      `\"´│\n                         │     ,--.│\n                         │    (_=,=)│\n                         │      `\"´│\n\nNEOVIM\nWhich path treats one blank-line-separated pose as an object and places the copy before the blink?",
+    "compact_prompt": "ANIMATION\nInsert one complete open-eye hold before the blink.\n\n  │(_o,o)│ │(_=,=)│\n       ↓\n  │(_o,o)│ │(_o,o)│ │(_=,=)│\n\nNEOVIM\nWhich path uses the paragraph boundary and P?",
+    "animation_prompt": "ANIMATION\nThe open pose is duplicated as a complete hold immediately before the blink.",
+    "animation_answer": "The target contains open, open, then blink; each pose retains all three rows and its separator.",
+    "neovim_prompt": "NEOVIM\nChoose the paragraph-object path whose final P puts the stored pose before the blink.",
+    "neovim_answer": "ggyap copies the first pose paragraph, gg}j reaches the next pose boundary, and P places the copy before the blink.",
+    "choices": [
+      "ANIMATION: Keep open, open, then blink as three complete poses. | NEOVIM: `ggyapgg}jP` copies the first paragraph and puts it before the next pose.",
+      "ANIMATION: Replace the blink with the open pose. | NEOVIM: `ggyapgg}jp` puts below the boundary and overwrites the following paragraph.",
+      "ANIMATION: Copy only the eye row as the hold. | NEOVIM: `yyP` makes one row a complete pose object.",
+      "ANIMATION: Move the source pose after the blink. | NEOVIM: `dap}p` preserves the original while adding a copy before it."
+    ],
+    "compact_choices": [
+      "A: open/open/blink · V: yap, }, P",
+      "A: replace blink · V: p overwrites paragraph",
+      "A: eye row hold · V: yyP owns full pose",
+      "A: move source · V: dap preserves it"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the paragraph object keeps the pose and separator intact, and P inserts it before the blink.",
+      "A put inserts stored text; it does not overwrite a following paragraph, and lowercase p is not the taught before-boundary placement.",
+      "One eye row has no complete silhouette or frame boundary; the pose is the whole paragraph.",
+      "dap deletes the source paragraph, so this path would lose the first open pose instead of creating a hold."
+    ]
+  },
+  "M15.BAH.P01": {
+    "prompt": "ANIMATION\nThe second missile pose needs one right comparison edge on every row. Its nose, exhaust, and lower hull end at different columns; the first pose must remain unchanged.\n\n  BEFORE             AFTER\n  │  ____/│          │  ____/│\n  │< / / |:.│        │< / / |:.│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\│\n  │  ____/│          │  ____/|│\n  │< / / |:'│        │< / / |:'|│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\|│\n\nNEOVIM\nWhich operation appends at each selected row's own end rather than forcing one shared column?",
+    "compact_prompt": "ANIMATION\nAdd one edge to each uneven row of pose 2 only.\n\n  │____/ │ → │____/|│\n  │/ |:' │ → │/ |:'|│\n  │¯¯¯¯\\ │ → │¯¯¯¯\\|│\n\nNEOVIM\nWhich block command follows each row to $?",
+    "animation_prompt": "ANIMATION\nOnly the second complete missile receives one right edge per row; its uneven row lengths remain intact.",
+    "animation_answer": "Three edges are appended at three true row ends without padding, shifting, or changing the first pose.",
+    "neovim_prompt": "NEOVIM\nChoose the Visual Block append that applies $A once across the selected pose rows.",
+    "neovim_answer": "4G0<C-v>2j selects the second pose's three rows, and $A|<Esc> appends one bar at each selected row end.",
+    "choices": [
+      "ANIMATION: Add a rectangular column at one fixed display position. | NEOVIM: `<C-v>2jr|` replaces whatever cells already occupy that column.",
+      "ANIMATION: Add one edge only to the longest row. | NEOVIM: `$A|<Esc>` without a block affects the current line only.",
+      "ANIMATION: Append one edge at every true row end of pose 2. | NEOVIM: `4G0<C-v>2j$A|<Esc>` selects its three rows and appends across the block.",
+      "ANIMATION: Add spaces until all rows share a width, then add edges. | NEOVIM: Insert mode padding is required before blockwise append."
+    ],
+    "compact_choices": [
+      "A: fixed column replace · V: block r",
+      "A: longest row only · V: linewise A",
+      "A: each true row end · V: block $A",
+      "A: pad then edge · V: insertion required"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "A fixed-column replacement changes existing cells and cannot follow three different row ends.",
+      "Without a Visual Block selection, A owns only the current row and leaves the other two unmarked.",
+      "Correct: blockwise $A resolves $ independently for each selected row and appends exactly one edge.",
+      "Padding changes the fixed-width pose and is precisely what the row-end append avoids."
+    ]
+  },
+  "M17.GNH.P01": {
+    "prompt": "ANIMATION\nTwo held missile poses share identical hulls. Advance the final exhaust puff from . to ' in both poses while every non-exhaust row stays byte-for-byte fixed.\n\n  BEFORE             AFTER\n  │  ____/│          │  ____/│\n  │< / / |:.│        │< / / |:'│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\│\n  │  ____/│          │  ____/│\n  │< / / |:.│        │< / / |:'│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\│\n\nNEOVIM\nWhich Ex command selects only rows containing the exhaust colon and runs one bounded Normal edit on each?",
+    "compact_prompt": "ANIMATION\nAdvance both exhaust rows; preserve both hulls.\n\n  │|:.│ → │|:'│\n  │|:.│ → │|:'│\n\nNEOVIM\nWhich :g pattern owns only those rows?",
+    "animation_prompt": "ANIMATION\nBoth held exhaust puffs advance together while every hull row remains coherent.",
+    "animation_answer": "Only the two rows containing exhaust colons change, and each changes one final puff cell.",
+    "neovim_prompt": "NEOVIM\nChoose the global command with a bounded Normal payload.",
+    "neovim_answer": ":g/:/ selects the two exhaust rows, and normal! 0f.r' changes the final dot on each selected row.",
+    "choices": [
+      "ANIMATION: Advance every dot in the file. | NEOVIM: `:%s/./'/g` treats dot as the literal exhaust glyph.",
+      "ANIMATION: Advance only the first pose. | NEOVIM: `/.:<CR>r'` automatically stops after one match.",
+      "ANIMATION: Advance both exhaust rows and preserve all hull rows. | NEOVIM: `:g/:/normal! 0f.r'<CR>` selects colon rows and performs one bounded replacement on each.",
+      "ANIMATION: Duplicate the first exhaust row over the second. | NEOVIM: `:g/:/t$` edits each selected puff in place."
+    ],
+    "compact_choices": [
+      "A: every dot · V: wildcard substitute",
+      "A: first pose only · V: one search",
+      "A: both exhaust rows · V: :g + bounded normal",
+      "A: duplicate row · V: :g with t"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "In a substitute pattern, bare dot is a wildcard; this would consume unrelated hull cells rather than one exhaust endpoint.",
+      "A single search and replacement reaches one occurrence and does not express the two-row coherence rule.",
+      "Correct: the global pattern owns the acting rows, and the Normal payload owns one cell within each selected row.",
+      "Ex t copies lines and does not perform the required in-place puff change."
+    ]
+  },
+  "M18.EXPRH.P01": {
+    "prompt": "ANIMATION\nThe Frog pose is already approved. Only the trailing validation digit is stale; copying metadata must not generate, mirror, or alter any pose cell.\n\n  BEFORE          AFTER\n  │CHECK 1│       │CHECK 1│\n  │     ,Oo│      │     ,Oo│\n  │  (\\/ .-)│    │  (\\/ .-)│\n  │  ´ ·-\\´\\│    │  ´ ·-\\´\\│\n  │CHECK 0│       │CHECK 1│\n\nNEOVIM\nWhich expression substitute reads the leading digit and replaces only the final CHECK-row zero?",
+    "compact_prompt": "ANIMATION\nKeep the Frog literal; update only CHECK 0 → CHECK 1.\n\n  │CHECK 1│\n  │  (\\/ .-)│ unchanged\n  │CHECK 0│ → │CHECK 1│\n\nNEOVIM\nWhich \\= expression targets row 5 only?",
+    "animation_prompt": "ANIMATION\nThe complete Frog pose remains literal while only its trailing validation metadata changes.",
+    "animation_answer": "Every art row stays identical; the final CHECK digit becomes the leading CHECK digit.",
+    "neovim_prompt": "NEOVIM\nChoose the row-bounded expression replacement that reads line 1.",
+    "neovim_answer": ":5s/0/\\=getline(1)[-1:]/<CR> addresses the final row, replaces its zero, and evaluates the last character of line 1 as the replacement.",
+    "choices": [
+      "ANIMATION: Rebuild the Frog from line 1. | NEOVIM: `:%s/.*/\\=getline(1)/` safely copies metadata into every row.",
+      "ANIMATION: Keep every Frog cell and change only the final CHECK digit. | NEOVIM: `:5s/0/\\=getline(1)[-1:]/<CR>` evaluates the leading digit only on row 5.",
+      "ANIMATION: Reverse the Frog while updating the check. | NEOVIM: `\\=reverse(getline(1))` is a valid hand-mirroring operation.",
+      "ANIMATION: Change both CHECK rows to zero. | NEOVIM: `:%s/1/0/g` is equivalent because the art contains no digits."
+    ],
+    "compact_choices": [
+      "A: rebuild pose · V: expression on every row",
+      "A: pose fixed; final digit only · V: row-5 \\=",
+      "A: reverse pose · V: reverse() is hand mirror",
+      "A: both checks zero · V: whole-file substitute"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "A whole-file expression would replace the authored pose rows; validation metadata is the only permitted target.",
+      "Correct: the address confines substitution to the trailing CHECK row, and the expression reads one metadata character from line 1.",
+      "Software reversal is not hand-authored mirroring, and this expression reads metadata rather than art geometry.",
+      "Whole-file scope can change embedded art digits and also destroys the intended leading CHECK value."
+    ]
   }
 }

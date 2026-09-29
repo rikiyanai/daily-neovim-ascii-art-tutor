@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.60",
+ "revision": "2026-09-29.61",
  "review_intervals_hours": [
   4,
   24,
@@ -56,6 +56,7 @@
     "M11.VE"
    ],
    "required_review_card_ids": [
+    "M11.04",
     "M11.WSH",
     "M11.UTH",
     "M11.06"
@@ -167,13 +168,17 @@
     "M14.PARA",
     "M14.05",
     "M14.DAPH",
+    "M14.PH",
     "M14.06",
     "M14.07",
     "M14.08"
    ],
    "required_review_card_ids": [
+    "M14.04",
     "M14.DAPH",
-    "M14.06"
+    "M14.PH",
+    "M14.06",
+    "M14.08"
    ]
   },
   {
@@ -216,13 +221,16 @@
     "M15.BA",
     "M15.05",
     "M15.ZPH",
+    "M15.BAH",
     "M15.06",
     "M15.07",
     "M15.MAC",
     "M15.GLOBAL"
    ],
    "required_review_card_ids": [
+    "M15.04",
     "M15.ZPH",
+    "M15.BAH",
     "M15.06"
    ]
   },
@@ -246,7 +254,9 @@
     "M16.08"
    ],
    "required_review_card_ids": [
-    "M16.06"
+    "M16.04",
+    "M16.06",
+    "M16.08"
    ]
   },
   {
@@ -311,13 +321,16 @@
     "M4.08"
    ],
    "required_review_card_ids": [
+    "M3.04",
     "M3.GAH",
     "M3.06",
+    "M3.08",
     "M4.BIH",
     "M4.BCH",
     "M4.DIFFH",
     "M4.GVH",
-    "M4.06"
+    "M4.06",
+    "M4.08"
    ]
   },
   {
@@ -337,12 +350,16 @@
     "M17.03",
     "M17.04",
     "M17.05",
+    "M17.GNH",
     "M17.06",
     "M17.07",
     "M17.08"
    ],
    "required_review_card_ids": [
-    "M17.06"
+    "M11.08",
+    "M17.GNH",
+    "M17.06",
+    "M17.08"
    ]
   },
   {
@@ -388,9 +405,13 @@
     "M7.08"
    ],
    "required_review_card_ids": [
+    "M12.04",
+    "M15.08",
+    "M13.04",
     "M13.WH",
     "M13.GH",
     "M13.06",
+    "M7.04",
     "M7.06"
    ]
   },
@@ -415,6 +436,7 @@
     "M6.08"
    ],
    "required_review_card_ids": [
+    "M6.04",
     "M6.06"
    ]
   },
@@ -433,12 +455,16 @@
     "M18.04",
     "M18.EXPR",
     "M18.05",
+    "M18.EXPRH",
     "M18.06",
     "M18.07",
     "M18.08"
    ],
    "required_review_card_ids": [
-    "M18.06"
+    "M18.04",
+    "M18.EXPRH",
+    "M18.06",
+    "M18.08"
    ]
   },
   {
@@ -468,6 +494,7 @@
     "M9.08"
    ],
    "required_review_card_ids": [
+    "M8.04",
     "M8.06",
     "M9.06"
    ]
@@ -578,9 +605,11 @@
     "M11.08"
    ],
    "required_review_card_ids": [
+    "M11.04",
     "M11.WSH",
     "M11.UTH",
-    "M11.06"
+    "M11.06",
+    "M11.08"
    ],
    "animation_pack_lesson_ids": [
     "AL11"
@@ -726,6 +755,7 @@
     "M12.08"
    ],
    "required_review_card_ids": [
+    "M12.04",
     "M12.JHH",
     "M12.06"
    ]
@@ -759,13 +789,17 @@
     "M14.PARA",
     "M14.05",
     "M14.DAPH",
+    "M14.PH",
     "M14.06",
     "M14.07",
     "M14.08"
    ],
    "required_review_card_ids": [
+    "M14.04",
     "M14.DAPH",
-    "M14.06"
+    "M14.PH",
+    "M14.06",
+    "M14.08"
    ],
    "animation_pack_lesson_ids": [
     "AL09"
@@ -876,6 +910,7 @@
     "M15.BA",
     "M15.05",
     "M15.ZPH",
+    "M15.BAH",
     "M15.06",
     "M15.07",
     "M15.MAC",
@@ -883,8 +918,11 @@
     "M15.08"
    ],
    "required_review_card_ids": [
+    "M15.04",
     "M15.ZPH",
-    "M15.06"
+    "M15.BAH",
+    "M15.06",
+    "M15.08"
    ]
   },
   {
@@ -919,7 +957,9 @@
     "M16.08"
    ],
    "required_review_card_ids": [
-    "M16.06"
+    "M16.04",
+    "M16.06",
+    "M16.08"
    ],
    "animation_pack_lesson_ids": [
     "AL12"
@@ -961,8 +1001,10 @@
     "M3.08"
    ],
    "required_review_card_ids": [
+    "M3.04",
     "M3.GAH",
-    "M3.06"
+    "M3.06",
+    "M3.08"
    ],
    "animation_pack_lesson_ids": [
     "AL10"
@@ -1012,7 +1054,8 @@
     "M4.BCH",
     "M4.DIFFH",
     "M4.GVH",
-    "M4.06"
+    "M4.06",
+    "M4.08"
    ],
    "animation_pack_lesson_ids": [
     "AL02"
@@ -1044,12 +1087,15 @@
     "M17.03",
     "M17.04",
     "M17.05",
+    "M17.GNH",
     "M17.06",
     "M17.07",
     "M17.08"
    ],
    "required_review_card_ids": [
-    "M17.06"
+    "M17.GNH",
+    "M17.06",
+    "M17.08"
    ]
   },
   {
@@ -1088,6 +1134,7 @@
     "M13.08"
    ],
    "required_review_card_ids": [
+    "M13.04",
     "M13.WH",
     "M13.GH",
     "M13.06"
@@ -1128,6 +1175,7 @@
     "M7.08"
    ],
    "required_review_card_ids": [
+    "M7.04",
     "M7.06"
    ],
    "animation_pack_lesson_ids": [
@@ -1167,6 +1215,7 @@
     "M6.08"
    ],
    "required_review_card_ids": [
+    "M6.04",
     "M6.06"
    ],
    "animation_pack_lesson_ids": [
@@ -1200,12 +1249,16 @@
     "M18.04",
     "M18.EXPR",
     "M18.05",
+    "M18.EXPRH",
     "M18.06",
     "M18.07",
     "M18.08"
    ],
    "required_review_card_ids": [
-    "M18.06"
+    "M18.04",
+    "M18.EXPRH",
+    "M18.06",
+    "M18.08"
    ],
    "animation_pack_lesson_ids": [
     "AL05"
@@ -1242,6 +1295,7 @@
     "M8.08"
    ],
    "required_review_card_ids": [
+    "M8.04",
     "M8.06"
    ],
    "animation_pack_lesson_ids": [
@@ -3629,6 +3683,7 @@
     "R enters Replace mode; typed glyphs overwrite cells until <Esc>",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "S0",
    "artifact_mode": "still-study",
    "paired_question_ids": [
@@ -4725,6 +4780,7 @@
     ":set virtualedit=all permits N| to address an empty fixed-width column past row end",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "A3",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -7976,6 +8032,7 @@
     "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "A4",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -9379,6 +9436,7 @@
     "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "S5",
    "artifact_mode": "still-study",
    "paired_question_ids": [
@@ -10014,6 +10072,224 @@
    "pairing_exception": null
   },
   {
+   "id": "M14.PH",
+   "module_id": "M14",
+   "ordinal": 5.25,
+   "kind": "independent_edit",
+   "title": "Variant palette · Retrieve paragraph put-before on an unfamiliar blink strip",
+   "project_id": "mastery-m14-ph",
+   "artifact": "transfer",
+   "variant_group": "M14.PH.mastery",
+   "skill": "paragraph frame objects, named glyph registers, and non-shifting palette replacement",
+   "source_ref": "ascii-art-authoring §§1.7,2,3; Neovim help text-objects, quote_alpha, i_CTRL-R, virtual-replace-mode; official-Pets/Skully res01 + res04 blink overlay",
+   "source": "official-Pets/Skully res01 + res04 blink overlay",
+   "medium": "monospace",
+   "node_ids": [
+    "S5/V14"
+   ],
+   "master_habits": [
+    "H3",
+    "H6",
+    "H9"
+   ],
+   "master_stages": [
+    "S5"
+   ],
+   "lesson_benefit": "retrieve put-before on unfamiliar animation art with the key path hidden",
+   "prompt": "Copy the complete open-eyed Skully paragraph and place it immediately before the blink as an anticipation hold. Use the paragraph boundary and P; do not address four line numbers.",
+   "roadmap_contract": "Copy the complete open-eyed Skully paragraph and place it immediately before the blink as an anticipation hold. Use the paragraph boundary and P; do not address four line numbers.",
+   "start": [
+    "     ,--.",
+    "    (_o,o)",
+    "      `\"´",
+    "",
+    "     ,--.",
+    "    (_=,=)",
+    "      `\"´",
+    ""
+   ],
+   "target": [
+    "     ,--.",
+    "    (_o,o)",
+    "      `\"´",
+    "",
+    "     ,--.",
+    "    (_o,o)",
+    "      `\"´",
+    "",
+    "     ,--.",
+    "    (_=,=)",
+    "      `\"´",
+    ""
+   ],
+   "expected": "ggyapgg}jP",
+   "recipe": [
+    [
+     "ggyap",
+     "yank the complete open-eyed pose and separator"
+    ],
+    [
+     "gg}j",
+     "cross to the next pose boundary"
+    ],
+    [
+     "P",
+     "place the stored pose immediately before the blink"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": false,
+   "hint": "Name the acting cells first. The exact key sequence remains hidden until evaluation.",
+   "grammar_families": [
+    "put-before",
+    "paragraph-next"
+   ],
+   "grammar_stage": "hidden",
+   "key_vocabulary": [
+    "P puts the yanked object before the cursor or above the current line",
+    "} moves to the next blank-line-separated paragraph/frame"
+   ],
+   "frame_rows": 4,
+   "frame_slices": [
+    4,
+    4,
+    4
+   ],
+   "method_requirement": {
+    "label": "use the taught put-before path",
+    "exact_any_of": [
+     "ggyapgg}jP"
+    ]
+   },
+   "review_variants": [
+    {
+     "start": [
+      "   (\\(\\",
+      "  ( n.n)",
+      "o(,`_\"_)",
+      "",
+      "   (\\(\\",
+      "  ( -.-)",
+      "o(,`_\"_)",
+      ""
+     ],
+     "target": [
+      "   (\\(\\",
+      "  ( n.n)",
+      "o(,`_\"_)",
+      "",
+      "   (\\(\\",
+      "  ( n.n)",
+      "o(,`_\"_)",
+      "",
+      "   (\\(\\",
+      "  ( -.-)",
+      "o(,`_\"_)",
+      ""
+     ],
+     "expected": "ggyapgg}jP",
+     "recipe": [
+      [
+       "ggyap",
+       "copy the complete open-eyed bunny paragraph"
+      ],
+      [
+       "gg}jP",
+       "cross its separator and put the hold before the blink"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/SnowBunny res01 + res03 blink overlay",
+     "prompt": "SnowBunny review: place one complete open-eyed hold immediately before the blink with the paragraph object and P.",
+     "hint": "The ears, face, body, and blank separator move as one paragraph object.",
+     "method_requirement": {
+      "label": "copy one complete pose paragraph and place it before the next with P",
+      "exact_any_of": [
+       "ggyapgg}jP"
+      ]
+     }
+    },
+    {
+     "start": [
+      "     ,Oo",
+      "  (\\/ .-)",
+      "  ´ ·-\\´\\",
+      "",
+      "     ,--",
+      "  (\\/ .-)",
+      "  ´ ·-\\´\\",
+      ""
+     ],
+     "target": [
+      "     ,Oo",
+      "  (\\/ .-)",
+      "  ´ ·-\\´\\",
+      "",
+      "     ,Oo",
+      "  (\\/ .-)",
+      "  ´ ·-\\´\\",
+      "",
+      "     ,--",
+      "  (\\/ .-)",
+      "  ´ ·-\\´\\",
+      ""
+     ],
+     "expected": "ggyapgg}jP",
+     "recipe": [
+      [
+       "ggyap",
+       "copy the complete open-eyed frog paragraph"
+      ],
+      [
+       "gg}jP",
+       "place it before the shut-eye pose"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Frog res01 + res07 blink overlay",
+     "prompt": "Frog review: add one open-eye anticipation hold before the blink without reconstructing any pose row.",
+     "hint": "Use P at the paragraph boundary so the copied pose remains complete.",
+     "method_requirement": {
+      "label": "copy one complete pose paragraph and place it before the next with P",
+      "exact_any_of": [
+       "ggyapgg}jP"
+      ]
+     }
+    }
+   ],
+   "review_source_card_id": "M14.PH",
+   "review_method_family": "put-before",
+   "required_before_mastery": true,
+   "duplicate_frames": [
+    {
+     "frames": [
+      1,
+      2
+     ],
+     "role": "hold",
+     "reason": "the copied open-eyed pose is an intentional anticipation hold before the blink",
+     "playback": true,
+     "duration_frames": 2
+    }
+   ],
+   "stage_owner": "S5",
+   "artifact_mode": "still-study",
+   "paired_question_ids": [
+    "M14.PH.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M14.PH.P01"
+    ],
+    "rationale": {
+     "M14.PH.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
    "id": "M14.06",
    "module_id": "M14",
    "ordinal": 6,
@@ -10468,6 +10744,7 @@
     "} moves to the next blank-line-separated paragraph/frame",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "S5",
    "artifact_mode": "still-study",
    "paired_question_ids": [
@@ -12906,6 +13183,7 @@
     "explicit line range + s command + pattern + replacement + flags + <CR>",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "S7",
    "artifact_mode": "still-study",
    "paired_question_ids": [
@@ -13453,6 +13731,180 @@
     ],
     "rationale": {
      "M15.ZPH.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "id": "M15.BAH",
+   "module_id": "M15",
+   "ordinal": 5.25,
+   "kind": "independent_edit",
+   "title": "Texture ground · Retrieve blockwise end append on an unfamiliar pose",
+   "project_id": "mastery-m15-bah",
+   "artifact": "transfer",
+   "variant_group": "M15.BAH.mastery",
+   "skill": "dither, offset brick, isometric ground shadow, one-cell indentation, block edges, range edits, and reusable macros",
+   "source_ref": "ascii-art-authoring §§3,4,6,8; Neovim help shiftwidth, >>, visual-block, v_b_A, :substitute, q, @; official-Games/TowerDefense res18 missile frames 1 -> 2",
+   "source": "official-Games/TowerDefense res18 missile frames 1 -> 2",
+   "medium": "monospace",
+   "node_ids": [
+    "S7/V15"
+   ],
+   "master_habits": [
+    "H4",
+    "H8"
+   ],
+   "master_stages": [
+    "S7"
+   ],
+   "lesson_benefit": "retrieve block-append on unfamiliar animation art with the key path hidden",
+   "prompt": "Add a right comparison edge to every row of the second missile pose. Its rows end at different columns, so use one blockwise $A append rather than a shared column or three separate edits.",
+   "roadmap_contract": "Add a right comparison edge to every row of the second missile pose. Its rows end at different columns, so use one blockwise $A append rather than a shared column or three separate edits.",
+   "start": [
+    "  ____/",
+    "< / / |:.",
+    "  ¯¯¯¯\\",
+    "  ____/",
+    "< / / |:'",
+    "  ¯¯¯¯\\"
+   ],
+   "target": [
+    "  ____/",
+    "< / / |:.",
+    "  ¯¯¯¯\\",
+    "  ____/|",
+    "< / / |:'|",
+    "  ¯¯¯¯\\|"
+   ],
+   "expected": "4G0<C-v>2j$A|<Esc>",
+   "recipe": [
+    [
+     "4G0<C-v>2j",
+     "select all three rows of the second missile pose"
+    ],
+    [
+     "$A|<Esc>",
+     "append one edge at each selected row's true end"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": false,
+   "hint": "Name the acting cells first. The exact key sequence remains hidden until evaluation.",
+   "grammar_families": [
+    "block-append"
+   ],
+   "grammar_stage": "hidden",
+   "key_vocabulary": [
+    "Ctrl-v block + $A appends the typed glyph at the end of every selected row"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3,
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught block-append path",
+    "exact_any_of": [
+     "4G0<C-v>2j$A|<Esc>"
+    ]
+   },
+   "review_variants": [
+    {
+     "start": [
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´",
+      "     ,--.",
+      "    (_=,=)",
+      "      `\"´"
+     ],
+     "target": [
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´",
+      "     ,--.|",
+      "    (_=,=)|",
+      "      `\"´|"
+     ],
+     "expected": "4G0<C-v>2j$A|<Esc>",
+     "recipe": [
+      [
+       "4G0<C-v>2j",
+       "select the complete Skully blink"
+      ],
+      [
+       "$A|<Esc>",
+       "append one edge at each uneven row end"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Skully res01 + res04 blink overlay",
+     "prompt": "Skully review: append one right edge to every row of the blink pose while the open pose remains unchanged.",
+     "hint": "Blockwise $A follows each selected row to its own true end.",
+     "method_requirement": {
+      "label": "append one right edge to every selected row with blockwise $A",
+      "exact_any_of": [
+       "4G0<C-v>2j$A|<Esc>"
+      ]
+     }
+    },
+    {
+     "start": [
+      "   (\\(\\",
+      "  ( n.n)",
+      "o(,`_\"_)",
+      "   (\\(\\",
+      "  ( -.-)",
+      "o(,`_\"_)"
+     ],
+     "target": [
+      "   (\\(\\",
+      "  ( n.n)",
+      "o(,`_\"_)",
+      "   (\\(\\|",
+      "  ( -.-)|",
+      "o(,`_\"_)|"
+     ],
+     "expected": "4G0<C-v>2j$A|<Esc>",
+     "recipe": [
+      [
+       "4G0<C-v>2j",
+       "select all three SnowBunny blink rows"
+      ],
+      [
+       "$A|<Esc>",
+       "append exactly one edge per selected row"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/SnowBunny res01 + res03 blink overlay",
+     "prompt": "SnowBunny review: add a right comparison edge to the complete blink without padding or changing the open pose.",
+     "hint": "Use the selected row ends; do not force the pose into one rectangular width.",
+     "method_requirement": {
+      "label": "append one right edge to every selected row with blockwise $A",
+      "exact_any_of": [
+       "4G0<C-v>2j$A|<Esc>"
+      ]
+     }
+    }
+   ],
+   "review_source_card_id": "M15.BAH",
+   "review_method_family": "block-append",
+   "required_before_mastery": true,
+   "stage_owner": "S7",
+   "artifact_mode": "still-study",
+   "paired_question_ids": [
+    "M15.BAH.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M15.BAH.P01"
+    ],
+    "rationale": {
+     "M15.BAH.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
     }
    },
    "pairing_exception": null
@@ -14181,6 +14633,7 @@
     "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "A4",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -14786,6 +15239,7 @@
     "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "A0",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -15645,6 +16099,7 @@
     "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "A0",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -16342,7 +16797,7 @@
     }
    ],
    "review_source_card_id": "M3.04",
-   "review_method_family": "technique:M3.04",
+   "review_method_family": "operator-motion-object",
    "master_habits": [
     "H3"
    ],
@@ -16358,6 +16813,13 @@
     "[count] operator [count] motion-or-text-object",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "method_requirement": {
+    "label": "change the copied eye with the ci( text object",
+    "exact_any_of": [
+     "8Gci(O<Esc>"
+    ]
+   },
+   "required_before_mastery": true,
    "stage_owner": "A2",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -17558,7 +18020,7 @@
     }
    ],
    "review_source_card_id": "M3.08",
-   "review_method_family": "technique:M3.08",
+   "review_method_family": "digraph",
    "master_habits": [
     "H3"
    ],
@@ -17578,6 +18040,13 @@
     "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "method_requirement": {
+    "label": "enter the middle-dot guide with the taught digraph",
+    "exact_any_of": [
+     "14Gfor<C-k>.M"
+    ]
+   },
+   "required_before_mastery": true,
    "stage_owner": "A2",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -19792,6 +20261,7 @@
     "count + dd deletes whole rows; D is d$ and deletes from the cursor to row end",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "A2",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -20480,6 +20950,196 @@
    "pairing_exception": null
   },
   {
+   "id": "M17.GNH",
+   "module_id": "M17",
+   "ordinal": 5.25,
+   "kind": "independent_edit",
+   "title": "Coherent anchors · Retrieve a global Normal pass on coherent exhaust rows",
+   "project_id": "mastery-m17-gnh",
+   "artifact": "transfer",
+   "variant_group": "M17.GNH.mastery",
+   "skill": "unchanged-glyph coherence across frames with search repeat, dot repeat, :global normal, and recorded macros",
+   "source_ref": "ascii-art-authoring §§7.3,7.4,8.1; Neovim help /, n, ., :global, :normal, q, @; official-Games/TowerDefense res18 missile frame 1 x2 -> frame 2 x2",
+   "source": "official-Games/TowerDefense res18 missile frame 1 x2 -> frame 2 x2",
+   "medium": "monospace",
+   "node_ids": [
+    "A3/V17"
+   ],
+   "master_habits": [
+    "H2",
+    "H5"
+   ],
+   "master_stages": [
+    "A3"
+   ],
+   "lesson_benefit": "retrieve global-normal on unfamiliar animation art with the key path hidden",
+   "prompt": "Advance the exhaust in both held missile poses with one :g command. Only rows containing the exhaust colon may run the bounded Normal-mode replacement; hull rows must remain identical.",
+   "roadmap_contract": "Advance the exhaust in both held missile poses with one :g command. Only rows containing the exhaust colon may run the bounded Normal-mode replacement; hull rows must remain identical.",
+   "start": [
+    "  ____/",
+    "< / / |:.",
+    "  ¯¯¯¯\\",
+    "  ____/",
+    "< / / |:.",
+    "  ¯¯¯¯\\"
+   ],
+   "target": [
+    "  ____/",
+    "< / / |:'",
+    "  ¯¯¯¯\\",
+    "  ____/",
+    "< / / |:'",
+    "  ¯¯¯¯\\"
+   ],
+   "expected": ":g/:/normal! 0f.r'<CR>",
+   "recipe": [
+    [
+     ":g/:/",
+     "select only the two exhaust rows"
+    ],
+    [
+     "normal! 0f.r'",
+     "advance the final puff on each selected row"
+    ],
+    [
+     "<CR>",
+     "execute the global command once"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": false,
+   "hint": "Name the acting cells first. The exact key sequence remains hidden until evaluation.",
+   "grammar_families": [
+    "global-normal"
+   ],
+   "grammar_stage": "hidden",
+   "key_vocabulary": [
+    "global selector + matching pattern + normal! command + bounded Normal payload + <CR> execution"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3,
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught global-normal path",
+    "exact_any_of": [
+     ":g/:/normal! 0f.r'<CR>"
+    ]
+   },
+   "review_variants": [
+    {
+     "start": [
+      "      ,-.",
+      "     :·; :",
+      "     '._.'",
+      "      ,-.",
+      "     :·; :",
+      "     '._.'"
+     ],
+     "target": [
+      "      ,-.",
+      "     :·;,:",
+      "     '._.'",
+      "      ,-.",
+      "     :·;,:",
+      "     '._.'"
+     ],
+     "expected": ":g/;/normal! 0f;lr,<CR>",
+     "recipe": [
+      [
+       ":g/;/",
+       "select only the two cracked egg rows"
+      ],
+      [
+       "normal! 0f;lr,",
+       "grow one crack cell on each selected row"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Chick res01 hatch frame 3 x2 -> frame 4 x2",
+     "prompt": "Chick review: grow the crack in both held eggs with one pattern-selected Normal pass; preserve every shell row.",
+     "hint": "Only the acting rows contain the semicolon landmark.",
+     "method_requirement": {
+      "label": "apply one bounded Normal edit to every row selected by :g",
+      "exact_any_of": [
+       ":g/;/normal! 0f;lr,<CR>"
+      ]
+     }
+    },
+    {
+     "start": [
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´",
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´"
+     ],
+     "target": [
+      "     ,--.",
+      "    (_O,o)",
+      "      `\"´",
+      "     ,--.",
+      "    (_O,o)",
+      "      `\"´"
+     ],
+     "expected": ":g/o/normal! 0forO<CR>",
+     "recipe": [
+      [
+       ":g/o/",
+       "select the two eye rows"
+      ],
+      [
+       "normal! 0forO",
+       "widen the first eye on each selected row"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Skully res01 x2 -> res02 look overlay x2",
+     "prompt": "Skully review: widen the left eye in both held poses with one global Normal pass while every contour row stays fixed.",
+     "hint": "The pattern chooses eye rows; the Normal payload owns one eye cell per row.",
+     "method_requirement": {
+      "label": "apply one bounded Normal edit to every row selected by :g",
+      "exact_any_of": [
+       ":g/o/normal! 0forO<CR>"
+      ]
+     }
+    }
+   ],
+   "review_source_card_id": "M17.GNH",
+   "review_method_family": "global-normal",
+   "required_before_mastery": true,
+   "duplicate_frames": [
+    {
+     "frames": [
+      1,
+      2
+     ],
+     "role": "hold",
+     "reason": "both complete missile poses deliberately hold while their exhaust advances coherently",
+     "playback": true,
+     "duration_frames": 2
+    }
+   ],
+   "stage_owner": "A3",
+   "artifact_mode": "animation-strip",
+   "paired_question_ids": [
+    "M17.GNH.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M17.GNH.P01"
+    ],
+    "rationale": {
+     "M17.GNH.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
    "id": "M17.06",
    "module_id": "M17",
    "ordinal": 6,
@@ -20905,6 +21565,7 @@
     "q{register} records bounded edits; q stops; @{register} replays at a homologous anchor",
     "/pattern<CR> searches; f/t land on or before a visible character landmark"
    ],
+   "required_before_mastery": true,
    "stage_owner": "A3",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -21656,6 +22317,7 @@
     "W/B move by WORD starts; E lands at a WORD end; counts scale the boundary motion",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "A4",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -23489,144 +24151,102 @@
    ],
    "review_variants": [
     {
+     "prompt": "Two held missile poses: change the first three roof cells from underscores to equals in both; preserve both complete hulls and their timing rows.",
+     "hint": "Select exactly three roof cells with v, then repeat that bounded change one five-row pose later.",
      "start": [
+      "  ____/",
+      "< / / |:.",
+      "  ¯¯¯¯\\",
       "",
       "",
-      "  !---\\  ",
-      " /-----\\ ",
-      "/-------\\",
+      "  ____/",
+      "< / / |:.",
+      "  ¯¯¯¯\\",
       "",
-      "",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "    ^    ",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "    ^    ",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\"
+      ""
      ],
      "target": [
+      "  ===_/",
+      "< / / |:.",
+      "  ¯¯¯¯\\",
       "",
       "",
-      "  !===\\  ",
-      " /-----\\ ",
-      "/-------\\",
+      "  ===_/",
+      "< / / |:.",
+      "  ¯¯¯¯\\",
       "",
-      "",
-      "  /===\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "    ^    ",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "    ^    ",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\"
+      ""
      ],
-     "expected": "3G0f-v2lr=5j.",
+     "expected": "gg02lv2lr=5j.",
      "recipe": [
       [
-       "3G0f-v2lr=",
-       "change the first held frame's complete three-cell material band"
+       "gg02lv2lr=",
+       "select and replace the first three roof cells characterwise"
       ],
       [
        "5j.",
-       "repeat the same bounded band edit in the matching hold"
+       "move one complete padded pose and repeat the same band change"
       ]
      ],
-     "cursor": "^"
+     "cursor": "^",
+     "source": "official-Games/TowerDefense res18 missile frame 1 x2 + timing rows",
+     "method_requirement": {
+      "label": "change one three-cell material band with characterwise Visual mode and dot repeat",
+      "exact_any_of": [
+       "gg02lv2lr=5j."
+      ]
+     }
     },
     {
+     "prompt": "Two held Chick eggs: soften the complete three-cell roof to tildes in both while each shell and timing row stays registered.",
+     "hint": "The selected band is three characters wide; dot repeats only that replacement in the next padded pose.",
      "start": [
+      "      ,-.",
+      "     :   :",
+      "     '._.'",
       "",
       "",
-      "  +---\\  ",
-      " /-----\\ ",
-      "/-------\\",
+      "      ,-.",
+      "     :   :",
+      "     '._.'",
       "",
-      "",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "    ^    ",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "    ^    ",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\"
+      ""
      ],
      "target": [
+      "      ~~~",
+      "     :   :",
+      "     '._.'",
       "",
       "",
-      "  +===\\  ",
-      " /-----\\ ",
-      "/-------\\",
+      "      ~~~",
+      "     :   :",
+      "     '._.'",
       "",
-      "",
-      "  /===\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "    ^    ",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "    ^    ",
-      "   /_\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\"
+      ""
      ],
-     "expected": "3G0f-v2lr=5j.",
+     "expected": "gg06lv2lr~5j.",
      "recipe": [
       [
-       "3G0f-v2lr=",
-       "change the first held frame's complete three-cell material band"
+       "gg06lv2lr~",
+       "select the three-cell egg roof and replace it with tildes"
       ],
       [
        "5j.",
-       "repeat the same bounded band edit in the matching hold"
+       "repeat the same characterwise band change on the second held egg"
       ]
      ],
-     "cursor": "^"
+     "cursor": "^",
+     "source": "official-Pets/Chick res01 egg frame 1 x2 + timing rows",
+     "method_requirement": {
+      "label": "change one three-cell egg-roof band with characterwise Visual mode and dot repeat",
+      "exact_any_of": [
+       "gg06lv2lr~5j."
+      ]
+     }
     }
    ],
    "review_source_card_id": "M7.04",
-   "review_method_family": "technique:M7.04",
+   "review_method_family": "visual-characterwise",
    "master_habits": [
     "H5"
    ],
@@ -23648,6 +24268,13 @@
     "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "method_requirement": {
+    "label": "change the complete material band with characterwise Visual mode",
+    "exact_any_of": [
+     "3G0f-v2lr=5j."
+    ]
+   },
+   "required_before_mastery": true,
    "stage_owner": "A4",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -25092,6 +25719,7 @@
     "count + dd deletes whole rows; D is d$ and deletes from the cursor to row end",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "A5",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -26307,6 +26935,7 @@
     "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "required_before_mastery": true,
    "stage_owner": "A6",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -26673,6 +27302,179 @@
     ],
     "rationale": {
      "M18.05.P01": "The exact result must exist before the learner compares cursor dependence, scope, and animation risk across the two valid methods."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "id": "M18.EXPRH",
+   "module_id": "M18",
+   "ordinal": 5.25,
+   "kind": "independent_edit",
+   "title": "Hand-mirrored return · Retrieve expression substitution as validation only",
+   "project_id": "mastery-m18-exprh",
+   "artifact": "transfer",
+   "variant_group": "M18.EXPRH.mastery",
+   "skill": "full directional hand mirrors, validation-only expression substitution, and reverse-order frame reuse",
+   "source_ref": "ascii-art-authoring §§7.2,7.5,8.2; Neovim help :sub-replace-expression, getline(), :copy; official-Pets/Frog res01 open-eye pose + tutor validation rows",
+   "source": "official-Pets/Frog res01 open-eye pose + tutor validation rows",
+   "medium": "monospace",
+   "node_ids": [
+    "A6/V18"
+   ],
+   "master_habits": [
+    "H1",
+    "H3",
+    "H9"
+   ],
+   "master_stages": [
+    "A6"
+   ],
+   "lesson_benefit": "retrieve expression-substitute on unfamiliar animation art with the key path hidden",
+   "prompt": "Copy the leading check digit into the final CHECK row with an expression substitute. The complete Frog pose between them is already authored and must remain byte-for-byte unchanged.",
+   "roadmap_contract": "Copy the leading check digit into the final CHECK row with an expression substitute. The complete Frog pose between them is already authored and must remain byte-for-byte unchanged.",
+   "start": [
+    "CHECK 1",
+    "     ,Oo",
+    "  (\\/ .-)",
+    "  ´ ·-\\´\\",
+    "CHECK 0"
+   ],
+   "target": [
+    "CHECK 1",
+    "     ,Oo",
+    "  (\\/ .-)",
+    "  ´ ·-\\´\\",
+    "CHECK 1"
+   ],
+   "expected": ":5s/0/\\=getline(1)[-1:]/<CR>",
+   "recipe": [
+    [
+     ":5s/0/",
+     "address only the final CHECK row and its stale digit"
+    ],
+    [
+     "\\=getline(1)[-1:]",
+     "derive the replacement from the leading metadata row"
+    ],
+    [
+     "<CR>",
+     "update metadata without generating any art cell"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": false,
+   "hint": "Name the acting cells first. The exact key sequence remains hidden until evaluation.",
+   "grammar_families": [
+    "expression-substitute"
+   ],
+   "grammar_stage": "hidden",
+   "key_vocabulary": [
+    "address/range + s command + pattern + \\= expression replacement + <CR> execution"
+   ],
+   "frame_rows": 5,
+   "frame_slices": [
+    5
+   ],
+   "method_requirement": {
+    "label": "use the taught expression-substitute path",
+    "exact_any_of": [
+     ":5s/0/\\=getline(1)[-1:]/<CR>"
+    ]
+   },
+   "review_variants": [
+    {
+     "start": [
+      "CHECK 2",
+      " .''.'.''.",
+      "  .,,*,,.",
+      "'  .'.'. '",
+      "CHECK 0"
+     ],
+     "target": [
+      "CHECK 2",
+      " .''.'.''.",
+      "  .,,*,,.",
+      "'  .'.'. '",
+      "CHECK 2"
+     ],
+     "expected": ":5s/0/\\=getline(1)[-1:]/<CR>",
+     "recipe": [
+      [
+       ":5s/0/",
+       "address only the final Fireworks CHECK row"
+      ],
+      [
+       "\\=getline(1)[-1:]",
+       "derive its digit from the leading metadata"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Cosmetics/Fireworks res03 willow frame 5 + validation rows",
+     "prompt": "Fireworks review: update only the final CHECK digit from line 1; preserve all three shown canopy rows literally.",
+     "hint": "Expression substitution validates metadata here; it never mirrors or generates the art.",
+     "method_requirement": {
+      "label": "derive only the final check digit with expression substitution",
+      "exact_any_of": [
+       ":5s/0/\\=getline(1)[-1:]/<CR>"
+      ]
+     }
+    },
+    {
+     "start": [
+      "CHECK 3",
+      "  ____/",
+      "< / / |:.",
+      "  ¯¯¯¯\\",
+      "CHECK 0"
+     ],
+     "target": [
+      "CHECK 3",
+      "  ____/",
+      "< / / |:.",
+      "  ¯¯¯¯\\",
+      "CHECK 3"
+     ],
+     "expected": ":5s/0/\\=getline(1)[-1:]/<CR>",
+     "recipe": [
+      [
+       ":5s/0/",
+       "address only the final missile CHECK row"
+      ],
+      [
+       "\\=getline(1)[-1:]",
+       "copy the leading validation digit"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Games/TowerDefense res18 missile frame 1 + validation rows",
+     "prompt": "Missile review: derive the trailing CHECK digit while every hull and exhaust cell remains unchanged.",
+     "hint": "The expression's target is metadata, not a drawing row.",
+     "method_requirement": {
+      "label": "derive only the final check digit with expression substitution",
+      "exact_any_of": [
+       ":5s/0/\\=getline(1)[-1:]/<CR>"
+      ]
+     }
+    }
+   ],
+   "review_source_card_id": "M18.EXPRH",
+   "review_method_family": "expression-substitute",
+   "required_before_mastery": true,
+   "labels": true,
+   "stage_owner": "A6",
+   "artifact_mode": "animation-strip",
+   "paired_question_ids": [
+    "M18.EXPRH.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M18.EXPRH.P01"
+    ],
+    "rationale": {
+     "M18.EXPRH.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
     }
    },
    "pairing_exception": null
@@ -27115,6 +27917,7 @@
    "key_vocabulary": [
     "source address/range + t/copy command + destination address + <CR> execution"
    ],
+   "required_before_mastery": true,
    "stage_owner": "A6",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -27437,94 +28240,112 @@
    },
    "review_variants": [
     {
+     "prompt": "Dracula walk review: append the complete next contact pose, including its two timing rows, below the existing stand and first walk pose.",
+     "hint": "Use o for every new row; do not copy or substitute an existing pose.",
      "start": [
-      "  !/     ",
-      " /|      ",
-      "  |      ",
-      " / \\     ",
-      "/_  \\    ",
-      "  o\\     ",
-      " /|\\     ",
-      "  |      ",
-      "  |\\     ",
-      " /  \\_   "
+      "   \\(}_",
+      "  ,' ¯/",
+      " '-_.'",
+      "",
+      "",
+      "   \\(}_",
+      ".-´  ,'",
+      " ¯-´ \\",
+      "",
+      ""
      ],
      "target": [
-      "  !/     ",
-      " /|      ",
-      "  |      ",
-      " / \\     ",
-      "/_  \\    ",
-      "  o\\     ",
-      " /|\\     ",
-      "  |      ",
-      "  |\\     ",
-      " /  \\_   ",
-      " \\o      ",
-      "  |\\     ",
-      "  |      ",
-      " /|      ",
-      "/  _\\    "
+      "   \\(}_",
+      "  ,' ¯/",
+      " '-_.'",
+      "",
+      "",
+      "   \\(}_",
+      ".-´  ,'",
+      " ¯-´ \\",
+      "",
+      "",
+      "   \\(}_",
+      ".-´  ,'",
+      " ¯-´>\\",
+      "",
+      ""
      ],
-     "expected": "Go \\o<Esc>o  |\\<Esc>o  |<Esc>o /|<Esc>o/  _\\<Esc>",
+     "expected": "Go   \\(}_<Esc>o.-´  ,'<Esc>o ¯-´>\\<Esc>o<Esc>o<Esc>",
      "recipe": [
       [
-       "G then o",
-       "append each complete row of the opposite-contact pose directly"
+       "G",
+       "go to the end of the two-pose strip"
       ],
       [
-       "five bounded rows",
-       "keep the torso column registered without padding the key path with unrelated I/A commands"
+       "o…<Esc> x5",
+       "append the complete next Dracula pose and its two timing rows"
       ]
      ],
-     "cursor": "^"
+     "cursor": "^",
+     "source": "official-Pets/Dracula res01 stand and walk frames 2-3 + timing rows",
+     "method_requirement": {
+      "label": "append the complete next five-row pose with open-line o",
+      "exact_any_of": [
+       "Go   \\(}_<Esc>o.-´  ,'<Esc>o ¯-´>\\<Esc>o<Esc>o<Esc>"
+      ]
+     }
     },
     {
+     "prompt": "Boo hover review: append the complete folded-skirt pose after the expanded and wide-skirt poses, preserving two timing rows per pose.",
+     "hint": "Every target row is new; retrieve open-line o rather than altering either existing pose.",
      "start": [
-      "  +/     ",
-      " /|      ",
-      "  |      ",
-      " / \\     ",
-      "/_  \\    ",
-      "  o\\     ",
-      " /|\\     ",
-      "  |      ",
-      "  |\\     ",
-      " /  \\_   "
+      "  .-.",
+      "_(   )_",
+      "`.   .´",
+      "",
+      "",
+      "  .-.",
+      " (   )",
+      "-´   `-",
+      "",
+      ""
      ],
      "target": [
-      "  +/     ",
-      " /|      ",
-      "  |      ",
-      " / \\     ",
-      "/_  \\    ",
-      "  o\\     ",
-      " /|\\     ",
-      "  |      ",
-      "  |\\     ",
-      " /  \\_   ",
-      " \\o      ",
-      "  |\\     ",
-      "  |      ",
-      " /|      ",
-      "/  _\\    "
+      "  .-.",
+      "_(   )_",
+      "`.   .´",
+      "",
+      "",
+      "  .-.",
+      " (   )",
+      "-´   `-",
+      "",
+      "",
+      "  .-.",
+      " (   )",
+      " /   \\",
+      "",
+      ""
      ],
-     "expected": "Go \\o<Esc>o  |\\<Esc>o  |<Esc>o /|<Esc>o/  _\\<Esc>",
+     "expected": "Go  .-.<Esc>o (   )<Esc>o /   \\<Esc>o<Esc>o<Esc>",
      "recipe": [
       [
-       "G then o",
-       "append each complete row of the opposite-contact pose directly"
+       "G",
+       "go to the end of the two-pose hover strip"
       ],
       [
-       "five bounded rows",
-       "keep the torso column registered without padding the key path with unrelated I/A commands"
+       "o…<Esc> x5",
+       "append Boo's complete folded-skirt pose and timing rows"
       ]
      ],
-     "cursor": "^"
+     "cursor": "^",
+     "source": "official-Pets/Boo res01 hover frames 2-4 + timing rows",
+     "method_requirement": {
+      "label": "append the complete next five-row hover pose with open-line o",
+      "exact_any_of": [
+       "Go  .-.<Esc>o (   )<Esc>o /   \\<Esc>o<Esc>o<Esc>"
+      ]
+     }
     }
    ],
    "review_source_card_id": "M8.04",
-   "review_method_family": "technique:M8.04",
+   "review_method_family": "normal-open-line",
    "master_habits": [
     "H2",
     "H8"
@@ -27543,6 +28364,13 @@
     "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
+   "method_requirement": {
+    "label": "append the complete opposite-contact pose with open-line o",
+    "exact_any_of": [
+     "Go \\o<Esc>o  |\\<Esc>o  |<Esc>o /|<Esc>o/  _\\<Esc>"
+    ]
+   },
+   "required_before_mastery": true,
    "stage_owner": "A7",
    "artifact_mode": "animation-strip",
    "paired_question_ids": [
@@ -42840,6 +43668,89 @@
    "authorship": "manual"
   },
   {
+   "id": "M14.PH.P01",
+   "card_id": "M14.PH",
+   "module_id": "M14",
+   "grammar_family": "put-before",
+   "grammar_breakdown_id": "put-before",
+   "grammar_breakdown": [
+    "P puts the yanked object before the cursor or above the current line",
+    "} moves to the next blank-line-separated paragraph/frame"
+   ],
+   "paired_invariant": "keep variants in the file, treat each blank-line-separated frame as one object, and reuse a deliberate glyph vocabulary instead of retyping it from memory",
+   "source_ref": "ascii-art-authoring §§1.7,2,3; Neovim help text-objects, quote_alpha, i_CTRL-R, virtual-replace-mode",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nA complete open-eyed Skully pose must become an anticipation hold immediately before the blink. The source pose remains first, and all three copied rows plus their separator stay together.\n\n  START                 TARGET\n  │     ,--.│           │     ,--.│\n  │    (_o,o)│          │    (_o,o)│\n  │      `\"´│          │      `\"´│\n  │     ,--.│           │     ,--.│\n  │    (_=,=)│          │    (_o,o)│\n  │      `\"´│          │      `\"´│\n                         │     ,--.│\n                         │    (_=,=)│\n                         │      `\"´│\n\nNEOVIM\nWhich path treats one blank-line-separated pose as an object and places the copy before the blink?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Keep open, open, then blink as three complete poses. | NEOVIM: `ggyapgg}jP` copies the first paragraph and puts it before the next pose.",
+    "ANIMATION: Replace the blink with the open pose. | NEOVIM: `ggyapgg}jp` puts below the boundary and overwrites the following paragraph.",
+    "ANIMATION: Copy only the eye row as the hold. | NEOVIM: `yyP` makes one row a complete pose object.",
+    "ANIMATION: Move the source pose after the blink. | NEOVIM: `dap}p` preserves the original while adding a copy before it."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: the paragraph object keeps the pose and separator intact, and P inserts it before the blink.",
+    "A put inserts stored text; it does not overwrite a following paragraph, and lowercase p is not the taught before-boundary placement.",
+    "One eye row has no complete silhouette or frame boundary; the pose is the whole paragraph.",
+    "dap deletes the source paragraph, so this path would lose the first open pose instead of creating a hold."
+   ],
+   "animation_prompt": "ANIMATION\nThe open pose is duplicated as a complete hold immediately before the blink.",
+   "animation_answer": "The target contains open, open, then blink; each pose retains all three rows and its separator.",
+   "neovim_prompt": "NEOVIM\nChoose the paragraph-object path whose final P puts the stored pose before the blink.",
+   "neovim_answer": "ggyap copies the first pose paragraph, gg}j reaches the next pose boundary, and P places the copy before the blink.",
+   "compact_prompt": "ANIMATION\nInsert one complete open-eye hold before the blink.\n\n  │(_o,o)│ │(_=,=)│\n       ↓\n  │(_o,o)│ │(_o,o)│ │(_=,=)│\n\nNEOVIM\nWhich path uses the paragraph boundary and P?",
+   "compact_choices": [
+    "A: open/open/blink · V: yap, }, P",
+    "A: replace blink · V: p overwrites paragraph",
+    "A: eye row hold · V: yyP owns full pose",
+    "A: move source · V: dap preserves it"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "ggyapgg}jP",
+    "required_term_groups": [
+     [
+      "put",
+      "paste",
+      "P"
+     ],
+     [
+      "before",
+      "above"
+     ],
+     [
+      "register",
+      "yank",
+      "copy"
+     ],
+     [
+      "paragraph",
+      "frame",
+      "blank line"
+     ],
+     [
+      "next",
+      "forward",
+      "}"
+     ],
+     [
+      "boundary",
+      "scope"
+     ]
+    ],
+    "sample_answer": "put before register paragraph next boundary"
+   },
+   "authorship": "manual"
+  },
+  {
    "id": "M14.06.P01",
    "card_id": "M14.06",
    "module_id": "M14",
@@ -44356,6 +45267,75 @@
      ]
     ],
     "sample_answer": "zy trailing zp block"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M15.BAH.P01",
+   "card_id": "M15.BAH",
+   "module_id": "M15",
+   "grammar_family": "block-append",
+   "grammar_breakdown_id": "block-append",
+   "grammar_breakdown": [
+    "Ctrl-v block + $A appends the typed glyph at the end of every selected row"
+   ],
+   "paired_invariant": "texture is a material system: offset repeated motifs by measured cells, lighten dither by erasing density, and keep the shadow or isometric base as a stable depth cue",
+   "source_ref": "ascii-art-authoring §§3,4,6,8; Neovim help shiftwidth, >>, visual-block, v_b_A, :substitute, q, @",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThe second missile pose needs one right comparison edge on every row. Its nose, exhaust, and lower hull end at different columns; the first pose must remain unchanged.\n\n  BEFORE             AFTER\n  │  ____/│          │  ____/│\n  │< / / |:.│        │< / / |:.│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\│\n  │  ____/│          │  ____/|│\n  │< / / |:'│        │< / / |:'|│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\|│\n\nNEOVIM\nWhich operation appends at each selected row's own end rather than forcing one shared column?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Add a rectangular column at one fixed display position. | NEOVIM: `<C-v>2jr|` replaces whatever cells already occupy that column.",
+    "ANIMATION: Add one edge only to the longest row. | NEOVIM: `$A|<Esc>` without a block affects the current line only.",
+    "ANIMATION: Append one edge at every true row end of pose 2. | NEOVIM: `4G0<C-v>2j$A|<Esc>` selects its three rows and appends across the block.",
+    "ANIMATION: Add spaces until all rows share a width, then add edges. | NEOVIM: Insert mode padding is required before blockwise append."
+   ],
+   "correct_choice": 2,
+   "feedback": [
+    "A fixed-column replacement changes existing cells and cannot follow three different row ends.",
+    "Without a Visual Block selection, A owns only the current row and leaves the other two unmarked.",
+    "Correct: blockwise $A resolves $ independently for each selected row and appends exactly one edge.",
+    "Padding changes the fixed-width pose and is precisely what the row-end append avoids."
+   ],
+   "animation_prompt": "ANIMATION\nOnly the second complete missile receives one right edge per row; its uneven row lengths remain intact.",
+   "animation_answer": "Three edges are appended at three true row ends without padding, shifting, or changing the first pose.",
+   "neovim_prompt": "NEOVIM\nChoose the Visual Block append that applies $A once across the selected pose rows.",
+   "neovim_answer": "4G0<C-v>2j selects the second pose's three rows, and $A|<Esc> appends one bar at each selected row end.",
+   "compact_prompt": "ANIMATION\nAdd one edge to each uneven row of pose 2 only.\n\n  │____/ │ → │____/|│\n  │/ |:' │ → │/ |:'|│\n  │¯¯¯¯\\ │ → │¯¯¯¯\\|│\n\nNEOVIM\nWhich block command follows each row to $?",
+   "compact_choices": [
+    "A: fixed column replace · V: block r",
+    "A: longest row only · V: linewise A",
+    "A: each true row end · V: block $A",
+    "A: pad then edge · V: insertion required"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "4G0<C-v>2j$A|<Esc>",
+    "required_term_groups": [
+     [
+      "block",
+      "Ctrl-v",
+      "column"
+     ],
+     [
+      "end",
+      "$",
+      "A",
+      "append"
+     ],
+     [
+      "each row",
+      "scope"
+     ]
+    ],
+    "sample_answer": "block end each row"
    },
    "authorship": "manual"
   },
@@ -47143,6 +48123,77 @@
    "authorship": "manual"
   },
   {
+   "id": "M17.GNH.P01",
+   "card_id": "M17.GNH",
+   "module_id": "M17",
+   "grammar_family": "global-normal",
+   "grammar_breakdown_id": "global-normal",
+   "grammar_breakdown": [
+    "global selector + matching pattern + normal! command + bounded Normal payload + <CR> execution"
+   ],
+   "paired_invariant": "unchanged glyphs are temporal anchors: batch-edit only a proven homologous landmark, then inspect every frame for collateral changes before playback",
+   "source_ref": "ascii-art-authoring §§7.3,7.4,8.1; Neovim help /, n, ., :global, :normal, q, @",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nTwo held missile poses share identical hulls. Advance the final exhaust puff from . to ' in both poses while every non-exhaust row stays byte-for-byte fixed.\n\n  BEFORE             AFTER\n  │  ____/│          │  ____/│\n  │< / / |:.│        │< / / |:'│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\│\n  │  ____/│          │  ____/│\n  │< / / |:.│        │< / / |:'│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\│\n\nNEOVIM\nWhich Ex command selects only rows containing the exhaust colon and runs one bounded Normal edit on each?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Advance every dot in the file. | NEOVIM: `:%s/./'/g` treats dot as the literal exhaust glyph.",
+    "ANIMATION: Advance only the first pose. | NEOVIM: `/.:<CR>r'` automatically stops after one match.",
+    "ANIMATION: Advance both exhaust rows and preserve all hull rows. | NEOVIM: `:g/:/normal! 0f.r'<CR>` selects colon rows and performs one bounded replacement on each.",
+    "ANIMATION: Duplicate the first exhaust row over the second. | NEOVIM: `:g/:/t$` edits each selected puff in place."
+   ],
+   "correct_choice": 2,
+   "feedback": [
+    "In a substitute pattern, bare dot is a wildcard; this would consume unrelated hull cells rather than one exhaust endpoint.",
+    "A single search and replacement reaches one occurrence and does not express the two-row coherence rule.",
+    "Correct: the global pattern owns the acting rows, and the Normal payload owns one cell within each selected row.",
+    "Ex t copies lines and does not perform the required in-place puff change."
+   ],
+   "animation_prompt": "ANIMATION\nBoth held exhaust puffs advance together while every hull row remains coherent.",
+   "animation_answer": "Only the two rows containing exhaust colons change, and each changes one final puff cell.",
+   "neovim_prompt": "NEOVIM\nChoose the global command with a bounded Normal payload.",
+   "neovim_answer": ":g/:/ selects the two exhaust rows, and normal! 0f.r' changes the final dot on each selected row.",
+   "compact_prompt": "ANIMATION\nAdvance both exhaust rows; preserve both hulls.\n\n  │|:.│ → │|:'│\n  │|:.│ → │|:'│\n\nNEOVIM\nWhich :g pattern owns only those rows?",
+   "compact_choices": [
+    "A: every dot · V: wildcard substitute",
+    "A: first pose only · V: one search",
+    "A: both exhaust rows · V: :g + bounded normal",
+    "A: duplicate row · V: :g with t"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": ":g/:/normal! 0f.r'<CR>",
+    "required_term_groups": [
+     [
+      "global",
+      ":g",
+      "selector"
+     ],
+     [
+      "pattern",
+      "match"
+     ],
+     [
+      "normal",
+      "payload"
+     ],
+     [
+      "enter",
+      "execute"
+     ]
+    ],
+    "sample_answer": "global pattern normal enter"
+   },
+   "authorship": "manual"
+  },
+  {
    "id": "M17.06.P01",
    "card_id": "M17.06",
    "module_id": "M17",
@@ -49548,6 +50599,80 @@
      ]
     ],
     "sample_answer": "The expression derives only each check digit from an already-authored frame row; the manual method inspects both frames, and neither generates mirrored art."
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M18.EXPRH.P01",
+   "card_id": "M18.EXPRH",
+   "module_id": "M18",
+   "grammar_family": "expression-substitute",
+   "grammar_breakdown_id": "expression-substitute",
+   "grammar_breakdown": [
+    "address/range + s command + pattern + \\= expression replacement + <CR> execution"
+   ],
+   "paired_invariant": "never reverse stored bytes to mirror ASCII art; redraw directional glyphs and spacing by eye, validate the result separately, then reuse approved frames in reverse when the motion physically returns",
+   "source_ref": "ascii-art-authoring §§7.2,7.5,8.2; Neovim help :sub-replace-expression, getline(), :copy",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThe Frog pose is already approved. Only the trailing validation digit is stale; copying metadata must not generate, mirror, or alter any pose cell.\n\n  BEFORE          AFTER\n  │CHECK 1│       │CHECK 1│\n  │     ,Oo│      │     ,Oo│\n  │  (\\/ .-)│    │  (\\/ .-)│\n  │  ´ ·-\\´\\│    │  ´ ·-\\´\\│\n  │CHECK 0│       │CHECK 1│\n\nNEOVIM\nWhich expression substitute reads the leading digit and replaces only the final CHECK-row zero?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Rebuild the Frog from line 1. | NEOVIM: `:%s/.*/\\=getline(1)/` safely copies metadata into every row.",
+    "ANIMATION: Keep every Frog cell and change only the final CHECK digit. | NEOVIM: `:5s/0/\\=getline(1)[-1:]/<CR>` evaluates the leading digit only on row 5.",
+    "ANIMATION: Reverse the Frog while updating the check. | NEOVIM: `\\=reverse(getline(1))` is a valid hand-mirroring operation.",
+    "ANIMATION: Change both CHECK rows to zero. | NEOVIM: `:%s/1/0/g` is equivalent because the art contains no digits."
+   ],
+   "correct_choice": 1,
+   "feedback": [
+    "A whole-file expression would replace the authored pose rows; validation metadata is the only permitted target.",
+    "Correct: the address confines substitution to the trailing CHECK row, and the expression reads one metadata character from line 1.",
+    "Software reversal is not hand-authored mirroring, and this expression reads metadata rather than art geometry.",
+    "Whole-file scope can change embedded art digits and also destroys the intended leading CHECK value."
+   ],
+   "animation_prompt": "ANIMATION\nThe complete Frog pose remains literal while only its trailing validation metadata changes.",
+   "animation_answer": "Every art row stays identical; the final CHECK digit becomes the leading CHECK digit.",
+   "neovim_prompt": "NEOVIM\nChoose the row-bounded expression replacement that reads line 1.",
+   "neovim_answer": ":5s/0/\\=getline(1)[-1:]/<CR> addresses the final row, replaces its zero, and evaluates the last character of line 1 as the replacement.",
+   "compact_prompt": "ANIMATION\nKeep the Frog literal; update only CHECK 0 → CHECK 1.\n\n  │CHECK 1│\n  │  (\\/ .-)│ unchanged\n  │CHECK 0│ → │CHECK 1│\n\nNEOVIM\nWhich \\= expression targets row 5 only?",
+   "compact_choices": [
+    "A: rebuild pose · V: expression on every row",
+    "A: pose fixed; final digit only · V: row-5 \\=",
+    "A: reverse pose · V: reverse() is hand mirror",
+    "A: both checks zero · V: whole-file substitute"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": ":5s/0/\\=getline(1)[-1:]/<CR>",
+    "required_term_groups": [
+     [
+      "range",
+      "address"
+     ],
+     [
+      "substitute",
+      "pattern"
+     ],
+     [
+      "expression",
+      "\\="
+     ],
+     [
+      "getline",
+      "validation"
+     ],
+     [
+      "enter",
+      "execute"
+     ]
+    ],
+    "sample_answer": "range substitute expression getline enter"
    },
    "authorship": "manual"
   },
@@ -54544,6 +55669,11 @@
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
+   "card_id": "M14.PH",
+   "label": "use the taught put-before path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M14.06",
    "label": "transfer the visible O palette through named register a",
    "evidence": "runtime-required ordered command path plus exact target"
@@ -54624,6 +55754,11 @@
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
+   "card_id": "M15.BAH",
+   "label": "use the taught block-append path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M15.06",
    "label": "pan the source tread with an explicit one-cell indent",
    "evidence": "runtime-required ordered command path plus exact target"
@@ -54674,6 +55809,11 @@
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
+   "card_id": "M3.04",
+   "label": "change the copied eye with the ci( text object",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M3.05",
    "label": "counted yank",
    "evidence": "runtime-recognized comparison method"
@@ -54691,6 +55831,11 @@
   {
    "card_id": "M3.06",
    "label": "perform the unfamiliar-art transfer with its taught command path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
+   "card_id": "M3.08",
+   "label": "enter the middle-dot guide with the taught digraph",
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
@@ -54779,6 +55924,11 @@
    "evidence": "runtime-recognized comparison method"
   },
   {
+   "card_id": "M17.GNH",
+   "label": "use the taught global-normal path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M17.06",
    "label": "use search repeat and dot on both Cranius eye anchors",
    "evidence": "runtime-required ordered command path plus exact target"
@@ -54844,6 +55994,11 @@
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
+   "card_id": "M7.04",
+   "label": "change the complete material band with characterwise Visual mode",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M7.05",
    "label": "recorded visual macro",
    "evidence": "runtime-recognized comparison method"
@@ -54904,6 +56059,11 @@
    "evidence": "runtime-recognized comparison method"
   },
   {
+   "card_id": "M18.EXPRH",
+   "label": "use the taught expression-substitute path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M18.06",
    "label": "hand-author the complete Pallas ghost mirror without reversing bytes",
    "evidence": "runtime-required ordered command path plus exact target"
@@ -54911,6 +56071,11 @@
   {
    "card_id": "M18.08",
    "label": "reuse complete approved frame ranges in reverse order",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
+   "card_id": "M8.04",
+   "label": "append the complete opposite-contact pose with open-line o",
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
@@ -55102,6 +56267,12 @@
    "evidence": "source-linked changed-art review bank"
   },
   {
+   "source_card_id": "M14.PH",
+   "method_family": "put-before",
+   "changed_art_variants": 2,
+   "evidence": "source-linked changed-art review bank"
+  },
+  {
    "source_card_id": "M14.06",
    "method_family": "required:transfer the visible O palette through named register a",
    "changed_art_variants": 2,
@@ -55158,6 +56329,12 @@
   {
    "source_card_id": "M15.ZPH",
    "method_family": "trimmed-block-copy",
+   "changed_art_variants": 2,
+   "evidence": "source-linked changed-art review bank"
+  },
+  {
+   "source_card_id": "M15.BAH",
+   "method_family": "block-append",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -55235,7 +56412,7 @@
   },
   {
    "source_card_id": "M3.04",
-   "method_family": "technique:M3.04",
+   "method_family": "operator-motion-object",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -55265,7 +56442,7 @@
   },
   {
    "source_card_id": "M3.08",
-   "method_family": "technique:M3.08",
+   "method_family": "digraph",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -55320,6 +56497,12 @@
   {
    "source_card_id": "M17.05",
    "method_family": "comparison:M17.05",
+   "changed_art_variants": 2,
+   "evidence": "source-linked changed-art review bank"
+  },
+  {
+   "source_card_id": "M17.GNH",
+   "method_family": "global-normal",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -55391,7 +56574,7 @@
   },
   {
    "source_card_id": "M7.04",
-   "method_family": "technique:M7.04",
+   "method_family": "visual-characterwise",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -55456,6 +56639,12 @@
    "evidence": "source-linked changed-art review bank"
   },
   {
+   "source_card_id": "M18.EXPRH",
+   "method_family": "expression-substitute",
+   "changed_art_variants": 2,
+   "evidence": "source-linked changed-art review bank"
+  },
+  {
    "source_card_id": "M18.06",
    "method_family": "required:hand-author the complete Pallas ghost mirror without reversing bytes",
    "changed_art_variants": 2,
@@ -55469,7 +56658,7 @@
   },
   {
    "source_card_id": "M8.04",
-   "method_family": "technique:M8.04",
+   "method_family": "normal-open-line",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -55983,6 +57172,16 @@
    "prior_guided_card_id": "M14.DAP"
   },
   {
+   "hidden_card_id": "M14.PH",
+   "grammar_family": "put-before",
+   "prior_guided_card_id": "M14.PARA"
+  },
+  {
+   "hidden_card_id": "M14.PH",
+   "grammar_family": "paragraph-next",
+   "prior_guided_card_id": "M14.PARA"
+  },
+  {
    "hidden_card_id": "M14.06",
    "grammar_family": "register",
    "prior_guided_card_id": "M14.01"
@@ -56171,6 +57370,11 @@
    "hidden_card_id": "M15.ZPH",
    "grammar_family": "trimmed-block-copy",
    "prior_guided_card_id": "M15.ZP"
+  },
+  {
+   "hidden_card_id": "M15.BAH",
+   "grammar_family": "block-append",
+   "prior_guided_card_id": "M15.BA"
   },
   {
    "hidden_card_id": "M15.06",
@@ -56473,6 +57677,11 @@
    "prior_guided_card_id": "M15.01"
   },
   {
+   "hidden_card_id": "M17.GNH",
+   "grammar_family": "global-normal",
+   "prior_guided_card_id": "M15.GLOBAL"
+  },
+  {
    "hidden_card_id": "M17.06",
    "grammar_family": "normal-replace",
    "prior_guided_card_id": "M0.01"
@@ -56773,6 +57982,11 @@
    "prior_guided_card_id": "M0.01"
   },
   {
+   "hidden_card_id": "M18.EXPRH",
+   "grammar_family": "expression-substitute",
+   "prior_guided_card_id": "M18.EXPR"
+  },
+  {
    "hidden_card_id": "M18.06",
    "grammar_family": "change-to-end",
    "prior_guided_card_id": "M10.02"
@@ -56940,7 +58154,7 @@
    "review_card_id": "M0.06",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "search-landmark",
@@ -56948,7 +58162,7 @@
    "review_card_id": "M0.06",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "normal-motion",
@@ -56956,7 +58170,7 @@
    "review_card_id": "M0.06",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "linewise-yank-put",
@@ -56964,7 +58178,7 @@
    "review_card_id": "M12.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "normal-open-line",
@@ -56972,7 +58186,7 @@
    "review_card_id": "M8.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "ex-substitute-range",
@@ -56980,15 +58194,15 @@
    "review_card_id": "M15.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "ex-copy",
    "guided_card_id": "M0.T",
-   "review_card_id": "M12.05",
+   "review_card_id": "M15.08",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "ex-substitute-line",
@@ -56996,7 +58210,7 @@
    "review_card_id": "M0.06",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "replace-mode",
@@ -57004,7 +58218,7 @@
    "review_card_id": "M11.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "undo-redo",
@@ -57012,7 +58226,7 @@
    "review_card_id": "M11.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "whitespace-column-audit",
@@ -57020,7 +58234,7 @@
    "review_card_id": "M11.WSH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "undo-tree-travel",
@@ -57028,7 +58242,7 @@
    "review_card_id": "M11.UTH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "virtual-column",
@@ -57036,7 +58250,7 @@
    "review_card_id": "M11.08",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "char-find-repeat",
@@ -57044,7 +58258,7 @@
    "review_card_id": "M1.06",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "linewise-delete",
@@ -57052,7 +58266,7 @@
    "review_card_id": "M4.08",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "virtual-replace",
@@ -57060,7 +58274,7 @@
    "review_card_id": "M19.06",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "operator-motion-object",
@@ -57068,7 +58282,7 @@
    "review_card_id": "M3.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "digraph",
@@ -57076,7 +58290,7 @@
    "review_card_id": "M3.08",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "visual-scope",
@@ -57084,7 +58298,7 @@
    "review_card_id": "M12.JHH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "block-change",
@@ -57092,7 +58306,7 @@
    "review_card_id": "M12.JHH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "visual-reselect",
@@ -57100,7 +58314,7 @@
    "review_card_id": "M12.JHH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "register",
@@ -57108,7 +58322,7 @@
    "review_card_id": "M14.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "paragraph-delete",
@@ -57116,23 +58330,23 @@
    "review_card_id": "M14.DAPH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "paragraph-next",
    "guided_card_id": "M14.PARA",
-   "review_card_id": "M14.05",
+   "review_card_id": "M14.PH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "put-before",
    "guided_card_id": "M14.PARA",
-   "review_card_id": "M14.05",
+   "review_card_id": "M14.PH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "change-to-end",
@@ -57140,7 +58354,7 @@
    "review_card_id": "M18.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "ex-command",
@@ -57148,7 +58362,7 @@
    "review_card_id": "M15.06",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "trimmed-block-copy",
@@ -57156,15 +58370,15 @@
    "review_card_id": "M15.ZPH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "block-append",
    "guided_card_id": "M15.BA",
-   "review_card_id": "M15.05",
+   "review_card_id": "M15.BAH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "macro",
@@ -57172,23 +58386,23 @@
    "review_card_id": "M15.08",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "global-normal",
    "guided_card_id": "M15.GLOBAL",
-   "review_card_id": "M17.05",
+   "review_card_id": "M17.GNH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "ex-move",
    "guided_card_id": "M16.MOVE",
-   "review_card_id": "M16.05",
+   "review_card_id": "M6.06",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "glyph-inspect",
@@ -57196,7 +58410,7 @@
    "review_card_id": "M3.GAH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "block-insert",
@@ -57204,7 +58418,7 @@
    "review_card_id": "M4.BIH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "onion-diff-view",
@@ -57212,15 +58426,15 @@
    "review_card_id": "M4.DIFFH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "repeat",
    "guided_card_id": "M17.01",
-   "review_card_id": "M17.05",
+   "review_card_id": "M17.06",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "word-boundary",
@@ -57228,7 +58442,7 @@
    "review_card_id": "M13.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "lowercase-word-motion",
@@ -57236,7 +58450,7 @@
    "review_card_id": "M13.WH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "last-nonblank",
@@ -57244,7 +58458,7 @@
    "review_card_id": "M13.GH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "visual-characterwise",
@@ -57252,15 +58466,15 @@
    "review_card_id": "M7.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   },
   {
    "grammar_family": "expression-substitute",
    "guided_card_id": "M18.EXPR",
-   "review_card_id": "M18.05",
+   "review_card_id": "M18.EXPRH",
    "changed_art_variants": 2,
    "keys_hidden": true,
-   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+   "evidence": "method-required hidden target plus source-linked spaced review"
   }
  ],
  "required_mastery_review_coverage": [
@@ -57268,6 +58482,15 @@
    "module_id": "M0",
    "source_card_id": "M0.06",
    "method_label": "perform the unfamiliar-art transfer with its taught command path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M11",
+   "source_card_id": "M11.04",
+   "method_label": "undo and redo a real fixed-width redraw",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
@@ -57295,6 +58518,15 @@
    "module_id": "M11",
    "source_card_id": "M11.06",
    "method_label": "transfer the two-cell blink with Replace mode",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M11",
+   "source_card_id": "M11.08",
+   "method_label": "enable virtual editing and place both trails at exact column 14",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
@@ -57329,6 +58561,15 @@
   },
   {
    "module_id": "M12",
+   "source_card_id": "M12.04",
+   "method_label": "repeat the lower-joint character search with semicolon",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M12",
    "source_card_id": "M12.JHH",
    "method_label": "use the taught visual-reselect path",
    "changed_art_variants": 2,
@@ -57347,6 +58588,15 @@
   },
   {
    "module_id": "M14",
+   "source_card_id": "M14.04",
+   "method_label": "change only the second variant through its named palette register",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M14",
    "source_card_id": "M14.DAPH",
    "method_label": "use the taught paragraph-delete path",
    "changed_art_variants": 2,
@@ -57356,8 +58606,26 @@
   },
   {
    "module_id": "M14",
+   "source_card_id": "M14.PH",
+   "method_label": "use the taught put-before path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M14",
    "source_card_id": "M14.06",
    "method_label": "transfer the visible O palette through named register a",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M14",
+   "source_card_id": "M14.08",
+   "method_label": "navigate paragraph frames and retrieve a named glyph register",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
@@ -57392,8 +58660,26 @@
   },
   {
    "module_id": "M15",
+   "source_card_id": "M15.04",
+   "method_label": "combine a one-cell brick shift with a row-bounded dither lightening",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M15",
    "source_card_id": "M15.ZPH",
    "method_label": "use the taught trimmed-block-copy path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M15",
+   "source_card_id": "M15.BAH",
+   "method_label": "use the taught block-append path",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
@@ -57409,9 +58695,45 @@
    "evidence": "method-required hidden transfer plus changed-art spaced review"
   },
   {
+   "module_id": "M15",
+   "source_card_id": "M15.08",
+   "method_label": "record and replay the dither-lightening macro across four landmarks",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M16",
+   "source_card_id": "M16.04",
+   "method_label": "copy a complete plan block and count-increment its frame label",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
    "module_id": "M16",
    "source_card_id": "M16.06",
    "method_label": "increment the embedded FrogBog frame number without redrawing the pad",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M16",
+   "source_card_id": "M16.08",
+   "method_label": "append a complete key-pose plan and count-increment the new label",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M3",
+   "source_card_id": "M3.04",
+   "method_label": "change the copied eye with the ci( text object",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
@@ -57430,6 +58752,15 @@
    "module_id": "M3",
    "source_card_id": "M3.06",
    "method_label": "perform the unfamiliar-art transfer with its taught command path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M3",
+   "source_card_id": "M3.08",
+   "method_label": "enter the middle-dot guide with the taught digraph",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
@@ -57481,9 +58812,45 @@
    "evidence": "method-required hidden transfer plus changed-art spaced review"
   },
   {
+   "module_id": "M4",
+   "source_card_id": "M4.08",
+   "method_label": "delete exactly the redundant three-row seam frame",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M17",
+   "source_card_id": "M17.GNH",
+   "method_label": "use the taught global-normal path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
    "module_id": "M17",
    "source_card_id": "M17.06",
    "method_label": "use search repeat and dot on both Cranius eye anchors",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M17",
+   "source_card_id": "M17.08",
+   "method_label": "record and replay a search-bearing macro across four frame anchors",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M13",
+   "source_card_id": "M13.04",
+   "method_label": "address three texture edges with E, counted W, and B",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
@@ -57518,8 +58885,26 @@
   },
   {
    "module_id": "M7",
+   "source_card_id": "M7.04",
+   "method_label": "change the complete material band with characterwise Visual mode",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M7",
    "source_card_id": "M7.06",
    "method_label": "perform the unfamiliar-art transfer with its taught command path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M6",
+   "source_card_id": "M6.04",
+   "method_label": "clear the apex row while retaining the five-row frame",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
@@ -57536,8 +58921,44 @@
   },
   {
    "module_id": "M18",
+   "source_card_id": "M18.04",
+   "method_label": "hand-author the copied return overshoot across all three art rows",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M18",
+   "source_card_id": "M18.EXPRH",
+   "method_label": "use the taught expression-substitute path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M18",
    "source_card_id": "M18.06",
    "method_label": "hand-author the complete Pallas ghost mirror without reversing bytes",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M18",
+   "source_card_id": "M18.08",
+   "method_label": "reuse complete approved frame ranges in reverse order",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M8",
+   "source_card_id": "M8.04",
+   "method_label": "append the complete opposite-contact pose with open-line o",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
