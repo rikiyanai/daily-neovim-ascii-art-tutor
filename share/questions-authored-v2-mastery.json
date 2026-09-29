@@ -1456,5 +1456,140 @@
       "% is the whole-file range: every line. e only silences the error on a line that has no tail.",
       "The · marks exist only in this diagram. An empty replacement deletes the match and writes nothing."
     ]
+  },
+  "M11.LS.P01": {
+    "prompt": "ANIMATION\nOne Skully row ends in an invisible space (shown here as ·). Only that space goes.\n\n  BEFORE            AFTER\n  │     ,--.│       │     ,--.│\n  │    (_o,o)·│     │    (_o,o)│\n  │      `\"´│       │      `\"´│\n\nNEOVIM\nWhat does :set list do, and what removes the space?",
+    "compact_prompt": "ANIMATION\nOnly the trailing · goes; the skull stays.\n\n  │    (_o,o)·│ → │    (_o,o)│\n\nNEOVIM\nWhat does list do; what deletes the space?",
+    "animation_prompt": "ANIMATION\nAn invisible trailing space is found and removed; the skull does not move.",
+    "animation_answer": "Only the trailing space on the eye row disappears.",
+    "neovim_prompt": "NEOVIM\nExplain :set list and the deleting keys.",
+    "neovim_answer": ":set list only displays invisible characters; 2G$x deletes the trailing space it revealed.",
+    "choices": [
+      "ANIMATION: Only the invisible tail on the eye row goes. | NEOVIM: list shows the space as a mark; 2G$ lands on it and x deletes it.",
+      "ANIMATION: Every space in the skull goes. | NEOVIM: :set list deletes all spaces it marks.",
+      "ANIMATION: The eye row moves one cell left. | NEOVIM: x at the start of the row removes the extra space.",
+      "ANIMATION: A visible mark is added to the art. | NEOVIM: list writes the marks into the file."
+    ],
+    "compact_choices": [
+      "A: tail only · V: list shows, $x deletes",
+      "A: all spaces · V: list deletes",
+      "A: row shifts left · V: x at row start",
+      "A: mark saved · V: list writes"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: list only changes what you see; $ reaches the last cell, which is the invisible space, and x removes it.",
+      "list never edits anything. It only draws marks on screen for invisible characters.",
+      "The extra space is at the END of the row. Deleting at the start would move the whole eye row left.",
+      "The marks exist only on screen. :set nolist hides them and the file never contained them."
+    ]
+  },
+  "M11.CUC.P01": {
+    "prompt": "ANIMATION\nThe walking Dracula below the standing one should share its left edge, but its cape row starts one cell too far right.\n\n  BEFORE          AFTER\n  │   \\(}_│       │   \\(}_│\n  │  ,' ¯/│       │  ,' ¯/│\n  │ '-_.'│        │ '-_.'│\n  │   \\(}_│       │   \\(}_│\n  │ .-´  ,'│      │.-´  ,'│\n  │ ¯-´ \\│        │ ¯-´ \\│\n\nNEOVIM\nHow does cursorcolumn help, and what fixes the row?",
+    "compact_prompt": "ANIMATION\nThe walking cape row sits one cell right.\n\n  │ .-´  ,'│ → │.-´  ,'│\n\nNEOVIM\nWhat does cursorcolumn show; what fixes it?",
+    "animation_prompt": "ANIMATION\nThe second frame's cape row is moved back into registration with the first.",
+    "animation_answer": "Frame 2's cape row starts in the same column as frame 1's; nothing else changes.",
+    "neovim_prompt": "NEOVIM\nExplain cursorcolumn and the fixing keys.",
+    "neovim_answer": ":set cursorcolumn lights the cursor's column on every row so the one-cell offset is visible; 5G0x deletes the extra leading space.",
+    "choices": [
+      "ANIMATION: Frame 2's cape moves one cell left into line. | NEOVIM: cursorcolumn lights one column on every row; 5G0x deletes the extra leading space.",
+      "ANIMATION: Frame 1 moves right to match frame 2. | NEOVIM: cursorcolumn inserts a space in every row.",
+      "ANIMATION: The cape row is deleted. | NEOVIM: 5Gdd removes the offset row.",
+      "ANIMATION: Nothing changes; the offset is a display glitch. | NEOVIM: cursorcolumn fixes alignment by itself."
+    ],
+    "compact_choices": [
+      "A: cape moves left · V: guide + 5G0x",
+      "A: frame 1 moves · V: inserts spaces",
+      "A: row deleted · V: 5Gdd",
+      "A: no change · V: guide fixes it"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the highlighted column makes the one-cell drift visible; x on the extra leading space pulls that row back into line.",
+      "Frame 1 is the reference. cursorcolumn never edits text; it only highlights a column.",
+      "Deleting the row would break the frame. Only the extra leading space goes.",
+      "cursorcolumn is display only. The offset is real text and needs the x."
+    ]
+  },
+  "M11.UB.P01": {
+    "prompt": "ANIMATION\nTwo takes for the next egg crack: an exaggerated ! and the chosen , crack. The , take is submitted.\n\n  START          ! TAKE         CHOSEN\n  │:·; :│        │:·;!:│        │:·;,:│\n\nNEOVIM\nAfter r! then u, what does r, create?",
+    "compact_prompt": "ANIMATION\n! crack, undone, then the , crack.\n\n  │:·;!:│ → u → │:·;,:│\n\nNEOVIM\nWhat does r, after u create?",
+    "animation_prompt": "ANIMATION\nOne crack cell is tried two ways; the chosen , crack is kept.",
+    "animation_answer": "The final egg has the , crack; the ! take is not in the file.",
+    "neovim_prompt": "NEOVIM\nExplain u followed by a new change.",
+    "neovim_answer": "u steps back before the ! take; r, is a new change from there, so it starts a second branch and the ! take stays in the undo history.",
+    "choices": [
+      "ANIMATION: The , crack is kept; the ! take is only in history. | NEOVIM: u steps back; r, then starts a new branch, and the ! take is kept, not destroyed.",
+      "ANIMATION: Both cracks appear in the egg. | NEOVIM: u keeps the ! and r, adds a , beside it.",
+      "ANIMATION: The ! take is gone forever. | NEOVIM: a change after u erases the older take from history.",
+      "ANIMATION: The egg returns to one crack. | NEOVIM: r, is undone automatically by u."
+    ],
+    "compact_choices": [
+      "A: , kept, ! in history · V: new branch",
+      "A: both in egg · V: adds beside",
+      "A: ! gone forever · V: history erased",
+      "A: one crack · V: r, undone"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: undo followed by a new edit makes a branch. The ! take still exists in the undo tree.",
+      "r replaces one cell; there is only one crack cell here, so only one take is ever in the egg.",
+      "Vim's undo tree keeps the abandoned branch. The next step shows how to visit it with g-.",
+      "u came BEFORE r, so the , take is the newest state and it stays."
+    ]
+  },
+  "M11.UG.P01": {
+    "prompt": "ANIMATION\nAfter the ! take and the chosen - take on the frog's right eye, history is walked back to the ! and forward again.\n\n  │     ,O-│ → g- → │     ,O!│ → g+ → │     ,O-│\n\nNEOVIM\nWhat do g- and g+ do?",
+    "compact_prompt": "ANIMATION\n- take → g- → ! take → g+ → - take.\n\n  │,O-│ ↔ │,O!│\n\nNEOVIM\nWhat do g- and g+ do?",
+    "animation_prompt": "ANIMATION\nThe abandoned take is inspected, then the chosen take is restored for submission.",
+    "animation_answer": "The frog ends with the - eye after visiting the ! take.",
+    "neovim_prompt": "NEOVIM\nExplain g- and g+.",
+    "neovim_answer": "g- steps back through every state in time order, including the abandoned ! branch; g+ steps forward again.",
+    "choices": [
+      "ANIMATION: Visit the abandoned ! take, then return to -. | NEOVIM: g- steps back in time through every state, even other branches; g+ steps forward.",
+      "ANIMATION: The ! take becomes the submitted eye. | NEOVIM: g- makes the older take permanent.",
+      "ANIMATION: Both eyes flip between ! and -. | NEOVIM: g- and g+ swap the two eye cells.",
+      "ANIMATION: Nothing can reach the ! take any more. | NEOVIM: g- is the same as u and stays on this branch."
+    ],
+    "compact_choices": [
+      "A: visit ! then - · V: time order, any branch",
+      "A: ! submitted · V: g- permanent",
+      "A: eyes flip · V: swaps cells",
+      "A: ! unreachable · V: g- = u"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: u/Ctrl-r follow one branch; g-/g+ follow time, so they reach the abandoned take too.",
+      "g+ comes last, so the frog is back on the newest state, the - eye.",
+      "g- and g+ move between whole states of the file; they do not edit cells.",
+      "That is exactly the difference: u stays on the branch, g- walks time and reaches the ! take."
+    ]
+  },
+  "M11.UE.P01": {
+    "prompt": "ANIMATION\nThe same history walk on the missile exhaust, using a command instead of g-.\n\n  │< / / |:'│ → :earlier 1 → │< / / |:!│ → g+ → │< / / |:'│\n\nNEOVIM\nWhat does :earlier 1 do?",
+    "compact_prompt": "ANIMATION\n' puff → :earlier 1 → ! puff → g+ → ' puff.\n\n  │|:'│ ↔ │|:!│\n\nNEOVIM\nWhat does :earlier 1 do?",
+    "animation_prompt": "ANIMATION\nThe older take is revisited by command, then the chosen take is restored.",
+    "animation_answer": "The missile ends with the ' puff.",
+    "neovim_prompt": "NEOVIM\nExplain :earlier 1.",
+    "neovim_answer": ":earlier 1 goes one state back in time, the same step as g-; g+ returns to the newest state.",
+    "choices": [
+      "ANIMATION: Revisit the older take, then return to '. | NEOVIM: :earlier 1 goes one state back in time, like g-; g+ comes forward again.",
+      "ANIMATION: The missile moves up one line. | NEOVIM: :earlier 1 moves the cursor up one line.",
+      "ANIMATION: The ' take is deleted. | NEOVIM: :earlier 1 discards the newest state.",
+      "ANIMATION: The missile reloads from disk. | NEOVIM: :earlier 1 re-reads the saved file."
+    ],
+    "compact_choices": [
+      "A: revisit then ' · V: one state back",
+      "A: up one line · V: cursor move",
+      "A: ' deleted · V: discards newest",
+      "A: reload · V: re-reads file"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      ":earlier counts undo states in time. :earlier 10s would go back ten seconds instead.",
+      "It moves through undo history, not through lines of the file.",
+      "Nothing is discarded; g+ brings the newest state back.",
+      "It works on the undo history in memory, not the saved file."
+    ]
   }
 }

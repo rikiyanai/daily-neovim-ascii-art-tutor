@@ -5615,3 +5615,66 @@ findings from headed captures at 80×24 and 188×49).
 
 **Not yet done:** audit #7 (heading-word standardisation; tests assert the
 current words), #9 (brief width sizing at 188 columns) and #11–#17.
+
+## VD-37 · 2026-09-29 13:30 — concept-overload audit: first fixes (parser meanings, M11 splits, wrong content)
+
+**Audit:** `share/audits/CONCEPT_OVERLOAD_AUDIT_2026-09-29.md` (221 cards).
+- 7 cards introduce 3 or more new ideas.
+- Only 6 of 180 hints are card-specific.
+- 24 explanation lines on 14 cards just echo the command.
+- 57 guided→hidden jumps, and 10 hidden cards use a command never shown.
+- 4 parser misreads, 3 of which teach wrong meanings.
+
+**Fixed now:**
+- Parser misreads (`share/v2_keys.py`), each now a single command with the
+  correct meaning, its own family, and teaching and example text:
+  - `r<C-k>{a}{b}` was read as `.` = repeat and `M` = middle; it is now a
+    digraph replace (`.M` = ·).
+  - `<C-w>{x}` was read as "press Ctrl-w" plus `p` = paste; it is now a
+    window command (`p` = previous window).
+  - `zy` (was "press z"): yank a block without trailing spaces.
+  - `g_` (was echoed as-is): the last non-blank character.
+  - `R<C-r>{reg}` (was literal text): paste a register in Replace mode,
+    contrasted with Normal-mode Ctrl-r = redo.
+  - `:g/pat/normal! keys`: now spelled out in words.
+  - `:earlier`, `:diffthis`, `:read` no longer get a false "on the current
+    line".
+  - `:read %` explains that `%` means this file here but every line in
+    `:%s`.
+- M11, where the operator is now:
+  - M11.WS's four ideas and M11.UT's three are each preceded by single-idea
+    guided steps, each with a card-specific hint, a hand-authored question
+    and different Stone Story art. The order is WS → LS → CUC → CC → TR →
+    UB → UG → UE → UT.
+    - LS: `:set list` (Skully).
+    - CUC: cursorcolumn (Dracula stand/walk).
+    - UB: undo branch (Chick egg crack).
+    - UG: `g-`/`g+` (Frog blink).
+    - UE: `:earlier 1` (missile exhaust).
+  - UT got a specific hint.
+- Wrong content:
+  - the M0.O hint said "two leading spaces"; the target has four;
+  - the M16.01 recipe showed `0f1<C-a>` on a card whose label is F00 and
+    whose expected keys use `f0`.
+- Test harness: `send_text` sent a lone `;` that tmux reads as a command
+  separator, so repeat-find recipes never reached Neovim in headed tests. It
+  now sends `\;`. Learners typing in the popup were not affected.
+
+**Evidence:**
+- `share/test_v2.py` exit 0: 226/226 lessons, 185/185 primary recipes
+  executed in Neovim.
+- Question quality PASS on 406.
+- `share/test_tmux_v2_routes.py` 28/28 PASS at 80×24;
+  `share/test_tmux_v2.py` PASS at 80×24.
+- All 9 M11 guided steps (WS, LS, CUC, CC, TR, UB, UG, UE, UT) pass the
+  headed popup route at 80×24.
+
+**Still open (from the audit):**
+- M4.DIFF (8 ideas / 18 steps) split.
+- M11.VE and M13.BE splits.
+- Digraph teaching before M1, and the typing walls in M10/M1.04/M19/M18.06.
+- Count-variant NEW detection (`3@q`, `2<C-a>`) and guided cards for them.
+- The M18.EXPR Vimscript explanation.
+- The hint template, which still names tools a card does not use.
+- 9 missing FAMILY_TEACH and 20 missing EXAMPLES entries.
+- Recipe placeholders (`C...`).

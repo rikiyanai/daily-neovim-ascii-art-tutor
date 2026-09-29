@@ -161,6 +161,19 @@ def _pattern_gloss(pattern):
     return "%s (%s)" % (_q(pattern), ", then ".join(meaning for _p, meaning in parts))
 
 
+# Concept-overload audit #1/#2/#13: multi-key commands read as one idea.
+DIGRAPHS = {".M": "·", "''": "´", "'m": "¯", "'-": "‾", "DG": "°", "Sb": "∙",
+            "z*": "ζ", "o!": "ò", "o'": "ó", "!I": "¡"}
+WINDOW_KEYS = {"p": "go back to the previous window", "w": "go to the next window",
+               "v": "split the window side by side", "s": "split the window top/bottom",
+               "c": "close this window", "o": "close every other window",
+               "q": "quit this window", "h": "go to the window on the left",
+               "l": "go to the window on the right", "j": "go to the window below",
+               "k": "go to the window above", "=": "make the windows equal size"}
+NOT_LINE_COMMANDS = {"earlier", "later", "diffthis", "diffoff", "vsplit", "vnew", "new",
+                     "undo", "read", "r", "set", "silent", "bwipeout", "bw"}
+
+
 def _range_words(rng):
     if not rng:
         return "on the current line"
@@ -216,6 +229,11 @@ def _explain_ex(text):
         return ("%s %s %s" % (verb, where.replace("on ", "", 1), _dest_words(rest)),
                 ":%s%s{dest}" % (fam_rng, name))
     if name in ("g", "global", "v"):
+        m = re.fullmatch(r"(.)(.*?)\1\s*(normal!?|norm!?)\s+(.*)", rest)
+        if m:
+            which = "matching" if name != "v" else "NOT matching"
+            return ("on every line %s %s, run the Normal-mode keys %s" % (
+                which, _pattern_gloss(m.group(2)), _q(m.group(4))), ":%s/pattern/normal" % name)
         return ("%s: %s" % (EX_NAMES[name], _q(rest)), ":%s/pattern/command" % name)
     if name in ("normal", "norm"):
         return ("%s, run the Normal-mode keys %s" % (where, _q(rest.strip())),
@@ -230,6 +248,12 @@ def _explain_ex(text):
         value = option.split("=", 1)[1] if "=" in option else ""
         return note(value), ":set %s" % base
     if name in EX_NAMES:
+        if name in ("read", "r") and rest.strip() == "%":
+            return ("read a second copy of THIS file below the cursor "
+                    "(% = the current file here; in :%s it means every line)"), ":read %"
+        if not rng and name in NOT_LINE_COMMANDS:
+            return "%s%s" % (EX_NAMES[name], (" " + rest.strip()) if rest.strip() else ""), \
+                ":%s" % name
         return "%s, %s%s" % (where, EX_NAMES[name], (" " + rest.strip()) if rest.strip() else ""), \
             ":%s%s" % (fam_rng, name)
     return "run the command-line command %s" % _q(text), ":" + name
@@ -311,6 +335,14 @@ def explain(keys):
             i += 2
             out.append(("".join(tk[start:i]), n + FIND[c] % _q(ch), fam + c + "{char}"))
             continue
+        if c == "r" and i + 3 < len(tk) and tk[i + 1] == "<C-k>":
+            pair = tk[i + 2] + tk[i + 3]
+            i += 4
+            glyph = DIGRAPHS.get(pair)
+            out.append(("".join(tk[start:i]), n + "replace the character under the cursor with "
+                        "the digraph Ctrl-k %s%s (a glyph you cannot type directly)" % (
+                            pair, (" = " + _q(glyph)) if glyph else ""), fam + "r<C-k>{a}{b}"))
+            continue
         if c == "r" and i + 1 < len(tk):
             ch = tk[i + 1]
             i += 2
@@ -319,6 +351,13 @@ def explain(keys):
             continue
         if c == "R":
             text, i = _typed_until_esc(tk, i + 1)
+            m = re.fullmatch(r"<C-r>(.)", "".join(text) if isinstance(text, list) else str(text))
+            if m:
+                out.append(("".join(tk[start:i]),
+                            "Replace mode: overwrite with the contents of register %s "
+                            "(in Insert/Replace mode Ctrl-r {reg} pastes a register; in Normal "
+                            "mode Ctrl-r is redo), then Esc" % _q(m.group(1)), "R<C-r>{reg}<Esc>"))
+                continue
             out.append(("".join(tk[start:i]),
                         "Replace mode: type over the existing characters with %s, then Esc"
                         % _q(_show(text)), "R{text}<Esc>"))
@@ -359,6 +398,7 @@ def explain(keys):
                        "gu": "lowercase over a motion", "gU": "uppercase over a motion",
                        "ga": "inspect the character value",
                        "g-": "visit the previous undo-tree state",
+                       "g_": "to the last non-blank character of the line",
                        "g+": "visit the next undo-tree state"}.get(two, two)
             out.append(("".join(tk[start:i]), meaning, two))
             if two == "gv":
@@ -370,6 +410,17 @@ def explain(keys):
             out.append(("".join(tk[start:i]),
                         "paste the block %s without adding trailing spaces" %
                         ("after" if two == "zp" else "before"), two))
+            continue
+        if c == "<C-w>" and i + 1 < len(tk):
+            key = tk[i + 1]
+            i += 2
+            out.append(("".join(tk[start:i]), "window command: %s" % WINDOW_KEYS.get(
+                key, "Ctrl-w then %s" % _q(key)), "<C-w>{x}"))
+            continue
+        if c == "z" and i + 1 < len(tk) and tk[i + 1] in ("y", "Y"):
+            i += 2
+            out.append(("".join(tk[start:i]),
+                        "yank the selected block WITHOUT the trailing spaces of short rows", "zy"))
             continue
         if c == "G":
             i += 1
@@ -453,6 +504,12 @@ def families(keys):
 
 
 FAMILY_TEACH = {
+    "r<C-k>{a}{b}": "r Ctrl-k {a}{b}  replace one cell with a digraph glyph you cannot type (Ctrl-k .M = ·)",
+    "<C-w>{x}": "Ctrl-w {x}  window commands: p previous window, w next, v side-by-side split, c close",
+    "zy": "zy  yank a Visual block without the trailing spaces of its shorter rows",
+    "g_": "g_  jump to the last non-blank character of the line ($ goes past trailing spaces)",
+    "R<C-r>{reg}<Esc>": "R Ctrl-r {reg}  in Replace mode, Ctrl-r a types the contents of register a over the text",
+    ":g/pattern/normal": ":g/pattern/normal! {keys}  run the same Normal keys on every line the pattern matches",
     ":set list": ":set list  show invisible whitespace as marks (display only; :set nolist hides them)",
     ":set cursorcolumn": ":set cursorcolumn  highlight the cursor's column top to bottom (off: :set nocursorcolumn)",
     ":set colorcolumn": ":set colorcolumn={N}  paint column N as a ruler for the frame's right edge (off: :set colorcolumn=)",
@@ -587,6 +644,12 @@ def explain_lines(keys, width=None):
 # VD-13: a worked example on neutral text for each command family, shown the
 # first time a hidden-recipe lesson needs a family that no earlier lesson showed.
 EXAMPLES = {
+    "r<C-k>{a}{b}": "on `a:c` with the cursor on ':', r Ctrl-k .M makes it `a·c`",
+    "<C-w>{x}": "with two windows open, Ctrl-w p jumps back to the one you were just in",
+    "zy": "on rows `ab` and `abcd` in a 4-wide block: zy copies `ab` without two padding spaces",
+    "g_": "on `ab   ` (3 trailing spaces): g_ lands on b; $ lands on the last space",
+    "R<C-r>{reg}<Esc>": "after \"ayl on `*`: R Ctrl-r a Esc overwrites one cell with `*`",
+    ":g/pattern/normal": ":g/o/normal! 0rO turns the first cell of every line containing o into O",
     ":set list": "after :set list, `ab   ` shows as `ab···$`: three trailing spaces you could not see before",
     ":set cursorcolumn": "with the cursor on column 7, :set cursorcolumn lights column 7 on every row, so a glyph one cell off stands out",
     ":set colorcolumn": ":set colorcolumn=11 paints column 11; a 10-cell frame must end before the painted stripe",

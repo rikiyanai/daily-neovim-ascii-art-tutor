@@ -2366,7 +2366,7 @@ MODULES = [
                 ["   o   ", "  /|\\  ", "  / \\  ", "F01 KEY", "T08 FPS"],
                 "Gk0f0<C-a>",
                 [["Gk", "reach the frame-label line without touching the approved small pose"],
-                 ["0f1<C-a>", "increment the numeric label in place while preserving its zero padding"]],
+                 ["0f0<C-a>", "find the label's first 0 (F00), then Ctrl-a counts it up to F01 in place"]],
                 method_requirement=require_method(
                     "increment the written frame number with CTRL-A",
                     exact_any_of=["Gk0f0<C-a>"]),
@@ -4818,7 +4818,7 @@ def m0_extra_cards(module):
         "cursor": "^", "show_target": True, "show_recipe": True,
         "hint": (
             "Use G to reach the last supplied row, then o once. The art buffer disables "
-            "automatic indentation, so type the two leading spaces shown in TARGET yourself."
+            "automatic indentation, so type the four leading spaces shown in TARGET yourself."
         ),
         "frame_slices": [3, 3], "grammar_families": ["normal-open-line"],
         "grammar_stage": "guided",
@@ -5995,6 +5995,33 @@ def mastery_extension_cards(module):
                 "whitespace-column-audit", 3.6,
                 "official-Games/TowerDefense res18 missile frame 3", guided=True,
                 preserve_trailing_whitespace=True)),
+            # VD-37 (overload audit #5): list and cursorcolumn each get a
+            # single-idea step too, before the colorcolumn and cleanup steps.
+            ("M11.04", _with_hint(
+                "With list on, the invisible space at a row end shows as a mark. $ lands on that last cell; x deletes it.",
+                card(
+                "LS", "Make one invisible trailing space visible with list",
+                "One Skully row ends in an invisible space. Turn on list to see which row, then delete only that space. Every skull cell stays put.",
+                [ss.SKULLY_IDLE[0], ss.SKULLY_IDLE[1] + " ", ss.SKULLY_IDLE[2]],
+                list(ss.SKULLY_IDLE), ":set list<CR>2G$x",
+                [[":set list<CR>", "show invisible characters; the trailing space becomes a visible mark"],
+                 ["2G$", "go to the marked row and jump to its last cell, the space"],
+                 ["x", "delete that one space; it was the last cell, so nothing shifts"]],
+                "whitespace-column-audit", 3.65,
+                "official-Pets/Skully res01 + one tutor trailing space", guided=True,
+                preserve_trailing_whitespace=True))),
+            ("M11.04", _with_hint(
+                "cursorcolumn lights the cursor's column on every row. Put the cursor on copy 1's cape and look down: copy 2's cape is one cell right.",
+                card(
+                "CUC", "Line up two copies with the cursorcolumn guide",
+                "Below the standing Dracula, the walking Dracula's cape row starts one cell too far right. Turn on cursorcolumn, compare the two cape rows, then delete only the extra leading space.",
+                list(ss.DRACULA_STAND) + [ss.DRACULA_WALK_F2[0], " " + ss.DRACULA_WALK_F2[1], ss.DRACULA_WALK_F2[2]],
+                list(ss.DRACULA_STAND) + list(ss.DRACULA_WALK_F2), ":set cursorcolumn<CR>5G0x",
+                [[":set cursorcolumn<CR>", "highlight the cursor's column on every row"],
+                 ["5G0", "go to the start of copy 2's cape row, where the extra space is"],
+                 ["x", "delete the one extra leading space so the cape lines up with copy 1"]],
+                "whitespace-column-audit", 3.66,
+                "official-Pets/Dracula res01 stand + walk frame 2 with one tutor offset", guided=True))),
             # VD-34: WS introduces four ideas at once. Two single-idea
             # reinforcements follow it before any hidden retrieval: the
             # colorcolumn ruler alone, then the end-anchored cleanup alone.
@@ -6059,7 +6086,45 @@ def mastery_extension_cards(module):
                       ss.SNOWBUNNY_IDLE[1].replace("n", "-", 1),
                       ss.SNOWBUNNY_IDLE[2]]
         rows.extend([
-            ("M11.04", card(
+            # VD-37 (overload audit #4): UT bundled branching, g-/g+ and
+            # :earlier. Each idea is now its own guided step first.
+            ("M11.04", _with_hint(
+                "u steps back before the ! take. The next change (r,) starts a new branch; the ! take is kept in history, not deleted.",
+                card(
+                "UB", "Undo, then make a different take: a branch",
+                "Crack the egg with an exaggerated ! first, undo it, then make the chosen , crack instead. Submit the , crack.",
+                ss.CHICK_EGG_F3, ss.CHICK_EGG_F4, "2G0f;lr!ur,",
+                [["2G0f;l", "go to the empty cell right of the first crack"],
+                 ["r!", "author the exaggerated ! crack take"],
+                 ["u", "undo it: back to the empty cell"],
+                 ["r,", "a new change after undo starts a second branch: the chosen , crack"]],
+                "undo-tree-travel", 3.71,
+                "official-Pets/Chick res01 hatch frame 3 -> 4", guided=True))),
+            ("M11.04", _with_hint(
+                "g- walks back through every state in time order, including the abandoned ! take that u and Ctrl-r cannot reach; g+ walks forward again.",
+                card(
+                "UG", "Walk the history with g- and g+",
+                "Close the frog's right eye as ! first, undo it, close it as - instead, then press g- to see the abandoned ! take and g+ to come back. Submit the - eye.",
+                ss.FROG_OPEN, ss.FROG_ONE_OPEN, "0for!ur-g-g+",
+                [["0for!ur-", "make the ! take, undo it, make the chosen - take (two branches)"],
+                 ["g-", "step back in time: the abandoned ! take reappears"],
+                 ["g+", "step forward in time: back to the chosen - eye"]],
+                "undo-tree-travel", 3.72,
+                "official-Pets/Frog res01 -> res05 blink overlay", guided=True))),
+            ("M11.04", _with_hint(
+                ":earlier 1 is g- as a command: one state back in time. g+ then returns to the newest state.",
+                card(
+                "UE", "Go back one state in time with :earlier",
+                "Flick the missile's exhaust puff to ! first, undo it, make the chosen ' puff, then use :earlier 1 to revisit the older state and g+ to return. Submit the ' puff.",
+                ss.MISSILE_F1, ss.MISSILE_F2, "jf.r!ur':earlier 1<CR>g+",
+                [["jf.r!ur'", "make the ! take, undo it, make the chosen ' take"],
+                 [":earlier 1<CR>", "go one state back in time (the same step as g-)"],
+                 ["g+", "come forward again to the chosen ' puff"]],
+                "undo-tree-travel", 3.73,
+                "official-Games/TowerDefense res18 missile frame 1 -> 2", guided=True))),
+            ("M11.04", _with_hint(
+                "Everything from the last three steps in one pass: branch with u, walk history with g-/g+ and :earlier, finish on the O look.",
+                card(
                 "UT", "Compare two Skully look takes through the undo tree",
                 "Try ! as an exaggerated left eye, undo it, author the chosen O look, visit the abandoned ! take with chronological history, then return to and submit the O-eye frame.",
                 ss.SKULLY_IDLE, ss.SKULLY_LOOK, skully_undo,
@@ -6069,7 +6134,7 @@ def mastery_extension_cards(module):
                  ["g-g+", "visit the abandoned older take, then return to the newer choice"],
                  [":earlier 1<CR>g+", "repeat the history comparison and finish on the chosen O eye"]],
                 "undo-tree-travel", 3.7,
-                "official-Pets/Skully res01 -> res02 look overlay", guided=True)),
+                "official-Pets/Skully res01 -> res02 look overlay", guided=True))),
             ("M11.06", card(
                 "UTH", "Retrieve undo-tree comparison on a SnowBunny half-blink",
                 "On the unfamiliar SnowBunny pose, try ! as an exaggerated left eye, undo and author the chosen -, inspect the abandoned take chronologically, then return to the half-blink for submission.",

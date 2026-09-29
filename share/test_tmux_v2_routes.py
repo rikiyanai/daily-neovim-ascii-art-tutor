@@ -54,6 +54,10 @@ def capture(socket, pane):
 
 
 def send_text(socket, pane, text):
+    # tmux reads an argument ending in ";" as a command separator, so a lone
+    # `;` (repeat-find) never reached Neovim. `\;` is tmux's literal semicolon.
+    if text.endswith(";"):
+        text = text[:-1] + "\\;"
     tmux(socket, "send-keys", "-t", pane, "-l", text)
 
 

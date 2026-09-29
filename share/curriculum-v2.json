@@ -46,8 +46,13 @@
     "M11.03",
     "M11.UR",
     "M11.WS",
+    "M11.LS",
+    "M11.CUC",
     "M11.CC",
     "M11.TR",
+    "M11.UB",
+    "M11.UG",
+    "M11.UE",
     "M11.UT",
     "M11.04",
     "M11.05",
@@ -596,8 +601,13 @@
     "M11.03",
     "M11.UR",
     "M11.WS",
+    "M11.LS",
+    "M11.CUC",
     "M11.CC",
     "M11.TR",
+    "M11.UB",
+    "M11.UG",
+    "M11.UE",
     "M11.UT",
     "M11.04",
     "M11.05",
@@ -1747,7 +1757,7 @@
    "cursor": "^",
    "show_target": true,
    "show_recipe": true,
-   "hint": "Use G to reach the last supplied row, then o once. The art buffer disables automatic indentation, so type the two leading spaces shown in TARGET yourself.",
+   "hint": "Use G to reach the last supplied row, then o once. The art buffer disables automatic indentation, so type the four leading spaces shown in TARGET yourself.",
    "frame_slices": [
     3,
     3
@@ -3446,6 +3456,192 @@
    "pairing_exception": null
   },
   {
+   "id": "M11.LS",
+   "module_id": "M11",
+   "ordinal": 3.65,
+   "kind": "guided_edit",
+   "title": "Missile fixed-width redraw · Make one invisible trailing space visible with list",
+   "project_id": "mastery-m11-ls",
+   "artifact": "transfer",
+   "variant_group": "M11.LS.mastery",
+   "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar; official-Pets/Skully res01 + one tutor trailing space",
+   "source": "official-Pets/Skully res01 + one tutor trailing space",
+   "medium": "monospace",
+   "node_ids": [
+    "S0/V11"
+   ],
+   "master_habits": [
+    "H1",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S0"
+   ],
+   "lesson_benefit": "perform whitespace-column-audit with visible keys",
+   "prompt": "One Skully row ends in an invisible space. Turn on list to see which row, then delete only that space. Every skull cell stays put.",
+   "roadmap_contract": "One Skully row ends in an invisible space. Turn on list to see which row, then delete only that space. Every skull cell stays put.",
+   "start": [
+    "     ,--.",
+    "    (_o,o) ",
+    "      `\"´"
+   ],
+   "target": [
+    "     ,--.",
+    "    (_o,o)",
+    "      `\"´"
+   ],
+   "expected": ":set list<CR>2G$x",
+   "recipe": [
+    [
+     ":set list<CR>",
+     "show invisible characters; the trailing space becomes a visible mark"
+    ],
+    [
+     "2G$",
+     "go to the marked row and jump to its last cell, the space"
+    ],
+    [
+     "x",
+     "delete that one space; it was the last cell, so nothing shifts"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "With list on, the invisible space at a row end shows as a mark. $ lands on that last cell; x deletes it.",
+   "grammar_families": [
+    "whitespace-column-audit"
+   ],
+   "grammar_stage": "guided",
+   "key_vocabulary": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught whitespace-column-audit path",
+    "exact_any_of": [
+     ":set list<CR>2G$x"
+    ]
+   },
+   "preserve_trailing_whitespace": true,
+   "stage_owner": "S0",
+   "artifact_mode": "still-study",
+   "paired_question_ids": [
+    "M11.LS.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M11.LS.P01"
+    ],
+    "rationale": {
+     "M11.LS.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "id": "M11.CUC",
+   "module_id": "M11",
+   "ordinal": 3.66,
+   "kind": "guided_edit",
+   "title": "Missile fixed-width redraw · Line up two copies with the cursorcolumn guide",
+   "project_id": "mastery-m11-cuc",
+   "artifact": "transfer",
+   "variant_group": "M11.CUC.mastery",
+   "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar; official-Pets/Dracula res01 stand + walk frame 2 with one tutor offset",
+   "source": "official-Pets/Dracula res01 stand + walk frame 2 with one tutor offset",
+   "medium": "monospace",
+   "node_ids": [
+    "S0/V11"
+   ],
+   "master_habits": [
+    "H1",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S0"
+   ],
+   "lesson_benefit": "perform whitespace-column-audit with visible keys",
+   "prompt": "Below the standing Dracula, the walking Dracula's cape row starts one cell too far right. Turn on cursorcolumn, compare the two cape rows, then delete only the extra leading space.",
+   "roadmap_contract": "Below the standing Dracula, the walking Dracula's cape row starts one cell too far right. Turn on cursorcolumn, compare the two cape rows, then delete only the extra leading space.",
+   "start": [
+    "   \\(}_",
+    "  ,' ¯/",
+    " '-_.'",
+    "   \\(}_",
+    " .-´  ,'",
+    " ¯-´ \\"
+   ],
+   "target": [
+    "   \\(}_",
+    "  ,' ¯/",
+    " '-_.'",
+    "   \\(}_",
+    ".-´  ,'",
+    " ¯-´ \\"
+   ],
+   "expected": ":set cursorcolumn<CR>5G0x",
+   "recipe": [
+    [
+     ":set cursorcolumn<CR>",
+     "highlight the cursor's column on every row"
+    ],
+    [
+     "5G0",
+     "go to the start of copy 2's cape row, where the extra space is"
+    ],
+    [
+     "x",
+     "delete the one extra leading space so the cape lines up with copy 1"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "cursorcolumn lights the cursor's column on every row. Put the cursor on copy 1's cape and look down: copy 2's cape is one cell right.",
+   "grammar_families": [
+    "whitespace-column-audit"
+   ],
+   "grammar_stage": "guided",
+   "key_vocabulary": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3,
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught whitespace-column-audit path",
+    "exact_any_of": [
+     ":set cursorcolumn<CR>5G0x"
+    ]
+   },
+   "stage_owner": "S0",
+   "artifact_mode": "still-study",
+   "paired_question_ids": [
+    "M11.CUC.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M11.CUC.P01"
+    ],
+    "rationale": {
+     "M11.CUC.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
    "id": "M11.CC",
    "module_id": "M11",
    "ordinal": 3.7,
@@ -3629,6 +3825,277 @@
    "pairing_exception": null
   },
   {
+   "id": "M11.UB",
+   "module_id": "M11",
+   "ordinal": 3.71,
+   "kind": "guided_edit",
+   "title": "Missile fixed-width redraw · Undo, then make a different take: a branch",
+   "project_id": "mastery-m11-ub",
+   "artifact": "transfer",
+   "variant_group": "M11.UB.mastery",
+   "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar; official-Pets/Chick res01 hatch frame 3 -> 4",
+   "source": "official-Pets/Chick res01 hatch frame 3 -> 4",
+   "medium": "monospace",
+   "node_ids": [
+    "S0/V11"
+   ],
+   "master_habits": [
+    "H1",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S0"
+   ],
+   "lesson_benefit": "perform undo-tree-travel with visible keys",
+   "prompt": "Crack the egg with an exaggerated ! first, undo it, then make the chosen , crack instead. Submit the , crack.",
+   "roadmap_contract": "Crack the egg with an exaggerated ! first, undo it, then make the chosen , crack instead. Submit the , crack.",
+   "start": [
+    "      ,-.",
+    "     :·; :",
+    "     '._.'"
+   ],
+   "target": [
+    "      ,-.",
+    "     :·;,:",
+    "     '._.'"
+   ],
+   "expected": "2G0f;lr!ur,",
+   "recipe": [
+    [
+     "2G0f;l",
+     "go to the empty cell right of the first crack"
+    ],
+    [
+     "r!",
+     "author the exaggerated ! crack take"
+    ],
+    [
+     "u",
+     "undo it: back to the empty cell"
+    ],
+    [
+     "r,",
+     "a new change after undo starts a second branch: the chosen , crack"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "u steps back before the ! take. The next change (r,) starts a new branch; the ! take is kept in history, not deleted.",
+   "grammar_families": [
+    "undo-tree-travel"
+   ],
+   "grammar_stage": "guided",
+   "key_vocabulary": [
+    "u returns before a change so a second variant creates a branch; g-/g+ travel changes chronologically; :earlier 1 revisits the previous authored state"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught undo-tree-travel path",
+    "exact_any_of": [
+     "2G0f;lr!ur,"
+    ]
+   },
+   "stage_owner": "S0",
+   "artifact_mode": "still-study",
+   "paired_question_ids": [
+    "M11.UB.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M11.UB.P01"
+    ],
+    "rationale": {
+     "M11.UB.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "id": "M11.UG",
+   "module_id": "M11",
+   "ordinal": 3.72,
+   "kind": "guided_edit",
+   "title": "Missile fixed-width redraw · Walk the history with g- and g+",
+   "project_id": "mastery-m11-ug",
+   "artifact": "transfer",
+   "variant_group": "M11.UG.mastery",
+   "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar; official-Pets/Frog res01 -> res05 blink overlay",
+   "source": "official-Pets/Frog res01 -> res05 blink overlay",
+   "medium": "monospace",
+   "node_ids": [
+    "S0/V11"
+   ],
+   "master_habits": [
+    "H1",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S0"
+   ],
+   "lesson_benefit": "perform undo-tree-travel with visible keys",
+   "prompt": "Close the frog's right eye as ! first, undo it, close it as - instead, then press g- to see the abandoned ! take and g+ to come back. Submit the - eye.",
+   "roadmap_contract": "Close the frog's right eye as ! first, undo it, close it as - instead, then press g- to see the abandoned ! take and g+ to come back. Submit the - eye.",
+   "start": [
+    "     ,Oo",
+    "  (\\/ .-)",
+    "  ´ ·-\\´\\"
+   ],
+   "target": [
+    "     ,O-",
+    "  (\\/ .-)",
+    "  ´ ·-\\´\\"
+   ],
+   "expected": "0for!ur-g-g+",
+   "recipe": [
+    [
+     "0for!ur-",
+     "make the ! take, undo it, make the chosen - take (two branches)"
+    ],
+    [
+     "g-",
+     "step back in time: the abandoned ! take reappears"
+    ],
+    [
+     "g+",
+     "step forward in time: back to the chosen - eye"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "g- walks back through every state in time order, including the abandoned ! take that u and Ctrl-r cannot reach; g+ walks forward again.",
+   "grammar_families": [
+    "undo-tree-travel"
+   ],
+   "grammar_stage": "guided",
+   "key_vocabulary": [
+    "u returns before a change so a second variant creates a branch; g-/g+ travel changes chronologically; :earlier 1 revisits the previous authored state"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught undo-tree-travel path",
+    "exact_any_of": [
+     "0for!ur-g-g+"
+    ]
+   },
+   "stage_owner": "S0",
+   "artifact_mode": "still-study",
+   "paired_question_ids": [
+    "M11.UG.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M11.UG.P01"
+    ],
+    "rationale": {
+     "M11.UG.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "id": "M11.UE",
+   "module_id": "M11",
+   "ordinal": 3.73,
+   "kind": "guided_edit",
+   "title": "Missile fixed-width redraw · Go back one state in time with :earlier",
+   "project_id": "mastery-m11-ue",
+   "artifact": "transfer",
+   "variant_group": "M11.UE.mastery",
+   "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar; official-Games/TowerDefense res18 missile frame 1 -> 2",
+   "source": "official-Games/TowerDefense res18 missile frame 1 -> 2",
+   "medium": "monospace",
+   "node_ids": [
+    "S0/V11"
+   ],
+   "master_habits": [
+    "H1",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S0"
+   ],
+   "lesson_benefit": "perform undo-tree-travel with visible keys",
+   "prompt": "Flick the missile's exhaust puff to ! first, undo it, make the chosen ' puff, then use :earlier 1 to revisit the older state and g+ to return. Submit the ' puff.",
+   "roadmap_contract": "Flick the missile's exhaust puff to ! first, undo it, make the chosen ' puff, then use :earlier 1 to revisit the older state and g+ to return. Submit the ' puff.",
+   "start": [
+    "  ____/",
+    "< / / |:.",
+    "  ¯¯¯¯\\"
+   ],
+   "target": [
+    "  ____/",
+    "< / / |:'",
+    "  ¯¯¯¯\\"
+   ],
+   "expected": "jf.r!ur':earlier 1<CR>g+",
+   "recipe": [
+    [
+     "jf.r!ur'",
+     "make the ! take, undo it, make the chosen ' take"
+    ],
+    [
+     ":earlier 1<CR>",
+     "go one state back in time (the same step as g-)"
+    ],
+    [
+     "g+",
+     "come forward again to the chosen ' puff"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": ":earlier 1 is g- as a command: one state back in time. g+ then returns to the newest state.",
+   "grammar_families": [
+    "undo-tree-travel"
+   ],
+   "grammar_stage": "guided",
+   "key_vocabulary": [
+    "u returns before a change so a second variant creates a branch; g-/g+ travel changes chronologically; :earlier 1 revisits the previous authored state"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught undo-tree-travel path",
+    "exact_any_of": [
+     "jf.r!ur':earlier 1<CR>g+"
+    ]
+   },
+   "stage_owner": "S0",
+   "artifact_mode": "still-study",
+   "paired_question_ids": [
+    "M11.UE.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M11.UE.P01"
+    ],
+    "rationale": {
+     "M11.UE.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
    "id": "M11.UT",
    "module_id": "M11",
    "ordinal": 3.7,
@@ -3691,7 +4158,7 @@
    "cursor": "^",
    "show_target": true,
    "show_recipe": true,
-   "hint": "Follow the visible grammar once, then inspect the registered result.",
+   "hint": "Everything from the last three steps in one pass: branch with u, walk history with g-/g+ and :earlier, finish on the O look.",
    "grammar_families": [
     "undo-tree-travel"
    ],
@@ -14978,8 +15445,8 @@
      "reach the frame-label line without touching the approved small pose"
     ],
     [
-     "0f1<C-a>",
-     "increment the numeric label in place while preserving its zero padding"
+     "0f0<C-a>",
+     "find the label's first 0 (F00), then Ctrl-a counts it up to F01 in place"
     ]
    ],
    "cursor": "^",
@@ -15070,7 +15537,7 @@
    "artifact": "project",
    "show_target": true,
    "show_recipe": true,
-   "hint": "Vim toolbox: counted number incrementing can update a frame label without retyping it. Scope: Treat each 5-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: a copied plan block loses an art row, two blocks retain the same frame number, a move cuts through a five-line plate, or an imported plate comes from unsaved buffer state instead of the named source.",
+   "hint": "Vim toolbox: counted number incrementing can update a frame label without retyping it; a visible character landmark is safer than repeated unit motions. Scope: Treat each 5-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: a copied plan block loses an art row, two blocks retain the same frame number, a move cuts through a five-line plate, or an imported plate comes from unsaved buffer state instead of the named source.",
    "frame_slices": [
     5
    ],
@@ -40883,6 +41350,148 @@
    "authorship": "manual"
   },
   {
+   "id": "M11.LS.P01",
+   "card_id": "M11.LS",
+   "module_id": "M11",
+   "grammar_family": "whitespace-column-audit",
+   "grammar_breakdown_id": "whitespace-column-audit",
+   "grammar_breakdown": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
+   "difficulty": 1,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nOne Skully row ends in an invisible space (shown here as ·). Only that space goes.\n\n  BEFORE            AFTER\n  │     ,--.│       │     ,--.│\n  │    (_o,o)·│     │    (_o,o)│\n  │      `\"´│       │      `\"´│\n\nNEOVIM\nWhat does :set list do, and what removes the space?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Only the invisible tail on the eye row goes. | NEOVIM: list shows the space as a mark; 2G$ lands on it and x deletes it.",
+    "ANIMATION: Every space in the skull goes. | NEOVIM: :set list deletes all spaces it marks.",
+    "ANIMATION: The eye row moves one cell left. | NEOVIM: x at the start of the row removes the extra space.",
+    "ANIMATION: A visible mark is added to the art. | NEOVIM: list writes the marks into the file."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: list only changes what you see; $ reaches the last cell, which is the invisible space, and x removes it.",
+    "list never edits anything. It only draws marks on screen for invisible characters.",
+    "The extra space is at the END of the row. Deleting at the start would move the whole eye row left.",
+    "The marks exist only on screen. :set nolist hides them and the file never contained them."
+   ],
+   "animation_prompt": "ANIMATION\nAn invisible trailing space is found and removed; the skull does not move.",
+   "animation_answer": "Only the trailing space on the eye row disappears.",
+   "neovim_prompt": "NEOVIM\nExplain :set list and the deleting keys.",
+   "neovim_answer": ":set list only displays invisible characters; 2G$x deletes the trailing space it revealed.",
+   "compact_prompt": "ANIMATION\nOnly the trailing · goes; the skull stays.\n\n  │    (_o,o)·│ → │    (_o,o)│\n\nNEOVIM\nWhat does list do; what deletes the space?",
+   "compact_choices": [
+    "A: tail only · V: list shows, $x deletes",
+    "A: all spaces · V: list deletes",
+    "A: row shifts left · V: x at row start",
+    "A: mark saved · V: list writes"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": ":set list<CR>2G$x",
+    "required_term_groups": [
+     [
+      "list",
+      "whitespace"
+     ],
+     [
+      "cursorcolumn",
+      "active column"
+     ],
+     [
+      "colorcolumn",
+      "boundary"
+     ],
+     [
+      "substitute",
+      "trailing",
+      "cleanup"
+     ]
+    ],
+    "sample_answer": "list cursorcolumn colorcolumn substitute"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M11.CUC.P01",
+   "card_id": "M11.CUC",
+   "module_id": "M11",
+   "grammar_family": "whitespace-column-audit",
+   "grammar_breakdown_id": "whitespace-column-audit",
+   "grammar_breakdown": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
+   "difficulty": 1,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThe walking Dracula below the standing one should share its left edge, but its cape row starts one cell too far right.\n\n  BEFORE          AFTER\n  │   \\(}_│       │   \\(}_│\n  │  ,' ¯/│       │  ,' ¯/│\n  │ '-_.'│        │ '-_.'│\n  │   \\(}_│       │   \\(}_│\n  │ .-´  ,'│      │.-´  ,'│\n  │ ¯-´ \\│        │ ¯-´ \\│\n\nNEOVIM\nHow does cursorcolumn help, and what fixes the row?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Frame 2's cape moves one cell left into line. | NEOVIM: cursorcolumn lights one column on every row; 5G0x deletes the extra leading space.",
+    "ANIMATION: Frame 1 moves right to match frame 2. | NEOVIM: cursorcolumn inserts a space in every row.",
+    "ANIMATION: The cape row is deleted. | NEOVIM: 5Gdd removes the offset row.",
+    "ANIMATION: Nothing changes; the offset is a display glitch. | NEOVIM: cursorcolumn fixes alignment by itself."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: the highlighted column makes the one-cell drift visible; x on the extra leading space pulls that row back into line.",
+    "Frame 1 is the reference. cursorcolumn never edits text; it only highlights a column.",
+    "Deleting the row would break the frame. Only the extra leading space goes.",
+    "cursorcolumn is display only. The offset is real text and needs the x."
+   ],
+   "animation_prompt": "ANIMATION\nThe second frame's cape row is moved back into registration with the first.",
+   "animation_answer": "Frame 2's cape row starts in the same column as frame 1's; nothing else changes.",
+   "neovim_prompt": "NEOVIM\nExplain cursorcolumn and the fixing keys.",
+   "neovim_answer": ":set cursorcolumn lights the cursor's column on every row so the one-cell offset is visible; 5G0x deletes the extra leading space.",
+   "compact_prompt": "ANIMATION\nThe walking cape row sits one cell right.\n\n  │ .-´  ,'│ → │.-´  ,'│\n\nNEOVIM\nWhat does cursorcolumn show; what fixes it?",
+   "compact_choices": [
+    "A: cape moves left · V: guide + 5G0x",
+    "A: frame 1 moves · V: inserts spaces",
+    "A: row deleted · V: 5Gdd",
+    "A: no change · V: guide fixes it"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": ":set cursorcolumn<CR>5G0x",
+    "required_term_groups": [
+     [
+      "list",
+      "whitespace"
+     ],
+     [
+      "cursorcolumn",
+      "active column"
+     ],
+     [
+      "colorcolumn",
+      "boundary"
+     ],
+     [
+      "substitute",
+      "trailing",
+      "cleanup"
+     ]
+    ],
+    "sample_answer": "list cursorcolumn colorcolumn substitute"
+   },
+   "authorship": "manual"
+  },
+  {
    "id": "M11.CC.P01",
    "card_id": "M11.CC",
    "module_id": "M11",
@@ -41021,6 +41630,222 @@
      ]
     ],
     "sample_answer": "list cursorcolumn colorcolumn substitute"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M11.UB.P01",
+   "card_id": "M11.UB",
+   "module_id": "M11",
+   "grammar_family": "undo-tree-travel",
+   "grammar_breakdown_id": "undo-tree-travel",
+   "grammar_breakdown": [
+    "u returns before a change so a second variant creates a branch; g-/g+ travel changes chronologically; :earlier 1 revisits the previous authored state"
+   ],
+   "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
+   "difficulty": 1,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nTwo takes for the next egg crack: an exaggerated ! and the chosen , crack. The , take is submitted.\n\n  START          ! TAKE         CHOSEN\n  │:·; :│        │:·;!:│        │:·;,:│\n\nNEOVIM\nAfter r! then u, what does r, create?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: The , crack is kept; the ! take is only in history. | NEOVIM: u steps back; r, then starts a new branch, and the ! take is kept, not destroyed.",
+    "ANIMATION: Both cracks appear in the egg. | NEOVIM: u keeps the ! and r, adds a , beside it.",
+    "ANIMATION: The ! take is gone forever. | NEOVIM: a change after u erases the older take from history.",
+    "ANIMATION: The egg returns to one crack. | NEOVIM: r, is undone automatically by u."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: undo followed by a new edit makes a branch. The ! take still exists in the undo tree.",
+    "r replaces one cell; there is only one crack cell here, so only one take is ever in the egg.",
+    "Vim's undo tree keeps the abandoned branch. The next step shows how to visit it with g-.",
+    "u came BEFORE r, so the , take is the newest state and it stays."
+   ],
+   "animation_prompt": "ANIMATION\nOne crack cell is tried two ways; the chosen , crack is kept.",
+   "animation_answer": "The final egg has the , crack; the ! take is not in the file.",
+   "neovim_prompt": "NEOVIM\nExplain u followed by a new change.",
+   "neovim_answer": "u steps back before the ! take; r, is a new change from there, so it starts a second branch and the ! take stays in the undo history.",
+   "compact_prompt": "ANIMATION\n! crack, undone, then the , crack.\n\n  │:·;!:│ → u → │:·;,:│\n\nNEOVIM\nWhat does r, after u create?",
+   "compact_choices": [
+    "A: , kept, ! in history · V: new branch",
+    "A: both in egg · V: adds beside",
+    "A: ! gone forever · V: history erased",
+    "A: one crack · V: r, undone"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "2G0f;lr!ur,",
+    "required_term_groups": [
+     [
+      "u",
+      "undo",
+      "branch"
+     ],
+     [
+      "g-",
+      "older"
+     ],
+     [
+      "g+",
+      "newer"
+     ],
+     [
+      "earlier",
+      "history",
+      "state"
+     ]
+    ],
+    "sample_answer": "u g- g+ earlier"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M11.UG.P01",
+   "card_id": "M11.UG",
+   "module_id": "M11",
+   "grammar_family": "undo-tree-travel",
+   "grammar_breakdown_id": "undo-tree-travel",
+   "grammar_breakdown": [
+    "u returns before a change so a second variant creates a branch; g-/g+ travel changes chronologically; :earlier 1 revisits the previous authored state"
+   ],
+   "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
+   "difficulty": 1,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nAfter the ! take and the chosen - take on the frog's right eye, history is walked back to the ! and forward again.\n\n  │     ,O-│ → g- → │     ,O!│ → g+ → │     ,O-│\n\nNEOVIM\nWhat do g- and g+ do?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Visit the abandoned ! take, then return to -. | NEOVIM: g- steps back in time through every state, even other branches; g+ steps forward.",
+    "ANIMATION: The ! take becomes the submitted eye. | NEOVIM: g- makes the older take permanent.",
+    "ANIMATION: Both eyes flip between ! and -. | NEOVIM: g- and g+ swap the two eye cells.",
+    "ANIMATION: Nothing can reach the ! take any more. | NEOVIM: g- is the same as u and stays on this branch."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: u/Ctrl-r follow one branch; g-/g+ follow time, so they reach the abandoned take too.",
+    "g+ comes last, so the frog is back on the newest state, the - eye.",
+    "g- and g+ move between whole states of the file; they do not edit cells.",
+    "That is exactly the difference: u stays on the branch, g- walks time and reaches the ! take."
+   ],
+   "animation_prompt": "ANIMATION\nThe abandoned take is inspected, then the chosen take is restored for submission.",
+   "animation_answer": "The frog ends with the - eye after visiting the ! take.",
+   "neovim_prompt": "NEOVIM\nExplain g- and g+.",
+   "neovim_answer": "g- steps back through every state in time order, including the abandoned ! branch; g+ steps forward again.",
+   "compact_prompt": "ANIMATION\n- take → g- → ! take → g+ → - take.\n\n  │,O-│ ↔ │,O!│\n\nNEOVIM\nWhat do g- and g+ do?",
+   "compact_choices": [
+    "A: visit ! then - · V: time order, any branch",
+    "A: ! submitted · V: g- permanent",
+    "A: eyes flip · V: swaps cells",
+    "A: ! unreachable · V: g- = u"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "0for!ur-g-g+",
+    "required_term_groups": [
+     [
+      "u",
+      "undo",
+      "branch"
+     ],
+     [
+      "g-",
+      "older"
+     ],
+     [
+      "g+",
+      "newer"
+     ],
+     [
+      "earlier",
+      "history",
+      "state"
+     ]
+    ],
+    "sample_answer": "u g- g+ earlier"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M11.UE.P01",
+   "card_id": "M11.UE",
+   "module_id": "M11",
+   "grammar_family": "undo-tree-travel",
+   "grammar_breakdown_id": "undo-tree-travel",
+   "grammar_breakdown": [
+    "u returns before a change so a second variant creates a branch; g-/g+ travel changes chronologically; :earlier 1 revisits the previous authored state"
+   ],
+   "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
+   "difficulty": 1,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThe same history walk on the missile exhaust, using a command instead of g-.\n\n  │< / / |:'│ → :earlier 1 → │< / / |:!│ → g+ → │< / / |:'│\n\nNEOVIM\nWhat does :earlier 1 do?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Revisit the older take, then return to '. | NEOVIM: :earlier 1 goes one state back in time, like g-; g+ comes forward again.",
+    "ANIMATION: The missile moves up one line. | NEOVIM: :earlier 1 moves the cursor up one line.",
+    "ANIMATION: The ' take is deleted. | NEOVIM: :earlier 1 discards the newest state.",
+    "ANIMATION: The missile reloads from disk. | NEOVIM: :earlier 1 re-reads the saved file."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    ":earlier counts undo states in time. :earlier 10s would go back ten seconds instead.",
+    "It moves through undo history, not through lines of the file.",
+    "Nothing is discarded; g+ brings the newest state back.",
+    "It works on the undo history in memory, not the saved file."
+   ],
+   "animation_prompt": "ANIMATION\nThe older take is revisited by command, then the chosen take is restored.",
+   "animation_answer": "The missile ends with the ' puff.",
+   "neovim_prompt": "NEOVIM\nExplain :earlier 1.",
+   "neovim_answer": ":earlier 1 goes one state back in time, the same step as g-; g+ returns to the newest state.",
+   "compact_prompt": "ANIMATION\n' puff → :earlier 1 → ! puff → g+ → ' puff.\n\n  │|:'│ ↔ │|:!│\n\nNEOVIM\nWhat does :earlier 1 do?",
+   "compact_choices": [
+    "A: revisit then ' · V: one state back",
+    "A: up one line · V: cursor move",
+    "A: ' deleted · V: discards newest",
+    "A: reload · V: re-reads file"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "jf.r!ur':earlier 1<CR>g+",
+    "required_term_groups": [
+     [
+      "u",
+      "undo",
+      "branch"
+     ],
+     [
+      "g-",
+      "older"
+     ],
+     [
+      "g+",
+      "newer"
+     ],
+     [
+      "earlier",
+      "history",
+      "state"
+     ]
+    ],
+    "sample_answer": "u g- g+ earlier"
    },
    "authorship": "manual"
   },
@@ -55932,6 +56757,16 @@
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
+   "card_id": "M11.LS",
+   "label": "use the taught whitespace-column-audit path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
+   "card_id": "M11.CUC",
+   "label": "use the taught whitespace-column-audit path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M11.CC",
    "label": "use the taught whitespace-column-audit path",
    "evidence": "runtime-required ordered command path plus exact target"
@@ -55939,6 +56774,21 @@
   {
    "card_id": "M11.TR",
    "label": "use the taught whitespace-column-audit path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
+   "card_id": "M11.UB",
+   "label": "use the taught undo-tree-travel path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
+   "card_id": "M11.UG",
+   "label": "use the taught undo-tree-travel path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
+   "card_id": "M11.UE",
+   "label": "use the taught undo-tree-travel path",
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
@@ -57242,7 +58092,7 @@
   {
    "hidden_card_id": "M11.UTH",
    "grammar_family": "undo-tree-travel",
-   "prior_guided_card_id": "M11.UT"
+   "prior_guided_card_id": "M11.UB"
   },
   {
    "hidden_card_id": "M11.06",
@@ -58691,7 +59541,7 @@
   },
   {
    "grammar_family": "undo-tree-travel",
-   "guided_card_id": "M11.UT",
+   "guided_card_id": "M11.UB",
    "review_card_id": "M11.UTH",
    "changed_art_variants": 2,
    "keys_hidden": true,
