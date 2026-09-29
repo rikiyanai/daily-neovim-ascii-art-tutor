@@ -1235,20 +1235,28 @@ MODULES = [
                  ["16G/17G/19G/20G C", "mirror its arm and leg action into a distinct return passing pose"]],
             ),
         ],
-        "transfer": step(
-            ["   o/   ", "  /|    ", "   |    ", "  / \\   ", " /   \\  "],
-            ["   o/   ", "  /|    ", "   |    ", "  / \\   ", " /_  \\  "],
-            "G0llr_",
-            [["G0ll", "reach the unfamiliar pose's planted-foot cell"],
-             ["r_", "restore contact without moving the torso"]],
-        ),
-        "transfer_alt": step(
-            ["  \\O   ", "   |\\  ", "   |   ", "  /|   ", " /  \\  "],
-            ["  \\O   ", "   |\\  ", "   |   ", "  /|   ", " / _\\  "],
-            "G0lllr_",
-            [["G0lll", "reach the opposite-contact cell in a changed subject"],
-             ["r_", "plant it while keeping the secondary arm intact"]],
-        ),
+        "transfer": dict(step(
+            stone_story_variants.DRACULA_WALK_F3 + ["", ""],
+            stone_story_variants.DRACULA_WALK_F4 + ["", ""],
+            "3G0f>r|",
+            [["3G0f>", "find the trailing foot on the Dracula hem row"],
+             ["r|", "plant that foot for walk frame 4"]],
+        ), source="official-Pets/Dracula res01 walk frame 3 to frame 4",
+           prompt=(
+               "Advance Dracula walk frame 3 to frame 4 by planting only the trailing "
+               "foot `>` as `|`; keep the cape, torso, and five-row padding fixed."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.DRACULA_WALK_F4 + ["", ""],
+            stone_story_variants.DRACULA_WALK_F5 + ["", ""],
+            "3G$r>",
+            [["3G$", "reach the planted foot at the end of the Dracula hem row"],
+             ["r>", "kick that foot forward for walk frame 5"]],
+        ), source="official-Pets/Dracula res01 walk frame 4 to frame 5",
+           prompt=(
+               "Advance Dracula walk frame 4 to frame 5 by changing only the final "
+               "foot from backslash to `>`; preserve every other source cell."
+           )),
     },
     {
         "id": "M9", "title": "Original bounce capstone", "node": "A7/V9", "project": "original-micro",
@@ -6343,7 +6351,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.48",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.49",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

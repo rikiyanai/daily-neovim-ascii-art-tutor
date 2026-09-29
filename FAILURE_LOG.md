@@ -4750,3 +4750,21 @@ pass real-user-config headed routes at 80x24.
 **Still open.** Sixteen module transfers still use tutor-authored primary
 variants. The pending M4/M19 headed processes and full route matrix remain
 unclaimed here. No new source asset was imported and no push occurred.
+
+### VD-41 follow-through · revision `.49` — M8 contact now advances real Dracula walk frames
+
+- M8.06 variant 1 advances Dracula walk frame 3 to 4 by changing only the
+  trailing `>` foot to a planted `|` on the hem row.
+- Variant 2 advances frame 4 to 5 by changing only the final backslash foot to
+  a forward `>`, retaining the already planted bar and every upper-pose cell.
+- The three-row source frames are explicitly padded to the module's five-row
+  invariant. Both paired questions print the padded BEFORE/AFTER pose and ask
+  about a visible foot landmark or row-end motion followed by one-cell `r`.
+
+**Proof:** revision `.49` writes 215 cards / 395 questions; question quality,
+all 215 cards / 174 recipes, and changed-art replay pass. Both M8.06 variants
+pass real-user-config headed routes at 80x24.
+
+**Still open.** Fifteen module transfers still use tutor-authored primary
+variants. The pending M4/M19 headed processes and full route matrix remain
+unclaimed. No new source asset was imported and no push occurred.

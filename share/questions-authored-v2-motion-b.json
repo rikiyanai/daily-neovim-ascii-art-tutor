@@ -1323,30 +1323,30 @@
     ]
   },
   "M8.06.P01": {
-    "prompt": "ANIMATION\nThe horizontally offset transfer gains one planted-foot underscore while its torso and arm remain fixed.\n\n    BEFORE        AFTER\n    │   o/   │    │   o/   │\n    │  /|    │    │  /|    │\n    │   |    │    │   |    │\n    │  / \\   │    │  / \\   │\n    │ /   \\  │    │ /_  \\  │\n\nNEOVIM\nWhich landmark-based path reaches the target without memorized columns?",
-    "compact_prompt": "ANIMATION\nOffset walker: plant one foot, body stays.\n\n    BEFORE      AFTER\n    │  /|│      │  /|│\n    │ /  \\│      │ /_ \\│\n\nNEOVIM\nUse the visible landmark.",
-    "animation_prompt": "The transfer uses the same contact decision at a different horizontal placement.\n\n    BEFORE        AFTER\n    │   o/   │    │   o/   │\n    │  /|    │    │  /|    │\n    │   |    │    │   |    │\n    │  / \\   │    │  / \\   │\n    │ /   \\  │    │ /_  \\  │",
-    "animation_answer": "Plant the visible foot while preserving the offset torso and arm.",
-    "neovim_prompt": "Use visible navigation followed by one-cell replacement.",
-    "neovim_answer": "Find the foot, move l as far as the visible target requires, then r_.",
+    "prompt": "ANIMATION\nDracula walk frame 3 advances to frame 4. Only the trailing foot `>` on the hem row becomes a planted `|`; the cape, torso, accent marks, and two padding rows remain unchanged.\n\n  BEFORE       AFTER\n  │   \\(}_│     │   \\(}_│\n  │.-´  ,'│     │.-´  ,'│\n  │ ¯-´>\\│  →  │ ¯-´|\\│\n  ││             ││\n  ││             ││\n\nNEOVIM\nWhich landmark edit reaches the source-authored contact without guessing its column?",
+    "compact_prompt": "ANIMATION\nPlant Dracula's trailing foot: `>` becomes `|`; every other cell stays.\n\n  │ ¯-´>\\│ → │ ¯-´|\\│\n\nNEOVIM\nDecode `3G0f>r|`.",
+    "animation_prompt": "The walk contact advances by one foot glyph while the complete padded Dracula pose remains registered.",
+    "animation_answer": "Replace the visible trailing-foot > with | and preserve the rest of the frame.",
+    "neovim_prompt": "Use the foot glyph itself as the landmark for a one-cell replacement.",
+    "neovim_answer": "3G0 reaches the hem row from its left edge, f> lands on the trailing foot, and r| overwrites only that cell.",
     "choices": [
-      "ANIMATION: One contact cell changes; the offset body remains fixed. | NEOVIM: landmark-based l then r_.",
-      "ANIMATION: Reuse the original absolute count without inspection. | NEOVIM: type the old motion blindly.",
-      "ANIMATION: Copy and mirror the full five-row walker. | NEOVIM: :6,10t$.",
-      "ANIMATION: Move the torso toward the foot. | NEOVIM: C the body rows."
+      "ANIMATION: Only the trailing foot plants as `|`; cape and torso stay fixed. | NEOVIM: `3G0f>r|` finds the visible foot and overwrites one cell.",
+      "ANIMATION: The entire hem row shifts left for stronger contact. | NEOVIM: f> deletes every cell it crosses before r|.",
+      "ANIMATION: A second full Dracula frame is appended. | NEOVIM: the find/replace path copies all five rows.",
+      "ANIMATION: Every `>` in the walk strip becomes `|`. | NEOVIM: r after f is a global replacement."
     ],
     "compact_choices": [
-      "A: contact only, offset fixed · V: visible l + r_",
-      "A: blind old count · V: old motion",
-      "A: copy/mirror pose · V: :6,10t$",
-      "A: move torso · V: C body"
+      "A: foot only · V: find > + replace |",
+      "A: hem shifts · V: f deletes crossed cells",
+      "A: append frame · V: f/r copies rows",
+      "A: every > changes · V: r is global"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the visible foot supplies the navigation target in the offset art.",
-      "Absolute counts from the original pose may land on a different cell.",
-      "The transfer asks for contact repair, not a complete frame copy.",
-      "Torso motion would break the transfer's stable registration."
+      "Correct: the source foot is the landmark and one-cell overwrite advances the contact without pose drift.",
+      "f is a cursor motion and does not delete the cape cells it crosses.",
+      "No frame is appended; the current padded pose advances in place from source frame 3 to 4.",
+      "r changes only the cursor cell. Other angle glyphs elsewhere are outside its scope."
     ]
   },
   "M8.08.P01": {

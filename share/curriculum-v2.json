@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.48",
+ "revision": "2026-09-29.49",
  "review_intervals_hours": [
   4,
   24,
@@ -27582,99 +27582,104 @@
    "project_id": "walk-study",
    "variant_group": "M8.card-6",
    "start": [
-    "   o/   ",
-    "  /|    ",
-    "   |    ",
-    "  / \\   ",
-    " /   \\  "
+    "   \\(}_",
+    ".-´  ,'",
+    " ¯-´>\\",
+    "",
+    ""
    ],
    "target": [
-    "   o/   ",
-    "  /|    ",
-    "   |    ",
-    "  / \\   ",
-    " /_  \\  "
+    "   \\(}_",
+    ".-´  ,'",
+    " ¯-´|\\",
+    "",
+    ""
    ],
-   "expected": "G0llr_",
+   "expected": "3G0f>r|",
    "recipe": [
     [
-     "G0ll",
-     "reach the unfamiliar pose's planted-foot cell"
+     "3G0f>",
+     "find the trailing foot on the Dracula hem row"
     ],
     [
-     "r_",
-     "restore contact without moving the torso"
+     "r|",
+     "plant that foot for walk frame 4"
     ]
    ],
    "cursor": "^",
+   "source": "official-Pets/Dracula res01 walk frame 3 to frame 4",
    "prompt": "Plant one foot in an unfamiliar five-row walker without moving torso or secondary arm.",
    "artifact": "transfer",
    "variants": [
     {
      "start": [
-      "   o/   ",
-      "  /|    ",
-      "   |    ",
-      "  / \\   ",
-      " /   \\  "
+      "   \\(}_",
+      ".-´  ,'",
+      " ¯-´>\\",
+      "",
+      ""
      ],
      "target": [
-      "   o/   ",
-      "  /|    ",
-      "   |    ",
-      "  / \\   ",
-      " /_  \\  "
+      "   \\(}_",
+      ".-´  ,'",
+      " ¯-´|\\",
+      "",
+      ""
      ],
-     "expected": "G0llr_",
+     "expected": "3G0f>r|",
      "recipe": [
       [
-       "G0ll",
-       "reach the unfamiliar pose's planted-foot cell"
+       "3G0f>",
+       "find the trailing foot on the Dracula hem row"
       ],
       [
-       "r_",
-       "restore contact without moving the torso"
+       "r|",
+       "plant that foot for walk frame 4"
       ]
      ],
      "cursor": "^",
+     "source": "official-Pets/Dracula res01 walk frame 3 to frame 4",
+     "prompt": "Advance Dracula walk frame 3 to frame 4 by planting only the trailing foot `>` as `|`; keep the cape, torso, and five-row padding fixed.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       "G0llr_"
+       "3G0f>r|"
       ]
      }
     },
     {
      "start": [
-      "  \\O   ",
-      "   |\\  ",
-      "   |   ",
-      "  /|   ",
-      " /  \\  "
+      "   \\(}_",
+      ".-´  ,'",
+      " ¯-´|\\",
+      "",
+      ""
      ],
      "target": [
-      "  \\O   ",
-      "   |\\  ",
-      "   |   ",
-      "  /|   ",
-      " / _\\  "
+      "   \\(}_",
+      ".-´  ,'",
+      " ¯-´|>",
+      "",
+      ""
      ],
-     "expected": "G0lllr_",
+     "expected": "3G$r>",
      "recipe": [
       [
-       "G0lll",
-       "reach the opposite-contact cell in a changed subject"
+       "3G$",
+       "reach the planted foot at the end of the Dracula hem row"
       ],
       [
-       "r_",
-       "plant it while keeping the secondary arm intact"
+       "r>",
+       "kick that foot forward for walk frame 5"
       ]
      ],
      "cursor": "^",
+     "source": "official-Pets/Dracula res01 walk frame 4 to frame 5",
+     "prompt": "Advance Dracula walk frame 4 to frame 5 by changing only the final foot from backslash to `>`; preserve every other source cell.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       "G0lllr_"
+       "3G$r>"
       ]
      },
      "paired_question_ids": [
@@ -27685,13 +27690,13 @@
    "method_requirement": {
     "label": "perform the unfamiliar-art transfer with its taught command path",
     "exact_any_of": [
-     "G0llr_"
+     "3G0f>r|"
     ]
    },
    "required_before_mastery": true,
    "show_target": true,
    "show_recipe": false,
-   "hint": "Vim toolbox: single-cell replace preserves the row width and surrounding registration. Scope: Treat each 5-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the planted foot slides, the torso shifts, or the arm flips without an adjacent transition.",
+   "hint": "Vim toolbox: a visible character landmark is safer than repeated unit motions. Scope: Treat each 5-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the planted foot slides, the torso shifts, or the arm flips without an adjacent transition.",
    "review_source_card_id": "M8.06",
    "review_method_family": "required:perform the unfamiliar-art transfer with its taught command path",
    "master_habits": [
@@ -27703,11 +27708,13 @@
    ],
    "grammar_families": [
     "normal-replace",
+    "search-landmark",
     "normal-motion"
    ],
    "grammar_stage": "hidden",
    "key_vocabulary": [
     "r + replacement glyph; overwrite one cell without shifting the row",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
    "stage_owner": "A7",
@@ -49816,6 +49823,7 @@
    "grammar_breakdown_id": "normal-replace",
    "grammar_breakdown": [
     "r + replacement glyph; overwrite one cell without shifting the row",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "track the planted contact cell and let the secondary arm arrive on a different frame",
@@ -49824,51 +49832,51 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The key-hidden transfer comes first; afterward, four explicit choices check the command path and animation scope without free-text grading.",
-   "prompt": "ANIMATION\nThe horizontally offset transfer gains one planted-foot underscore while its torso and arm remain fixed.\n\n    BEFORE        AFTER\n    │   o/   │    │   o/   │\n    │  /|    │    │  /|    │\n    │   |    │    │   |    │\n    │  / \\   │    │  / \\   │\n    │ /   \\  │    │ /_  \\  │\n\nNEOVIM\nWhich landmark-based path reaches the target without memorized columns?",
+   "prompt": "ANIMATION\nDracula walk frame 3 advances to frame 4. Only the trailing foot `>` on the hem row becomes a planted `|`; the cape, torso, accent marks, and two padding rows remain unchanged.\n\n  BEFORE       AFTER\n  │   \\(}_│     │   \\(}_│\n  │.-´  ,'│     │.-´  ,'│\n  │ ¯-´>\\│  →  │ ¯-´|\\│\n  ││             ││\n  ││             ││\n\nNEOVIM\nWhich landmark edit reaches the source-authored contact without guessing its column?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "typed_keys",
    "choices": [
-    "ANIMATION: One contact cell changes; the offset body remains fixed. | NEOVIM: landmark-based l then r_.",
-    "ANIMATION: Reuse the original absolute count without inspection. | NEOVIM: type the old motion blindly.",
-    "ANIMATION: Copy and mirror the full five-row walker. | NEOVIM: :6,10t$.",
-    "ANIMATION: Move the torso toward the foot. | NEOVIM: C the body rows."
+    "ANIMATION: Only the trailing foot plants as `|`; cape and torso stay fixed. | NEOVIM: `3G0f>r|` finds the visible foot and overwrites one cell.",
+    "ANIMATION: The entire hem row shifts left for stronger contact. | NEOVIM: f> deletes every cell it crosses before r|.",
+    "ANIMATION: A second full Dracula frame is appended. | NEOVIM: the find/replace path copies all five rows.",
+    "ANIMATION: Every `>` in the walk strip becomes `|`. | NEOVIM: r after f is a global replacement."
    ],
    "correct_choice": 0,
    "feedback": [
-    "Correct: the visible foot supplies the navigation target in the offset art.",
-    "Absolute counts from the original pose may land on a different cell.",
-    "The transfer asks for contact repair, not a complete frame copy.",
-    "Torso motion would break the transfer's stable registration."
+    "Correct: the source foot is the landmark and one-cell overwrite advances the contact without pose drift.",
+    "f is a cursor motion and does not delete the cape cells it crosses.",
+    "No frame is appended; the current padded pose advances in place from source frame 3 to 4.",
+    "r changes only the cursor cell. Other angle glyphs elsewhere are outside its scope."
    ],
-   "animation_prompt": "The transfer uses the same contact decision at a different horizontal placement.\n\n    BEFORE        AFTER\n    │   o/   │    │   o/   │\n    │  /|    │    │  /|    │\n    │   |    │    │   |    │\n    │  / \\   │    │  / \\   │\n    │ /   \\  │    │ /_  \\  │",
-   "animation_answer": "Plant the visible foot while preserving the offset torso and arm.",
-   "neovim_prompt": "Use visible navigation followed by one-cell replacement.",
-   "neovim_answer": "Find the foot, move l as far as the visible target requires, then r_.",
-   "compact_prompt": "ANIMATION\nOffset walker: plant one foot, body stays.\n\n    BEFORE      AFTER\n    │  /|│      │  /|│\n    │ /  \\│      │ /_ \\│\n\nNEOVIM\nUse the visible landmark.",
+   "animation_prompt": "The walk contact advances by one foot glyph while the complete padded Dracula pose remains registered.",
+   "animation_answer": "Replace the visible trailing-foot > with | and preserve the rest of the frame.",
+   "neovim_prompt": "Use the foot glyph itself as the landmark for a one-cell replacement.",
+   "neovim_answer": "3G0 reaches the hem row from its left edge, f> lands on the trailing foot, and r| overwrites only that cell.",
+   "compact_prompt": "ANIMATION\nPlant Dracula's trailing foot: `>` becomes `|`; every other cell stays.\n\n  │ ¯-´>\\│ → │ ¯-´|\\│\n\nNEOVIM\nDecode `3G0f>r|`.",
    "compact_choices": [
-    "A: contact only, offset fixed · V: visible l + r_",
-    "A: blind old count · V: old motion",
-    "A: copy/mirror pose · V: :6,10t$",
-    "A: move torso · V: C body"
+    "A: foot only · V: find > + replace |",
+    "A: hem shifts · V: f deletes crossed cells",
+    "A: append frame · V: f/r copies rows",
+    "A: every > changes · V: r is global"
    ],
    "source_answer_contract": {
     "form": "typed_keys",
     "initial_lines": [
-     "   o/   ",
-     "  /|    ",
-     "   |    ",
-     "  / \\   ",
-     " /   \\  "
+     "   \\(}_",
+     ".-´  ,'",
+     " ¯-´>\\",
+     "",
+     ""
     ],
     "target_lines": [
-     "   o/   ",
-     "  /|    ",
-     "   |    ",
-     "  / \\   ",
-     " /_  \\  "
+     "   \\(}_",
+     ".-´  ,'",
+     " ¯-´|\\",
+     "",
+     ""
     ],
     "initial_cursor": "^",
     "forbidden_side_effects": [
@@ -49877,7 +49885,7 @@
      "extra_window",
      "extra_tab"
     ],
-    "sample_answer": "G0llr_",
+    "sample_answer": "3G0f>r|",
     "effect_version": 1
    },
    "authorship": "manual"
@@ -52010,6 +52018,7 @@
    "grammar_breakdown_id": "normal-replace",
    "grammar_breakdown": [
     "r + replacement glyph; overwrite one cell without shifting the row",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "track the planted contact cell and let the secondary arm arrive on a different frame",
@@ -52018,39 +52027,39 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
-   "prompt": "ANIMATION\nThis unfamiliar walker faces the other direction. The planted-foot contact is the blank between `/` and `\\` on the last row; only that cell becomes `_`. The head, torso, arm, and other foot stay registered.\n\n  BEFORE      AFTER\n  │  \\O   │    │  \\O   │\n  │   |\\  │    │   |\\  │\n  │   |   │    │   |   │\n  │  /|   │    │  /|   │\n  │ /  \\  │ →  │ / _\\  │\n\nNEOVIM\nWhich command grammar changes one contact cell without adding a column?",
+   "prompt": "ANIMATION\nDracula walk frame 4 advances to frame 5. Only the final planted-foot backslash changes to a forward-kick `>`; the leading hem bar, cape, torso, and two padding rows remain registered.\n\n  BEFORE       AFTER\n  │   \\(}_│     │   \\(}_│\n  │.-´  ,'│     │.-´  ,'│\n  │ ¯-´|\\│  →  │ ¯-´|>│\n  ││             ││\n  ││             ││\n\nNEOVIM\nWhich bounded path edits the visible row-end foot and nothing else?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "decode",
    "choices": [
-    "ANIMATION: The lower leg shifts right to make room for a contact. | NEOVIM: `r_` inserts an underscore before the backslash.",
-    "ANIMATION: Both feet receive a ground line. | NEOVIM: three l motions select the three cells between the slashes.",
-    "ANIMATION: Only the nominated contact blank becomes `_`; the reversed pose stays registered. | NEOVIM: `G0` chooses the last-row origin, `lll` reaches that cell, and `r_` overwrites it.",
-    "ANIMATION: The whole last row becomes underscores. | NEOVIM: `r_` replaces from the cursor through end of line."
+    "ANIMATION: A new `>` is inserted after the old backslash. | NEOVIM: r preserves the old glyph and widens the hem row.",
+    "ANIMATION: Both foot glyphs become `>`. | NEOVIM: $ selects the full suffix from the planted bar onward.",
+    "ANIMATION: Only the row-end foot changes from backslash to `>`; the planted bar and pose stay fixed. | NEOVIM: `3G$` addresses that final cell and `r>` overwrites it.",
+    "ANIMATION: The cape row is mirrored with the foot. | NEOVIM: 3G selects the first three rows as a block."
    ],
    "correct_choice": 2,
    "feedback": [
-    "r overwrites an existing display cell, so the backslash and row width do not move.",
-    "Normal-mode l is a motion repeated three times, not a multi-cell selection.",
-    "Correct: the countable motion locates one acting cell and r preserves every registered neighbour.",
-    "r owns one cursor cell. C or a range operation would be needed for a suffix."
+    "r overwrites the existing backslash, so no extra column or old foot remains.",
+    "$ is a motion to one final character here, not a suffix selection.",
+    "Correct: the source-authored frame change is one bounded row-end replacement.",
+    "3G is an absolute line motion to row 3; it does not create a three-row selection."
    ],
-   "animation_prompt": "ANIMATION\nM8.06 variant 2 plants one foot on a reversed unfamiliar walker without moving the rest of the pose.",
-   "animation_answer": "One blank contact cell becomes an underscore; all other pose cells stay in their original columns.",
-   "neovim_prompt": "NEOVIM\nDecode `G0lllr_` on the five-row walker.",
-   "neovim_answer": "G0 selects the first cell of the last row, lll moves three cells to the contact blank, and r_ overwrites that cell without insertion.",
-   "compact_prompt": "ANIMATION\nOnly the blank planted-foot contact becomes `_`.\n\n  │ /  \\  │ → │ / _\\  │\n\nNEOVIM\nWhat does `G0lllr_` own?",
+   "animation_prompt": "ANIMATION\nM8.06 variant 2 advances the next Dracula contact while preserving every stable source cell.",
+   "animation_answer": "The last backslash becomes >; the preceding planted bar and all upper-pose rows remain unchanged.",
+   "neovim_prompt": "NEOVIM\nExplain `3G$r>` on the padded source frame.",
+   "neovim_answer": "3G selects the hem row, $ reaches its final visible foot, and r> overwrites that one cell without shifting the row.",
+   "compact_prompt": "ANIMATION\nKick the final foot forward: row-end `\\` becomes `>`; keep the planted `|`.\n\n  │ ¯-´|\\│ → │ ¯-´|>│\n\nNEOVIM\nDecode `3G$r>`.",
    "compact_choices": [
-    "A: leg shifts · V: r inserts",
-    "A: both feet ground · V: lll selects three cells",
-    "A: one contact cell · V: last row + three right + replace",
-    "A: whole row underscores · V: r owns suffix"
+    "A: insert beside backslash · V: r widens",
+    "A: both feet kick · V: $ selects suffix",
+    "A: row-end foot only · V: line 3, $, replace",
+    "A: mirror cape too · V: 3G selects rows"
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": "G0lllr_",
+    "display": "3G$r>",
     "required_term_groups": [
      [
       "replace",
@@ -52067,6 +52076,19 @@
       "registered"
      ],
      [
+      "search",
+      "find",
+      "landmark"
+     ],
+     [
+      "pattern",
+      "character"
+     ],
+     [
+      "cursor",
+      "cell"
+     ],
+     [
       "motion",
       "move",
       "cursor"
@@ -52078,7 +52100,7 @@
       "cell"
      ]
     ],
-    "sample_answer": "replace cell width motion landmark"
+    "sample_answer": "replace cell width search pattern cursor motion landmark"
    },
    "authorship": "manual"
   },
@@ -53362,6 +53384,7 @@
     ],
     "hidden_families": [
      "normal-replace",
+     "search-landmark",
      "normal-motion"
     ]
    },
@@ -56545,6 +56568,11 @@
   {
    "hidden_card_id": "M8.06",
    "grammar_family": "normal-replace",
+   "prior_guided_card_id": "M0.01"
+  },
+  {
+   "hidden_card_id": "M8.06",
+   "grammar_family": "search-landmark",
    "prior_guided_card_id": "M0.01"
   },
   {

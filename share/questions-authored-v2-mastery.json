@@ -1080,30 +1080,30 @@
     ]
   },
   "M8.06.V2.P01": {
-    "prompt": "ANIMATION\nThis unfamiliar walker faces the other direction. The planted-foot contact is the blank between `/` and `\\` on the last row; only that cell becomes `_`. The head, torso, arm, and other foot stay registered.\n\n  BEFORE      AFTER\n  │  \\O   │    │  \\O   │\n  │   |\\  │    │   |\\  │\n  │   |   │    │   |   │\n  │  /|   │    │  /|   │\n  │ /  \\  │ →  │ / _\\  │\n\nNEOVIM\nWhich command grammar changes one contact cell without adding a column?",
-    "compact_prompt": "ANIMATION\nOnly the blank planted-foot contact becomes `_`.\n\n  │ /  \\  │ → │ / _\\  │\n\nNEOVIM\nWhat does `G0lllr_` own?",
-    "animation_prompt": "ANIMATION\nM8.06 variant 2 plants one foot on a reversed unfamiliar walker without moving the rest of the pose.",
-    "animation_answer": "One blank contact cell becomes an underscore; all other pose cells stay in their original columns.",
-    "neovim_prompt": "NEOVIM\nDecode `G0lllr_` on the five-row walker.",
-    "neovim_answer": "G0 selects the first cell of the last row, lll moves three cells to the contact blank, and r_ overwrites that cell without insertion.",
+    "prompt": "ANIMATION\nDracula walk frame 4 advances to frame 5. Only the final planted-foot backslash changes to a forward-kick `>`; the leading hem bar, cape, torso, and two padding rows remain registered.\n\n  BEFORE       AFTER\n  │   \\(}_│     │   \\(}_│\n  │.-´  ,'│     │.-´  ,'│\n  │ ¯-´|\\│  →  │ ¯-´|>│\n  ││             ││\n  ││             ││\n\nNEOVIM\nWhich bounded path edits the visible row-end foot and nothing else?",
+    "compact_prompt": "ANIMATION\nKick the final foot forward: row-end `\\` becomes `>`; keep the planted `|`.\n\n  │ ¯-´|\\│ → │ ¯-´|>│\n\nNEOVIM\nDecode `3G$r>`.",
+    "animation_prompt": "ANIMATION\nM8.06 variant 2 advances the next Dracula contact while preserving every stable source cell.",
+    "animation_answer": "The last backslash becomes >; the preceding planted bar and all upper-pose rows remain unchanged.",
+    "neovim_prompt": "NEOVIM\nExplain `3G$r>` on the padded source frame.",
+    "neovim_answer": "3G selects the hem row, $ reaches its final visible foot, and r> overwrites that one cell without shifting the row.",
     "choices": [
-      "ANIMATION: The lower leg shifts right to make room for a contact. | NEOVIM: `r_` inserts an underscore before the backslash.",
-      "ANIMATION: Both feet receive a ground line. | NEOVIM: three l motions select the three cells between the slashes.",
-      "ANIMATION: Only the nominated contact blank becomes `_`; the reversed pose stays registered. | NEOVIM: `G0` chooses the last-row origin, `lll` reaches that cell, and `r_` overwrites it.",
-      "ANIMATION: The whole last row becomes underscores. | NEOVIM: `r_` replaces from the cursor through end of line."
+      "ANIMATION: A new `>` is inserted after the old backslash. | NEOVIM: r preserves the old glyph and widens the hem row.",
+      "ANIMATION: Both foot glyphs become `>`. | NEOVIM: $ selects the full suffix from the planted bar onward.",
+      "ANIMATION: Only the row-end foot changes from backslash to `>`; the planted bar and pose stay fixed. | NEOVIM: `3G$` addresses that final cell and `r>` overwrites it.",
+      "ANIMATION: The cape row is mirrored with the foot. | NEOVIM: 3G selects the first three rows as a block."
     ],
     "compact_choices": [
-      "A: leg shifts · V: r inserts",
-      "A: both feet ground · V: lll selects three cells",
-      "A: one contact cell · V: last row + three right + replace",
-      "A: whole row underscores · V: r owns suffix"
+      "A: insert beside backslash · V: r widens",
+      "A: both feet kick · V: $ selects suffix",
+      "A: row-end foot only · V: line 3, $, replace",
+      "A: mirror cape too · V: 3G selects rows"
     ],
     "correct_choice": 2,
     "feedback": [
-      "r overwrites an existing display cell, so the backslash and row width do not move.",
-      "Normal-mode l is a motion repeated three times, not a multi-cell selection.",
-      "Correct: the countable motion locates one acting cell and r preserves every registered neighbour.",
-      "r owns one cursor cell. C or a range operation would be needed for a suffix."
+      "r overwrites the existing backslash, so no extra column or old foot remains.",
+      "$ is a motion to one final character here, not a suffix selection.",
+      "Correct: the source-authored frame change is one bounded row-end replacement.",
+      "3G is an absolute line motion to row 3; it does not create a three-row selection."
     ]
   },
   "M9.06.V2.P01": {
