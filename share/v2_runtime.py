@@ -2056,7 +2056,7 @@ def _print_check_replay(replay, bold, off, *, compact=False):
     outcomes = replay.get("outcomes", [])
     if not outcomes:
         return
-    print("\n%sMODULE CHECK REPLAY%s  %d/%d correct; threshold %d" % (
+    print("\n%sCHECK ANSWERS%s  %d/%d correct; threshold %d" % (
         bold, off, replay.get("score", 0), len(outcomes), replay.get("threshold", len(outcomes))))
     for index, outcome in enumerate(outcomes, 1):
         q = outcome["question"]
@@ -2089,7 +2089,7 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
                          ledger_rows=None, breakdown_packed=False):
     """Fit essential result evidence in an 80x24 popup without scrolling it away."""
     if replay and replay.get("type") == "edit":
-        print("%sARTIFACT REPLAY%s  %s" % (
+        print("%sRESULT COMPARISON%s  %s" % (
             bold, off, "exact target" if completed else "mismatch: yours vs target"))
         for line in _artifact_replay(replay, completed, max_rows=replay_rows,
                                      minimal=minimal):
@@ -2112,10 +2112,10 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
                 _clip(replay.get("actual_keys", "(unavailable)"), 24),
                 _clip(replay.get("taught_keys", card.get("expected", "(none)")), 24)))
         if replay.get("method_evidence_error"):
-            print("METHOD EVIDENCE  %s" % _clip(
+            print("METHOD CHECK  %s" % _clip(
                 replay["method_evidence_error"], 68))
         elif replay.get("method_family"):
-            print("METHOD EVIDENCE  demonstrated: %s" % replay["method_family"])
+            print("METHOD CHECK  demonstrated: %s" % replay["method_family"])
     elif replay and replay.get("type") == "paired_question":
         q = replay["question"]
         print("%sANSWER EXPLANATION%s  %s" % (
@@ -2141,7 +2141,7 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
                 print("ONE ACCEPTED ANSWER  %s" % _clip(sample, 64))
         edit = replay.get("edit_replay")
         if edit:
-            print("%sEDIT REPLAY%s  %s" % (
+            print("%sEDIT RESULT%s  %s" % (
                 bold, off, "exact target" if completed else "mismatch: yours vs target"))
             for line in _artifact_replay(edit, completed, max_rows=replay_rows,
                                          minimal=minimal):
@@ -2151,7 +2151,7 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
                 _clip(edit.get("taught_keys", "(none)"), 20)))
     if check_replay:
         outcomes = check_replay.get("outcomes", [])
-        print("%sMODULE CHECK REPLAY%s  %d/%d; threshold %d" % (
+        print("%sCHECK ANSWERS%s  %d/%d; threshold %d" % (
             bold, off, check_replay.get("score", 0), len(outcomes),
             check_replay.get("threshold", len(outcomes))))
         wrong = [(index, outcome) for index, outcome in enumerate(outcomes, 1)
@@ -2299,10 +2299,10 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
         return
 
     if replay and replay.get("type") == "edit":
-        print("\n%sARTIFACT REPLAY%s  saved buffer before and after evaluation" % (bold, off))
+        print("\n%sRESULT COMPARISON%s  saved buffer before and after evaluation" % (bold, off))
         for line in _artifact_replay(replay, completed):
             print(line)
-        print("\n%sKEYSTROKE REPLAY%s  actual input vs taught path" % (bold, off))
+        print("\n%sKEYSTROKE LEDGER%s  actual input vs taught path" % (bold, off))
         if compact:
             print("  actual: %s" % replay.get("actual_keys", "(unavailable)"))
             print("  taught: %s  ·  alternate keys pass when the exact target matches" %
@@ -2313,9 +2313,9 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
             for line in replay.get("table", []):
                 print(line)
         if replay.get("method_evidence_error"):
-            print("  METHOD EVIDENCE: %s" % replay["method_evidence_error"])
+            print("  METHOD CHECK: %s" % replay["method_evidence_error"])
         elif replay.get("method_family"):
-            print("  METHOD EVIDENCE: demonstrated %s" % replay["method_family"])
+            print("  METHOD CHECK: demonstrated %s" % replay["method_family"])
     elif replay and replay.get("type") == "paired_question":
         q = replay["question"]
         print("\n%sANSWER EXPLANATION%s" % (bold, off))
@@ -2344,7 +2344,7 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
                 print("  ONE ACCEPTED ANSWER: %s" % sample)
         edit = replay.get("edit_replay")
         if edit:
-            print("\n%sCHANGED-ART EDIT REPLAY%s" % (bold, off))
+            print("\n%sCHANGED-ART EDIT RESULT%s" % (bold, off))
             for line in _artifact_replay(edit, completed):
                 print(line)
             print("  actual keys: %s" % edit.get("actual_keys", "(none)"))
@@ -2611,14 +2611,14 @@ def _latest_check_replay(cfg, cur, card):
 
 def run_check_questions(cfg, cur, progress, card):
     if card["id"] in progress.get("check_concepts", []):
-        print("check concepts already passed; resuming the artifact subpart")
+        print("check concepts already passed; resuming the editing task")
         return True, _latest_check_replay(cfg, cur, card)
     qmap = _question_map(cur)
     context = _lesson_context(cur, card)
     print("\n" + _progress_line(cfg, progress, card))
     print("MODULE CHECK WHY: %s" % context["why"][1])
     print("MODULE CHECK BUYS: %s" % context["buys"])
-    print("DO THIS: answer five checks, then complete the unhinted artifact edit.")
+    print("DO THIS: answer five checks, then complete the unhinted art edit.")
     declared = card.get("question_ids", [])
     module_bank = declared or [q["id"] for q in cur["questions"]
                                if q["module_id"] == card["module_id"]]

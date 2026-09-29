@@ -5168,3 +5168,33 @@ all 395 questions received a new human editorial pass in this checkpoint, and
 it does not resolve redistribution. The 885-sheet corpus still has zero
 archive-manifest rows; the source excerpts and all local commits remain
 unpushed because publication permission has not been established.
+
+## VD-53 · 2026-09-29 — internal authoring labels leaked into learner explanations
+
+**Finding:** the authored files accounted for all 395 live questions, but a
+field-by-field scan of every learner-visible scalar found 39 strings that still
+spoke from the curriculum author's point of view. Thirty-four mastery
+explanations named internal ids such as `M13.W`, `M4.DIFFH`, or “variant 2.”
+Five feedback lines referred to “the card,” “this module,” “method evidence,”
+or “the checkpoint.” The post-lesson UI separately printed `ARTIFACT REPLAY`,
+`EDIT REPLAY`, `MODULE CHECK REPLAY`, `METHOD EVIDENCE`, and “resuming the
+artifact subpart.” These phrases describe storage and grading machinery rather
+than teaching the animation or Neovim concept.
+
+**Repair:** every identified question string now states the visible change and
+the Vim operation directly, without an id or authoring-system noun. The result
+page now labels the requested surfaces as `RESULT COMPARISON`, `KEYSTROKE
+LEDGER`, `METHOD CHECK`, `EDIT RESULT`, and `CHECK ANSWERS`. Module checks say
+“art edit” and “editing task,” not “artifact task/subpart.”
+
+`test_question_quality.py` now scans the complete learner-visible question
+record—including array feedback—for module/card/curriculum nouns, internal
+`M*.**` ids, numbered variant labels, and the previously observed workflow
+phrases. This is a regression guard for the manually repaired text; it is not a
+claim that a prose heuristic can replace human review.
+
+**Proof:** the regenerated revision still contains 215 cards, 395 questions,
+and 174 primary recipes. Question quality passes 395/395 and `test_v2.py`
+passes 215/215 cards plus 174/174 recipes. The real-user-config client-attached
+popup passes at 80×24, 100×36, and 188×49 with the new labels; the focused
+five-question headed route also passes at 80×24.

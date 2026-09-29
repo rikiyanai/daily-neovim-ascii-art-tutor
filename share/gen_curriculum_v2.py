@@ -3136,9 +3136,9 @@ STILL_PROMPT_REWRITES = {
     "M19.03": "Inspect the complete hand-mirrored still below, then choose the interpretation supported by its visible glyph and spacing evidence.",
     "M19.06": "Transfer full-row Virtual Replace mirroring to unfamiliar fixed-rail still art with the exact keys hidden.",
     "M19.07": "Diagnose the displayed hand-mirrored still, then choose the repair that preserves fixed rails and directional glyph roles.",
-    "M19.08": "Answer five checks, then perform this key-hidden artifact task: retain the approved still as a third candidate and vary one eye without treating the plate as an ordered sequence. The target stays visible; the exact command path stays hidden until evaluation.",
+    "M19.08": "Answer five checks, then perform this key-hidden art task: retain the approved still as a third candidate and vary one eye without treating the plate as an ordered sequence. The target stays visible; the exact command path stays hidden until evaluation.",
     "M2.07": "Diagnose the displayed face study, then choose the bounded repair that preserves silhouette, focus, and fixed width.",
-    "M2.08": "Answer five checks, then perform this key-hidden artifact task: copy the complete face as a second expression candidate and close only its eye. The target stays visible; the exact command path stays hidden until evaluation.",
+    "M2.08": "Answer five checks, then perform this key-hidden art task: copy the complete face as a second expression candidate and close only its eye. The target stays visible; the exact command path stays hidden until evaluation.",
     "M12.AA": "On this single four-row stroke study, replace the hard vertical bars with the shown off-vertical anti-aliasing glyphs: apostrophe, dot, exclamation, then inverted exclamation. The four rows form one drawing.",
     "M14.01": "Yank a visible glyph from the drawing's palette into register `a`, then retrieve it with `<C-r>a` in Replace mode so the acting eye changes without shifting the wall.",
     "M14.DAP": "The first Skully candidate is an accidental duplicate before the closed-eye candidate. Delete that complete still and its separator as one paragraph object.",
@@ -3146,7 +3146,7 @@ STILL_PROMPT_REWRITES = {
     "M14.PARA": "Yank the first blank-line-separated still, cross the paragraph boundary with }, and put the stored still above the next candidate.",
     "M14.DAPH": "On the unfamiliar SnowBunny plate, remove the complete open-eyed paragraph so the closed-eye still remains registered.",
     "M14.07": "Diagnose the displayed variant plate, then choose the repair that preserves palette and material consistency.",
-    "M14.08": "Answer five checks, then perform this key-hidden artifact task: store the first eye material, navigate across two paragraph-separated candidates with `}`, and retrieve the register in the third candidate so it reuses the first material. The target stays visible; the exact command path stays hidden until evaluation.",
+    "M14.08": "Answer five checks, then perform this key-hidden art task: store the first eye material, navigate across two paragraph-separated candidates with `}`, and retrieve the register in the third candidate so it reuses the first material. The target stays visible; the exact command path stays hidden until evaluation.",
     "M15.02": "Copy the complete three-row material stack as the working still for a lighter offset treatment.",
     "M15.ZPH": "On the unfamiliar Chick still, copy the ragged three-row drawing from its padded palette into the `>` destination rows without carrying invisible right-edge padding.",
     "M15.07": "Diagnose the displayed texture-and-ground study, then choose the repair that preserves dither density, offset, and shadow rules.",
@@ -5959,7 +5959,7 @@ def lesson_benefit(module, ordinal):
         5: "produce one exact outcome, then compare two executable methods that reach that same buffer",
         6: "apply the module intention to unfamiliar ASCII art instead of memorised coordinates",
         7: f"diagnose the observable {module['title']} defect and select a bounded repair",
-        8: "combine five conceptual decisions with one key-hidden artifact before mastery is awarded",
+        8: "combine five conceptual decisions with one key-hidden art edit before mastery is awarded",
     }[ordinal]
 
 
@@ -6253,7 +6253,7 @@ def make_cards(module, catalog_prompts):
                                     for number in (3, 7, 10, 8, 9)]
         elif ordinal == 8:
             card["prompt"] = (
-                "Answer five checks, then perform this key-hidden artifact task: "
+                "Answer five checks, then perform this key-hidden art task: "
                 f"{catalog_prompts[card_id]} The target remains visible; the exact command path stays hidden until evaluation.")
             if card_id == "M6.08":
                 card["lesson_benefit"] = (

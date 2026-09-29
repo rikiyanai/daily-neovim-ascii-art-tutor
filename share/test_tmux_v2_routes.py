@@ -370,7 +370,7 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             feedback_screen = " ".join(capture(outer, pane).split())
             if route == "review":
                 assert "REVIEW RETRIEVED" in feedback_screen and "ANSWER EXPLANATION" in feedback_screen, feedback_screen
-                assert "EDIT REPLAY" in feedback_screen and "exact target" in feedback_screen
+                assert "EDIT RESULT" in feedback_screen and "exact target" in feedback_screen
             else:
                 assert ("LESSON COMPLETE" in feedback_screen
                         or ("verified outcome" in feedback_screen
@@ -386,9 +386,9 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 assert CARDS[card_id]["expected"] in feedback_screen, feedback_screen
                 expected_family = next(method["label"] for method in CARDS[card_id]["method_alternatives"]
                                        if method["keys"] == CARDS[card_id]["expected"])
-                assert "METHOD EVIDENCE" in feedback_screen and expected_family in feedback_screen
+                assert "METHOD CHECK" in feedback_screen and expected_family in feedback_screen
             if route == "check":
-                assert "MODULE CHECK REPLAY" in feedback_screen and "5/5" in feedback_screen
+                assert "CHECK ANSWERS" in feedback_screen and "5/5" in feedback_screen
                 assert "all 5 choices correct" in feedback_screen
                 assert "PLAYBACK VERIFIED" in feedback_screen
 

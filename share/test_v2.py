@@ -1096,7 +1096,7 @@ with tempfile.TemporaryDirectory() as tmp:
         v2._post_lesson(cfg, cur, first, v2.project(cur, []), failed_replay,
                         completed=False)
     failed_text = output.getvalue()
-    assert "ARTIFACT REPLAY" in failed_text
+    assert "RESULT COMPARISON" in failed_text
     # VD-11: two-column replay (yours | target), a DO THIS action, and a
     # failed attempt that counts as daily practice and keeps the streak without
     # granting mastery XP or an all-time completion.
@@ -1191,7 +1191,7 @@ with tempfile.TemporaryDirectory() as tmp:
     assert (artifact.parent / "checkpoints" / (compare["id"] + "-failed-1.txt")).exists()
     rows = v2.read_events(cfg)
     assert rows[-1]["reason"] == "missing-method-evidence"
-    assert "METHOD EVIDENCE" in output.getvalue()
+    assert "METHOD CHECK" in output.getvalue()
     assert "saved project matches the exact target" in output.getvalue()
     assert "saved project did not match" not in output.getvalue()
 
@@ -1528,7 +1528,7 @@ with tempfile.TemporaryDirectory() as tmp:
         with contextlib.redirect_stdout(output):
             v2._post_lesson(cfg, cur, check, v2.rebuild(cfg, cur), replay, completed=True)
         check_text = output.getvalue()
-        assert "MODULE CHECK REPLAY" in check_text and "5/5 correct" in check_text
+        assert "CHECK ANSWERS" in check_text and "5/5 correct" in check_text
         assert check_text.count("chose:") == 5 and check_text.count("why:") >= 5
 
         review = {"module_id": "M0", "stage": 0, "question_id": "M0.Q01"}
@@ -1537,7 +1537,7 @@ with tempfile.TemporaryDirectory() as tmp:
             assert v2.run_review(cfg, cur, v2.rebuild(cfg, cur), "M0.01", review) == 0
         review_text = output.getvalue()
         assert "REVIEW RETRIEVED" in review_text
-        assert "ANSWER EXPLANATION" in review_text and "CHANGED-ART EDIT REPLAY" in review_text
+        assert "ANSWER EXPLANATION" in review_text and "CHANGED-ART EDIT RESULT" in review_text
         assert "exact saved target verified" in review_text
         assert "SKILL TREE / MODULE PROGRESS" in review_text
         latest_review = [row for row in v2.read_events(cfg)

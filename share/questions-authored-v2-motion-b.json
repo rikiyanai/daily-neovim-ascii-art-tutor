@@ -292,7 +292,7 @@
     "feedback": [
       "Correct: the guided edit is a bounded one-cell replace.",
       "The AFTER art visibly retains the base and all five rows.",
-      "No second frame appears; copying is a different card.",
+      "No second frame appears; copying would be a different operation.",
       "Inserting would alter width; the practiced operation overwrote one cell."
     ]
   },
@@ -481,7 +481,7 @@
     "feedback": [
       "Correct: the task preserves five-row frames and the Ex sentence needs Enter to run.",
       "Padding is part of each frame and must not be deleted.",
-      "This module reorders frames; byte reversal is unrelated.",
+      "This task reorders complete frames; byte reversal is unrelated.",
       "An Ex command is not applied until it is submitted with <CR>."
     ]
   },
@@ -940,7 +940,7 @@
     "feedback": [
       "Correct: complete validated blocks and explicit range-copy grammar preserve the hand-authored loop.",
       "CHECK rows carry validation evidence and belong to the block.",
-      "The return was hand-authored; reversal would violate the module contract.",
+      "The return was hand-authored; reversal would violate the required method.",
       "Single-row copies would split the four-line frame and lose timing context."
     ]
   },
@@ -1103,7 +1103,7 @@
       "Correct: landmark-based navigation adapts to the offset while preserving the body.",
       "Memorized counts can land on the wrong cell after an offset.",
       "This task transfers contact, not a complete mirror or copy.",
-      "Moving the torso to meet the foot creates the very drift the card forbids."
+      "Moving the torso to meet the foot creates the very drift the target forbids."
     ]
   },
   "M8.Q07": {
@@ -1399,7 +1399,7 @@
     "feedback": [
       "Correct: the marker changes inside the complete three-row keyframe.",
       "The ground is a registration anchor and remains visible.",
-      "The card establishes the high extreme before a midpoint is planned.",
+      "The shown edit establishes the high extreme before a midpoint is planned.",
       "The subject's horizontal position is not the requested change."
     ]
   },

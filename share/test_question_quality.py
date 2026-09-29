@@ -35,8 +35,14 @@ BANNED = [
 INTERNAL_BANNED = [
     "question replay", "concept replay", "hidden artifact recipe",
     "hidden recipe", "mastery strip", "checkpoint statement",
-    "checkpoint claim", "this card exists",
+    "checkpoint claim", "this card exists", "method evidence",
+    "checkpoint requires", "artifact subpart", "source contract",
 ]
+INTERNAL_PATTERN = re.compile(
+    r"\b(?:card|module|curriculum)\b|"
+    r"\bM\d+(?:\.[A-Z0-9]+)+\b|\bvariant\s+\d+\b",
+    re.IGNORECASE,
+)
 # Popup interior widths: 90% of an 80, 100 and 188 column client.
 POPUP_COLUMNS = (72, 90, 169)
 MAX_WRONG_HALF_REUSE = 3
@@ -104,6 +110,10 @@ for q in cur["questions"]:
         if phrase in learner_text.casefold():
             failures["internal workflow prose"].append("%s: %r" % (qid, phrase))
             break
+    match = INTERNAL_PATTERN.search(learner_text)
+    if match:
+        failures["internal workflow prose"].append(
+            "%s: %r" % (qid, match.group(0)))
     for columns in POPUP_COLUMNS:
         width = max(42, min(78, columns - 8))
         shown = [v2._compact_choice_text(choice, width=width) for choice in choices]

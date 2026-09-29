@@ -428,7 +428,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             "DO THIS",
             "ATTEMPT NOT PASSED",
             "no progress awarded",
-            "ARTIFACT REPLAY",
+            "RESULT COMPARISON",
             "KEYSTROKE LEDGER",
             "YOU TYPED",
             "THE RECIPE ASKS FOR",
@@ -560,7 +560,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         post_flattened = " ".join(post_screen.split())
         post_required = [
             "LESSON COMPLETE",
-            "ARTIFACT REPLAY",
+            "RESULT COMPARISON",
             "KEYSTROKE LEDGER",
             "YOU TYPED",
             "THE RECIPE ASKS FOR",
