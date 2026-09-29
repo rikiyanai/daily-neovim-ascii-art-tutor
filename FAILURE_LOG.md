@@ -4024,3 +4024,32 @@ left the art unchanged. Those diagnostic hooks and mapping changes were removed.
 Therefore this entry does not claim a complete post-M3 headed matrix. M8.06,
 M16.06, and M17.06 did pass at 80×24; M9.06, M12.06, and M18.06 remain the
 specific live-config blockers to diagnose next.
+
+### VD-34 follow-through · 2026-09-29 03:33 — late cursor restoration and multi-line Flash semantics resolved the headed blockers
+
+The three apparent input failures shared a current-line assumption. LazyVim's
+late handlers could restore a cursor after the launcher's `+1`/`+normal! ^`, so
+the logged `f`, `t`, or `C` command ran on a different row. The launcher now
+reapplies each card's authored line/cursor once after `VeryLazy` and before the
+headed ready boundary. This made M9.06, M12.06, and M18.06 pass at 80×24.
+
+Continuing the matrix then exposed M7.06: the personal Flash configuration's
+character mode is multi-line, so `fo` may select an `o` in another frame rather
+than native Vim's next `o` on the current row. The tutor teaches native Vim
+grammar, so only `f/F/t/T/;/,` receive buffer-local nonrecursive native mappings
+inside the art buffer. The user's theme, lualine, relative numbers, WhichKey,
+Hardtime, other mappings, and every non-tutor buffer remain unchanged. M7.06
+then passed at 80×24.
+
+All twenty `M*.06` transfer cards have now passed as isolated real-config
+headed routes at 80×24 on the current source. M3.06 additionally passed at
+100×36 and 188×49. This is isolated per-transfer evidence, not a claim that the
+entire all-route script (primer, concept, retry, guided, independent, compare,
+module check, review, then all transfers in one process) has been rerun.
+
+The main 80×24 popup regression then caught the failed-attempt headline still
+scrolling away. The feedback body already ends with a newline, while
+`post_page_break()` added a second blank row before its prompt. Removing that
+redundant row keeps `ATTEMPT NOT PASSED`, the two-column replay, ledger, source,
+and progress prompt visible together. The main client-attached real-config
+popup now passes at 80×24, 100×36, and 188×49.

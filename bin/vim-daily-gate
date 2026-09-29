@@ -728,6 +728,14 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
             # top whenever the cursor still fits on screen.
             art_lua = (
                 "local artb=vim.api.nvim_get_current_buf();"
+                # Lessons define f/F/t/T/;/, with native Vim's current-line
+                # semantics. Flash's global multi-line character motions can
+                # select a matching glyph in another animation frame. A
+                # buffer-local nonrecursive mapping keeps the taught language
+                # deterministic without changing the personal configuration
+                # anywhere outside this tutor art buffer.
+                "for _,k in ipairs({'f','F','t','T',';',','}) do "
+                "vim.keymap.set({'n','x','o'},k,k,{buffer=artb,noremap=true,silent=true}) end;"
                 "local function vd_plain() for _,w in ipairs(vim.api.nvim_list_wins()) do "
                 "local b=vim.api.nvim_win_get_buf(w);vim.wo[w].list=false;"
                 "vim.b[b].snacks_indent=false;vim.b[b].miniindentscope_disable=true;"
@@ -746,6 +754,22 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
                 "vim.api.nvim_create_autocmd('WinResized',{callback=function() vim.schedule(vd_top) end})"
             )
             cmd.append("+lua " + art_lua)
+            # LazyVim's late window/buffer handlers can restore a remembered
+            # cursor after the command-line +line/+normal placement. Cards
+            # whose first operation is current-line f/t/C then edit the wrong
+            # row while their key log still looks correct. Re-apply the
+            # authored starting position once after VeryLazy, before headed
+            # readiness, without changing any user mapping or global option.
+            cursor_lua = (
+                "do local aw=vim.api.nvim_get_current_win();local done=false;"
+                "local function place() if done then return end;done=true;vim.defer_fn(function() "
+                "if vim.api.nvim_win_is_valid(aw) then vim.api.nvim_win_set_cursor(aw,{%d,0});"
+                "vim.api.nvim_win_call(aw,function() vim.cmd('normal! '..%s) end) end end,100) end;"
+                "if vim.g.did_very_lazy then place() elseif package.loaded['lazy'] then "
+                "vim.api.nvim_create_autocmd('User',{pattern='VeryLazy',once=true,callback=place}) "
+                "else place() end end"
+            ) % (start_line, json.dumps(cursor))
+            cmd.append("+lua " + cursor_lua)
         if brief:
             # VD-09: keep instructions in a separate read-only buffer. The art
             # stays current, so gg/G, counts, ranges, and :t/:m address art only.
@@ -916,7 +940,9 @@ def post_page_break():
     if not os.environ.get("VIM_DAILY_POPUP"):
         return
     try:
-        input("\n%spress Enter for skill-tree progress%s " % (DIM, OFF))
+        # The preceding renderer already ends with a newline. An additional
+        # blank row scrolls the result headline off an 80x24 popup.
+        input("%spress Enter for skill-tree progress%s " % (DIM, OFF))
     except (EOFError, KeyboardInterrupt):
         pass
 

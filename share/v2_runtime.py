@@ -1989,9 +1989,7 @@ def _clip(value, width=48):
     return textwrap.shorten(" ".join(str(value).split()), width=width, placeholder="…")
 
 
-# Reserve the prompt plus both tmux popup border rows. Counting the outer
-# terminal height as fully printable let a compact five-question check scroll
-# its result header off an 80x24 popup by one row.
+# Reserve the prompt, popup borders, and the outer tmux status row.
 _FEEDBACK_TRAILER_LINES = 5
 
 
