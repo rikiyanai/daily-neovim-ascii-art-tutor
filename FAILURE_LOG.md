@@ -4435,8 +4435,42 @@ metadata.
   reviews. The broad post-M2 matrix remains a separate pending claim.
 
 **Still open; not claimed here.** The broad headed route matrix after M2 is not
-yet claimed by the direct M3.06 pass. The remaining S6 single-composite
-layer-order/material/seam checkpoint, broader
-Stone Story primary-art migration, per-variant `.06` questions, archive
+yet claimed by the direct M3.06 pass. The broader Stone Story primary-art
+migration, per-variant `.06` questions, archive
 provenance intake, and full headed post-M2 route matrix remain open. No Stone
 Story third-party art was pushed or otherwise published.
+
+## VD-39 · 2026-09-29 — S6 now proves a complete layer/material/seam decision
+
+**Finding.** S6 had individual seam edits, but no one card required the learner
+to read an unfamiliar composite back-to-front, retain three declared material
+languages, and break only the false background/foreground connection. The
+stage could therefore advance on local cursor skill without proving the layer
+judgement named by the stage.
+
+**Implemented in revision `.37`:**
+
+- `M5.S6C` presents a four-row cloud/roof/ground composite. The target replaces
+  only the final cloud colon touching the foreground roof with one blank cell;
+  roof and ground remain byte-for-byte registered.
+- Its key path is hidden and runtime-required: `2G0f/hr<Space>` uses the
+  foreground slash as the landmark, steps back to the touching background
+  cell, and overwrites that one cell with negative space. The learner does not
+  retype the drawing or insert/delete a column.
+- The paired four-choice question prints the full BEFORE/AFTER composite and
+  asks both why the seam is removed from the background and why `r<Space>`
+  preserves registration. Each wrong choice explains its particular layer or
+  Vim-scope error.
+- Two enforced changed-art reviews replace cloud `.:` with hatch `;` and wave
+  `~` materials. They retain the same authoring principle without using a
+  synthetic border-glyph swap.
+
+**Proof:** generator `.37` writes 215 cards / 375 questions;
+`test_question_quality.py` passes 375; `test_v2.py` passes **215/215 cards and
+174/174 primary recipes**, with 70 changed-art review banks; and the full
+headed `M5.S6C` route passes with the real user config at 80x24, 100x36, and
+188x49.
+
+**Still open.** This does not close the broader Stone Story primary-art
+migration, `.06` variant-specific question work, archive provenance, or the
+full headed route matrix. No third-party art was pushed or published.

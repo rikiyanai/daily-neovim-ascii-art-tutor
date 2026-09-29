@@ -727,5 +727,32 @@
       "Insertion would increase row width and leave the low dots in place, violating both visible invariants.",
       "The checkpoint requires the three-row block and gv evidence; a one-cell edit neither reaches the target nor proves recall."
     ]
+  },
+  "M5.S6C.P01": {
+    "prompt": "ANIMATION\nBefore layers can move independently, this still composite must read back-to-front. The cloud uses `.:`, the roof uses `/\\_`, and the ground uses `_`. One cloud colon falsely touches the roof; the AFTER drawing removes only that background cell.\n\n  BEFORE       AFTER\n  │| .::::. |│   │| .::::. |│\n  │| .:::/\\ |│ → │| .:: /\\ |│\n  │|    /__\\|│   │|    /__\\|│\n  │|___/____|│   │|___/____|│\n\nNEOVIM\nWhy does `2G0f/hr ` preserve both layer order and registration?",
+    "compact_prompt": "ANIMATION\nOne cloud cell is erased where background falsely joins the foreground roof.\n\n  │| .:::/\\ |│ → │| .:: /\\ |│\n  │|    /__\\|│   │|    /__\\|│\n  │|___/____|│   │|___/____|│\n\nNEOVIM\nWhat does f/ then h then r-space address?",
+    "animation_prompt": "ANIMATION\nM5.S6C establishes a readable back-to-front seam before either layer is allowed to move.",
+    "animation_answer": "Only the final background colon becomes negative space; roof and ground materials remain intact and registered.",
+    "neovim_prompt": "NEOVIM\nDecode `2G0f/hr ` on the touching cloud-and-roof row.",
+    "neovim_answer": "2G0 selects the acting row from its left edge, f/ finds the foreground roof slash, h steps back to the touching background colon, and r-space overwrites that one cell without shifting the row.",
+    "choices": [
+      "ANIMATION: The roof is erased so the cloud becomes foreground. | NEOVIM: `f/` deletes the found slash automatically.",
+      "ANIMATION: A blank column is inserted through every layer. | NEOVIM: `r ` inserts one new cell before the slash.",
+      "ANIMATION: One background colon becomes a separating blank while roof and ground stay registered. | NEOVIM: `f/` finds the foreground landmark, `h` selects the touching background cell, and `r ` overwrites it.",
+      "ANIMATION: Every colon is removed from the cloud material. | NEOVIM: `f/` and `h` form a whole-line substitute."
+    ],
+    "compact_choices": [
+      "A: erase roof · V: f/ deletes",
+      "A: insert blank column · V: r inserts",
+      "A: one background seam cell · V: find, step back, replace",
+      "A: erase all cloud colons · V: whole-line substitute"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "The roof is the nominated foreground and must remain intact; f is only a motion.",
+      "r overwrites one selected cell. Inserting a column would destroy registration across all four rows.",
+      "Correct: the foreground landmark makes the touching background cell addressable, and a replacement space breaks only that false connection.",
+      "The cloud keeps its declared `.:` material everywhere except the one seam cell; no substitute command is used."
+    ]
   }
 }

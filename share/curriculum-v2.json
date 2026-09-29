@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.36",
+ "revision": "2026-09-29.37",
  "review_intervals_hours": [
   4,
   24,
@@ -191,10 +191,12 @@
     "M5.C",
     "M5.05",
     "M5.06",
+    "M5.S6C",
     "M5.08"
    ],
    "required_review_card_ids": [
-    "M5.06"
+    "M5.06",
+    "M5.S6C"
    ]
   },
   {
@@ -833,10 +835,12 @@
     "M5.05",
     "M5.06",
     "M5.07",
+    "M5.S6C",
     "M5.08"
    ],
    "required_review_card_ids": [
-    "M5.06"
+    "M5.06",
+    "M5.S6C"
    ],
    "animation_pack_lesson_ids": [
     "AL06"
@@ -11940,6 +11944,172 @@
     "after": [],
     "rationale": {
      "M5.Q03": "The learner must interpret the visible animation evidence and bounded edit before the concept or diagnosis card can advance."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "id": "M5.S6C",
+   "module_id": "M5",
+   "ordinal": 7.5,
+   "kind": "independent_edit",
+   "title": "Layered scene · Layer and seam still checkpoint",
+   "project_id": "mastery-m5-s6c",
+   "artifact": "transfer",
+   "variant_group": "M5.S6C.mastery",
+   "skill": "foreground, background, and negative-space seams",
+   "source_ref": "ascii-art-authoring §§3,11; Neovim help visual-line, /, :copy; ascii-art-authoring §3 depth checklist and §2.8 negative-space seams; authored single-composite study",
+   "source": "ascii-art-authoring §3 depth checklist and §2.8 negative-space seams; authored single-composite study",
+   "medium": "monospace",
+   "node_ids": [
+    "S6/V5"
+   ],
+   "master_habits": [
+    "H3",
+    "H4",
+    "H7"
+   ],
+   "master_stages": [
+    "S6"
+   ],
+   "lesson_benefit": "prove back-to-front layer reading, material preservation, and one-cell negative-space seam separation on unfamiliar still art",
+   "prompt": "On this unfamiliar four-row composite, preserve the cloud texture, roof material, and ground as separate back-to-front layers. Replace only the final cloud colon touching the roof with one space so the roof reads in front; do not move either layer.",
+   "roadmap_contract": "On this unfamiliar four-row composite, preserve the cloud texture, roof material, and ground as separate back-to-front layers. Replace only the final cloud colon touching the roof with one space so the roof reads in front; do not move either layer.",
+   "start": [
+    "| .::::. |",
+    "| .:::/\\ |",
+    "|    /__\\|",
+    "|___/____|"
+   ],
+   "target": [
+    "| .::::. |",
+    "| .:: /\\ |",
+    "|    /__\\|",
+    "|___/____|"
+   ],
+   "expected": "2G0f/hr ",
+   "recipe": [
+    [
+     "2G0f/",
+     "find the foreground roof slash from the acting background row"
+    ],
+    [
+     "h",
+     "step back onto the touching background colon"
+    ],
+    [
+     "r ",
+     "replace that one background cell with negative space"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": false,
+   "hint": "Name the acting cells first. The exact key sequence remains hidden until evaluation.",
+   "grammar_families": [
+    "search-landmark"
+   ],
+   "grammar_stage": "hidden",
+   "key_vocabulary": [
+    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+   ],
+   "frame_rows": 4,
+   "frame_slices": [
+    4
+   ],
+   "method_requirement": {
+    "label": "use the taught search-landmark path",
+    "exact_any_of": [
+     "2G0f/hr "
+    ]
+   },
+   "review_variants": [
+    {
+     "start": [
+      "| ..;;;; |",
+      "| ..;;;/\\|",
+      "|   /___\\|",
+      "|__/_____|"
+     ],
+     "target": [
+      "| ..;;;; |",
+      "| ..;; /\\|",
+      "|   /___\\|",
+      "|__/_____|"
+     ],
+     "expected": "2G0f/hr ",
+     "recipe": [
+      [
+       "f/ then h",
+       "address the final background hatch touching the roof"
+      ],
+      [
+       "r ",
+       "erase only that background cell"
+      ]
+     ],
+     "cursor": "^",
+     "source": "ascii-art-authoring §3 negative-space seam; hatch-material composite",
+     "prompt": "Changed-hatch review: open one negative-space seam before the roof while preserving the hatch and ground materials.",
+     "hint": "Search for the foreground slash, then step back to the background cell that falsely joins it.",
+     "method_requirement": {
+      "label": "break only the background-to-foreground seam with one replacement space",
+      "exact_any_of": [
+       "2G0f/hr "
+      ]
+     }
+    },
+    {
+     "start": [
+      "| ~~~~~~ |",
+      "| ~~~~/\\ |",
+      "|   /___\\|",
+      "|__/_____|"
+     ],
+     "target": [
+      "| ~~~~~~ |",
+      "| ~~~ /\\ |",
+      "|   /___\\|",
+      "|__/_____|"
+     ],
+     "expected": "2G0f/hr ",
+     "recipe": [
+      [
+       "f/ then h",
+       "address the touching background wave"
+      ],
+      [
+       "r ",
+       "make the one-cell separation"
+      ]
+     ],
+     "cursor": "^",
+     "source": "ascii-art-authoring §3 negative-space seam; wave-material composite",
+     "prompt": "Changed-wave review: separate the foreground roof from its wave-texture background with one blank cell.",
+     "hint": "Do not delete or insert: the fixed-width layers must stay registered.",
+     "method_requirement": {
+      "label": "break only the background-to-foreground seam with one replacement space",
+      "exact_any_of": [
+       "2G0f/hr "
+      ]
+     }
+    }
+   ],
+   "review_source_card_id": "M5.S6C",
+   "review_method_family": "search-landmark",
+   "required_before_mastery": true,
+   "stage_owner": "S6",
+   "artifact_mode": "still-study",
+   "paired_question_ids": [
+    "M5.S6C.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M5.S6C.P01"
+    ],
+    "rationale": {
+     "M5.S6C.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
     }
    },
    "pairing_exception": null
@@ -43343,6 +43513,73 @@
    "authorship": "manual"
   },
   {
+   "id": "M5.S6C.P01",
+   "card_id": "M5.S6C",
+   "module_id": "M5",
+   "grammar_family": "search-landmark",
+   "grammar_breakdown_id": "search-landmark",
+   "grammar_breakdown": [
+    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+   ],
+   "paired_invariant": "erase from the background layer at every false seam while preserving the foreground silhouette",
+   "source_ref": "ascii-art-authoring §§3,11; Neovim help visual-line, /, :copy",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nBefore layers can move independently, this still composite must read back-to-front. The cloud uses `.:`, the roof uses `/\\_`, and the ground uses `_`. One cloud colon falsely touches the roof; the AFTER drawing removes only that background cell.\n\n  BEFORE       AFTER\n  │| .::::. |│   │| .::::. |│\n  │| .:::/\\ |│ → │| .:: /\\ |│\n  │|    /__\\|│   │|    /__\\|│\n  │|___/____|│   │|___/____|│\n\nNEOVIM\nWhy does `2G0f/hr ` preserve both layer order and registration?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: The roof is erased so the cloud becomes foreground. | NEOVIM: `f/` deletes the found slash automatically.",
+    "ANIMATION: A blank column is inserted through every layer. | NEOVIM: `r ` inserts one new cell before the slash.",
+    "ANIMATION: One background colon becomes a separating blank while roof and ground stay registered. | NEOVIM: `f/` finds the foreground landmark, `h` selects the touching background cell, and `r ` overwrites it.",
+    "ANIMATION: Every colon is removed from the cloud material. | NEOVIM: `f/` and `h` form a whole-line substitute."
+   ],
+   "correct_choice": 2,
+   "feedback": [
+    "The roof is the nominated foreground and must remain intact; f is only a motion.",
+    "r overwrites one selected cell. Inserting a column would destroy registration across all four rows.",
+    "Correct: the foreground landmark makes the touching background cell addressable, and a replacement space breaks only that false connection.",
+    "The cloud keeps its declared `.:` material everywhere except the one seam cell; no substitute command is used."
+   ],
+   "animation_prompt": "ANIMATION\nM5.S6C establishes a readable back-to-front seam before either layer is allowed to move.",
+   "animation_answer": "Only the final background colon becomes negative space; roof and ground materials remain intact and registered.",
+   "neovim_prompt": "NEOVIM\nDecode `2G0f/hr ` on the touching cloud-and-roof row.",
+   "neovim_answer": "2G0 selects the acting row from its left edge, f/ finds the foreground roof slash, h steps back to the touching background colon, and r-space overwrites that one cell without shifting the row.",
+   "compact_prompt": "ANIMATION\nOne cloud cell is erased where background falsely joins the foreground roof.\n\n  │| .:::/\\ |│ → │| .:: /\\ |│\n  │|    /__\\|│   │|    /__\\|│\n  │|___/____|│   │|___/____|│\n\nNEOVIM\nWhat does f/ then h then r-space address?",
+   "compact_choices": [
+    "A: erase roof · V: f/ deletes",
+    "A: insert blank column · V: r inserts",
+    "A: one background seam cell · V: find, step back, replace",
+    "A: erase all cloud colons · V: whole-line substitute"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "2G0f/hr ",
+    "required_term_groups": [
+     [
+      "search",
+      "find",
+      "landmark"
+     ],
+     [
+      "pattern",
+      "character"
+     ],
+     [
+      "cursor",
+      "cell"
+     ]
+    ],
+    "sample_answer": "search pattern cursor"
+   },
+   "authorship": "manual"
+  },
+  {
    "id": "M5.08.P01",
    "card_id": "M5.08",
    "module_id": "M5",
@@ -52176,6 +52413,11 @@
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
+   "card_id": "M5.S6C",
+   "label": "use the taught search-landmark path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M15.01",
    "label": "use explicit shiftwidth=1 and >> for the one-cell brick offset",
    "evidence": "runtime-required ordered command path plus exact target"
@@ -52709,6 +52951,12 @@
   {
    "source_card_id": "M5.06",
    "method_family": "required:perform the unfamiliar-art transfer with its taught command path",
+   "changed_art_variants": 2,
+   "evidence": "source-linked changed-art review bank"
+  },
+  {
+   "source_card_id": "M5.S6C",
+   "method_family": "search-landmark",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -53681,6 +53929,11 @@
   {
    "hidden_card_id": "M5.06",
    "grammar_family": "normal-motion",
+   "prior_guided_card_id": "M0.01"
+  },
+  {
+   "hidden_card_id": "M5.S6C",
+   "grammar_family": "search-landmark",
    "prior_guided_card_id": "M0.01"
   },
   {
@@ -54922,6 +55175,15 @@
    "module_id": "M5",
    "source_card_id": "M5.06",
    "method_label": "perform the unfamiliar-art transfer with its taught command path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M5",
+   "source_card_id": "M5.S6C",
+   "method_label": "use the taught search-landmark path",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,

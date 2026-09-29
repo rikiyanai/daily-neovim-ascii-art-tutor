@@ -96,10 +96,10 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["paradigm"] == concept["paradigm"]
 
 assert len(cur["modules"]) == 20
-assert len(cur["cards"]) == 214
-assert len(cur["questions"]) == 374
-assert len({card["title"] for card in cur["cards"]}) == 214
-assert len({card["prompt"] for card in cur["cards"]}) == 214
+assert len(cur["cards"]) == 215
+assert len(cur["questions"]) == 375
+assert len({card["title"] for card in cur["cards"]}) == 215
+assert len({card["prompt"] for card in cur["cards"]}) == 215
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
 
@@ -113,7 +113,7 @@ def card_lines(card, lines):
 mc_questions = [question for question in cur["questions"]
                 if question["form"] == "multiple_choice"]
 assert {question["form"] for question in cur["questions"]} == {"multiple_choice"}
-assert len(mc_questions) == len(cur["questions"]) == 374
+assert len(mc_questions) == len(cur["questions"]) == 375
 assert not any(
     phrase in question["prompt"]
     for question in cur["questions"]
@@ -223,7 +223,7 @@ assert all("ANIMATION" in q["compact_prompt"] and "NEOVIM" in q["compact_prompt"
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == len(mc_questions) == 374
+            for q in mc_questions}) == len(mc_questions) == 375
 def contains_ascii_visual(value):
     if "│" in value:
         return True
@@ -367,9 +367,9 @@ required_reviews = cur["required_mastery_review_coverage"]
 extension_mastery_ids = {
     "M13.WH", "M13.GH", "M14.DAPH", "M3.GAH",
     "M4.BIH", "M4.BCH", "M4.GVH", "M4.DIFFH", "M15.ZPH", "M11.WSH",
-    "M11.UTH", "M12.JHH",
+    "M11.UTH", "M12.JHH", "M5.S6C",
 }
-assert len(required_reviews) == len(cur["modules"]) + len(extension_mastery_ids) == 32
+assert len(required_reviews) == len(cur["modules"]) + len(extension_mastery_ids) == 33
 assert {row["source_card_id"] for row in required_reviews} == {
     "%s.06" % module["id"] for module in cur["modules"]} | extension_mastery_ids
 assert all(row["changed_art_variants"] >= 2 and row["keys_hidden"] is True

@@ -145,3 +145,10 @@ The generated `.36` S0-S7 task prompts contain zero matches for `animation`,
 `playback`, `loop`, `tween`, `frame`, or `motion`. Questions still make the
 animation relevance explicit, but the executable task does not ask the learner
 to author timing before A0.
+
+Revision `.37` closes the S6 rebuild item with `M5.S6C`: one unfamiliar
+four-row composite whose cloud, roof, and ground retain distinct material
+languages while the learner removes exactly one background cell at the false
+cloud/roof connection. Its hidden `f/`, `h`, `r<Space>` path is required, its
+paired question prints the complete composite, and two changed-material reviews
+repeat the seam decision. The card passes headed at 80x24, 100x36, and 188x49.

@@ -5129,6 +5129,53 @@ def mastery_extension_cards(module):
         )
         rows.append(("M12.06", checkpoint))
 
+    if module["id"] == "M5":
+        seam_label = "break only the background-to-foreground seam with one replacement space"
+        seam_checkpoint = card(
+            "S6C", "Layer and seam still checkpoint",
+            "On this unfamiliar four-row composite, preserve the cloud texture, roof material, and ground as separate back-to-front layers. Replace only the final cloud colon touching the roof with one space so the roof reads in front; do not move either layer.",
+            ["| .::::. |", "| .:::/\\ |", "|    /__\\|", "|___/____|"],
+            ["| .::::. |", "| .:: /\\ |", "|    /__\\|", "|___/____|"],
+            "2G0f/hr ",
+            [["2G0f/", "find the foreground roof slash from the acting background row"],
+             ["h", "step back onto the touching background colon"],
+             ["r ", "replace that one background cell with negative space"]],
+            "search-landmark", 7.5,
+            "ascii-art-authoring §3 depth checklist and §2.8 negative-space seams; authored single-composite study",
+            guided=False,
+            reviews=[
+                review(
+                    ["| ..;;;; |", "| ..;;;/\\|", "|   /___\\|", "|__/_____|"],
+                    ["| ..;;;; |", "| ..;; /\\|", "|   /___\\|", "|__/_____|"],
+                    "2G0f/hr ",
+                    [["f/ then h", "address the final background hatch touching the roof"],
+                     ["r ", "erase only that background cell"]],
+                    "ascii-art-authoring §3 negative-space seam; hatch-material composite",
+                    seam_label,
+                    "Changed-hatch review: open one negative-space seam before the roof while preserving the hatch and ground materials.",
+                    "Search for the foreground slash, then step back to the background cell that falsely joins it.",
+                ),
+                review(
+                    ["| ~~~~~~ |", "| ~~~~/\\ |", "|   /___\\|", "|__/_____|"],
+                    ["| ~~~~~~ |", "| ~~~ /\\ |", "|   /___\\|", "|__/_____|"],
+                    "2G0f/hr ",
+                    [["f/ then h", "address the touching background wave"],
+                     ["r ", "make the one-cell separation"]],
+                    "ascii-art-authoring §3 negative-space seam; wave-material composite",
+                    seam_label,
+                    "Changed-wave review: separate the foreground roof from its wave-texture background with one blank cell.",
+                    "Do not delete or insert: the fixed-width layers must stay registered.",
+                ),
+            ],
+        )
+        seam_checkpoint["frame_rows"] = 4
+        seam_checkpoint["frame_slices"] = [4]
+        seam_checkpoint["lesson_benefit"] = (
+            "prove back-to-front layer reading, material preservation, and one-cell "
+            "negative-space seam separation on unfamiliar still art"
+        )
+        rows.append(("M5.08", seam_checkpoint))
+
     if module["id"] == "M13":
         w_label = "use lowercase w to count exact glyph-run boundaries"
         rows.extend([
@@ -6254,7 +6301,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.36",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.37",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,
