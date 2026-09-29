@@ -4665,5 +4665,6 @@ changed-art review-bank tests pass.
 when this entry was written, so it is not claimed here. The revision-wide full
 headed route matrix is also not claimed. Stone Story primary-art migration,
 archive provenance intake, and the publication decision remain open. The
-rights audit keeps the 86-set extracted corpus research-only because no
-redistribution permission was found; no third-party art was pushed.
+rights audit found no redistribution permission; the operator later allowed
+local tutor integration, but did not authorize publication from this public
+repository. No third-party art was pushed.

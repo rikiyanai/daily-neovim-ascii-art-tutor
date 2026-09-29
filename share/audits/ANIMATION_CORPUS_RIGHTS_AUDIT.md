@@ -7,6 +7,15 @@ font, screenshot, GIF, or lightly edited derivative is vendored by this lesson
 pack. Any exact-source integration is **blocked** until the owner records a
 license and redistribution permission that covers this repository.
 
+> **2026-09-29 status correction.** This document records the boundary at its
+> 2026-09-28 audit date. The operator later authorized exact excerpts for the
+> local tutor only; revision `.44` contains 70 changed-art review banks, with
+> 92 variant rows citing 14 `official-*` subjects. That local-use decision did
+> **not** supply a redistribution license
+> or authorize a push from this public repository. Statements below saying
+> “0 tutor use” are historical measurements, not the current tree. Archive
+> provenance intake and the publication decision remain open.
+
 ## Executive decision
 
 The local Stone Story corpus is valuable evidence for *animation structure* but
@@ -171,4 +180,3 @@ similarity; (6) whether the source is still excluded from the tutor and generate
 curriculum; and (7) whether the lesson's question is answerable from prior
 teaching, unambiguous about its requested format, and placed after the concepts
 it presupposes. Until all seven are evidenced, keep `integration: blocked`.
-
