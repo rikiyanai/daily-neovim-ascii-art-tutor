@@ -70,7 +70,7 @@ transcript Part 1 `:339-401`.
 
 | Card | Kind | One new decision/edit and artifact result |
 |---|---|---|
-| M0.01 | G | Replace the placeholder core inside a complete three-row spark while all six rays stay registered. |
+| M0.01 | G | Replace Fireworks `*` with `o`; preserve every ray and accent. |
 | M0.02 | G | Copy all three frame rows, then brighten only the core in the copy. |
 | M0.03 | Q | Read complete multi-row frames and choose the change actually supported by the visible evidence. |
 | M0.04 | G | Copy the bright keyframe, then widen only the new frame's horizontal rays into a flare. |
@@ -270,18 +270,18 @@ viewer's `sjis_combos.v1` dataset. Held-out slugs remain excluded.
 | M10.07 | Q | Diagnose shear, escaped hatching, or false terminal-cell alignment in an ordered proportional strip. |
 | M10.08 | K | Return to the complete lobe as the settle and pass a mixed animation, Saitamaar-boundary, and Neovim checkpoint. |
 
-### M11 — Fixed-width redraw
+### M11 — TowerDefense missile fixed-width redraw
 
 | Card | Kind | One new decision/edit and artifact result |
 |---|---|---|
-| M11.01 | G | Overwrite one two-cell roof band with `R` while both fixed-width walls remain registered. |
-| M11.02 | G | Copy the complete three-row machine before developing a second tension pose. |
-| M11.03 | Q | Pair the fixed-width animation reading with the reason Replace mode preserves registration. |
-| M11.04 | G | Redraw the copied roof, actually undo that result, then redo it so both recovery operations affect the saved artifact. |
-| M11.05 | X | Brighten two indicators by exact local replacements and by a current-row substitute; compare scope. |
-| M11.06 | T | Transfer the bounded `R` redraw to an unfamiliar shell without shifting its endpoints. |
-| M11.07 | Q | Diagnose insertion drift, no-op undo/redo, or mismatched motion-blur columns. |
-| M11.08 | K | Use `virtualedit=all`, exact-column motion, and dot repeat to align a blur trail across both complete frames. |
+| M11.01 | G | On the sourced TowerDefense missile, overwrite the first two roof underscores with `==` while every later hull cell remains registered. |
+| M11.02 | G | Copy the complete three-row missile before developing its slack-tension pose. |
+| M11.03 | Q | Read the missile's bounded roof change and explain why Replace mode preserves fixed-width registration. |
+| M11.04 | G | Redraw only the copied roof from `==` to `~~`, undo that real edit, then redo it so the saved missile remains the slack extreme. |
+| M11.05 | X | Reverse the copied missile's two inner strokes from `/ /` to `\ \` by local replacements or a current-row substitute; compare scope. |
+| M11.06 | T | Close the sourced Snail's adjacent `Oo` eyes with one two-cell Replace redraw while its shell and baseline remain registered. |
+| M11.07 | Q | Diagnose insertion drift, no-op undo/redo, unsafe whitespace cleanup, or mismatched trail columns on the sourced art. |
+| M11.08 | K | Use `virtualedit=all` and repeated exact-column motion to place aligned trail bars at column 12 on the taut and banked missile poses. |
 
 ### M12 — Joint sweep
 

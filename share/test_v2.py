@@ -200,8 +200,8 @@ assert not any("\\|/" in line or "/|\\" in line
                for line in card.get("start", []) + card.get("target", []))
 primary_edits = [card for card in cur["cards"] if card.get("expected")]
 assert sum(str(card.get("source", "")).startswith(("official-", "aahub-"))
-           for card in primary_edits) == 55
-assert sum(not card.get("source") for card in primary_edits) == 120
+           for card in primary_edits) == 62
+assert sum(not card.get("source") for card in primary_edits) == 113
 # The beginner must perform each concrete prerequisite visibly before the old
 # combined card or any hidden retrieval can demand it.  M0.O is intentionally
 # one open-line action, not a second-frame typing test.

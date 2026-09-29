@@ -302,10 +302,11 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 review_variant = CARDS["M0.01"]["review_variants"][0]
                 send_spec(outer, pane, review_variant["expected"] + "ZZ")
             elif route == "check":
-                for number in range(1, 6):
-                    send_text(outer, pane, answer_for("M0.Q%02d" % number))
+                check_qids = card["question_ids"][:5]
+                for number, check_qid in enumerate(check_qids, start=1):
+                    send_text(outer, pane, answer_for(check_qid))
                     tmux(outer, "send-keys", "-t", pane, "Enter")
-                    if number < 5:
+                    if number < len(check_qids):
                         wait_signal(inner, question)
                         assert_compact_choices_fit(capture(outer, pane))
                 try:
@@ -314,10 +315,10 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                     raise AssertionError("module check never opened editor:\n" +
                                          capture(outer, pane)) from exc
                 brief = " ".join(capture(outer, pane).split())
-                assert "M0.08" in brief and "exact command keys" in brief
+                assert card_id in brief and "exact command keys" in brief
                 assert "TARGET" in brief and "HINT" in brief
-                assert CARDS["M0.08"]["expected"] not in brief
-                send_spec(outer, pane, CARDS["M0.08"]["expected"] + "ZZ")
+                assert card["expected"] not in brief
+                send_spec(outer, pane, card["expected"] + "ZZ")
             else:
                 try:
                     wait_signal(inner, ready)
@@ -327,6 +328,15 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                     ) from exc
                 brief_raw = capture(outer, pane)
                 brief = " ".join(brief_raw.split())
+                # At 80 columns a long recipe may wrap at a word boundary.
+                # Remove the popup's left/right border before flattening so
+                # the border glyphs do not become fake text inside a key
+                # sequence such as ``:set colorcolumn=11<CR>``.
+                brief_content = " ".join(
+                    line.strip().strip("│").strip()
+                    for line in brief_raw.splitlines()
+                )
+                brief_compact = "".join(brief_content.split())
                 card = route_card
                 assert card_id in brief and card["prompt"][:30] in brief, brief
                 assert "TARGET" in brief, brief
@@ -335,7 +345,8 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                     assert "│" + target_row in brief_raw, brief_raw
                 if card.get("show_recipe", card.get("show_target", False)):
                     assert "TARGET" in brief and "RECIPE" in brief, brief
-                    assert all(keys.strip() in brief for keys, _why in card["recipe"]), brief
+                    assert all("".join(keys.strip().split()) in brief_compact
+                               for keys, _why in card["recipe"]), brief
                 else:
                     assert "HINT" in brief and "hidden" in brief, brief
                     assert card["expected"] not in brief
@@ -419,7 +430,10 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                                        if method["keys"] == CARDS[card_id]["expected"])
                 assert passed_event.get("method_family") == expected_family, passed_event
                 keylog = Path(passed_event.get("keylog", ""))
-                assert re.fullmatch(r"keys-M0\.05-attempt-\d{4}\.log", keylog.name), passed_event
+                assert re.fullmatch(
+                    r"keys-%s-attempt-\d{4}\.log" % re.escape(card_id),
+                    keylog.name,
+                ), passed_event
                 assert keylog.is_file(), passed_event
                 assert len(passed_event.get("keylog_sha256", "")) == 64, passed_event
             if route in ("concept", "review", "check"):

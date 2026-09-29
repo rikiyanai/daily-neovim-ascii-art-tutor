@@ -432,6 +432,14 @@ M0_PRIMARY_SOURCE = (
     "official-Cosmetics/Fireworks res06 radial frame 3 crop; "
     "authored core/outer-ray energy states"
 )
+M11_MISSILE_BASE = stone_story_variants.MISSILE_F1
+M11_MISSILE_TAUT = ["  ==__/", M11_MISSILE_BASE[1], M11_MISSILE_BASE[2]]
+M11_MISSILE_SLACK = ["  ~~__/", M11_MISSILE_BASE[1], M11_MISSILE_BASE[2]]
+M11_MISSILE_BANKED = [M11_MISSILE_SLACK[0], "< \\ \\ |:.", M11_MISSILE_SLACK[2]]
+M11_PRIMARY_SOURCE = (
+    "official-Games/TowerDefense res18 missile frame 1; "
+    "authored roof-tension, inner-stroke, and trail studies"
+)
 
 
 MODULES = [
@@ -1492,33 +1500,32 @@ MODULES = [
            )),
     },
     {
-        "id": "M11", "title": "Fixed-width redraw", "node": "S0/V11", "project": "redraw-lab",
+        "id": "M11", "title": "Missile fixed-width redraw", "node": "S0/V11", "project": "missile-redraw-lab",
         "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
         "frame_rows": 3,
         "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
-        "meaning": "a paired three-row machinery loop changes surface tension in place, proves recovery, and adds aligned motion-blur trails past short rows",
-        "first_reading": "the first roof changes from a loose -- band to a taut == band without shifting either side wall",
+        "meaning": "a sourced TowerDefense missile changes roof tension in place, proves recovery on its copied pose, and adds aligned trails past ragged row ends",
+        "first_reading": "the missile roof's first two underscores become a taut == band without shifting its nose, exhaust, or remaining hull",
         "principle": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
-        "defect": "inserted or deleted cells shift the machinery walls, undo/redo is performed as a no-op demonstration, or blur trails land in different columns",
+        "defect": "inserted or deleted cells shift the missile hull, undo/redo is performed as a no-op demonstration, or trails land in different columns",
         "basic": "redraw a bounded run with Replace mode while preserving both endpoints",
         "scaled": "recover and reapply a real redraw, compare Replace with Visual replacement, then place homologous trails at one virtual column",
         "steps": [
-            step(
-                ["/--\\  /--\\", "| o|  |o |", "\\__|  |__/"],
-                ["/==\\  /--\\", "| o|  |o |", "\\__|  |__/"],
-                "0lR==<Esc>",
-                [["0l", "stand on the first cell inside the fixed roof endpoints"],
-                 ["R==<Esc>", "overwrite exactly two material cells without shifting either wall"]],
+            dict(step(
+                M11_MISSILE_BASE,
+                M11_MISSILE_TAUT,
+                "0f_R==<Esc>",
+                [["0f_", "find the first underscore in the fixed missile roof"],
+                 ["R==<Esc>", "overwrite exactly two roof cells without shifting the nose or exhaust"]],
                 method_requirement=require_method(
                     "overwrite the fixed-width roof with Replace mode",
-                    exact_any_of=["0lR==<Esc>"]),
-            ),
-            step(
-                ["/==\\  /--\\", "| o|  |o |", "\\__|  |__/"],
-                ["/==\\  /--\\", "| o|  |o |", "\\__|  |__/",
-                 "/==\\  /--\\", "| o|  |o |", "\\__|  |__/"],
+                    exact_any_of=["0f_R==<Esc>"]),
+            ), source=M11_PRIMARY_SOURCE),
+            dict(step(
+                M11_MISSILE_TAUT,
+                M11_MISSILE_TAUT + M11_MISSILE_TAUT,
                 "gg3yyGp",
-                [["gg3yyGp", "copy the complete three-row registered machine pose before changing its tension"]],
+                [["gg3yyGp", "copy the complete three-row registered missile before changing its tension"]],
                 review_variants=[
                     step(["/--\\  /--\\", "| x|  |x |", "\\..|  |.. /"],
                          ["/--\\  /--\\", "| x|  |x |", "\\..|  |.. /",
@@ -1529,19 +1536,17 @@ MODULES = [
                           ".==.  .==.", "| *|  |* |", "'__'  '__'"],
                          "gg3yyGp", [["gg3yyGp", "copy the alternate complete pose"]]),
                 ],
-            ),
-            step(
-                ["/==\\  /--\\", "| o|  |o |", "\\__|  |__/",
-                 "/==\\  /--\\", "| o|  |o |", "\\__|  |__/"],
-                ["/==\\  /--\\", "| o|  |o |", "\\__|  |__/",
-                 "/~~\\  /--\\", "| o|  |o |", "\\__|  |__/"],
-                "4G0lR~~<Esc>u<C-r>",
-                [["4G0lR~~<Esc>", "redraw the copied roof as the slack extreme"],
-                 ["u", "actually remove that redraw so the registered == pose returns"],
+            ), source=M11_PRIMARY_SOURCE),
+            dict(step(
+                M11_MISSILE_TAUT + M11_MISSILE_TAUT,
+                M11_MISSILE_TAUT + M11_MISSILE_SLACK,
+                "4G0f=R~~<Esc>u<C-r>",
+                [["4G0f=R~~<Esc>", "redraw the copied missile roof as the slack extreme"],
+                 ["u", "actually remove that redraw so the copied == roof returns"],
                  ["<C-r>", "redo the redraw so the required slack extreme is again the saved result"]],
                 method_requirement=require_method(
                     "undo and redo a real fixed-width redraw",
-                    exact_any_of=["4G0lR~~<Esc>u<C-r>"]),
+                    exact_any_of=["4G0f=R~~<Esc>u<C-r>"]),
                 review_variants=[
                     step(["/++\\  /--\\", "| x|  |x |", "\\__|  |__/",
                           "/++\\  /--\\", "| x|  |x |", "\\__|  |__/"],
@@ -1562,16 +1567,14 @@ MODULES = [
                              "undo and redo the alternate roof redraw",
                              exact_any_of=["4G0lR--<Esc>u<C-r>"])),
                 ],
-            ),
-            step(
-                ["/==\\  /--\\", "| o|  |o |", "\\__|  |__/",
-                 "/~~\\  /--\\", "| o|  |o |", "\\__|  |__/"],
-                ["/==\\  /--\\", "| o|  |o |", "\\__|  |__/",
-                 "/~~\\  /--\\", "| O|  |O |", "\\__|  |__/"],
-                "5G:s/o/O/g<CR>",
-                [["5G:s/o/O/g", "change only the copied pose's two acting indicators"]], alternatives=[
-                method("two local replacements", "5G0forO5lrO", "find and replace each acting indicator on the one copied row"),
-                method("current-row substitute", "5G:s/o/O/g<CR>", "replace both indicators while keeping the substitution scoped to the copied row"),
+            ), source=M11_PRIMARY_SOURCE),
+            dict(step(
+                M11_MISSILE_TAUT + M11_MISSILE_SLACK,
+                M11_MISSILE_TAUT + M11_MISSILE_BANKED,
+                "5G:s@/@\\\\@g<CR>",
+                [["5G:s@/@\\\\@g", "change only the copied missile's two inner diagonal strokes"]], alternatives=[
+                method("local r edits", "5G0f/r\\lf/r\\", "find and replace each inner slash on the copied row"),
+                method("row-scoped :s", "5G:s@/@\\\\@g<CR>", "replace both slashes while keeping the substitution scoped to the copied row"),
             ], review_variants=[
                 step(["/==\\  /--\\", "| x|  |x |", "\\__|  |__/",
                       "/~~\\  /--\\", "| x|  |x |", "\\__|  |__/"],
@@ -1589,19 +1592,18 @@ MODULES = [
                      method_requirement=require_method(
                          "use a bounded indicator edit on changed art",
                          exact_any_of=["5G:s/\\*/+/g<CR>"])),
-            ]),
-            step(
-                ["/==\\  /--\\", "| o|  |o |", "\\__|  |__/",
-                 "/~~\\  /--\\", "| O|  |O |", "\\__|  |__/"],
-                ["/==\\  /--\\", "| o|  |o |  |", "\\__|  |__/",
-                 "/~~\\  /--\\", "| O|  |O |  |", "\\__|  |__/"],
-                ":set virtualedit=all<CR>2G13|i|<Esc>3j13|i|<Esc>",
+            ]), source=M11_PRIMARY_SOURCE),
+            dict(step(
+                M11_MISSILE_TAUT + M11_MISSILE_BANKED,
+                [M11_MISSILE_TAUT[0], M11_MISSILE_TAUT[1] + "  |", M11_MISSILE_TAUT[2],
+                 M11_MISSILE_BANKED[0], M11_MISSILE_BANKED[1] + "  |", M11_MISSILE_BANKED[2]],
+                ":set virtualedit=all<CR>2G12|i|<Esc>3j12|i|<Esc>",
                 [[":set virtualedit=all", "permit an exact column target beyond the short acting rows"],
-                 ["2G13|i|<Esc>", "position before display column 14 and insert the first blur trail there"],
-                 ["3j13|i|<Esc>", "move to the homologous row, address column 14 explicitly, and insert its trail"]],
+                 ["2G12|i|<Esc>", "place the first trail at display column 12 past the exhaust row"],
+                 ["3j12|i|<Esc>", "move to the homologous row and place its trail at the same column"]],
                 method_requirement=require_method(
-                    "enable virtual editing and place both trails at exact column 14",
-                    exact_any_of=[":set virtualedit=all<CR>2G13|i|<Esc>3j13|i|<Esc>"]),
+                    "enable virtual editing and place both trails at exact column 12",
+                    exact_any_of=[":set virtualedit=all<CR>2G12|i|<Esc>3j12|i|<Esc>"]),
                 review_variants=[
                     step(["/--\\  /--\\", "| x|  |x |", "\\__|  |__/",
                           "/..\\  /--\\", "| X|  |X |", "\\__|  |__/"],
@@ -1616,7 +1618,7 @@ MODULES = [
                          ":set virtualedit=all<CR>2G13|i|<Esc>3j13|i|<Esc>",
                          [["virtualedit / 13| twice", "align the alternate trails without relying on dot"]]),
                 ],
-            ),
+            ), source=M11_PRIMARY_SOURCE),
         ],
         "transfer": dict(step(
             stone_story_variants.SNAIL_OPEN,
@@ -3133,7 +3135,7 @@ STRICT_HIDDEN_RETRIEVALS = {
 # described candidates, paragraphs, or working copies as playback artifacts.
 STILL_PROMPT_REWRITES = {
     "M0.SL": "On the sourced Fireworks canopy, change every comma on the current material row to a colon with one line-scoped substitute; leave both neighbouring spark rows alone.",
-    "M11.02": "Copy the complete three-row machine as a second redraw candidate.",
+    "M11.02": "Copy the complete three-row missile as a second redraw candidate.",
     "M11.WS": "Inspect the padded missile still with visible whitespace and column guides, then remove only trailing spaces. Every visible missile and exhaust glyph must remain unchanged.",
     "M11.UT": "Try ! as an exaggerated left-eye take, undo it, author the chosen O look, visit the abandoned ! take with chronological history, then return to and submit the O-eye still.",
     "M11.WSH": "On the unfamiliar Chick still, turn on the whitespace and column guides, then remove only the three invisible tail spaces from each row. Preserve every visible drawing cell.",
@@ -3231,9 +3233,9 @@ FIRST_READING_DISTRACTORS = {
         "the fragment is accepted visually without a Saitamaar true-metric view",
     ],
     "M11": [
-        "both side walls shift right because two new glyphs were inserted instead of overwritten",
-        "the second machine changes tension even though only the first roof was selected",
-        "the roof keeps its original -- material and only an indicator changes case",
+        "the missile nose shifts right because two new glyphs were inserted instead of overwriting roof cells",
+        "both missile poses change tension even though only the copied roof owns the slack redraw",
+        "the roof keeps its original == material while unrelated inner strokes are changed",
     ],
     "M12": [
         "both upper joints change together, eliminating the intended left-to-right stagger",
@@ -3289,7 +3291,7 @@ SEQUENCE_READINGS = {
     "M8": "registered torso; planted feet alternate while the arm arrives later",
     "M9": "fixed rails and ground; high, falling, squash, and rebound overshoot read in order",
     "M10": "the complete puff expands from lobe to arch, holds at the hatched impact, then returns to its registered settle",
-    "M11": "registered walls; the copied roof slackens, its indicators brighten, and aligned blur trails appear at one virtual column",
+    "M11": "registered missile hull; the copied roof slackens, its inner strokes bank, and aligned trail bars appear at display column 12",
     "M12": "fixed centre axis; the joint accent travels left, both, lower pair, release, then right",
     "M13": "fixed support rows; the material accent travels centre, right, expanded edges, flash, then left",
     "M14": "one registered face silhouette; its palette-owned eye changes star, plus, then returns to star across paragraph frames",
@@ -3438,16 +3440,16 @@ QUESTION_PROMPTS = {
         ("A terminal preview looks aligned but Saitamaar does not. Which judgement wins?", "Which edit should be revised only after measuring the true-advance render rather than counting terminal columns?"),
     ],
     "M11": [
-        ("Which roof cells change while both machine walls remain registered?", "Which Replace-mode path overwrites the two-cell -- run without inserting or deleting columns?"),
-        ("Why is the complete three-row machine copied before its tension changes?", "Which counted yank and put preserves roof, indicators, and base as one pose?"),
-        ("A redraw shifts the right wall two columns. What fixed-width failure occurred?", "Why is R over the existing run safer here than i followed by two new glyphs?"),
-        ("Why must undo remove the slack roof before redo restores it?", "Which adjacent u and <C-r> pair proves recovery on the actual R~~ redraw rather than acting as a no-op?"),
-        ("The copied pose brightens both indicators while its walls stay still. What is the acting change?", "When do two local r edits and one current-line :s describe the same bounded result?"),
-        ("The transfer machine has dots or a rounded shell. What redraw contract remains unchanged?", "Which R== sequence is independent of the unfamiliar endpoint glyphs?"),
-        ("Read taut, slack, and the two aligned trail rows. What secondary motion is being added?", "Why must both trail glyphs use the same exact virtual column?"),
-        ("The acting rows end before column 14. Why is that empty area still an intentional target?", "Which :set option plus exact-column motion permits inserting a glyph at column 14 without hand-counted padding?"),
-        ("What buffer result should R== produce between / and \\?", "How does Replace mode differ from inserting == into the roof run?"),
-        ("One blur trail lands at column 13 and the other at 14. What playback defect results?", "Which 13| then insert plus dot-repeat workflow places both glyphs at column 14?"),
+        ("Which two cells tighten on the sourced missile while its nose and hull remain registered?", "Which f_ plus Replace-mode path consumes the first two underscores without growing the row?"),
+        ("Why is the complete three-row missile copied before its tension changes?", "Which counted linewise yank and put preserves roof, inner strokes, exhaust, and lower hull as one pose?"),
+        ("The attempted roof redraw leaves all four underscores and pushes the nose right. What fixed-width failure occurred?", "Why is R over the existing underscores safer than i followed by two new glyphs?"),
+        ("Why must undo return the copied roof to == before redo restores ~~?", "Which adjacent u and <C-r> pair proves recovery on the actual slack-roof redraw rather than acting as a no-op?"),
+        ("The copied missile banks by changing / / to \\ \\ on one row. What is the acting change?", "When do two local r edits and one current-row :s describe the same bounded result?"),
+        ("Which spaces in the padded missile are structural and which may be removed?", "Why does the \\s\\+$ pattern preserve leading registration and internal stroke spacing?"),
+        ("Why may Skully's rejected ! eye remain in history without becoming the submitted pose?", "Which chronological-history commands revisit the discarded take and return to the chosen O eye?"),
+        ("Which two Snail cells close while its shell spiral and baseline remain fixed?", "Which fO plus two-cell Replace path closes Oo without shifting later glyphs?"),
+        ("The missile rows end at different physical columns. Why is column 12 still one intentional target?", "Which :set option plus 12| permits inserting a bar in empty tail space without hand-counted padding?"),
+        ("What jitter appears if the taut and banked poses place their trail bars in different columns?", "Which row jump and repeated 12| address puts both bars at display column 12?"),
     ],
     "M12": [
         ("Which joint changes first while the mirrored outline and centre axis stay fixed?", "How does t: approach the left joint without landing on it, and which final motion reaches the joint for replacement?"),
@@ -3681,16 +3683,16 @@ QUESTION_ANSWERS = {
         ("the Saitamaar render wins because proportional advance widths—not terminal cells—define the authored shape", "revise the glyph-and-space combination after measuring the true-advance preview, then re-enter that bounded text edit"),
     ],
     "M11": [
-        ("the first roof changes from -- to == while both / and \\ endpoints remain in their columns", "0lR==<Esc> overwrites exactly the two roof cells"),
-        ("the derived tension pose needs the same roof bounds, paired indicators, and base", "gg3yyGp copies all three registered rows"),
-        ("inserting two extra cells changed row length and moved the right wall, so the pose no longer registers", "R replaces the existing cells in place; i would grow the row unless old cells were deleted"),
-        ("undo visibly returns the copied roof to == and redo reapplies ~~ as the saved slack extreme", "4G0lR~~<Esc>u<C-r> makes both recovery operations causally necessary"),
-        ("only the two copied-pose indicators brighten from o to O; the shell and base remain stable", "5G0forO5lrO and 5G:s/o/O/g<CR> are the two accepted bounded paths"),
-        ("the shell glyphs may change, but the owned two-cell roof run must be overwritten without changing width", "0lR==<Esc> transfers the method without depending on slash endpoints"),
-        ("two registered vertical trails lag the material change and read as aligned motion blur", "both insertions target display column 14, so the secondary effect does not jitter"),
-        ("column 14 is part of the planned frame even where the stored line is shorter", ":set virtualedit=all permits 13| to position before that column before i| writes the trail"),
-        ("the two original roof cells become == and the endpoint columns do not move", "Replace mode consumes the old cells; Insert mode would push the remainder right"),
-        ("a one-column trail mismatch reads as secondary-motion jitter between otherwise registered frames", "2G13|i|<Esc>3j13|i|<Esc> addresses column 14 explicitly in both homologous rows"),
+        ("the first two roof underscores become == while the missile nose, exhaust, and lower hull remain registered", "0f_R==<Esc> finds the roof and overwrites exactly two cells"),
+        ("the derived tension pose needs the same complete three-row missile", "gg3yyGp copies all three registered rows"),
+        ("inserting two extra cells retains ____ and pushes the missile nose right, so the pose no longer registers", "R replaces existing cells in place; i grows the row"),
+        ("undo visibly returns the copied roof to == and redo reapplies ~~ as the saved slack extreme", "4G0f=R~~<Esc>u<C-r> makes both recovery operations causally necessary"),
+        ("only the copied middle row's two / strokes reverse to \\ while roof, exhaust, and hull remain stable", "two local r edits and 5G:s@/@\\\\@g<CR> are the accepted bounded paths"),
+        ("trailing tail spaces may be removed while leading registration and internal spacing stay untouched", ":set list and %s/\\s\\+$//e expose and remove only line-ending whitespace"),
+        ("Skully's rejected ! eye remains inspectable while the chosen O eye is the submitted state", "g-/g+ and :earlier traverse chronological history before returning to the chosen state"),
+        ("Snail's adjacent Oo eyes become -- while its shell spiral, slash, and baseline stay registered", "0fOR--<Esc> overwrites exactly the two eye cells"),
+        ("column 12 is part of the planned comparison edge even where the stored missile row is shorter", ":set virtualedit=all permits 12| to address that empty column before i| writes the edge"),
+        ("a one-column trail mismatch reads as jitter between otherwise registered missile poses", "2G12|i|<Esc>3j12|i|<Esc> addresses column 12 explicitly on both homologous rows"),
     ],
     "M12": [
         ("only the left upper joint changes from : to !; the axis, outline, and right joint stay registered", "0t: stops before the first :, then l reaches it and r! replaces it in place"),
@@ -4263,9 +4265,9 @@ WHY_SPECS = {
         "sample": "The addressed range avoids cursor-position dependence; both methods copy the complete three-row hatched impact pose.",
     },
     "M11.05": {
-        "question": "How does current-row substitution bound the two indicator changes, and what would an unbounded substitution risk?",
-        "groups": [["current row", "copied row"], ["two", "2", "indicator"], ["other row", "outside", "unbounded"]],
-        "sample": "Current-row substitution changes both indicators on the copied row only; an unbounded substitute could alter indicators in other frames.",
+        "question": "How does current-row substitution bound the two inner-stroke reversals, and what would an unbounded substitution risk?",
+        "groups": [["current row", "copied row"], ["two", "2", "slash", "stroke"], ["other row", "outside", "unbounded"]],
+        "sample": "Substitution on the current row reverses the two inner slash strokes on the copied missile only; an unbounded substitute could alter slashes in other poses.",
     },
     "M12.05": {
         "question": "Compare repeated character search with row-scoped substitution: what two base cells are owned, and which scope must not expand?",
@@ -5203,25 +5205,31 @@ def guided_bridge_cards(module):
              ["<CR>", "execute the addressed move"]],
             "ex-move", 4.5, labels=True)))
     elif mid == "M11":
-        rows.extend([
-            ("M11.04", bridge(
-                "UR", "Inspect undo and redo on one fixed cell",
-                "Replace the middle glyph, undo once, then redo once so the final registered cell is the replacement.",
-                [" /---\\ ", "|  .  |", " \\---/ "],
-                [" /---\\ ", "|  !  |", " \\---/ "], "2G0f.r!u<C-r>",
-                [["2G0f.r!", "replace the one-cell core"], ["u", "undo that change"],
-                 ["<C-r>", "redo it without retyping"]],
-                "undo-redo", 3.5)),
-            ("M11.08", bridge(
-                "VE", "Address an empty registered column",
-                "Place one right edge at exact column 9 on each short row, padding empty cells without drifting the cores.",
-                ["| o |", "| o |", "| o |"], ["| o |   |", "| o |   |", "| o |   |"],
-                ":set virtualedit=all<CR>gg9|i|<Esc>2G9|i|<Esc>3G9|i|<Esc>",
-                [[":set virtualedit=all<CR>", "allow cursor addresses past physical row ends"],
-                 ["N|", "land on an exact one-based column"],
-                 ["i|<Esc>", "insert the registered edge and return to Normal"]],
-                "virtual-column", 7.5)),
-        ])
+        undo_redo = bridge(
+            "UR", "Inspect undo and redo on one fixed cell",
+            "On the sourced SnowBunny face, exaggerate only the first eye from dot to !, undo it, then redo it so the submitted still contains the chosen mark.",
+            stone_story_variants.SNOWBUNNY_IDLE,
+            [stone_story_variants.SNOWBUNNY_IDLE[0], "  ( n!n)", stone_story_variants.SNOWBUNNY_IDLE[2]],
+            "2G0f.r!u<C-r>",
+            [["2G0f.r!", "replace the first eye cell"], ["u", "undo that visible change"],
+             ["<C-r>", "redo it without retyping"]],
+            "undo-redo", 3.5)
+        undo_redo["source"] = "official-Pets/SnowBunny res01 eye-expression study"
+        virtual_column = bridge(
+            "VE", "Address an empty registered column",
+            "Place one comparison edge at exact column 12 on every ragged missile row, padding only the empty tail area.",
+            M11_MISSILE_BASE,
+            ["  ____/    |", "< / / |:.  |", "  ¯¯¯¯\\    |"],
+            ":set virtualedit=all<CR>gg12|i|<Esc>2G12|i|<Esc>3G12|i|<Esc>",
+            [[":set virtualedit=all<CR>", "allow cursor addresses past physical row ends"],
+             ["N|", "land on exact display column 12 for each ragged row"],
+             ["i|<Esc>", "insert the registered edge and return to Normal"]],
+            "virtual-column", 7.5)
+        virtual_column["source"] = (
+            "official-Games/TowerDefense res18 missile frame 1; "
+            "authored column-12 comparison edges"
+        )
+        rows.extend([("M11.04", undo_redo), ("M11.08", virtual_column)])
     elif mid == "M13":
         rows.append(("M13.04", bridge(
             "BE", "Traverse texture by WORD boundaries",
@@ -6729,7 +6737,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.62",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.63",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

@@ -373,7 +373,8 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         # Personal config remains in charge, but `o` in an indented art row
         # must start at column zero. Prove the behavior through the saved file,
         # then undo it so the graded attempt still begins at its checkpoint.
-        art_path = state / "vim-daily" / "projects" / "spark-loop" / "strip.txt"
+        art_path = (state / "vim-daily" / "projects" /
+                    M0_FIRST["project_id"] / "strip.txt")
         before_indent_probe = art_path.read_text(encoding="utf-8")
         tmux(outer_socket, "send-keys", "-t", outer_pane, "o")
         tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", "X")
@@ -509,8 +510,14 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             ) from exc
         question_screen = capture_outer(outer_socket, outer_pane)
         question_flat = " ".join(question_screen.split())
+        displayed_stem = (M0_FIRST_QUESTION.get("compact_prompt")
+                          if ROWS < 38 else M0_FIRST_QUESTION["prompt"])
+        displayed_stem_line = next(
+            line.strip() for line in displayed_stem.splitlines()
+            if line.strip() and line.strip() not in {"ANIMATION", "NEOVIM"}
+        )
         if not all(text in question_flat for text in (
-                "ANIMATION", "NEOVIM", "BEFORE", "AFTER",
+                "ANIMATION", "NEOVIM", displayed_stem_line,
                 "│", "a)", "b)", "c)", "d)")):
             raise AssertionError("guided after-question is incomplete:\n" + question_screen)
         # Keyboard copy is a second route when drag-selection is inconvenient.
@@ -532,7 +539,8 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
                     raise AssertionError("question copy control did not remain on the question:\n" + copied_screen)
                 copied_page = subprocess.run(
                     ["pbpaste"], text=True, capture_output=True, check=True).stdout
-                for copied_text in ("ANIMATION", "NEOVIM", "BEFORE", "AFTER", "a)", "d)"):
+                for copied_text in ("ANIMATION", "NEOVIM", displayed_stem_line,
+                                    "│", "a)", "d)"):
                     if copied_text not in copied_page:
                         raise AssertionError(
                             "question clipboard omitted %r:\n%s" % (copied_text, copied_page))

@@ -314,12 +314,12 @@ REPLACEMENTS = {
     ]},
     # M11.02 teaches gg3yyGp: copy the complete 3-row key pose as a working frame.
     "M11.02": {"review_variants": [
-        _variant(MISSILE_F1, MISSILE_F1 + MISSILE_F1, "gg3yyGp",
-                 [["gg3yy", "copy all three rows of the missile"],
+        _variant(SKULLY_IDLE, SKULLY_IDLE + SKULLY_IDLE, "gg3yyGp",
+                 [["gg3yy", "copy all three rows of Skully"],
                   ["Gp", "put the working copy below"]],
-                 "official-Games/TowerDefense res18 missile frame 1 (copied)",
+                 "official-Pets/Skully res01 idle pose (copied)",
                  "copy the complete three-row pose with a counted linewise yank",
-                 "Stone Story missile: copy the complete three-row missile as the working frame for its next exhaust puff.",
+                 "Stone Story Skully: copy the complete three-row idle pose as a working expression frame.",
                  "A count on yy copies whole rows; put the copy after the last line."),
         _variant(CHICK_EGG_F4, CHICK_EGG_F4 + CHICK_EGG_F4, "gg3yyGp",
                  [["gg3yy", "copy all three rows of the cracked egg"],

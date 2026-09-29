@@ -1,407 +1,407 @@
 {
   "M11.Q01": {
-    "prompt": "ANIMATION\nThe first roof tightens; every other machine cell stays registered.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich bounded action names the two changed roof cells?",
-    "compact_prompt": "ANIMATION\nRoof cells change; walls do not.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich action overwrites, rather than inserts, the run?",
-    "animation_prompt": "ANIMATION\nCompare the registered frames.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
-    "animation_answer": "Only the first two roof cells change from -- to ==; both walls and the other machine stay fixed.",
-    "neovim_prompt": "NEOVIM\nWhich bounded action writes == over the existing roof cells?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
-    "neovim_answer": "0lR==<Esc> moves to the first roof cell and replaces two cells in place.",
+    "prompt": "ANIMATION\nRead the sourced missile as fixed cells. The first two roof underscores tighten to ==; the nose, inner strokes, exhaust, and lower hull retain their columns.\n\n    BEFORE       AFTER\n    │  ____/│    │  ==__/│\n    │< / / |:.│  │< / / |:.│\n    │  ¯¯¯¯\\│    │  ¯¯¯¯\\│\n\nNEOVIM\nWhich command grammar describes that bounded overwrite?",
+    "compact_prompt": "ANIMATION\nTwo roof cells change; the missile width does not.\n\n    │  ____/│ → │  ==__/│\n    │< / / |:.│   │< / / |:.│\n    │  ¯¯¯¯\\│     │  ¯¯¯¯\\│\n\nNEOVIM\nWhich action consumes existing cells?",
+    "animation_prompt": "ANIMATION\nThe missile changes material in two cells without changing its silhouette or registration.\n\n    │  ____/│ → │  ==__/│\n    │< / / |:.│   │< / / |:.│\n    │  ¯¯¯¯\\│     │  ¯¯¯¯\\│",
+    "animation_answer": "Only the first two underscores become equals signs; every other source cell remains in place.",
+    "neovim_prompt": "NEOVIM\nWhich bounded action finds the roof and replaces two cells in place?\n\n    │  ____/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│",
+    "neovim_answer": "0f_R==<Esc> finds the first underscore and uses Replace mode for exactly two cells.",
     "choices": [
-      "ANIMATION: The first roof changes from -- to == while both walls remain in their columns. | NEOVIM: 0lR==<Esc> overwrites those two cells in place.",
-      "ANIMATION: The whole first three-row machine shifts right. | NEOVIM: 0lR==<Esc> inserts two new cells before the roof.",
-      "ANIMATION: Only the second machine's roof changes. | NEOVIM: gg3yyGp copies the first machine below itself.",
-      "ANIMATION: The roof is deleted and the walls are redrawn. | NEOVIM: dd removes the whole first row before typing ==."
+      "ANIMATION: Only two roof cells change and the missile stays registered. | NEOVIM: 0f_R==<Esc> finds the first underscore and overwrites two cells.",
+      "ANIMATION: The whole missile grows two columns wider. | NEOVIM: Replace mode inserts == before the underscores.",
+      "ANIMATION: A second missile is added as a hold. | NEOVIM: gg3yyGp performs the shown material change.",
+      "ANIMATION: The complete roof row is deleted and recreated. | NEOVIM: dd is a two-character delete."
     ],
     "compact_choices": [
-      "A: first roof only; walls fixed · V: R overwrites two cells",
-      "A: whole machine shifts · V: R inserts cells",
-      "A: second roof changes · V: yank and put",
-      "A: roof deleted/redrawn · V: delete row"
+      "A: two roof cells; art fixed · V: find _, R two cells",
+      "A: missile grows · V: R inserts",
+      "A: second pose added · V: yank/put redraw",
+      "A: roof row recreated · V: dd deletes two chars"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the changed cells are the first roof's two dashes, and Replace mode preserves the endpoints.",
-      "Replace mode does not shift the machine; the visible walls remain aligned.",
-      "The second machine is unchanged, and copying a frame is a different operation.",
-      "The frame is not deleted. A rowwise delete would remove far more than the two roof cells."
+      "Correct: f_ supplies the motion to the first roof cell, and R overwrites without shifting the remaining hull.",
+      "Replace mode consumes existing text; insertion is the operation that would grow the row.",
+      "No duplicate pose appears in the AFTER art; linewise copying answers a different problem.",
+      "dd is linewise and would remove the entire top row, including the missile nose."
     ]
   },
   "M11.Q02": {
-    "prompt": "ANIMATION\nA second tension pose reuses the whole machine shape before its surface changes.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/--\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n                    │/~~\\  /--\\│\n                    │| o|  |o |│\n                    │\\__|  |__/│\n\nNEOVIM\nWhich operation preserves one complete three-row pose?",
-    "compact_prompt": "ANIMATION\nCopy a complete three-row pose before changing tension.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/--\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n                    │/~~\\  /--\\│\n                    │| o|  |o |│\n                    │\\__|  |__/│\n\nNEOVIM\nWhat is counted as one frame?",
-    "animation_prompt": "ANIMATION\nThe copied pose retains roof, indicators, and base before a later redraw.\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│\n    │/~~\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
-    "animation_answer": "The full roof, indicator, and base rows form one coherent three-row frame.",
-    "neovim_prompt": "NEOVIM\nWhich command copies that complete frame?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
+    "prompt": "ANIMATION\nA tension study needs a working copy before any new extreme is drawn. The copy must include the full three-row missile, not a detached roof or exhaust row.\n\n    SOURCE        WORKING COPY\n    │  ==__/│     │  ==__/│\n    │< / / |:.│   │< / / |:.│\n    │  ¯¯¯¯\\│     │  ¯¯¯¯\\│\n\nNEOVIM\nWhich count + operator treats the pose as three whole lines?",
+    "compact_prompt": "ANIMATION\nCopy the complete three-row missile.\n\n    │  ==__/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│\n\nNEOVIM\nWhat does 3 count in 3yy?",
+    "animation_prompt": "ANIMATION\nThe missile's three rows form one pose and must remain together in the copy.\n\n    │  ==__/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│",
+    "animation_answer": "Roof, inner strokes, exhaust, and lower hull are copied as one complete three-line pose.",
+    "neovim_prompt": "NEOVIM\nWhich command copies that complete pose below the source?\n\n    │  ==__/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│",
     "neovim_answer": "gg3yyGp yanks three whole lines and puts them below the original.",
     "choices": [
-      "ANIMATION: Copy only the roof row and let the next pose invent its walls. | NEOVIM: yy copies one line, then p puts it below.",
-      "ANIMATION: Move the original machine down and reuse its old location. | NEOVIM: 3dd deletes the frame before p puts it elsewhere.",
-      "ANIMATION: Add three blank timing rows with no machine cells. | NEOVIM: 3o opens blank lines and stays in Insert mode.",
-      "ANIMATION: Copy roof, indicators, and base as one pose. | NEOVIM: gg3yyGp yanks three lines and puts the complete block below."
+      "ANIMATION: Copy only the roof row. | NEOVIM: yy yanks one character because no motion follows y.",
+      "ANIMATION: Move the source missile instead of retaining it. | NEOVIM: 3dd followed by p is a copy operation.",
+      "ANIMATION: Open three blank timing rows. | NEOVIM: 3o reproduces the missile automatically.",
+      "ANIMATION: Copy all three source rows as one pose. | NEOVIM: gg3yyGp yanks three lines and puts the block below."
     ],
     "compact_choices": [
-      "A: roof row only · V: yy then p",
-      "A: move original · V: delete then put",
-      "A: blank timing rows · V: open lines",
-      "A: full three-row pose · V: 3yy then put"
+      "A: roof only · V: yy yanks character",
+      "A: move source · V: delete/put copies",
+      "A: blank rows · V: open duplicates art",
+      "A: full pose · V: yank 3 lines, put below"
     ],
     "correct_choice": 3,
     "feedback": [
-      "A single roof row is not a readable frame; its walls and base would be detached.",
-      "Deletion makes a move, not a preserved working copy.",
-      "Blank lines carry no authored machine pose.",
-      "Correct: the count belongs to whole lines, so all three material rows stay together."
+      "A roof without its two supporting rows is not the complete source pose, and yy is linewise.",
+      "Deleting before putting moves the only source; it does not leave the original as evidence.",
+      "Opened rows are empty and cannot supply the authored missile cells.",
+      "Correct: yy is linewise, so the count 3 preserves all rows owned by the pose."
     ]
   },
   "M11.Q03": {
-    "prompt": "ANIMATION\nThe first roof's right wall is two columns farther right after the redraw; the wall no longer meets the row below.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==  \\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhat explains the registration failure?",
-    "compact_prompt": "ANIMATION\nThe first roof redraw moved its right wall two columns.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==  \\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich editing family would have kept width fixed?",
-    "animation_prompt": "ANIMATION\nThe acting roof changed, but insertion pushed its right wall away from the wall below.\n\n    │/--\\  /--\\│   │/==  \\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
-    "animation_answer": "Two inserted cells increased row length and pushed the right wall, breaking frame registration.",
-    "neovim_prompt": "NEOVIM\nWhy prefer Replace mode for an existing roof run?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
-    "neovim_answer": "R overwrites existing cells; i would insert and push the remainder unless old cells were removed.",
+    "prompt": "ANIMATION\nThis attempted redraw inserted == before the four underscores instead of consuming two of them. The missile nose now lands two columns too far right.\n\n    BEFORE       FAILED AFTER\n    │  ____/│    │  ==____/│\n    │< / / |:.│  │< / / |:.│\n    │  ¯¯¯¯\\│    │  ¯¯¯¯\\│\n\nNEOVIM\nWhat caused the registration failure?",
+    "compact_prompt": "ANIMATION\nThe roof row grew from seven to nine cells.\n\n    │  ____/│ → │  ==____/│\n\nNEOVIM\nWhich mode would have kept the nose fixed?",
+    "animation_prompt": "ANIMATION\nThe intended material appears, but two inserted cells push the remaining roof and nose away from the unchanged rows.\n\n    │  ==____/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│",
+    "animation_answer": "Insertion increased the top row's width and broke column registration with the rest of the missile.",
+    "neovim_prompt": "NEOVIM\nWhy is Replace mode the correct family here?\n\n    │  ____/│",
+    "neovim_answer": "R consumes existing underscore cells; i adds new cells and pushes the later text right.",
     "choices": [
-      "ANIMATION: The intended roof changed while every wall stayed fixed. | NEOVIM: R overwrites the old cells in place.",
-      "ANIMATION: The frame was copied cleanly and the wall drift is intentional motion. | NEOVIM: gg3yyGp is the bounded redraw command.",
-      "ANIMATION: Two inserted cells pushed the wall and broke registration. | NEOVIM: R replaces existing cells; i would grow the row.",
-      "ANIMATION: The base row alone controls the wall position. | NEOVIM: dd removes only the two roof cells without affecting row width."
+      "ANIMATION: The roof changed correctly and the longer nose is intended squash-and-stretch. | NEOVIM: i preserves the old columns while adding material.",
+      "ANIMATION: The frame was copied to the wrong location. | NEOVIM: gg3yyGp is responsible for the two extra roof cells.",
+      "ANIMATION: Inserting == pushed ____/ two columns right. | NEOVIM: R would overwrite two underscores and keep the nose registered.",
+      "ANIMATION: The lower hull pulled the nose right. | NEOVIM: dd deletes just the first two underscores while preserving the row."
     ],
     "compact_choices": [
-      "A: roof changes; walls fixed · V: overwrite in place",
-      "A: clean copy; drift intentional · V: copy frame",
-      "A: insertion pushed wall · V: R fixed, i grows",
-      "A: base controls wall · V: delete cells"
+      "A: longer nose intended · V: i preserves columns",
+      "A: wrong copy location · V: yank/put added cells",
+      "A: insertion pushed nose · V: R overwrites",
+      "A: lower hull pulled roof · V: dd deletes two chars"
     ],
     "correct_choice": 2,
     "feedback": [
-      "The displayed wall moved, so the fixed-width contract was not met.",
-      "The drift is a defect, not intentional motion, and copying does not redraw the roof.",
-      "Correct: insertion changes row length; Replace mode keeps the roof endpoints registered.",
-      "Deleting a row or cells cannot be described as a safe bounded overwrite."
+      "The fixed-width invariant is column registration; unexplained row growth is a defect, not animation.",
+      "The duplicate operation does not add characters inside one row; the failure is local insertion.",
+      "Correct: the visible four underscores prove the old roof was retained and two new cells were inserted before it.",
+      "dd is linewise, so it would remove the complete top row rather than two underscore cells."
     ]
   },
   "M11.Q04": {
-    "prompt": "ANIMATION\nA copied roof is changed to ~~, then recovery is inspected.\n\n    BEFORE         AFTER\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich sequence makes both undo and redo observable?",
-    "compact_prompt": "ANIMATION\nThe slack roof returns after a real undo/redo.\n\n    BEFORE         AFTER\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich recovery pair restores the actual redraw?",
-    "animation_prompt": "ANIMATION\nUndo first restores ==; redo reapplies ~~.\n\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
-    "animation_answer": "Undo visibly removes the slack redraw, and redo visibly reapplies it as the final pose.",
-    "neovim_prompt": "NEOVIM\nWhich sequence proves recovery on the real edit?\n\n    │/==\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
-    "neovim_answer": "4G0lR~~<Esc>u<C-r> performs the redraw, undoes it, then redoes it.",
+    "prompt": "ANIMATION\nOn the copied missile, a slack roof is an authored extreme, not a throwaway demonstration. Undo should return == and redo should restore ~~.\n\n    TAUT          SLACK\n    │  ==__/│ ⇄ │  ~~__/│\n    │< / / |:.│   │< / / |:.│\n    │  ¯¯¯¯\\│     │  ¯¯¯¯\\│\n\nNEOVIM\nWhich sequence makes both recovery commands observable?",
+    "compact_prompt": "ANIMATION\nUndo shows ==; redo restores ~~.\n\n    │  ==__/│ ⇄ │  ~~__/│\n\nNEOVIM\nWhat must precede u and CTRL-R?",
+    "animation_prompt": "ANIMATION\nA real two-cell roof decision is removed and then reapplied; the missile hull never moves.\n\n    │  ==__/│ ⇄ │  ~~__/│\n    │< / / |:.│   │< / / |:.│\n    │  ¯¯¯¯\\│     │  ¯¯¯¯\\│",
+    "animation_answer": "The copied roof is actually redrawn to ~~ before undo and redo inspect that history.",
+    "neovim_prompt": "NEOVIM\nWhich command order proves the recovery pair?\n\n    │  ==__/│ → │  ~~__/│",
+    "neovim_answer": "4G0f=R~~<Esc>u<C-r> performs the copied-roof redraw, undoes it, and redoes it.",
     "choices": [
-      "ANIMATION: The pose never changes; undo and redo are a no-op demonstration. | NEOVIM: 5G0forO5lrO only brightens indicators.",
-      "ANIMATION: Undo returns == and redo restores ~~. | NEOVIM: 4G0lR~~<Esc>u<C-r> makes both recovery operations causal.",
-      "ANIMATION: Redo removes ~~ and leaves the copied roof empty. | NEOVIM: 4G0lR~~<Esc>u<Esc> repeats the edit without undo.",
-      "ANIMATION: The original frame is deleted before a new one is typed. | NEOVIM: 3dd<C-r> recovers a deleted frame without a prior change."
+      "ANIMATION: No pose changes; recovery is only described. | NEOVIM: u and CTRL-R prove recovery without a preceding edit.",
+      "ANIMATION: Undo returns == and redo restores ~~. | NEOVIM: 4G0f=R~~<Esc>u<C-r> makes the recovery causal.",
+      "ANIMATION: Redo removes the roof and leaves empty cells. | NEOVIM: Escape performs redo after u.",
+      "ANIMATION: The complete copied missile is deleted and reinserted. | NEOVIM: 3dd and CTRL-R are a bounded two-cell redraw."
     ],
     "compact_choices": [
-      "A: no visible change · V: indicator edits",
-      "A: == undo, ~~ redo · V: redraw, u, CTRL-R",
-      "A: redo removes roof · V: edit then Escape",
-      "A: delete/retype frame · V: recover without change"
+      "A: no art change · V: recovery alone",
+      "A: == on undo, ~~ on redo · V: redraw, u, CTRL-R",
+      "A: redo clears roof · V: Escape is redo",
+      "A: whole pose deleted · V: line delete is two-cell redraw"
     ],
     "correct_choice": 1,
     "feedback": [
-      "Recovery cannot be demonstrated by an unchanged buffer; a real redraw must precede u and CTRL-R.",
-      "Correct: the recovery pair is causally attached to the R~~ edit.",
-      "Redo reapplies the change; it does not remove the roof, and a second Escape is not redo.",
-      "A recovery command needs an actual prior edit, not an invented delete."
+      "Recovery keys need a real prior edit; otherwise the learner cannot observe which state is being recovered.",
+      "Correct: u removes the ~~ redraw and CTRL-R reapplies precisely that change.",
+      "Escape ends Replace mode; CTRL-R is the redo command, and redo restores rather than erases.",
+      "Deleting three lines tests frame removal, not recovery of the authored two-cell roof decision."
     ]
   },
   "M11.Q05": {
-    "prompt": "ANIMATION\nOnly the copied indicators brighten; roof, walls, and base remain fixed.\n\n    BEFORE         AFTER\n    │/~~\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| O|  |O |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhen are local replacements equivalent to a current-row substitute?",
-    "compact_prompt": "ANIMATION\nTwo indicators change on one copied row.\n\n    BEFORE         AFTER\n    │/~~\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| O|  |O |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich scope keeps the same result?",
-    "animation_prompt": "ANIMATION\nOnly the copied row's o cells become O.\n\n    │/~~\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│\n    │| O|  |O |│",
-    "animation_answer": "Both indicators on the copied row brighten; the shell and the first frame are untouched.",
-    "neovim_prompt": "NEOVIM\nWhich two bounded paths can produce this result?\n\n    │| o|  |o |│\n    │| O|  |O |│",
-    "neovim_answer": "5G0forO5lrO visits both cells, while 5G:s/o/O/g scopes substitution to the current copied row.",
+    "prompt": "ANIMATION\nThe banked extreme reverses the copied missile's two inner strokes from / / to \\ \\. No other slash in the project belongs to this change.\n\n    BEFORE       AFTER\n    │  ~~__/│    │  ~~__/│\n    │< / / |:.│  │< \\ \\ |:.│\n    │  ¯¯¯¯\\│    │  ¯¯¯¯\\│\n\nNEOVIM\nWhen are two local replacements equivalent to :s on the current row?",
+    "compact_prompt": "ANIMATION\nTwo inner strokes reverse on one copied row.\n\n    │< / / |:.│ → │< \\ \\ |:.│\n\nNEOVIM\nWhich scope makes both methods equivalent?",
+    "animation_prompt": "ANIMATION\nOnly the copied pose's two inner diagonal cells reverse direction.\n\n    │  ~~__/│\n    │< / / |:.│ → │< \\ \\ |:.│\n    │  ¯¯¯¯\\│",
+    "animation_answer": "The two inner slash cells change to backslashes while roof, exhaust, and lower hull stay registered.",
+    "neovim_prompt": "NEOVIM\nWhich two bounded paths can produce the same result?\n\n    │< / / |:.│ → │< \\ \\ |:.│",
+    "neovim_answer": "Replace each slash locally, or use a slash-to-backslash substitute scoped to the copied middle row.",
     "choices": [
-      "ANIMATION: Both copied indicators brighten and no shell cell moves. | NEOVIM: 5G0forO5lrO or 5G:s/o/O/g<CR> stays on the copied row.",
-      "ANIMATION: Every indicator in both frames brightens. | NEOVIM: :%s/o/O/g is safe because all frames are related.",
-      "ANIMATION: The copied roof changes while indicators stay lowercase. | NEOVIM: 0lR==<Esc> is the matching two-cell method.",
-      "ANIMATION: The entire second frame is replaced by the first. | NEOVIM: 5Gddp copies the first rowwise pose over it."
+      "ANIMATION: Only the copied middle row's / / becomes \\ \\. | NEOVIM: two local r edits and a current-row :s are equivalent at that scope.",
+      "ANIMATION: Every slash in every missile pose reverses. | NEOVIM: :%s is equivalent because all poses share one subject.",
+      "ANIMATION: The roof's ~~ becomes \\ \\. | NEOVIM: a first-row Replace edit has the same target cells.",
+      "ANIMATION: The banked pose is created by copying the taut pose again. | NEOVIM: yy/p substitutes both slash cells."
     ],
     "compact_choices": [
-      "A: copied indicators only · V: two local or row-scoped paths",
-      "A: all frames brighten · V: whole-file substitute",
-      "A: roof changes · V: Replace roof",
-      "A: frame overwritten · V: delete and put"
+      "A: two copied strokes · V: local r or current-row :s",
+      "A: all slash cells · V: whole-file :s",
+      "A: roof changes · V: first-row Replace",
+      "A: recopy pose · V: yy/p substitutes"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: both accepted paths have the same bounded row scope and preserve registration.",
-      "Whole-file scope would also change the first frame, so it is not equivalent.",
-      "The visible acting change is the two indicators, not the roof.",
-      "Deleting and putting a rowwise block changes frame structure rather than two cells."
+      "Correct: both methods visit the same two matches when the Ex command is limited to the copied row.",
+      "Whole-file scope would also reverse strokes in the earlier pose, so the methods would no longer be equivalent.",
+      "The visible change occurs on the middle row; the ~~ roof remains untouched.",
+      "Yank and put duplicates lines; it does not transform the two diagonal glyphs."
     ]
   },
   "M11.Q06": {
-    "prompt": "ANIMATION\nThe transfer shell uses dots instead of dashes, but its roof endpoints still register.\n\n    BEFORE         AFTER\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │| x|  |x |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich reasoning transfers to the unfamiliar shell?",
-    "compact_prompt": "ANIMATION\nUnfamiliar endpoints do not change the roof's width.\n\n    BEFORE         AFTER\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │| x|  |x |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich edit is independent of endpoint glyph identity?",
-    "animation_prompt": "ANIMATION\nThe first two roof cells change while dot-shaped walls stay registered.\n\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │\\__|  |__/│",
-    "animation_answer": "Replace the owned two-cell roof run; do not depend on the particular wall glyphs.",
-    "neovim_prompt": "NEOVIM\nWhich path addresses the roof by position inside the unfamiliar frame?\n\n    │/..\\  /..\\│\n    │| x|  |x |│\n    │\\__|  |__/│",
-    "neovim_answer": "0lR==<Esc> overwrites the two existing roof cells without searching for the endpoints.",
+    "prompt": "ANIMATION\nThis sourced missile has invisible tail spaces after each visible row. They do not belong to the drawing and can make frame-width checks lie. Here · shows one invisible trailing space.\n\n    │  ____/···│\n    │< / / |::'····│\n    │  ¯¯¯¯\\···│\n\nNEOVIM\nWhich inspection and cleanup preserves every visible missile cell?",
+    "compact_prompt": "ANIMATION\nRemove only the tail spaces represented by ·.\n\n    │  ____/···│\n    │< / / |::'····│\n    │  ¯¯¯¯\\···│\n\nNEOVIM\nWhich pattern is limited to whitespace at line end?",
+    "animation_prompt": "ANIMATION\nThe visible missile must remain byte-for-byte the same while unneeded padding after its last glyph is removed.\n\n    │  ____/│\n    │< / / |::'│\n    │  ¯¯¯¯\\│",
+    "animation_answer": "Only trailing whitespace is removed; the missile's leading registration and every visible glyph remain intact.",
+    "neovim_prompt": "NEOVIM\nWhich tools reveal alignment and then target only end-of-line whitespace?\n\n    │  ____/···│\n    │< / / |::'····│\n    │  ¯¯¯¯\\···│",
+    "neovim_answer": "list, cursorcolumn, and colorcolumn expose the layout; %s/\\s\\+$//e removes whitespace only where it reaches line end.",
     "choices": [
-      "ANIMATION: Keep the unfamiliar walls and overwrite only their fixed roof run. | NEOVIM: 0lR==<Esc> uses the owned position, not wall glyph names.",
-      "ANIMATION: Redraw the entire shell so it matches the old machine. | NEOVIM: %s/\\./-/g normalizes every dot in the file.",
-      "ANIMATION: Move the roof until its dots become dashes. | NEOVIM: i== inserts two cells before the first dot.",
-      "ANIMATION: Change every x indicator and every dot together. | NEOVIM: :%s/[.x]/=/g edits all matching cells globally."
+      "ANIMATION: Keep every visible missile glyph and remove only invisible tails. | NEOVIM: inspect columns, then use %s/\\s\\+$//e for whitespace anchored at line end.",
+      "ANIMATION: Remove the missile's two leading spaces as well. | NEOVIM: %s/^\\s\\+// deletes only harmless trailing padding.",
+      "ANIMATION: Normalize all internal spacing around / / and |::. | NEOVIM: %s/\\s\\+//g is safe for fixed-width art.",
+      "ANIMATION: Join the three rows before trimming. | NEOVIM: J makes trailing whitespace visible without changing the drawing."
     ],
     "compact_choices": [
-      "A: roof only; walls retained · V: positional Replace",
-      "A: normalize whole shell · V: global dot substitute",
-      "A: move roof · V: insert two cells",
-      "A: dots and x change · V: global class substitute"
+      "A: visible art fixed; trim tails · V: \\s\\+$",
+      "A: delete leading registration · V: ^\\s\\+ is trailing",
+      "A: collapse internal spacing · V: all whitespace is safe",
+      "A: join rows · V: J is inspection"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the method is positional and preserves the unfamiliar shell around the owned run.",
-      "Transfer means preserve the new shell, not erase its material identity.",
-      "Insertion would change width and is not needed for an existing two-cell run.",
-      "A global class substitute exceeds the single roof's scope."
+      "Correct: the end anchor protects leading and internal spaces, which are structural cells in the missile.",
+      "Leading spaces register the roof and lower hull; ^ anchors the wrong side of the row.",
+      "Internal spaces separate strokes and carry shape, so a global whitespace collapse damages the art.",
+      "J changes the three-row drawing into one line; it is not a non-destructive whitespace display."
     ]
   },
   "M11.Q07": {
-    "prompt": "ANIMATION\nThree short rows receive the same blur-trail column.\n\n    BEFORE        AFTER\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n\nNEOVIM\nWhy must the trail column match in every row?",
-    "compact_prompt": "ANIMATION\nThe vertical trail is aligned.\n\n    BEFORE        AFTER\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n\nNEOVIM\nWhat does one shared virtual column prevent?",
-    "animation_prompt": "ANIMATION\nThe three new bars form one straight secondary effect.\n\n    │| o|   |│\n    │| o|   |│\n    │| o|   |│",
-    "animation_answer": "Homologous trail glyphs share one display column, so the blur reads as a stable line rather than jitter.",
-    "neovim_prompt": "NEOVIM\nWhich placement principle matters?\n\n    │| o|   |│\n    │| o|   |│\n    │| o|   |│",
-    "neovim_answer": "Address the same virtual column in each row before inserting the bar.",
+    "prompt": "ANIMATION\nSkully's left eye has three authored states in history: original o, rejected !, and chosen O. The submitted still must be O after briefly revisiting the rejected branch.\n\n    ORIGINAL      REJECTED      CHOSEN\n    │     ,--.│   │     ,--.│   │     ,--.│\n    │    (_o,o)│  │    (_!,o)│  │    (_O,o)│\n    │      `\"´│   │      `\"´│   │      `\"´│\n\nNEOVIM\nWhich history model lets you inspect an older branch and return to the chosen state?",
+    "compact_prompt": "ANIMATION\nRevisit !, then submit O.\n\n    │(_o,o)│ → │(_!,o)│ → │(_O,o)│\n\nNEOVIM\nWhich commands move through chronological history rather than only undo/redo pairs?",
+    "animation_prompt": "ANIMATION\nThe rejected eye remains inspectable without becoming the submitted choice.\n\n    │    (_!,o)│  rejected\n    │    (_O,o)│  submitted",
+    "animation_answer": "The artist can compare a discarded eye variant and still return to the approved O-eye still.",
+    "neovim_prompt": "NEOVIM\nWhich family traverses older and newer states by time?\n\n    │    (_o,o)│ → │    (_!,o)│ → │    (_O,o)│",
+    "neovim_answer": "g-/g+ and :earlier move through chronological undo history; returning to the newest chosen state preserves O for submission.",
     "choices": [
-      "ANIMATION: One aligned column makes a coherent trail. | NEOVIM: Repeat the exact display-column address on each row.",
-      "ANIMATION: Each trail should use a different column for texture. | NEOVIM: Place with arbitrary i commands after moving by one row.",
-      "ANIMATION: The trail belongs only on the longest row. | NEOVIM: Insert at end-of-line and let shorter rows pad themselves.",
-      "ANIMATION: A moving trail requires shifting the original cores. | NEOVIM: Delete the cores before adding bars."
+      "ANIMATION: Inspect the rejected ! eye, then return to the chosen O eye. | NEOVIM: use chronological history such as g-/g+ or :earlier, ending at the chosen state.",
+      "ANIMATION: Submit ! because revisiting a state automatically makes it final. | NEOVIM: :earlier permanently deletes every later branch.",
+      "ANIMATION: Duplicate all three Skully states into the drawing. | NEOVIM: yy/p is the undo tree navigator.",
+      "ANIMATION: Replace both eyes every time history moves. | NEOVIM: u can only delete whole rows, so each state must be retyped."
     ],
     "compact_choices": [
-      "A: one straight trail · V: same column each row",
-      "A: staggered texture · V: arbitrary insertion",
-      "A: longest row only · V: end-of-line insert",
-      "A: cores shift · V: delete cores first"
+      "A: revisit !, return O · V: chronological history",
+      "A: submit ! · V: earlier erases later states",
+      "A: show all variants · V: yank/put navigates history",
+      "A: retype both eyes · V: undo deletes rows only"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: equal display columns preserve temporal and spatial registration.",
-      "Different columns read as jitter, not a deliberate straight trail.",
-      "The effect is homologous across rows; it cannot be inferred from only the longest row.",
-      "The core art is stable; deleting it destroys the intended subject."
+      "Correct: history navigation supports variant comparison while the final position in history remains the approved O eye.",
+      "Visiting an older state is inspection, not approval; you must navigate back to the chosen newer state.",
+      "Linewise copying would place multiple drawings in the buffer rather than traverse their edit history.",
+      "Undo operates on changes, not only rows, and retyping would discard the point of comparing recorded variants."
     ]
   },
   "M11.Q08": {
-    "prompt": "ANIMATION\nThree short rows gain a right edge without hand-counted padding.\n\n    BEFORE        AFTER\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n\nNEOVIM\nWhich setting lets the cursor visit an empty column beyond the line?",
-    "compact_prompt": "ANIMATION\nPad all three rows at one exact column.\n\n    BEFORE        AFTER\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n\nNEOVIM\nWhich virtual-edit behavior is required?",
-    "animation_prompt": "ANIMATION\nThe new right bars line up while the cores stay fixed.\n\n    │| o |   |│\n    │| o |   |│\n    │| o |   |│",
-    "animation_answer": "Each short row is extended to the same display column; no core or existing edge moves.",
-    "neovim_prompt": "NEOVIM\nWhich command family reaches the empty column?\n\n    │| o |│\n    │| o |│\n    │| o |│",
-    "neovim_answer": ":set virtualedit=all<CR> enables exact-column motion past end-of-line before inserting the edge.",
+    "prompt": "ANIMATION\nSnail's blink closes the adjacent O and o eyes with -- while its shell spiral, slash, and crawl baseline remain registered.\n\n    BEFORE    AFTER\n    │ _ Oo│   │ _ --│\n    │(O)/│ → │(O)/│\n    │¯¯¯\"│   │¯¯¯\"│\n\nNEOVIM\nWhy is a two-cell Replace redraw safer than deleting or inserting?",
+    "compact_prompt": "ANIMATION\nClose Oo to -- without shifting the shell.\n\n    │ _ Oo│ → │ _ --│\n    │(O)/│    │(O)/│\n    │¯¯¯\"│    │¯¯¯\"│\n\nNEOVIM\nWhich mode preserves width?",
+    "animation_prompt": "ANIMATION\nOnly Snail's two eye cells change; the complete three-row pose remains registered.\n\n    │ _ Oo│ → │ _ --│\n    │(O)/│    │(O)/│\n    │¯¯¯\"│    │¯¯¯\"│",
+    "animation_answer": "The blink consumes exactly the two eye cells and preserves every shell and baseline cell.",
+    "neovim_prompt": "NEOVIM\nWhich grammar finds the first eye and overwrites two adjacent cells?\n\n    │ _ Oo│\n    │(O)/│\n    │¯¯¯\"│",
+    "neovim_answer": "0fOR--<Esc> finds the first O and replaces O and o with two dashes before leaving Replace mode.",
     "choices": [
-      "ANIMATION: All three edges land at one column while cores stay fixed. | NEOVIM: :set virtualedit=all<CR> permits exact-column motion beyond EOL.",
-      "ANIMATION: Each edge is padded with a different number of spaces. | NEOVIM: :set paste<CR> aligns columns automatically.",
-      "ANIMATION: The rows are joined into one long line. | NEOVIM: J creates the shared edge without a column address.",
-      "ANIMATION: Existing cores shift to the right edge. | NEOVIM: ggVG>s inserts a visual-width block before the cores."
+      "ANIMATION: Only Oo becomes --; shell and baseline stay fixed. | NEOVIM: find O, use R for two cells, then Escape.",
+      "ANIMATION: Delete Oo so later glyphs slide left into a closed eye. | NEOVIM: x twice preserves the slash and row width.",
+      "ANIMATION: Insert -- before Oo and keep the open eyes as timing detail. | NEOVIM: i-- preserves every later column.",
+      "ANIMATION: Replace every O in the complete Snail. | NEOVIM: fO starts a file-wide replacement."
     ],
     "compact_choices": [
-      "A: aligned new edges · V: virtualedit=all",
-      "A: unequal spaces · V: paste mode",
-      "A: joined line · V: J",
-      "A: cores shift · V: visual block insert"
+      "A: Oo→--; shell fixed · V: find O, R two",
+      "A: delete eyes · V: x preserves width",
+      "A: insert before eyes · V: i preserves columns",
+      "A: replace every O · V: f is global"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: virtualedit exposes the empty display column without changing earlier cells.",
-      "Unequal padding defeats alignment, and paste mode is unrelated.",
-      "Joining lines destroys the three-row frame.",
-      "The cores are landmarks that must remain fixed."
+      "Correct: two typed dashes overwrite the adjacent eyes and leave the pose width unchanged.",
+      "x deletes cells and pulls the later row contents left, shifting the fixed-width shell relation.",
+      "Insertion would retain Oo and push later glyphs right, so it is not the shown blink.",
+      "fO is a current-line motion to one match; it does not define a global edit."
     ]
   },
   "M11.Q09": {
-    "prompt": "ANIMATION\nA roof run becomes == while both endpoint columns remain fixed.\n\n    BEFORE        AFTER\n    │/--\\│        │/==\\│\n    │| o |│        │| o |│\n    │\\__ /│       │\\__ /│\n\nNEOVIM\nWhat distinguishes Replace mode from insertion here?",
-    "compact_prompt": "ANIMATION\nThe roof material changes, not its width.\n\n    BEFORE        AFTER\n    │/--\\│        │/==\\│\n    │| o |│        │| o |│\n    │\\__ /│       │\\__ /│\n\nNEOVIM\nWhich operation preserves the endpoint?",
-    "animation_prompt": "ANIMATION\nThe old roof cells are consumed by the new cells.\n\n    │/--\\│        │/==\\│\n    │| o |│        │| o |│\n    │\\__ /│       │\\__ /│",
-    "animation_answer": "The two old roof cells are replaced; they are not joined by extra cells.",
-    "neovim_prompt": "NEOVIM\nWhich mode consumes existing cells?\n\n    │/--\\│\n    │| o |│\n    │\\__ /│",
-    "neovim_answer": "R writes over the current cells; Insert mode pushes following cells to the right.",
+    "prompt": "ANIMATION\nThe three missile rows end at different physical columns, but the comparison edge must be a straight vertical line at display column 12.\n\n    BEFORE       AFTER\n    │  ____/│    │  ____/    |│\n    │< / / |:.│  │< / / |:.  |│\n    │  ¯¯¯¯\\│    │  ¯¯¯¯\\    |│\n\nNEOVIM\nWhich setting and motion express one shared empty column?",
+    "compact_prompt": "ANIMATION\nRagged rows gain one edge at column 12.\n\n    │  ____/    |│\n    │< / / |:.  |│\n    │  ¯¯¯¯\\    |│\n\nNEOVIM\nWhy is $ not enough?",
+    "animation_prompt": "ANIMATION\nOnly tail padding and the three new bars are added; the missile's visible cells stay fixed.\n\n    │  ____/    |│\n    │< / / |:.  |│\n    │  ¯¯¯¯\\    |│",
+    "animation_answer": "A shared display-column address aligns the bars even though each source row has a different length.",
+    "neovim_prompt": "NEOVIM\nWhich feature permits 12| to land beyond end-of-line?\n\n    │  ____/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│",
+    "neovim_answer": ":set virtualedit=all<CR> permits exact-column motion in empty space; 12| names the same display column on every row.",
     "choices": [
-      "ANIMATION: Existing roof cells are consumed and width stays fixed. | NEOVIM: R overwrites; Insert would push the remainder.",
-      "ANIMATION: New roof cells are inserted before the old roof. | NEOVIM: R always increases the row length.",
-      "ANIMATION: The roof is removed and the endpoint is re-created later. | NEOVIM: dd followed by p is Replace mode.",
-      "ANIMATION: The whole frame is duplicated to show a hold. | NEOVIM: yy and p are the only way to change a roof."
+      "ANIMATION: Every bar lands at column 12 and the missile stays fixed. | NEOVIM: virtualedit=all allows 12| beyond each physical line end.",
+      "ANIMATION: Every bar lands immediately after its row's last glyph. | NEOVIM: $ names the same display column on ragged rows.",
+      "ANIMATION: Existing glyphs shift until all rows become equal. | NEOVIM: repeated x and p creates harmless tail padding.",
+      "ANIMATION: The rows are joined to share one edge glyph. | NEOVIM: J preserves the three-row drawing while aligning columns."
     ],
     "compact_choices": [
-      "A: consume old cells; width fixed · V: R overwrites",
-      "A: insert before roof · V: R grows row",
-      "A: delete/recreate endpoint · V: dd/p is Replace",
-      "A: duplicate frame · V: yank/put only"
+      "A: bars at col 12 · V: virtualedit + 12|",
+      "A: bars at each EOL · V: $ is shared column",
+      "A: shift existing art · V: x/p makes padding",
+      "A: join rows · V: J preserves drawing"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: Replace consumes existing cells and keeps the endpoint registered.",
-      "Insertion would shift the endpoint, contradicting the visible fixed width.",
-      "Delete and put is not Replace mode and would alter more structure.",
-      "The frame is edited in place; no duplicate frame appears."
+      "Correct: a virtual column is an address, so the necessary spaces are added without moving earlier cells.",
+      "$ names a different physical end on each ragged row, producing a crooked edge.",
+      "Deleting and putting existing cells changes the missile; only empty tail area should be extended.",
+      "J removes line boundaries and destroys the three-row pose."
     ]
   },
   "M11.Q10": {
-    "prompt": "ANIMATION\nRows 2 and 5 need a blur bar at the same display column.\n\n      BEFORE        AFTER\n    2 │| o|│        │| o|   |│\n    5 │| o|│        │| o|   |│\n\nNEOVIM\nWhich workflow explicitly revisits that column?",
-    "compact_prompt": "ANIMATION\nThe blur bars on rows 2 and 5 align.\n\n      BEFORE        AFTER\n    2 │| o|│        │| o|   |│\n    5 │| o|│        │| o|   |│\n\nNEOVIM\nWhich workflow names the shared column?",
-    "animation_prompt": "ANIMATION\nThe bars on rows 2 and 5 occupy one shared display column.\n\n    2 │| o|   |│\n    5 │| o|   |│",
-    "animation_answer": "The repeated bars share one exact column, so the secondary motion does not jitter.",
-    "neovim_prompt": "NEOVIM\nWhich motion-plus-insert workflow targets that column twice?\n\n    │| o|   |│\n    │| o|   |│",
-    "neovim_answer": "2G13|i|<Esc>3j13|i|<Esc> addresses column 14 explicitly in both rows.",
+    "prompt": "ANIMATION\nThe taut pose and banked slack pose must keep their distinct inner strokes while one trail bar is added at column 12 on each middle row.\n\n      BEFORE          AFTER\n    1 │  ==__/│       │  ==__/│\n    2 │< / / |:.│     │< / / |:.  |│\n    3 │  ¯¯¯¯\\│       │  ¯¯¯¯\\│\n    4 │  ~~__/│       │  ~~__/│\n    5 │< \\ \\ |:.│     │< \\ \\ |:.  |│\n    6 │  ¯¯¯¯\\│       │  ¯¯¯¯\\│\n\nNEOVIM\nWhich workflow explicitly revisits the same display column on the homologous rows?",
+    "compact_prompt": "ANIMATION\nRows 2 and 5 gain aligned bars; their / / and \\ \\ strokes stay different.\n\n    2 │< / / |:.  |│\n    5 │< \\ \\ |:.  |│\n\nNEOVIM\nWhich path names column 12 twice?",
+    "animation_prompt": "ANIMATION\nThe added bars remain registered across the two poses, so the trail does not jitter while the missile banks.\n\n    2 │< / / |:.  |│\n    5 │< \\ \\ |:.  |│",
+    "animation_answer": "The bars share column 12 while the pose-specific inner strokes remain unchanged.",
+    "neovim_prompt": "NEOVIM\nWhich motion-plus-insert workflow targets that column twice?\n\n    2 │< / / |:.│\n    5 │< \\ \\ |:.│",
+    "neovim_answer": "After virtual editing is enabled, 2G12|i|<Esc>3j12|i|<Esc> addresses column 12 on rows 2 and 5.",
     "choices": [
-      "ANIMATION: Both bars align in the same column. | NEOVIM: 2G13|i|<Esc>3j13|i|<Esc> revisits the exact address.",
-      "ANIMATION: The bars intentionally alternate columns. | NEOVIM: j then i is sufficient without an address.",
-      "ANIMATION: Only the first row receives a bar. | NEOVIM: 2G13|i|<Esc>3j13|i|<Esc> inserts only once because 3j skips the row.",
-      "ANIMATION: The cores move to meet the bars. | NEOVIM: 2dd3p aligns the rows by duplicating them."
+      "ANIMATION: Both bars occupy column 12 and the two poses stay distinct. | NEOVIM: 2G12|i|<Esc>3j12|i|<Esc> revisits the exact address.",
+      "ANIMATION: The bars alternate columns to show direction. | NEOVIM: j followed by i is sufficient without any column address.",
+      "ANIMATION: Only the taut pose receives a bar. | NEOVIM: 3j skips past row 5, so the second insertion cannot occur.",
+      "ANIMATION: The banked pose is replaced with the taut pose before trailing. | NEOVIM: 3ddp aligns the bars by duplicating rows."
     ],
     "compact_choices": [
-      "A: bars share column · V: address 13| twice",
-      "A: bars alternate · V: vague j/i",
-      "A: first row only · V: second address skipped",
-      "A: cores move · V: delete and put"
+      "A: bars share col 12; poses stay · V: 12| twice",
+      "A: bars alternate · V: j/i needs no column",
+      "A: taut only · V: 3j skips row 5",
+      "A: banked pose replaced · V: delete/put aligns"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: explicit column motion and a row jump place homologous bars together.",
-      "Alternating columns read as jitter, not the authored blur.",
-      "The second bar must be inserted too; 3j moves from row 2 to row 5 before the same column address is reused.",
-      "Row duplication does not place a single bar at a shared column."
+      "Correct: the row jump selects the corresponding pose row, and repeating 12| preserves trail registration.",
+      "Without an exact address, ragged row lengths can place the two bars in different columns and create jitter.",
+      "From row 2, 3j lands on row 5; that is exactly where the second homologous insertion belongs.",
+      "Deleting and putting rows destroys the banked pose and still does not express a column-12 trail."
     ]
   },
   "M11.01.P01": {
-    "prompt": "ANIMATION\nAfter the guided redraw, which cells changed?\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nChoose the explanation of the completed bounded edit.",
-    "compact_prompt": "ANIMATION\nThe first roof tightens and the walls stay fixed.\n\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhat did the guided Replace edit do?",
-    "animation_prompt": "ANIMATION\nThe first roof's two dashes become ==; all other cells retain their columns.\n\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
-    "animation_answer": "The guided edit overwrote two roof cells without changing row width.",
-    "neovim_prompt": "NEOVIM\nWhich summary matches the completed command?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
-    "neovim_answer": "0lR==<Esc> moved to the roof and replaced exactly two cells.",
+    "prompt": "ANIMATION\nThe TowerDefense missile keeps its nose, exhaust, and hull registration while the first two roof cells tighten.\n\n    BEFORE       AFTER\n    │  ____/│    │  ==__/│\n    │< / / |:.│  │< / / |:.│\n    │  ¯¯¯¯\\│    │  ¯¯¯¯\\│\n\nNEOVIM\nWhich explanation matches a fixed-width Replace edit?",
+    "compact_prompt": "ANIMATION\nOnly the first two underscores become ==.\n\n    │  ____/│ → │  ==__/│\n    │< / / |:.│   │< / / |:.│\n    │  ¯¯¯¯\\│     │  ¯¯¯¯\\│\n\nNEOVIM\nWhat must stay fixed?",
+    "animation_prompt": "ANIMATION\nThe missile's first two roof cells tighten; its remaining hull and exhaust do not move.\n\n    │  ____/│ → │  ==__/│\n    │< / / |:.│   │< / / |:.│\n    │  ¯¯¯¯\\│     │  ¯¯¯¯\\│",
+    "animation_answer": "Exactly two existing roof cells change; row width and every other missile cell stay fixed.",
+    "neovim_prompt": "NEOVIM\nWhich grammar finds the first underscore and overwrites two cells?\n\n    │  ____/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│",
+    "neovim_answer": "0f_R==<Esc> finds the first underscore, enters Replace mode, overwrites two cells, and stops.",
     "choices": [
-      "ANIMATION: Two roof cells changed and both walls stayed registered. | NEOVIM: 0lR==<Esc> overwrote the existing cells.",
-      "ANIMATION: The whole first machine was inserted again. | NEOVIM: yy then p duplicated all three rows.",
-      "ANIMATION: The right machine shifted left. | NEOVIM: i== inserted before its wall.",
-      "ANIMATION: The first roof row was deleted. | NEOVIM: dd removed the row and Escape restored it."
+      "ANIMATION: Only the first two roof cells tighten; the hull stays registered. | NEOVIM: 0f_R==<Esc> finds the roof and overwrites two existing cells.",
+      "ANIMATION: Two extra cells are inserted before the roof. | NEOVIM: i== is safe because insertion preserves every later column.",
+      "ANIMATION: The whole missile is copied as a timing hold. | NEOVIM: yy followed by p performs the shown two-cell redraw.",
+      "ANIMATION: The lower hull is redrawn with the roof. | NEOVIM: dd removes only the two underscores."
     ],
     "compact_choices": [
-      "A: two roof cells; walls fixed · V: bounded R overwrite",
-      "A: duplicate machine · V: yy/p",
-      "A: right machine shifts · V: insert",
-      "A: row deleted · V: dd/Escape"
+      "A: two roof cells; hull fixed · V: find _, Replace two",
+      "A: insert two cells · V: i preserves columns",
+      "A: copy whole missile · V: yy/p redraw",
+      "A: redraw lower hull · V: dd deletes two cells"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the action is a two-cell fixed-width overwrite.",
-      "No second machine was added; copying is a different lesson.",
-      "The right machine is unchanged and insertion would alter width.",
-      "The row remains present, so a line delete did not occur."
+      "Correct: Replace mode consumes the two underscores without changing the missile's width.",
+      "Insertion pushes the remaining __/ to the right, so the missile would lose registration.",
+      "No second pose appears; this edit changes two cells inside the existing missile.",
+      "dd deletes a whole row, not a bounded two-cell roof run."
     ]
   },
   "M11.02.P01": {
-    "prompt": "ANIMATION\nA working copy contains the complete machine pose.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/--\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n                    │/--\\  /--\\│\n                    │| o|  |o |│\n                    │\\__|  |__/│\n\nNEOVIM\nHow did the command preserve the frame as one unit?",
-    "compact_prompt": "ANIMATION\nThe full three-row machine appears below itself.\n\n    │/--\\  /--\\│   │/--\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n                    │/--\\  /--\\│\n                    │| o|  |o |│\n                    │\\__|  |__/│\n\nNEOVIM\nWhat object was copied?",
-    "animation_prompt": "ANIMATION\nThe second block is a complete three-row frame, not a detached row.\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
-    "animation_answer": "The whole three-row machine was duplicated as the next working frame.",
-    "neovim_prompt": "NEOVIM\nWhich grammar describes the command?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
+    "prompt": "ANIMATION\nBefore authoring a slack-tension variant, keep the complete taut missile as the source pose.\n\n    BEFORE       AFTER\n    │  ==__/│    │  ==__/│\n    │< / / |:.│  │< / / |:.│\n    │  ¯¯¯¯\\│    │  ¯¯¯¯\\│\n                  │  ==__/│\n                  │< / / |:.│\n                  │  ¯¯¯¯\\│\n\nNEOVIM\nWhich operation treats the pose as three whole lines?",
+    "compact_prompt": "ANIMATION\nThe entire three-row missile is copied below itself.\n\n    │  ==__/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│\n    │  ==__/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│\n\nNEOVIM\nWhat did the count apply to?",
+    "animation_prompt": "ANIMATION\nThe copied pose retains the missile's roof, inner strokes, exhaust, and lower hull.\n\n    │  ==__/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│\n    │  ==__/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│",
+    "animation_answer": "All three rows are duplicated together, preserving a complete working pose.",
+    "neovim_prompt": "NEOVIM\nWhich grammar copies three whole lines and puts them below?\n\n    │  ==__/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│",
     "neovim_answer": "gg3yyGp means go to the top, yank three whole lines, and put them below.",
     "choices": [
-      "ANIMATION: Copy the complete three-row block. | NEOVIM: gg3yyGp yanks three lines and puts them below.",
-      "ANIMATION: Copy only the roof. | NEOVIM: yy copies one character because the count is omitted.",
-      "ANIMATION: Move the original block down. | NEOVIM: 3dd then p transfers the source.",
-      "ANIMATION: Add blank rows for timing. | NEOVIM: 3o opens lines but copies no art."
+      "ANIMATION: Preserve the full three-row missile as a second pose. | NEOVIM: gg3yyGp yanks three lines and puts the copy below.",
+      "ANIMATION: Preserve only the taut roof. | NEOVIM: yy copies one character at the cursor.",
+      "ANIMATION: Move the only missile downward. | NEOVIM: 3dd followed by p leaves the original in place.",
+      "ANIMATION: Create a three-row timing gap. | NEOVIM: 3o duplicates the visible art into new lines."
     ],
     "compact_choices": [
-      "A: full block · V: top, 3 lines, put",
-      "A: roof only · V: one character",
-      "A: move original · V: delete then put",
-      "A: blank timing rows · V: open lines"
+      "A: full missile · V: top, yank 3 lines, put",
+      "A: roof only · V: yy copies a character",
+      "A: move only pose · V: delete/put preserves original",
+      "A: blank timing gap · V: open duplicates art"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the count belongs to complete lines, preserving the machine frame.",
-      "The visible duplicate has all three rows, not only the roof.",
-      "The original remains, so this is copy rather than move.",
-      "Blank rows contain no machine cells and cannot be the shown result."
+      "Correct: 3 counts linewise yanks, so the complete missile stays intact in both poses.",
+      "The duplicate visibly includes the middle and lower rows; yy is linewise, not characterwise.",
+      "A delete-and-put would move the source; the BEFORE pose remains visible here.",
+      "Opened lines start empty; they cannot account for the copied missile cells."
     ]
   },
   "M11.UR.P01": {
-    "prompt": "ANIMATION\nThe middle cell is replaced, undone, then restored by redo.\n\n    BEFORE         AFTER\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│       │|  !  |│\n    │ \\---/ │      │ \\---/ │\n\nNEOVIM\nWhich explanation accounts for the visible recovery?",
-    "compact_prompt": "ANIMATION\nOne core cell returns after redo.\n\n    │ /---\\ │\n    │|  .  |│       │|  !  |│\n    │ \\---/ │\n\nNEOVIM\nWhat does the recovery pair do?",
-    "animation_prompt": "ANIMATION\nOnly the middle core changes from . to ! in the final frame.\n\n    │ /---\\ │\n    │|  .  |│  →  │|  !  |│\n    │ \\---/ │",
-    "animation_answer": "The actual core replacement is undone and then redone, leaving ! as the saved result.",
-    "neovim_prompt": "NEOVIM\nWhich command sequence makes that history real?\n\n    │|  .  |│  →  │|  !  |│",
-    "neovim_answer": "2G0f.r!u<C-r> replaces the core, undoes it, and redoes it.",
+    "prompt": "ANIMATION\nSnowBunny's first eye is tested as !, undone back to ., then restored by redo.\n\n    BEFORE       AFTER\n    │   (\\(\\│    │   (\\(\\│\n    │  ( n.n)│  → │  ( n!n)│\n    │o(,`_\"_)│    │o(,`_\"_)│\n\nNEOVIM\nWhich explanation makes undo and redo act on a real drawing decision?",
+    "compact_prompt": "ANIMATION\nThe first eye finishes as ! after a real undo/redo.\n\n    │  ( n.n)│ → │  ( n!n)│\n\nNEOVIM\nWhat must happen before u and CTRL-R?",
+    "animation_prompt": "ANIMATION\nOnly SnowBunny's first eye changes from . to !; ears, face, and body stay fixed.\n\n    │   (\\(\\│\n    │  ( n.n)│ → │  ( n!n)│\n    │o(,`_\"_)│",
+    "animation_answer": "The eye edit is made, removed with undo, then reapplied with redo so ! is the submitted choice.",
+    "neovim_prompt": "NEOVIM\nWhich sequence creates and revisits that history?\n\n    │  ( n.n)│ → │  ( n!n)│",
+    "neovim_answer": "2G0f.r!u<C-r> finds the eye, replaces it, undoes the replacement, and redoes it.",
     "choices": [
-      "ANIMATION: The core replacement remains after a real undo and redo. | NEOVIM: 2G0f.r!u<C-r> gives both recovery keys a real change to inspect.",
-      "ANIMATION: The frame never leaves its original state. | NEOVIM: u<C-r> alone demonstrates recovery without a prior edit.",
-      "ANIMATION: The whole middle row is copied. | NEOVIM: 3yyGp is the undo/redo pair.",
-      "ANIMATION: The contour is deleted and reconstructed. | NEOVIM: dd<C-r> redoes an unrecorded deletion."
+      "ANIMATION: SnowBunny's first eye finishes as ! after testing recovery. | NEOVIM: replace the eye, press u, then CTRL-R.",
+      "ANIMATION: SnowBunny never leaves the original . eye. | NEOVIM: u and CTRL-R demonstrate recovery without any prior change.",
+      "ANIMATION: Both eyes and the nose are copied. | NEOVIM: 3yyGp is the undo/redo pair.",
+      "ANIMATION: The face row is deleted and reconstructed. | NEOVIM: CTRL-R invents a deletion that was never made."
     ],
     "compact_choices": [
-      "A: core changed via real recovery · V: replace, undo, redo",
-      "A: no state change · V: recovery alone",
-      "A: row copied · V: yank/put",
-      "A: contour rebuilt · V: redo without history"
+      "A: eye ! via recovery · V: replace, undo, redo",
+      "A: eye never changes · V: recovery without edit",
+      "A: face copied · V: yank/put recovery",
+      "A: face row rebuilt · V: redo invents history"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the final ! is causally produced by the replacement and restored by redo.",
-      "Undo/redo alone cannot change a buffer that has not been edited.",
-      "The visible change is one core cell, not a copied row.",
-      "The contour remains intact; there is no deletion history here."
+      "Correct: the visible ! is restored by redo after undo temporarily returns the dot.",
+      "Without an eye edit, undo and redo have no drawing decision to inspect.",
+      "Only one eye cell changes; linewise copying cannot produce that history.",
+      "The face row remains intact, and redo can only reapply an actual earlier change."
     ]
   },
   "M11.04.P01": {
-    "prompt": "ANIMATION\nThe copied roof must become slack, then the real edit is undone and redone.\n\n    BEFORE         AFTER\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich result should remain saved?",
-    "compact_prompt": "ANIMATION\nThe copied roof ends at ~~ after real recovery.\n\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhat scope is required?",
-    "animation_prompt": "ANIMATION\nOnly the copied frame's roof changes to ~~; the first frame and walls stay fixed.\n\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
-    "animation_answer": "Redraw the copied roof, undo that real redraw, then redo it so ~~ is final.",
-    "neovim_prompt": "NEOVIM\nWhich path names the actual bounded recovery?\n\n    │/==\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
-    "neovim_answer": "4G0lR~~<Esc>u<C-r> changes the copied roof and makes both recovery operations meaningful.",
+    "prompt": "ANIMATION\nThe copied missile becomes the slack extreme: only its first two roof cells change from == to ~~. Undo must show the taut copy again; redo must restore the slack copy.\n\n    TAUT COPY     SLACK RESULT\n    │  ==__/│     │  ~~__/│\n    │< / / |:.│   │< / / |:.│\n    │  ¯¯¯¯\\│     │  ¯¯¯¯\\│\n\nNEOVIM\nWhich result and recovery scope are correct?",
+    "compact_prompt": "ANIMATION\nThe copied missile ends with ~~; every other cell stays registered.\n\n    │  ==__/│ → │  ~~__/│\n    │< / / |:.│   │< / / |:.│\n    │  ¯¯¯¯\\│     │  ¯¯¯¯\\│\n\nNEOVIM\nWhat should undo and redo visibly alternate?",
+    "animation_prompt": "ANIMATION\nThe copied pose alternates between a taut == roof and a slack ~~ roof while its hull stays fixed.\n\n    │  ==__/│ ⇄ │  ~~__/│\n    │< / / |:.│   │< / / |:.│\n    │  ¯¯¯¯\\│     │  ¯¯¯¯\\│",
+    "animation_answer": "Undo returns the copied roof to ==; redo reapplies ~~ as the final saved extreme.",
+    "neovim_prompt": "NEOVIM\nWhich bounded sequence gives u and CTRL-R a real redraw to inspect?\n\n    │  ==__/│ → │  ~~__/│",
+    "neovim_answer": "Move to the copied roof, overwrite its two == cells with ~~, undo once, then redo once.",
     "choices": [
-      "ANIMATION: The first roof changes and the copied roof remains ==. | NEOVIM: Apply Replace mode to the wrong frame.",
-      "ANIMATION: Both roofs change to ~~. | NEOVIM: Use a whole-file substitute even though only the copy owns the edit.",
-      "ANIMATION: The copied roof becomes ~~ while the first frame and walls remain fixed. | NEOVIM: Redraw only the copied roof, undo it once to compare, then redo the real change.",
-      "ANIMATION: The copied frame disappears after undo. | NEOVIM: Delete the complete copied frame instead of testing the roof edit."
+      "ANIMATION: The original taut pose changes while the copied pose stays ==. | NEOVIM: Apply Replace mode to the first frame instead of the copy.",
+      "ANIMATION: Both missile roofs become ~~. | NEOVIM: Use a whole-buffer substitute because the glyphs match.",
+      "ANIMATION: Only the copied roof becomes ~~ and finishes there. | NEOVIM: overwrite that two-cell run, undo to ==, then redo to ~~.",
+      "ANIMATION: Undo removes the complete copied missile. | NEOVIM: delete three lines before testing roof recovery."
     ],
     "compact_choices": [
-      "A: wrong roof changes · V: edit first frame",
-      "A: both roofs change · V: whole-file substitute",
-      "A: copied roof slack; shell fixed · V: redraw, undo, redo",
-      "A: copied frame deleted · V: delete then redo"
+      "A: original changes · V: edit wrong frame",
+      "A: both roofs change · V: whole-buffer substitute",
+      "A: copied roof == ⇄ ~~ · V: redraw, undo, redo",
+      "A: copied missile removed · V: delete frame"
     ],
     "correct_choice": 2,
     "feedback": [
-      "The copied frame is the acting frame; the first roof must remain ==.",
-      "Whole-file scope damages the earlier frame and violates registration.",
-      "Correct: the copied roof is the only acting region and the recovery history is real.",
-      "Undo does not delete the copied frame, and redo reapplies the redraw rather than a deletion."
+      "The copied pose is the acting pose; the earlier taut missile is evidence that must remain unchanged.",
+      "A whole-buffer substitute destroys the contrast between taut and slack poses.",
+      "Correct: the two roof cells are the only change, and redo restores the authored slack extreme.",
+      "The exercise tests recovery of a two-cell redraw, not deletion of the three-row pose."
     ]
   },
   "M11.05.P01": {
-    "prompt": "ANIMATION\nOne accepted method brightens both copied indicators, with no other rows changing.\n\n    BEFORE         AFTER\n    │/~~\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| O|  |O |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich comparison is accurate when one method is chosen?",
-    "compact_prompt": "ANIMATION\nOnly two o cells on the copied row become O.\n\n    │| o|  |o |│   │| O|  |O |│\n\nNEOVIM\nCompare local r edits with a current-row substitute.",
-    "animation_prompt": "ANIMATION\nThe copied row's two indicators brighten; frame bounds remain unchanged.\n\n    │/~~\\  /--\\│\n    │| o|  |o |│  →  │| O|  |O |│\n    │\\__|  |__/│",
-    "animation_answer": "Either accepted bounded method changes exactly the two copied-row indicators.",
-    "neovim_prompt": "NEOVIM\nWhat is the scope difference?\n\n    │| o|  |o |│\n    │| O|  |O |│",
-    "neovim_answer": "Local r edits visit each cell; a current-line substitute changes matching o cells only on that copied row.",
+    "prompt": "ANIMATION\nBank only the copied missile's two inner strokes. The source uses / /; the banked pose uses \\ \\. Roof, exhaust, and lower hull stay fixed.\n\n    BEFORE       AFTER\n    │  ~~__/│    │  ~~__/│\n    │< / / |:.│  │< \\ \\ |:.│\n    │  ¯¯¯¯\\│    │  ¯¯¯¯\\│\n\nNEOVIM\nWhich two methods have the same one-row scope?",
+    "compact_prompt": "ANIMATION\nOnly the copied missile's / / pair becomes \\ \\.\n\n    │< / / |:.│ → │< \\ \\ |:.│\n\nNEOVIM\nCompare two local r edits with a current-row substitute.",
+    "animation_prompt": "ANIMATION\nThe banked pose reverses two inner diagonal strokes without moving any neighbouring cell.\n\n    │  ~~__/│\n    │< / / |:.│ → │< \\ \\ |:.│\n    │  ¯¯¯¯\\│",
+    "animation_answer": "Exactly two slash cells on the copied middle row become backslashes; all other missile cells remain registered.",
+    "neovim_prompt": "NEOVIM\nWhat is the method comparison?\n\n    │< / / |:.│ → │< \\ \\ |:.│",
+    "neovim_answer": "One path visits and replaces each slash; the other substitutes every slash on the current copied row only.",
     "choices": [
-      "ANIMATION: Both copied indicators brighten and no frame edge moves. | NEOVIM: local r edits or a current-row :s have the same bounded result.",
-      "ANIMATION: Every o in every frame brightens. | NEOVIM: %s/o/O/g is the safer scope because it is shorter.",
-      "ANIMATION: Only the roof changes. | NEOVIM: R== is the equivalent indicator method.",
-      "ANIMATION: The copied frame is replaced with a third frame. | NEOVIM: 3yyGp is required after either method."
+      "ANIMATION: Only the copied row's two / strokes become \\. | NEOVIM: either replace the two matches locally or substitute / with \\ on that row.",
+      "ANIMATION: Every slash in both poses becomes \\. | NEOVIM: a whole-buffer substitute is equivalent because the poses belong together.",
+      "ANIMATION: The ~~ roof becomes \\ \\. | NEOVIM: Replace mode on the first row is the same scoped edit.",
+      "ANIMATION: A third missile is added as a banked pose. | NEOVIM: linewise yank/put performs the two stroke replacements."
     ],
     "compact_choices": [
-      "A: two copied indicators · V: local or row-scoped substitute",
-      "A: all frames' o cells · V: whole-file substitute",
-      "A: roof only · V: Replace roof",
-      "A: third frame added · V: copy again"
+      "A: two copied strokes · V: local r or row-scoped :s",
+      "A: all slash cells · V: whole-buffer :s",
+      "A: roof changes · V: Replace first row",
+      "A: third pose added · V: yank/put"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: both paths reach the same two-cell result when their scope is the copied row.",
-      "Whole-file substitution exceeds the intended acting frame.",
-      "The roof is unchanged; R== is a different material edit.",
-      "No third frame is needed after the copied row already exists."
+      "Correct: both methods change the same two cells when substitution is limited to the copied middle row.",
+      "Whole-buffer scope would also bank the earlier pose, erasing the intended contrast.",
+      "The roof remains ~~; the changed material is the pair of inner diagonal strokes.",
+      "The copied pose already exists, so another yank/put does not perform the required bank."
     ]
   },
   "M11.06.P01": {
@@ -432,57 +432,57 @@
     ]
   },
   "M11.VE.P01": {
-    "prompt": "ANIMATION\nA right edge is added at one shared column to three short rows.\n\n    BEFORE        AFTER\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n\nNEOVIM\nWhich command explanation matches the exact-column edit?",
-    "compact_prompt": "ANIMATION\nAll three rows receive one aligned edge.\n\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n\nNEOVIM\nWhat enables the empty column?",
-    "animation_prompt": "ANIMATION\nThe right bars share a display column and the cores stay still.\n\n    │| o |   |│\n    │| o |   |│\n    │| o |   |│",
-    "animation_answer": "Padding is placed at one exact column on all three rows without moving the cores.",
-    "neovim_prompt": "NEOVIM\nWhich grammar decomposes the completed path?\n\n    │| o |│\n    │| o |│\n    │| o |│",
-    "neovim_answer": ":set virtualedit=all<CR> enables N| to reach the empty column; each i| writes the edge.",
+    "prompt": "ANIMATION\nAdd a comparison edge at display column 12 on every ragged missile row. Existing glyphs must not move.\n\n    BEFORE       AFTER\n    │  ____/│    │  ____/    |│\n    │< / / |:.│  │< / / |:.  |│\n    │  ¯¯¯¯\\│    │  ¯¯¯¯\\    |│\n\nNEOVIM\nWhich feature lets N| address empty space past each line end?",
+    "compact_prompt": "ANIMATION\nAll three new bars land in column 12 despite different row lengths.\n\n    │  ____/    |│\n    │< / / |:.  |│\n    │  ¯¯¯¯\\    |│\n\nNEOVIM\nWhat enables the empty columns?",
+    "animation_prompt": "ANIMATION\nThe new right bars form one registered edge; the missile itself is unchanged.\n\n    │  ____/    |│\n    │< / / |:.  |│\n    │  ¯¯¯¯\\    |│",
+    "animation_answer": "Each bar occupies display column 12, with only empty tail padding added to the shorter rows.",
+    "neovim_prompt": "NEOVIM\nWhich grammar reaches column 12 beyond end-of-line?\n\n    │  ____/│\n    │< / / |:.│\n    │  ¯¯¯¯\\│",
+    "neovim_answer": ":set virtualedit=all<CR> permits 12| to land in virtual space; i| writes the comparison edge.",
     "choices": [
-      "ANIMATION: Three bars align at one column while cores remain registered. | NEOVIM: virtualedit=all plus exact-column motion permits each i|.",
-      "ANIMATION: Every row receives a different amount of padding. | NEOVIM: paste mode computes the edge automatically.",
-      "ANIMATION: The rows are joined before the edge is drawn. | NEOVIM: J followed by i| creates one shared line.",
-      "ANIMATION: The cores are moved right until the edge fits. | NEOVIM: x then p shifts each core and copies a bar."
+      "ANIMATION: The bars align at column 12 while every missile glyph stays fixed. | NEOVIM: virtualedit=all plus 12| permits each insertion in empty tail space.",
+      "ANIMATION: Each bar follows its row's natural end, so the edge is ragged. | NEOVIM: $ is equivalent to one shared display-column address.",
+      "ANIMATION: The three missile rows become one long row. | NEOVIM: J creates a vertical edge from joined text.",
+      "ANIMATION: Existing missile glyphs slide right to make room. | NEOVIM: x then p adds padding without changing art cells."
     ],
     "compact_choices": [
-      "A: aligned bars; cores fixed · V: virtualedit + exact columns",
-      "A: unequal padding · V: paste mode",
-      "A: joined rows · V: J/i",
-      "A: cores move · V: delete/put"
+      "A: bars at col 12; art fixed · V: virtualedit + 12|",
+      "A: bars at each EOL · V: $ is shared column",
+      "A: rows joined · V: J makes vertical edge",
+      "A: missile shifts · V: x/p pads safely"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: virtualedit allows exact-column access past short line ends, preserving registration.",
-      "Unequal padding would make the edge slant or jitter.",
-      "The rows remain separate frame rows; joining them destroys the art.",
-      "Cores are not padding; moving them changes the subject."
+      "Correct: virtual editing reaches the same absent column on every row without disturbing the missile.",
+      "End-of-line differs across these ragged rows, so $ would produce a crooked edge.",
+      "Joining rows destroys the three-row drawing and cannot create a vertical feature.",
+      "Deleting and putting changes existing cells; the intended padding belongs only beyond each line end."
     ]
   },
   "M11.08.P01": {
-    "prompt": "ANIMATION\nAdd a blur bar at the same column on both complete frames.\n\n      BEFORE          AFTER\n    1 │/==\\  /--\\│    │/==\\  /--\\│\n    2 │| o|  |o |│    │| o|  |o |  |│\n    3 │\\__|  |__/│    │\\__|  |__/│\n    4 │/~~\\  /--\\│    │/~~\\  /--\\│\n    5 │| O|  |O |│    │| O|  |O |  |│\n    6 │\\__|  |__/│    │\\__|  |__/│\n\nNEOVIM\nWhich reusable grammar completes the task?",
-    "compact_prompt": "ANIMATION\nAligned blur bars are added on rows 2 and 5 without changing either frame's core art.\n\n    2 │| o|  |o |│    │| o|  |o |  |│\n    5 │| O|  |O |│    │| O|  |O |  |│\n\nNEOVIM\nWhat grammar must be completed?",
-    "animation_prompt": "ANIMATION\nBoth homologous frame rows receive the same-column bar; roof and indicators remain as shown.\n\n    │/==\\  /--\\│\n    │| o|  |o |  |│\n    │\\__|  |__/│",
-    "animation_answer": "Use the same virtual-column placement on each corresponding row so the blur aligns across frames.",
-    "neovim_prompt": "NEOVIM\nWhich missing grammar piece makes an Ex setting execute?\n\n    │| o|  |o |  |│\n    │| O|  |O |  |│",
-    "neovim_answer": "The setting command needs <CR>; then exact-column motion and dot repeat can perform the aligned inserts.",
+    "prompt": "ANIMATION\nThe taut missile and the banked slack missile each need one trail bar at display column 12 on their middle row. The bars must align while the two poses remain distinct.\n\n      BEFORE          AFTER\n    1 │  ==__/│       │  ==__/│\n    2 │< / / |:.│     │< / / |:.  |│\n    3 │  ¯¯¯¯\\│       │  ¯¯¯¯\\│\n    4 │  ~~__/│       │  ~~__/│\n    5 │< \\ \\ |:.│     │< \\ \\ |:.  |│\n    6 │  ¯¯¯¯\\│       │  ¯¯¯¯\\│\n\nNEOVIM\nWhich reusable exact-column plan preserves both poses?",
+    "compact_prompt": "ANIMATION\nRows 2 and 5 gain aligned trail bars; / / and \\ \\ remain different.\n\n    2 │< / / |:.  |│\n    5 │< \\ \\ |:.  |│\n\nNEOVIM\nWhat must be repeated?",
+    "animation_prompt": "ANIMATION\nThe same-column bars create a stable trail reference across two distinct missile poses.\n\n    │< / / |:.  |│\n    │< \\ \\ |:.  |│",
+    "animation_answer": "Both middle rows receive a bar at column 12; the taut and banked stroke patterns remain untouched.",
+    "neovim_prompt": "NEOVIM\nWhich sequence of ideas reaches both homologous rows?\n\n    2 │< / / |:.│\n    5 │< \\ \\ |:.│",
+    "neovim_answer": "Enable virtual editing, address row 2 column 12, insert a bar, move three rows to row 5, and address column 12 again.",
     "choices": [
-      "ANIMATION: Bars align across both frames and existing cells stay fixed. | NEOVIM: finish the setting with <CR>, then use exact-column motion and dot repeat.",
-      "ANIMATION: Bars alternate columns so the frames visibly diverge. | NEOVIM: omit <CR>; the setting runs when the cursor moves.",
-      "ANIMATION: Both frames are rebuilt from scratch. | NEOVIM: replace virtualedit with dd and p.",
-      "ANIMATION: The blur is added by changing all indicator cells. | NEOVIM: use %s/o/|/g without a column address."
+      "ANIMATION: Both bars share column 12 and the two stroke poses remain distinct. | NEOVIM: enable virtual editing, use 12| on row 2, jump to row 5, and use 12| again.",
+      "ANIMATION: The trail bars intentionally alternate columns. | NEOVIM: use $ on each ragged row because end-of-line is a shared address.",
+      "ANIMATION: Both missiles are replaced by one copied pose. | NEOVIM: delete rows 4-6 and put rows 1-3 over them before adding a bar.",
+      "ANIMATION: The / / and \\ \\ strokes become trail glyphs. | NEOVIM: substitute every slash and backslash with | across the file."
     ],
     "compact_choices": [
-      "A: aligned bars; art stable · V: execute setting with CR",
-      "A: alternating bars · V: omit CR",
-      "A: rebuild frames · V: delete/put",
-      "A: indicators become bars · V: whole-file substitute"
+      "A: bars col 12; poses preserved · V: virtualedit, 12| twice",
+      "A: staggered bars · V: $ is shared column",
+      "A: one pose copied over other · V: delete/put",
+      "A: inner strokes become trails · V: global substitute"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: execution of the setting and exact-column repetition are both part of the reusable grammar.",
-      "Without <CR> the Ex setting is not executed, and alternating columns are not the target.",
-      "The task preserves authored frames; deleting and putting them loses that evidence.",
-      "A blur bar is a new aligned column, not an indicator replacement."
+      "Correct: the row jump changes the acting pose, while the repeated column address keeps the trail registered.",
+      "These rows have different content lengths; $ does not express one shared display column.",
+      "Overwriting the banked pose with the taut pose destroys the animation contrast the check is meant to preserve.",
+      "The trail is added beyond end-of-line; changing the inner diagonals damages the missile drawing."
     ]
   },
   "M1.Q01": {

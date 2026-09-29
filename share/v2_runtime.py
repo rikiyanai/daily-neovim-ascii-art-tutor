@@ -2172,7 +2172,7 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
     if not concept_replay:
         path = " → ".join(keys for keys, _why in card.get("recipe", [])
                           if keys != card.get("cursor"))
-        print("%sDO / AVOID%s  %s · required commands in order · exact saved target" % (
+        print("%sDO / AVOID%s  %s · exact target" % (
             bold, off, path or card.get("expected", "(none)")))
         width = max(40, shutil.get_terminal_size((80, 24)).columns - 4)
         breakdown = _answer_breakdown(card, width=width)
@@ -2259,7 +2259,11 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
         # until title, status, DO THIS, replay, and the Enter prompt all fit.
         import contextlib
         import io
-        status_lines = 2
+        # The popup's usable text width is narrower than the outer terminal.
+        # Result headings that include a card title therefore occupy two rows
+        # at 80 columns, followed by the one-line outcome.  Reserving only two
+        # rows let tmux scroll the ATTEMPT/COMPLETE heading off the top.
+        status_lines = 3
         available = (shutil.get_terminal_size((80, 24)).lines
                      - status_lines - do_lines - _FEEDBACK_TRAILER_LINES)
         ledger_total = max(1, len((replay or {}).get("table", [])) - 2)

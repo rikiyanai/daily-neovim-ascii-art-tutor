@@ -5346,3 +5346,63 @@ check) passes the real-user-config headed popup at **80×24, 100×36, and
 188×49**. The first concurrent 80×24 `M0.YP` driver run recorded an incorrect
 bright copied core; the same route passed immediately in isolation and at both
 larger sizes, so no product pass is claimed from that anomalous run itself.
+
+### VD-55 follow-through · revision `.63` — M11 now uses a sourced missile project
+
+The seven unsourced M11 cards named in the original inventory now use the
+three-row `official-Games/TowerDefense` res18 missile as one registered
+project: roof tension, complete-frame copy, a local inner-stroke edit, a
+row-scoped slash edit, and virtual-column trail alignment. Existing specialist
+cards remain source-backed SnowBunny, Skully, Chick, and Snail studies. Thus
+all **12/12 executable M11 cards** now identify their actual source; seven are
+newly converted in this revision.
+
+All **17 M11 question records** were rewritten individually. Each prints the
+missile or the named specialist pose being reasoned about, asks one concrete
+animation decision and one concrete Neovim decision, and gives mistake-specific
+feedback. No question template or token substitution authored those records.
+The M11 source/fallback prose, comparison reflection, diagnostic distractors,
+sequence reading, and catalog contract were changed with the art so that the
+old generic machine/indicator wording cannot reappear.
+
+The sourced-primary total rises from 55/178 to **62/178**. The no-source total
+falls from 120 to **113**; three additional primary cards retain non-official
+source metadata. This converts M11, not the remaining 113-card inventory.
+
+**Proof:** all 219 cards and 178 clean-Neovim recipes pass; all 399 questions
+pass the question-quality checks; Stone Story variant, provenance, animation
+pack/integration, 46-drill, and installer suites pass. Every M11 route—14
+cards including its concept checks, transfer, and module check—passes the real
+user-config popup at **80×24, 100×36, and 188×49**.
+
+**Boundary:** source excerpts remain local tutor evidence. Nothing was pushed,
+published, archived, transformed for transport, or placed in Git LFS.
+
+## VD-56 · 2026-09-29 — compact feedback and headed tests hid or misread valid UI
+
+**Finding 1 — real UI defect:** at 80×24 the compact feedback fitter reserved
+two status rows although the card heading wrapped and the outcome occupied a
+third. tmux therefore scrolled `ATTEMPT NOT PASSED` off the top, leaving only
+the end of the title (`it`). The fitter now reserves the wrapped heading row,
+and its compact `DO / AVOID` summary no longer repeats redundant prose. The
+status heading, DO THIS, two-column YOURS/TARGET replay, keystroke ledger,
+answer breakdown, source, and progress prompt remain simultaneously visible.
+
+**Finding 2 — stale test contract:** the popup test required literal
+`BEFORE`/`AFTER` labels even when compact mode deliberately renders the same
+visual as `│source│ → │target│`. It now checks the viewport-specific authored
+stem, both domains, visible art, and all four choices. The clipboard route is
+held to the exact question displayed rather than to undisplayed long-form
+labels.
+
+**Finding 3 — hidden route coverage:** the module-check driver and comparison
+keylog assertions were tied to M0 wording and IDs. They now derive the selected
+card, its five questions, recipe, and method family from curriculum data.
+`M3.06` passes directly at 80×24, 100×36, and 188×49. Every later transfer,
+`M3.06` through `M19.06`, also passes independently at 80×24, so an early
+driver exit can no longer be reported as evidence for unexecuted later cards.
+
+**Proof:** the baseline automatic popup and five-question module-check popup
+both pass at **80×24, 100×36, and 188×49** with the real user config. No claim
+is made that this source conversion or route proof closes VD-55's remaining
+113 unsourced primary cards.
