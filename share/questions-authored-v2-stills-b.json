@@ -378,30 +378,30 @@
     ]
   },
   "M5.06.P01": {
-    "prompt": "ANIMATION\nOn the unfamiliar triangular scene, what visible relationship must the repair restore?\n\n    BEFORE         AFTER\n    │  /\\      │   │  /\\      │\n    │ /  \\     │   │ /  \\     │\n    │/____o----│   │/____o----│\n    │.....|....│   │..... ....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n\nNEOVIM\nWhich bounded transfer explanation is correct after the edit?",
-    "compact_prompt": "ANIMATION\nBreak the new pivot/background contact.\n\n    │/____o----│\n    │..... ....│\n\nNEOVIM\nKeep the unfamiliar frame registered.",
-    "animation_prompt": "The triangular foreground remains intact while the one background bar below its pivot becomes blank; texture and ground do not move.\n\n    BEFORE         AFTER\n    │  /\\      │   │  /\\      │\n    │ /  \\     │   │ /  \\     │\n    │/____o----│   │/____o----│\n    │.....|....│   │..... ....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│",
-    "animation_answer": "Transfer the one-cell seam repair to the new pivot without changing the unfamiliar foreground or supports.",
-    "neovim_prompt": "What command path matches that transfer?",
-    "neovim_answer": "Use the taught counted landmark motion to the touching bar, then `r `; do not redraw or delete surrounding rows.",
+    "prompt": "ANIMATION\nThis four-row Ironclad mask is assembled from source layers. The tutor inserted one false bar between the two brow shapes. Restore the negative-space seam without moving any mask stroke.\n\nSTART\n   _|._\n  ,\\'-.\\\n  ||\\`~/\n  ',``'\n\nTARGET\n   _ ._\n  ,\\'-.\\\n  ||\\`~/\n  ',``'\n\nNEOVIM\nWhich choice removes exactly the false connection and preserves the composite?",
+    "compact_prompt": "ANIMATION\nRestore the gap between the Ironclad brow layers.\n\n│   _|._│  →  │   _ ._│\n│  ,\\'-.\\│     │  ,\\'-.\\│\n│  ||\\`~/│      │  ||\\`~/│\n│  ',``'│      │  ',``'│\n\nNEOVIM\nWhich one-cell overwrite is bounded to that seam?",
+    "animation_prompt": "ANIMATION\nThe complete Ironclad mask remains registered. Only the injected bar between the top-layer shapes becomes negative space.",
+    "animation_answer": "Replace the false bar with a space while preserving every source-authored mask stroke and all four row widths.",
+    "neovim_prompt": "NEOVIM\nDecode `0f|r ` on the first row of the shown mask.",
+    "neovim_answer": "0 starts at the row edge, f| finds the false bar, and r-space overwrites that one cell without insertion.",
     "choices": [
-      "ANIMATION: Only the background bar beneath the triangle's pivot becomes blank. | NEOVIM: counted landmark motion plus `r ` reaches the seam.",
-      "ANIMATION: The triangular outline is replaced by the original blade. | NEOVIM: copy the old foreground rows over it.",
-      "ANIMATION: The ground changes to match the new glyphs. | NEOVIM: substitute across the entire seven-row block.",
-      "ANIMATION: The transfer frame is omitted because its art is unfamiliar. | NEOVIM: navigate without making an edit."
+      "ANIMATION: Only the false brow connection becomes a gap. | NEOVIM: `0f|r ` finds that bar and overwrites it with one space.",
+      "ANIMATION: Delete the entire first mask row. | NEOVIM: `f|` selects the row for deletion.",
+      "ANIMATION: Shift the right brow one cell right. | NEOVIM: `r ` inserts a new blank before the bar.",
+      "ANIMATION: Remove every vertical stroke in the mask. | NEOVIM: `r ` replaces every `|` in the buffer."
     ],
     "compact_choices": [
-      "A: seam blank; triangle fixed · V: landmark motion + `r `",
-      "A: replace triangle · V: copy old blade",
-      "A: change ground · V: block substitute",
-      "A: omit transfer · V: navigation only"
+      "A: seam only · V: find bar, replace with space",
+      "A: delete first row · V: f selects row",
+      "A: shift brow · V: r inserts",
+      "A: erase all bars · V: r is global"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the method transfers by visual landmark and one-cell replacement.",
-      "The unfamiliar foreground is the subject to preserve, not overwrite.",
-      "The ground is a registration anchor and outside the repair scope.",
-      "Transfer requires the same bounded edit on changed art; navigation alone cannot reach TARGET."
+      "Correct: the bar is a visible landmark, and r-space restores one negative-space cell without changing width.",
+      "f is a motion to one character. It neither selects nor deletes the complete row.",
+      "r overwrites an existing cell; it does not insert a new column or shift the brow.",
+      "r affects only the cursor cell. It is not a file-wide replacement command."
     ]
   },
   "M5.08.P01": {
@@ -810,30 +810,30 @@
     ]
   },
   "M10.06.P01": {
-    "prompt": "ANIMATION\nThe unfamiliar transfer shoulder must change while its body stays registered.\n\n    BEFORE    AFTER\n    │　　｀? │   │　　｀ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n\nNEOVIM\nWhich bounded path would reach TARGET after the edit?",
-    "compact_prompt": "ANIMATION\nOne shoulder glyph is missing.\n\n    │　　｀? │   │　（　　）│\n    │　　ヽ_ノ│\n\nNEOVIM\nChoose a one-cell row-end path.",
-    "animation_prompt": "The transfer target adds ヽ to the shoulder and leaves both lower rows exactly as they were.\n\n    BEFORE    AFTER\n    │　　｀? │   │　　｀ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│",
-    "animation_answer": "Complete only the missing shoulder partner; preserve the registered body.",
-    "neovim_prompt": "Which command path matches the target?",
-    "neovim_answer": "A row-end motion followed by `rヽ` reaches TARGET with one fixed-width overwrite.",
+    "prompt": "ANIMATION\nThis complete four-row AAHub smoke puff uses the measured `⌒ヽ` shoulder idiom. Restore the redacted partner glyph and leave the body, tail, full-width spaces, and proportions untouched.\n\nSTART\n　　r'⌒?.\n　 (　　 　 )\n　　　)ノ´\n　　（\n\nTARGET\n　　r'⌒ヽ.\n　 (　　 　 )\n　　　)ノ´\n　　（\n\nNEOVIM\nWhich path repairs one visible glyph without rebuilding the puff?",
+    "compact_prompt": "ANIMATION\nRestore `⌒ヽ` in the complete smoke puff.\n\n　　r'⌒?.  →  　　r'⌒ヽ.\n　 (　　 　 )\n　　　)ノ´\n　　（\n\nNEOVIM\nWhich bounded edit uses `?` as its landmark?",
+    "animation_prompt": "ANIMATION\nThe smoke puff remains a complete source-authored form. Only the redacted shoulder partner changes from `?` to `ヽ`.",
+    "animation_answer": "Restore the `⌒ヽ` shoulder and preserve the other three rows and the puff's full-width spacing.",
+    "neovim_prompt": "NEOVIM\nDecode `0f?rヽ` on the first row.",
+    "neovim_answer": "0 starts at the row edge, f? finds the redacted glyph, and rヽ overwrites exactly that cell.",
     "choices": [
-      "ANIMATION: Shoulder only changes; body remains fixed. | NEOVIM: row-end motion plus `rヽ` reaches TARGET.",
-      "ANIMATION: Body rows widen with the shoulder. | NEOVIM: use `C` on all three rows.",
-      "ANIMATION: The shoulder row is copied into the body. | NEOVIM: yank the first row and put it twice.",
-      "ANIMATION: A cell is inserted before the shoulder. | NEOVIM: use `iヽ` and accept the width change."
+      "ANIMATION: Restore only the shoulder partner and keep the complete puff registered. | NEOVIM: `0f?rヽ` finds `?` and replaces that one glyph.",
+      "ANIMATION: Widen all four smoke rows. | NEOVIM: `rヽ` inserts a new glyph and shifts the rest of the first row.",
+      "ANIMATION: Copy the shoulder row over the body. | NEOVIM: `f?` yanks the current row for reuse.",
+      "ANIMATION: Change the lower `ノ` into `ヽ` too. | NEOVIM: one `rヽ` repeats on matching glyphs in later rows."
     ],
     "compact_choices": [
-      "A: shoulder only · V: end motion + `rヽ`",
-      "A: body widens · V: `C` all rows",
-      "A: shoulder copied down · V: yank/put twice",
-      "A: insert cell · V: `iヽ`"
+      "A: shoulder only · V: find ? and replace",
+      "A: widen all rows · V: r inserts",
+      "A: copy shoulder row · V: f yanks",
+      "A: change lower stroke · V: r repeats"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the transferred method remains a one-cell row-end replacement.",
-      "The lower rows are unchanged in TARGET.",
-      "Copying rows changes the pose topology rather than filling the shoulder.",
-      "Insertion shifts later cells and violates fixed-width authoring."
+      "Correct: the placeholder is a visible landmark and r restores one source glyph without reflowing the puff.",
+      "r overwrites one existing glyph; it does not insert or widen the row.",
+      "f moves to a character. It does not yank the row or alter the body.",
+      "r performs one replacement at the cursor and does not continue into later rows."
     ]
   },
   "M10.08.P01": {

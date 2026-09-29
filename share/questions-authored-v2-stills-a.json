@@ -891,30 +891,30 @@
     ]
   },
   "M1.06.P01": {
-    "prompt": "ANIMATION\nAn unfamiliar anchored contour needs the same joint material.\n\n    BEFORE       AFTER\n    │      _.´│   │      _.´│\n    │   _.-  │    │   _.-  │\n    │o_.,    │    │o_.:    │\n\nNEOVIM\nWhich bounded path reaches TARGET?",
-    "compact_prompt": "ANIMATION\nThe unfamiliar comma joint becomes colon; endpoint remains.\n\n    │      _.´│\n    │   _.-  │\n    │o_.,    │  →  │o_.:    │\n\nNEOVIM\nWhich search transfers the material rule?",
-    "animation_prompt": "ANIMATION\nOnly the unfamiliar joint changes; the anchor and slope stay registered.\n\n    │o_.,    │  →  │o_.:    │",
-    "animation_answer": "Apply the same joint-material choice to the visible landmark without moving the endpoint.",
-    "neovim_prompt": "NEOVIM\nWhich path reaches the changed joint without a column count?\n\n    │      _.´│\n    │   _.-  │\n    │o_.,    │",
-    "neovim_answer": "G0f,r: finds the comma from the row start, then replaces it with colon.",
+    "prompt": "ANIMATION\nThis Acronian wing study keeps its five-row silhouette. Only the comma joint on row 4 becomes a colon; every slash, gap, and endpoint stays registered.\n\nSTART\n  /‾‾‾‾‾`.\n /  `     `.\n \\   _____` \\\n  \\`/     `,/\n   \\;\n\nTARGET\n  /‾‾‾‾‾`.\n /  `     `.\n \\   _____` \\\n  \\`/     `:/\n   \\;\n\nNEOVIM\nWhich choice changes that one visible joint without relying on a memorised column?",
+    "compact_prompt": "ANIMATION\nKeep the complete Acronian wing fixed; change only `,` to `:` on row 4.\n\n│ \\   _____` \\ │\n│  \\`/     `,/ │  →  │  \\`/     `:/ │\n\nNEOVIM\nWhich bounded landmark edit does that?",
+    "animation_prompt": "ANIMATION\nThe source-authored wing remains a complete five-row still. The punctuation joint changes material in place; the contour does not shift.",
+    "animation_answer": "Change only the comma joint to a colon and preserve every other cell of the Acronian wing.",
+    "neovim_prompt": "NEOVIM\nDecode `4G0f,r:`: which part finds the visible joint, and which part overwrites it?",
+    "neovim_answer": "4G selects row 4, 0 starts at its left edge, f, finds the comma landmark, and r: overwrites that one cell.",
     "choices": [
-      "ANIMATION: Change only the unfamiliar joint and preserve its anchor. | NEOVIM: G0f,r: reaches the comma by landmark.",
-      "ANIMATION: Reverse the contour's bytes. | NEOVIM: 3ddGp mirrors it automatically.",
-      "ANIMATION: Shift the endpoint one column left. | NEOVIM: 5l counts to the old joint position.",
-      "ANIMATION: Change every dot and comma. | NEOVIM: :%s/[.,]/:/g has the same bounded effect."
+      "ANIMATION: Change only the row-4 comma joint; preserve the whole wing. | NEOVIM: `4G0f,r:` finds the comma and replaces that cell with a colon.",
+      "ANIMATION: Move the lower contour one cell left. | NEOVIM: `f,` deletes everything before the comma.",
+      "ANIMATION: Replace every punctuation mark in the wing. | NEOVIM: `r:` changes all commas after the cursor.",
+      "ANIMATION: Reverse the five source rows. | NEOVIM: `4G` mirrors the current row automatically."
     ],
     "compact_choices": [
-      "A: one unfamiliar joint · V: find comma, replace",
-      "A: byte-reverse contour · V: delete/put mirror",
-      "A: endpoint shifts · V: old-column count",
-      "A: all punctuation · V: global class substitute"
+      "A: joint only · V: row, find comma, replace",
+      "A: shift contour · V: f deletes prefix",
+      "A: all punctuation · V: r is global",
+      "A: reverse wing · V: G mirrors"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the visible comma is the landmark, and the anchor remains untouched.",
-      "The transfer requires a deliberate local edit, not an automatic mirror.",
-      "The endpoint is part of the invariant and must not shift.",
-      "The target names one joint, not all punctuation in the art."
+      "Correct: the visible comma is the landmark, and r changes one cell without shifting the contour.",
+      "f is a motion: it moves to the comma but does not delete the cells it crosses.",
+      "r overwrites only the cursor cell. It does not search for or replace later punctuation.",
+      "4G selects a line; it does not transform or mirror the line's contents."
     ]
   },
   "M1.08.P01": {
@@ -1323,30 +1323,30 @@
     ]
   },
   "M19.06.P01": {
-    "prompt": "ANIMATION\nUnfamiliar fixed-rail art needs a hand-authored mirrored direction.\n\n    │   /+\\   │\n    │ __/x\\   │\n    │<==/|\\   │\n    │   / \\   │\n    │__/___\\__|\n\nNEOVIM\nWhich bounded method reaches the unseen target?",
-    "compact_prompt": "ANIMATION\nThe unfamiliar eye, slashes, and arrow are mirrored; rails stay.\n\n    │ __/x\\   │   │   /x\\__ │\n    │<==/|\\   │   │   /|\\==>|\n\nNEOVIM\nWhich method proves deliberate row authoring?",
-    "animation_prompt": "ANIMATION\nOnly directional rows are changed; the fixed rails, height, and base remain.\n\n    │ __/x\\   │  →  │   /x\\__ │\n    │<==/|\\   │      │   /|\\==>|",
-    "animation_answer": "Transfer hand mirroring with fixed-width Virtual Replace on each directional row.",
-    "neovim_prompt": "NEOVIM\nWhich path family matches the target?\n\n    │   /+\\   │\n    │ __/x\\   │\n    │<==/|\\   │",
-    "neovim_answer": "Use gR on the three directional rows and exit each row with its fixed rails intact.",
+    "prompt": "ANIMATION\nHand-mirror this complete Acronian folded mid-wing. The outer edge, inner fold, accents, and empty space must be authored deliberately; both rails stay fixed.\n\nSTART\n|         ____ |\n|   /‾‾‾‾‾  ` \\|\n|   \\ `  ___.,/|\n|    \\  /_/\\   |\n|     \\ ‾` /   |\n|      ‾‾‾‾    |\n\nTARGET\n| ____         |\n|/ ´  ‾‾‾‾‾\\   |\n|\\,.___  ´ /   |\n|   /\\_\\  /    |\n|   \\ ´‾ /     |\n|    ‾‾‾‾      |\n\nNEOVIM\nWhich method redraws six complete fixed-width rows without inserting columns or mechanically reversing bytes?",
+    "compact_prompt": "ANIMATION\nMirror the complete folded Acronian wing; preserve both rails.\n\n|   \\ `  ___.,/|  →  |\\,.___  ´ /   |\n|    \\  /_/\\   |     |   /\\_\\  /    |\n\nNEOVIM\nWhich mode overwrites complete display rows?",
+    "animation_prompt": "ANIMATION\nThe target is the source-authored opposite folded wing, not a reversed string. All six rows remain between fixed rails.",
+    "animation_answer": "Author the six target rows explicitly, choosing the correct outer edge, inner fold, accents, and gaps while preserving both rails.",
+    "neovim_prompt": "NEOVIM\nWhy use a bounded `0gR...<Esc>` pass on each row?",
+    "neovim_answer": "0 begins at the left rail, gR overwrites display cells with the authored target, and Escape ends that row before moving down; repeat for all six rows.",
     "choices": [
-      "ANIMATION: Hand-author the unfamiliar mirror while preserving both rails. | NEOVIM: bounded gR passes on the three directional rows reach TARGET.",
-      "ANIMATION: Reverse all stored bytes and accept the result. | NEOVIM: ! is sufficient because the shell is symmetric.",
-      "ANIMATION: Insert a second set of slashes beside the old set. | NEOVIM: i writes the target without changing width.",
-      "ANIMATION: Change only x and leave the arrow direction. | NEOVIM: one r replaces every directional row."
+      "ANIMATION: Hand-author all six mirrored wing rows while preserving both rails. | NEOVIM: bounded `0gR...<Esc>` passes overwrite each complete display row.",
+      "ANIMATION: Reverse each row's bytes and accept the glyph directions. | NEOVIM: gR automatically reverses text.",
+      "ANIMATION: Insert the mirrored wing beside the old one. | NEOVIM: gR inserts cells and shifts the right rail.",
+      "ANIMATION: Change only the top edge and leave the inner fold facing left. | NEOVIM: one `r` command redraws all six rows."
     ],
     "compact_choices": [
-      "A: hand-authored mirror; rails fixed · V: repeated gR",
-      "A: byte reversal · V: automatic flip",
-      "A: duplicate slashes · V: insert preserves width",
-      "A: x only · V: one r for rows"
+      "A: author six rows; rails fixed · V: bounded gR",
+      "A: byte reverse · V: gR auto-reverses",
+      "A: insert second wing · V: gR shifts rail",
+      "A: top edge only · V: one r redraws rows"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the unseen transfer uses deliberate fixed-width row replacements.",
-      "Byte reversal does not establish correct spacing or directional glyph roles.",
-      "Insertion would duplicate strokes and shift rails.",
-      "The target changes several directional rows, not just x."
+      "Correct: Virtual Replace supports a deliberate row-for-row redraw while the rails expose any width drift.",
+      "gR overwrites what you type; it does not reverse a string or choose directional glyphs for you.",
+      "Virtual Replace overwrites display cells. The target replaces the old pose rather than adding a second one.",
+      "The inner fold and five other rows also change direction and spacing, so a one-cell replacement cannot reach the target."
     ]
   },
   "M19.08.P01": {

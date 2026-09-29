@@ -398,6 +398,29 @@ def require_method(label, any_of=None, max_tokens=None, all_of=None,
     return rule
 
 
+def full_row_rewrite(rows, mode):
+    """Explicitly rewrite each supplied fixed-width row, one row at a time."""
+    return "j".join("0%s%s<Esc>" % (mode, row) for row in rows)
+
+
+PALLAS_LEFT_CALM_RAILS = stone_story_variants.fixed_rails(
+    stone_story_variants.PALLAS_GHOST_LEFT_CALM, 10)
+PALLAS_RIGHT_CALM_RAILS = stone_story_variants.fixed_rails(
+    stone_story_variants.PALLAS_GHOST_RIGHT_CALM, 10)
+PALLAS_LEFT_STRAIN_RAILS = stone_story_variants.fixed_rails(
+    stone_story_variants.PALLAS_GHOST_LEFT_STRAIN, 10)
+PALLAS_RIGHT_STRAIN_RAILS = stone_story_variants.fixed_rails(
+    stone_story_variants.PALLAS_GHOST_RIGHT_STRAIN, 10)
+ACRONIAN_LEFT_F2_RAILS = stone_story_variants.fixed_rails(
+    stone_story_variants.ACRONIAN_WING_LEFT_F2, 14)
+ACRONIAN_RIGHT_F2_RAILS = stone_story_variants.fixed_rails(
+    stone_story_variants.ACRONIAN_WING_RIGHT_F2, 14)
+ACRONIAN_LEFT_MID_RAILS = stone_story_variants.fixed_rails(
+    stone_story_variants.ACRONIAN_WING_LEFT_MID, 14)
+ACRONIAN_RIGHT_MID_RAILS = stone_story_variants.fixed_rails(
+    stone_story_variants.ACRONIAN_WING_RIGHT_MID, 14)
+
+
 MODULES = [
     {
         "id": "M0", "title": "Spark loop", "node": "A1/V0", "project": "spark-loop",
@@ -575,20 +598,31 @@ MODULES = [
                  ["8G0f;r:", "soften only the settle joint so the loop seam is not a dead duplicate"]],
             ),
         ],
-        "transfer": step(
-            ["      _.´", "   _.-   ", "o_.,     "],
-            ["      _.´", "   _.-   ", "o_.:     "],
+        "transfer": dict(step(
+            stone_story_variants.ACRONIAN_WING_LEFT_F1,
+            stone_story_variants.ACRONIAN_WING_LEFT_F1[:3]
+            + ["  \\`/     `:/", stone_story_variants.ACRONIAN_WING_LEFT_F1[4]],
+            "4G0f,r:",
+            [["4G0f,", "find the low punctuation joint on the fourth wing row"],
+             ["r:", "centre that one joint without moving the feather contour"]],
+        ), frame_rows=5,
+           source="official-Cosmetics/AcronianGuardian res06 left-wing frame 1; authored comma-to-colon joint study",
+           prompt=(
+               "On Acronian Guardian's complete left wing, centre only the low comma "
+               "joint as a colon; preserve all five source rows and every feather edge."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.ACRONIAN_WING_RIGHT_F2,
+            stone_story_variants.ACRONIAN_WING_RIGHT_F2[:4] + ["\\:.´"],
             "G0f,r:",
-            [["G0f,", "find the uncertain joint in an unfamiliar anchored contour"],
-             ["r:", "apply the same material vocabulary without moving the endpoint"]],
-        ),
-        "transfer_alt": step(
-            ["´._      ", "   `-._  ", "     ,._o"],
-            ["´._      ", "   `-._  ", "     :._o"],
-            "G0f,r:",
-            [["G0f,", "find the corresponding joint in the mirrored contour"],
-             ["r:", "use the same declared joint glyph"]],
-        ),
+            [["G0f,", "find the comma joint on the final row of the downstroke wing"],
+             ["r:", "centre only that joint while the full wing remains registered"]],
+        ), frame_rows=5,
+           source="official-Cosmetics/AcronianGuardian res11 right-wing frame 2; authored comma-to-colon joint study",
+           prompt=(
+               "On the mirrored downstroke wing, centre only the final-row comma joint "
+               "as a colon; preserve the complete source silhouette."
+           )),
     },
     {
         "id": "M2", "title": "Face focus", "node": "S3/V2", "project": "shape-edit",
@@ -969,24 +1003,28 @@ MODULES = [
                  ["rO", "mark the intended foreground junction without reconnecting the background"]],
             ),
         ],
-        "transfer": step(
-            ["  /\\      ", " /  \\     ", "/____o----",
-             ".....|....", "..........", "==========", "__________"],
-            ["  /\\      ", " /  \\     ", "/____o----",
-             "..... ....", "..........", "==========", "__________"],
-            "4G05lr ",
-            [["4G05l", "reach the background stroke touching the new foreground pivot"],
-             ["r ", "break the false connection from the background side"]],
-        ),
-        "transfer_alt": step(
-            ["    /\\    ", "---/  \\   ", "  /___x---",
-             "......|...", "..........", "~~~~~~~~~~", "__________"],
-            ["    /\\    ", "---/  \\   ", "  /___x---",
-             "...... ...", "..........", "~~~~~~~~~~", "__________"],
-            "4G06lr ",
-            [["4G06l", "find the changed composition's touching background seam"],
-             ["r ", "erase only that covered cell"]],
-        ),
+        "transfer": dict(step(
+            ["   _|._"] + stone_story_variants.IRONCLAD_MASK_COMPOSITE[1:],
+            stone_story_variants.IRONCLAD_MASK_COMPOSITE,
+            "0f|r ",
+            [["0f|", "find the injected background bar joining the two brow layers"],
+             ["r ", "restore the source-authored negative-space break in place"]],
+        ), source="official-Hats/IroncladMask res01-res04 exact four-layer composite; tutor-injected false seam",
+           prompt=(
+               "Repair the Ironclad mask composite by erasing only the false bar between "
+               "its two top-layer shapes; preserve every source-authored mask stroke."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.IRONCLAD_MASK_COMPOSITE[:3] + [" |',``'"],
+            stone_story_variants.IRONCLAD_MASK_COMPOSITE,
+            "G0f|r ",
+            [["G0f|", "find the injected lower-layer bar on the final row"],
+             ["r ", "remove only that false depth connection without shifting the mask"]],
+        ), source="official-Hats/IroncladMask res01-res04 exact four-layer composite; alternate tutor-injected false seam",
+           prompt=(
+               "Repair the alternate Ironclad layer fault by erasing only the leading bar "
+               "on its final row; recover the exact source composite."
+           )),
     },
     {
         "id": "M6", "title": "Pyramid build", "node": "A5/V6", "project": "pyramid-build",
@@ -1427,20 +1465,30 @@ MODULES = [
                 [[":1,3t$", "return to the complete lobe frame as the proportional settle"]],
             ),
         ],
-        "transfer": step(
-            ["　　｀?", "　（　　）", "　　ヽ_ノ"],
-            ["　　｀ヽ", "　（　　）", "　　ヽ_ノ"],
-            "$rヽ",
-            [["$", "reach the unknown partner in a changed complete puff"],
-             ["rヽ", "complete the ｀ヽ shoulder while preserving both registered rows"]],
-        ),
-        "transfer_alt": step(
-            ["　／?＼", "（　　　）", "　＼＿／"],
-            ["　／￣＼", "（　　　）", "　＼＿／"],
-            "0f?r￣",
-            [["0f?", "find the missing shoulder partner in the alternate expansion pose"],
-             ["r￣", "complete the ／￣ shoulder without changing the bowl"]],
-        ),
+        "transfer": dict(step(
+            ["　　r'⌒?.", "　 (　　 　 )", "　　　)ノ´", "　　（"],
+            ["　　r'⌒ヽ.", "　 (　　 　 )", "　　　)ノ´", "　　（"],
+            "0f?rヽ",
+            [["0f?", "find the redacted partner inside the source lobe"],
+             ["rヽ", "restore the measured ⌒ヽ shoulder without reflowing the puff"]],
+        ), frame_rows=4,
+           source="AAHub bakuhatsu-kemuri resK-119 complete four-row smoke puff; one source glyph redacted for retrieval",
+           prompt=(
+               "Restore the missing ヽ in the complete AAHub smoke puff's ⌒ヽ shoulder; "
+               "preserve its body, tail, leading-space pattern, and proportional text."
+           )),
+        "transfer_alt": dict(step(
+            ["　　 r'⌒?.", "　 (´　　 　｀)", "　　ゝ,___,ノ´ﾐ"],
+            ["　　 r'⌒ヽ.", "　 (´　　 　｀)", "　　ゝ,___,ノ´ﾐ"],
+            "0f?rヽ",
+            [["0f?", "find the redacted partner in the alternate corpus lobe"],
+             ["rヽ", "restore only the source-authored ⌒ヽ idiom"]],
+        ), frame_rows=3,
+           source="AAHub bakuhatsu-kemuri resK-123 first complete three-row smoke puff; one source glyph redacted for retrieval",
+           prompt=(
+               "Restore the missing ヽ in the alternate AAHub puff's ⌒ヽ shoulder; "
+               "leave its full-width spaces, lower contour, and ﾐ wisp unchanged."
+           )),
     },
     {
         "id": "M11", "title": "Fixed-width redraw", "node": "S0/V11", "project": "redraw-lab",
@@ -2468,7 +2516,7 @@ MODULES = [
                 ],
             ),
         ],
-        "transfer": step(
+        "transfer": dict(step(
             ["    _", " ,'   `.", "/    1  \\", "\\       /", " \\/|..-'"],
             ["    _", " ,'   `.", "/    2  \\", "\\       /", " \\/|..-'"],
             "3G0f1<C-a>",
@@ -2477,8 +2525,12 @@ MODULES = [
             method_requirement=require_method(
                 "increment the embedded FrogBog frame number without redrawing the pad",
                 exact_any_of=["3G0f1<C-a>"]),
-        ),
-        "transfer_alt": step(
+        ), source="official-Games/FrogBog res05 -> res06 lily-pad frames",
+           prompt=(
+               "Advance only the number drawn inside the complete FrogBog lily pad "
+               "from 1 to 2; preserve all five source contour rows."
+           )),
+        "transfer_alt": dict(step(
             ["    _", " ,'   `.", "/    2  \\", "\\       /", " \\/|..-'"],
             ["    _", " ,'   `.", "/    3  \\", "\\       /", " \\/|..-'"],
             "3G0f2<C-a>",
@@ -2487,7 +2539,11 @@ MODULES = [
             method_requirement=require_method(
                 "increment the alternate embedded FrogBog frame number",
                 exact_any_of=["3G0f2<C-a>"]),
-        ),
+        ), source="official-Games/FrogBog res06 -> res07 lily-pad frames",
+           prompt=(
+               "Advance only the number drawn inside the alternate complete FrogBog "
+               "lily pad from 2 to 3; preserve all five source contour rows."
+           )),
     },
     {
         "id": "M17", "title": "Coherent anchors", "node": "A3/V17",
@@ -2847,24 +2903,36 @@ MODULES = [
                 ],
             ),
         ],
-        "transfer": step(
-            ["|*===>....|", "|.<|......|", "|./.\\.....|", "CHECK=0"],
-            ["|....<===*|", "|......|>.|", "|...../.\\.|", "CHECK=0"],
-            "0C|....<===*|<Esc>j0C|......|>.|<Esc>j0C|...../.\\.|<Esc>",
-            [["C on three rows", "hand-author every directional row in the unfamiliar full-frame mirror"]],
+        "transfer": dict(step(
+            PALLAS_LEFT_CALM_RAILS,
+            PALLAS_RIGHT_CALM_RAILS,
+            full_row_rewrite(PALLAS_RIGHT_CALM_RAILS, "C"),
+            [["C on six fixed-rail rows", "hand-author the complete source-authored right ghost, including accent and tail spacing"]],
             method_requirement=require_method(
-                "transfer full-frame hand mirroring to unfamiliar directional art",
-                exact_any_of=["0C|....<===*|<Esc>j0C|......|>.|<Esc>j0C|...../.\\.|<Esc>"]),
-        ),
-        "transfer_alt": step(
-            ["|+--->....|", "|.\\|......|", "|.\\./.....|", "CHECK=0"],
-            ["|....<---+|", "|......|/.|", "|.....\\./.|", "CHECK=0"],
-            "0C|....<---+|<Esc>j0C|......|/.|<Esc>j0C|.....\\./.|<Esc>",
-            [["C on three rows", "hand-author every directional row in the alternate full-frame mirror"]],
+                "hand-author the complete Pallas ghost mirror without reversing bytes",
+                exact_any_of=[full_row_rewrite(PALLAS_RIGHT_CALM_RAILS, "C")]),
+        ), frame_rows=6,
+           source="official-Foes/PallasCrown res01 left calm ghost to res03 right calm ghost; fixed tutor rails only",
+           prompt=(
+               "Hand-author Pallas's calm left ghost as its source-authored right-side mirror. "
+               "Exchange the accent, curve directions, tail wisp, and spacing across all six rows; "
+               "keep both tutor rails fixed."
+           )),
+        "transfer_alt": dict(step(
+            PALLAS_LEFT_STRAIN_RAILS,
+            PALLAS_RIGHT_STRAIN_RAILS,
+            full_row_rewrite(PALLAS_RIGHT_STRAIN_RAILS, "C"),
+            [["C on six fixed-rail rows", "hand-author the straining source mirror and its changed tail wisp"]],
             method_requirement=require_method(
-                "transfer full-frame hand mirroring to alternate directional art",
-                exact_any_of=["0C|....<---+|<Esc>j0C|......|/.|<Esc>j0C|.....\\./.|<Esc>"]),
-        ),
+                "hand-author the straining Pallas ghost mirror without reversing bytes",
+                exact_any_of=[full_row_rewrite(PALLAS_RIGHT_STRAIN_RAILS, "C")]),
+        ), frame_rows=6,
+           source="official-Foes/PallasCrown res02 left strain ghost to res04 right strain ghost; fixed tutor rails only",
+           prompt=(
+               "Hand-author the straining Pallas ghost as its right-side source mirror. "
+               "Preserve the (> <) expression while mirroring the accent, body curves, tail, "
+               "and whitespace inside fixed rails."
+           )),
     },
     {
         "id": "M19", "title": "Mirror key-pose still", "node": "S2/V19",
@@ -2936,24 +3004,35 @@ MODULES = [
                     exact_any_of=[":1,5t$<CR>12G0forO"]),
             ),
         ],
-        "transfer": step(
-            ["|   /+\\   |", "| __/x\\   |", "|<==/|\\   |", "|   / \\   |", "|__/___\\__|"],
-            ["|   /+\\   |", "|   /x\\__ |", "|   /|\\==>|", "|   / \\   |", "|__/___\\__|"],
-            "0gR|   /+\\   |<Esc>j0gR|   /x\\__ |<Esc>j0gR|   /|\\==>|<Esc>",
-            [["gR on three directional rows", "hand-author the unfamiliar mirrored key pose while preserving both fixed rails"]],
+        "transfer": dict(step(
+            ACRONIAN_LEFT_MID_RAILS,
+            ACRONIAN_RIGHT_MID_RAILS,
+            full_row_rewrite(ACRONIAN_RIGHT_MID_RAILS, "gR"),
+            [["gR on six fixed-rail rows", "hand-author the complete source right mid-wing, including the folded inner contour"]],
             method_requirement=require_method(
-                "transfer hand mirroring with virtual replace to unfamiliar art",
-                exact_any_of=["0gR|   /+\\   |<Esc>j0gR|   /x\\__ |<Esc>j0gR|   /|\\==>|<Esc>"]),
-        ),
-        "transfer_alt": step(
-            ["|   /o\\   |", "| _/!\\    |", "|<--/|\\   |", "|   / \\   |", "|__/___\\__|"],
-            ["|   /o\\   |", "|    /!\\_ |", "|   /|\\-->|", "|   / \\   |", "|__/___\\__|"],
-            "0gR|   /o\\   |<Esc>j0gR|    /!\\_ |<Esc>j0gR|   /|\\-->|<Esc>",
-            [["gR on three directional rows", "hand-author the alternate mirror without reversing bytes"]],
+                "hand-author the complete Acronian wing mirror with virtual replace",
+                exact_any_of=[full_row_rewrite(ACRONIAN_RIGHT_MID_RAILS, "gR")]),
+        ), frame_rows=6,
+           source="official-Cosmetics/AcronianGuardian res08 left mid-wing to res12 right mid-wing; fixed tutor rails only",
+           prompt=(
+               "Hand-author Acronian Guardian's complete folded mid-wing as its source "
+               "right-side mirror. Judge the outer edge, inner fold, accents, and every "
+               "gap across all six rows; keep both tutor rails fixed."
+           )),
+        "transfer_alt": dict(step(
+            ACRONIAN_LEFT_F2_RAILS,
+            ACRONIAN_RIGHT_F2_RAILS,
+            full_row_rewrite(ACRONIAN_RIGHT_F2_RAILS, "gR"),
+            [["gR on five fixed-rail rows", "hand-author the alternate downstroke mirror without a software flip"]],
             method_requirement=require_method(
-                "transfer hand mirroring with virtual replace to alternate art",
-                exact_any_of=["0gR|   /o\\   |<Esc>j0gR|    /!\\_ |<Esc>j0gR|   /|\\-->|<Esc>"]),
-        ),
+                "hand-author the alternate Acronian wing mirror with virtual replace",
+                exact_any_of=[full_row_rewrite(ACRONIAN_RIGHT_F2_RAILS, "gR")]),
+        ), source="official-Cosmetics/AcronianGuardian res07 left wing to res11 right wing; fixed tutor rails only",
+           prompt=(
+               "Hand-author the downstroke left wing as its source-authored right-wing mirror. "
+               "Judge every accent, slash, interior gap, and feather edge; keep all five "
+               "rows and both rails registered."
+           )),
     },
 ]
 
@@ -4252,15 +4331,21 @@ def infer_grammar_families(card):
     keys = " ".join([card.get("expected", "")] + [
         method.get("keys", "") for method in card.get("method_alternatives", [])
     ])
+    # Virtual Replace payload is authored art, not Normal-mode grammar.  A
+    # comma followed by a dot inside a wing row previously masqueraded as
+    # reverse-find plus dot-repeat, while a literal semicolon masqueraded as
+    # find-repeat.  Retain the gR mode transition but remove each payload from
+    # command-family inference.
+    detection_keys = re.sub(r"gR.*?<Esc>", "gR<Esc>", keys)
     # Only strip a real command-line sentence.  A literal `:` may be the
     # landmark searched by f:/;/, in an otherwise normal-mode recipe.
-    normal_keys = re.sub(r":[^<]*<CR>", "", keys)
+    normal_keys = re.sub(r":[^<]*<CR>", "", detection_keys)
     plain_normal = re.sub(r"<[^>]+>", "", normal_keys)
     families = []
     def add(name):
         if name not in families:
             families.append(name)
-    substitute_commands = re.findall(r":([^<\r\n]*?)(?:s|substitute)(?=[/@])", keys)
+    substitute_commands = re.findall(r":([^<\r\n]*?)(?:s|substitute)(?=[/@])", detection_keys)
     if substitute_commands:
         # A current-row :s and an addressed :range s are distinct teaching
         # families: seeing :1,3s does not teach the learner what an omitted
@@ -4269,14 +4354,14 @@ def infer_grammar_families(card):
             add("ex-substitute-range")
         else:
             add("ex-substitute-line")
-    if re.search(r":[^<]*(?:s|substitute)[/@][^<]*\\=", keys):
+    if re.search(r":[^<]*(?:s|substitute)[/@][^<]*\\=", detection_keys):
         add("expression-substitute")
-    if re.search(r":[^<]*(?:t|co(?:py)?)(?:\$|\d)", keys): add("ex-copy")
-    if re.search(r":[^<]*(?:m|move)(?:\$|\d)", keys): add("ex-move")
-    if re.search(r":(?:%|\d+(?:,\d+)?)?g[/@]", keys): add("global-normal")
-    if re.search(r"(?:\d+)?yy|yap", keys): add("linewise-yank-put")
-    if "<C-v>" in keys or "V" in plain_normal: add("visual-scope")
-    if "<C-v>" in keys and re.search(r"\$A", keys): add("block-append")
+    if re.search(r":[^<]*(?:t|co(?:py)?)(?:\$|\d)", detection_keys): add("ex-copy")
+    if re.search(r":[^<]*(?:m|move)(?:\$|\d)", detection_keys): add("ex-move")
+    if re.search(r":(?:%|\d+(?:,\d+)?)?g[/@]", detection_keys): add("global-normal")
+    if re.search(r"(?:\d+)?yy|yap", detection_keys): add("linewise-yank-put")
+    if "<C-v>" in detection_keys or "V" in plain_normal: add("visual-scope")
+    if "<C-v>" in detection_keys and re.search(r"\$A", detection_keys): add("block-append")
     if re.search(r"(?:^|[^A-Za-z])v(?:[^A-Za-z]|$)", plain_normal): add("visual-characterwise")
     if re.search(r"(?:\d+)?dd|D", plain_normal): add("linewise-delete")
     if re.search(r"(?:daw|ci\()", plain_normal): add("operator-motion-object")
@@ -4287,18 +4372,18 @@ def infer_grammar_families(card):
         add("repeat")
     if ";" in plain_normal or "," in plain_normal:
         add("char-find-repeat")
-    if re.search(r'"[a-z0-9]', keys) or re.search(r"<C-r>[A-Za-z0-9]", keys):
+    if re.search(r'"[a-z0-9]', detection_keys) or re.search(r"<C-r>[A-Za-z0-9]", detection_keys):
         add("register")
     if "u<C-r>" in keys: add("undo-redo")
     if "<C-k>" in keys: add("digraph")
-    if "virtualedit" in keys or re.search(r"\d+\|", plain_normal): add("virtual-column")
+    if "virtualedit" in detection_keys or re.search(r"\d+\|", plain_normal): add("virtual-column")
     if re.search(r"[WBE]", plain_normal): add("word-boundary")
     if "gR" in plain_normal: add("virtual-replace")
     if re.search(r"(?<!g)R", plain_normal): add("replace-mode")
     if "C" in plain_normal: add("change-to-end")
     if re.search(r"/[^<]+", plain_normal) or re.search(r"[ftFT].", plain_normal):
         add("search-landmark")
-    if (re.search(r":[^<]+<CR>", keys) and "virtual-column" not in families
+    if (re.search(r":[^<]+<CR>", detection_keys) and "virtual-column" not in families
             and not any(name.startswith("ex-") for name in families)):
         add("ex-command")
     if "P" in plain_normal: add("put-before")
@@ -6438,7 +6523,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.53",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.60",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,
@@ -6925,7 +7010,10 @@ def validate(cur):
                     if qid not in qids:
                         errors.append(
                             f"{card['id']}: transfer variant {index} lacks paired question {qid}")
-                frame_rows = module_map[card["module_id"]].get("frame_rows")
+                frame_rows = variant.get(
+                    "frame_rows",
+                    card.get("frame_rows", module_map[card["module_id"]].get("frame_rows")),
+                )
                 check_visual(card["id"], f"transfer variant {index} start", variant["start"], frame_rows)
                 check_visual(card["id"], f"transfer variant {index} target", variant["target"], frame_rows)
         if card.get("animation"):

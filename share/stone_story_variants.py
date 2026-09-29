@@ -157,6 +157,111 @@ CRANIUS_HAPPY_CROP = [" /    ___,  __,\\", "|  \\ (_^) ,(_^);-", "|   ) _  /!)  
 CRANIUS_HALF_CROP = [" /    ___,  __,\\", "|  \\ (==) ,(==);-", "|   ) _  /!)   )"]
 CRANIUS_SHUT_CROP = [" /    ___,  __,\\", "|  \\ (--) ,(--);-", "|   ) _  /!)   )"]
 
+# official-Cosmetics/AcronianGuardian res06/res10, res07/res11, and
+# res08/res12.  These
+# source-authored wing pairs are horizontal mirrors; `#` transparency is
+# converted to spaces and trailing transparency is removed.  The first two
+# pairs give M1 full contour studies whose punctuation joints can be varied;
+# the second and mid-wing pairs supply M19's five- and six-row fixed-rail
+# hand-mirroring studies without inventing another geometric toy.
+ACRONIAN_WING_LEFT_F1 = [
+    "  /‾‾‾‾‾`.",
+    " /  `     `.",
+    " \\   _____` \\",
+    "  \\`/     `,/",
+    "   \\;",
+]
+ACRONIAN_WING_RIGHT_F1 = [
+    "   .´‾‾‾‾‾\\",
+    " .´     ´  \\",
+    "/ ´_____   /",
+    "\\.´     \\´/",
+    "        ;/",
+]
+ACRONIAN_WING_LEFT_F2 = [
+    "   /‾‾‾‾‾‾‾`.",
+    "  /   `      \\",
+    " /`_____     |",
+    " \\/     `. ` |",
+    "          `.,/",
+]
+ACRONIAN_WING_RIGHT_F2 = [
+    " .´‾‾‾‾‾‾‾\\",
+    "/      ´   \\",
+    "|     _____´\\",
+    "| ´ .´     \\/",
+    "\\,.´",
+]
+ACRONIAN_WING_LEFT_MID = [
+    "         ____",
+    "   /‾‾‾‾‾  ` \\",
+    "   \\ `  ___.,/",
+    "    \\  /_/\\",
+    "     \\ ‾` /",
+    "      ‾‾‾‾",
+]
+ACRONIAN_WING_RIGHT_MID = [
+    " ____",
+    "/ ´  ‾‾‾‾‾\\",
+    "\\,.___  ´ /",
+    "   /\\_\\  /",
+    "   \\ ´‾ /",
+    "    ‾‾‾‾",
+]
+
+# official-Foes/PallasCrown res01-res04.  The left/right ghost pairs are
+# explicitly hand-authored mirrors in the source, including asymmetric
+# accents and tail wisps.  Rows are padded inside fixed rails only for the
+# tutor so full-row C edits have an immediate registration invariant.
+PALLAS_GHOST_LEFT_CALM = [
+    "    .-.",
+    "   (- -)",
+    "   \\ ‾ `-´",
+    "    ) /",
+    "    |/",
+    "    '",
+]
+PALLAS_GHOST_LEFT_STRAIN = [
+    "    .-.",
+    "   (> <)",
+    "   \\ ‾ `-´",
+    "    \\ /",
+    "    '/",
+    "    !",
+]
+PALLAS_GHOST_RIGHT_CALM = [
+    "   .-.",
+    "  (- -)",
+    "`-´ ‾ /",
+    "   \\ (",
+    "    \\|",
+    "     '",
+]
+PALLAS_GHOST_RIGHT_STRAIN = [
+    "   .-.",
+    "  (> <)",
+    "`-´ ‾ /",
+    "   \\ /",
+    "    \\'",
+    "     !",
+]
+
+# official-Hats/IroncladMask res01-res04, composited at the shared source
+# origin.  `#` is transparency.  The target is the exact four-row composite;
+# M5 deliberately injects one false seam into START and asks the learner to
+# recover this source-authored layer result.
+IRONCLAD_MASK_COMPOSITE = [
+    "   _ ._",
+    "  ,\\'-.\\",
+    "  ||\\`~/",
+    "  ',``'",
+]
+
+
+def fixed_rails(rows, width):
+    """Pad source rows inside fixed tutor rails without changing their ink."""
+    return ["|" + row.ljust(width) + "|" for row in rows]
+
 
 # card id -> {"review_variants": [...]}
 # Transfer variants are migrated only after their paired questions are manually

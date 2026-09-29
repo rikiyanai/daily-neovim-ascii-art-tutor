@@ -5034,3 +5034,137 @@ headed routes at 80x24.
 (M1, M5, M10, M18, M19). Full same-process route coverage at all three
 viewport sizes remains unclaimed. The Fireworks excerpts remain local-tutor
 use only; no push or publication occurred.
+
+## VD-52 · 2026-09-29 — final invented primary transfers removed; provenance gap exposed
+
+**Operator evidence carried forward:** the prior audit still found five module
+transfers using invented primary art, the M3.06 headed route had previously
+fallen back to a shell at 80×24, archive provenance was incomplete, and the
+local source-art commits had not been pushed. The last fact is intentional:
+local tutor authorization is not redistribution permission.
+
+### Source-backed transfer replacements
+
+- M1.06 now uses complete five-row Acronian Guardian wing poses from
+  `official-Cosmetics/AcronianGuardian` res06 and res11. Each task changes one
+  visible comma joint to a colon with `f,` plus one-cell `r`, preserving the
+  complete feather contour.
+- M5.06 now uses the exact four-layer Ironclad mask composite from
+  `official-Hats/IroncladMask` res01–res04. START injects one false `|` seam;
+  the target restores the source negative-space break with a one-cell
+  overwrite. A question fidelity check caught and restored the literal
+  backslash before the third-row backtick.
+- M10.06 now uses complete AAHub `bakuhatsu-kemuri` puffs from resK-119 and
+  resK-123. Only the redacted partner in the measured `⌒ヽ` shoulder is
+  restored; full-width spaces, body, tail, and the alternate `ﾐ` wisp remain.
+- M18.06 now uses Pallas Crown's source-authored calm and straining left/right
+  ghost pairs from res01–res04. Six fixed-rail rows are hand-authored with
+  bounded `C` passes; the questions distinguish deliberate glyph-aware
+  mirroring from byte reversal.
+- M19.06 now uses Acronian left/right wing pairs from res08/res12 and
+  res07/res11. The six-row folded mid-wing and five-row downstroke are
+  hand-authored with bounded `gR` passes; the rails expose insertion or width
+  drift.
+
+All ten base/alternate paired questions were rewritten individually in the
+four authored question files. Each prints its complete actual START and TARGET,
+asks a specific art judgment and Neovim scope question, supplies four distinct
+choices, and gives choice-specific feedback. No question template or prose
+generator produced these records.
+
+The new source excerpts do not share the parent module's old frame height
+(M1 5 rows, M10 4/3 rows, M18 6 rows). Transfer variants now carry their own
+`frame_rows`; validation uses that per-variant value instead of splitting a
+complete pose into a three-row frame plus a rejected toy remainder.
+
+### Provenance correction
+
+`share/audits/STONE_STORY_LOCAL_PROVENANCE.md` now binds the exact local file
+sets used by the tutor: 21 Stone Story source directories and two AAHub files.
+It records exact filenames, byte-derived SHA-256 set digests, transformations,
+curriculum linkage, and the local-only/publication-blocked boundary.
+`share/test_stone_story_provenance.py` recomputes those digests and checks every
+generated transfer. That check exposed M16.06: its FrogBog art was cited in
+question prose but both generated variants lacked a `source` field. The
+generator now records res05→res06 and res06→res07 directly. The test proves
+20/20 primary transfers have source metadata.
+
+This register is not archive ingestion. The 885-sheet corpus still has zero
+rows in `ascii-art-archive/MANIFEST.tsv`; adding it there or pushing the local
+tutor commits would publish third-party material and remains blocked pending a
+redistribution decision.
+
+### Evidence available at this checkpoint
+
+- Revision `.60` generates 20 modules, 215 cards, and 395 questions.
+- `test_question_quality.py` passes all 395 multiple-choice questions.
+- `test_v2.py` passes 215/215 cards, 174/174 primary recipes, 70 changed-art
+  variants, the strict S0→S7 then A0→A7 stage gate, and progress/state checks.
+- `test_drills.py` passes 46/46 legacy drills; setup, Stone Story variant,
+  animation-pack, and live curriculum-integration tests pass.
+- `test_stone_story_provenance.py` passes 21 Stone Story sets, two AAHub files,
+  22 source families, and 20/20 source-backed primary transfers.
+- The formerly disappearing M3.06 transfer passes a direct real-config headed
+  route at 188×49 in this checkpoint; VD-34 already records its three-size
+  fix. M1 base/alternate pass at 80×24, 100×36, and 188×49. M5, M10, and M18
+  base/alternate pass at those same three sizes.
+- At this checkpoint, M19 alternate passes at 80×24 and 100×36. Its first base
+  runs exceeded the 30-second command yield and remain unresolved background
+  sessions. They are **not** counted as passes or failures until their terminal
+  results are collected under the required polling cadence.
+
+**Still open:** collect and diagnose the M19 base headed runs; prove M19 at all
+three viewport sizes; run the full same-process route matrix rather than only
+targeted transfers; keep archive ingestion and all push/publication blocked;
+and do not treat automated question rules as a substitute for the prior
+per-question human audit.
+
+### VD-52 follow-through — M19 live failure reproduced and repaired
+
+The two pending M19 base sessions both terminated as failures. Rows 1–4 were
+exact; row 5 expected `|        ;/    |` but saved `|        /    ||`. The
+literal semicolon in the res06→res10 target was not inserted during the
+real-config Virtual Replace replay, so the original right rail survived as a
+second final `|`. The test then timed out waiting for an after-question because
+the runtime was correctly holding the failed-art debrief instead.
+
+The base exercise now uses the complete six-row Acronian folded mid-wing pair
+from res08/res12. This is not a weakened target: it adds one row and requires
+the learner to judge the outer edge, inner fold, accents, and gaps in a visibly
+different full pose. The variant-1 question was manually rewritten again with
+all six fixed-rail START and TARGET rows. The provenance set now includes
+res08/res12 and its recomputed byte-bound digest.
+
+This exposed a second metadata defect. `infer_grammar_families()` scanned the
+literal text typed inside `gR...<Esc>` as Normal-mode commands. The `,.` inside
+the source wing was falsely classified as reverse character-find plus dot
+repeat; the older semicolon had likewise falsely claimed character-find repeat.
+Virtual Replace payloads are now removed from grammar inference while the `gR`
+mode transition remains. M19.06 therefore owns `virtual-replace` and
+`normal-motion`, not commands that merely appear as art glyphs.
+
+**Current headed proof:** M19.06 base and alternate both pass with the real user
+config at 80×24, 100×36, and 188×49. Together with the earlier targeted runs,
+all ten final base/alternate routes for M1, M5, M10, M18, and M19 pass at all
+three sizes. Static proof remains 215/215 cards, 174/174 recipes, 395/395
+questions, 20/20 source-backed transfers, and all provenance digests valid.
+
+**Remaining boundary:** this closes the five-transfer replacement slice, not
+the entire audit. The full every-route same-process matrix still needs a fresh
+three-size run. Archive ingestion and all push/publication remain blocked.
+
+### VD-52 follow-through — complete headed route matrix
+
+The fresh same-process route matrix completed successfully at every required
+viewport. At **80×24, 100×36, and 188×49**, it passed the grammar primer,
+conceptual check, changed-stem retry, guided task/target, independent retrieval,
+two-method comparison, five-question module check, spaced review, and every
+live transfer from **M0.06 through M19.06**. This includes M3.06, which no
+longer falls through to a shell at 80×24.
+
+This closes the previously unverified popup-route boundary for the current
+revision. It does not convert the automated question checks into a claim that
+all 395 questions received a new human editorial pass in this checkpoint, and
+it does not resolve redistribution. The 885-sheet corpus still has zero
+archive-manifest rows; the source excerpts and all local commits remain
+unpushed because publication permission has not been established.

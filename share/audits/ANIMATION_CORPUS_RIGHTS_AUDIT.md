@@ -9,12 +9,15 @@ license and redistribution permission that covers this repository.
 
 > **2026-09-29 status correction.** This document records the boundary at its
 > 2026-09-28 audit date. The operator later authorized exact excerpts for the
-> local tutor only; revision `.59` contains 70 changed-art review banks, with
-> 92 variant rows citing 16 `official-*` subjects. That local-use decision did
+> local tutor only; revision `.60` contains 70 changed-art review banks and all
+> 20 primary transfer cards now use source-backed art. The exact local files,
+> byte-bound set digests, transformations, and card linkage are recorded in
+> `STONE_STORY_LOCAL_PROVENANCE.md`. That local-use decision did
 > **not** supply a redistribution license
 > or authorize a push from this public repository. Statements below saying
 > “0 tutor use” are historical measurements, not the current tree. Archive
-> provenance intake and the publication decision remain open.
+> archive provenance intake and the publication decision remain open; the new
+> register is an index, not ingestion into the public archive.
 
 ## Executive decision
 

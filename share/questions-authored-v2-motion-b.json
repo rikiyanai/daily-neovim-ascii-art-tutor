@@ -891,30 +891,30 @@
     ]
   },
   "M18.06.P01": {
-    "prompt": "ANIMATION\nThe transfer mirror uses new materials but exchanges actor, arrow, limbs, and spacing consistently.\n\n    BEFORE          AFTER\n    │|*===>....|│   │|....<===*|│\n    │|.<|......|│   │|......|>.|│\n    │|./.\\.....|│   │|...../.\\.|│\n    │CHECK=0    │   │CHECK=0    │\n\nNEOVIM\nWhich bounded path can reach TARGET exactly?",
-    "compact_prompt": "ANIMATION\nNew vocabulary, same hand-mirror judgment.\n\n    *===>....   ....<===*\n    .<|......   ......|>.\n    ./.\\.....  ...../.\\.\n\nNEOVIM\nChoose rowwise authoring.",
-    "animation_prompt": "The unfamiliar transfer is a full new still, not a byte reversal of the original.\n\n    BEFORE          AFTER\n    │|*===>....|│   │|....<===*|│\n    │|.<|......|│   │|......|>.|│\n    │|./.\\.....|│   │|...../.\\.|│\n    │CHECK=0    │   │CHECK=0    │",
-    "animation_answer": "Hand-author all three directional rows with the new vocabulary, keeping CHECK pending.",
-    "neovim_prompt": "Choose an operation that writes exactly the target rows and nothing else.",
-    "neovim_answer": "Use C on each of the three art rows; then validate CHECK separately.",
+    "prompt": "ANIMATION\nPallas's calm ghost moves from the left side of the fixed frame to its source-authored right-side pose. Mirror the accent, face placement, body curves, tail wisp, and empty space together; keep both rails fixed.\n\nSTART\n|    .-.   |\n|   (- -)  |\n|   \\ ‾ `-´|\n|    ) /   |\n|    |/    |\n|    '     |\n\nTARGET\n|   .-.    |\n|  (- -)   |\n|`-´ ‾ /   |\n|   \\ (    |\n|    \\|    |\n|     '    |\n\nNEOVIM\nWhich method treats this as six deliberately authored rows rather than a byte reversal?",
+    "compact_prompt": "ANIMATION\nMirror the complete calm Pallas ghost; rails stay fixed.\n\n|   \\ ‾ `-´|  →  |`-´ ‾ /   |\n|    |/    |      |    \\|    |\n\nNEOVIM\nWhich bounded row rewrite preserves the frame?",
+    "animation_prompt": "ANIMATION\nThe target is Pallas's complete source-authored right ghost. The face stays calm while curves, accent, tail, and gaps exchange sides coherently.",
+    "animation_answer": "Author all six right-side rows explicitly and keep the two rails in their original columns.",
+    "neovim_prompt": "NEOVIM\nWhat does one `0C...<Esc>` pass own, and why is it repeated once per row?",
+    "neovim_answer": "0 starts at the left rail, C replaces that row's suffix with the authored target, and Escape bounds the change before moving to the next row.",
     "choices": [
-      "ANIMATION: Every directional row and gap is deliberately mirrored. | NEOVIM: C-overwrite the three art rows.",
-      "ANIMATION: Only the actor exchanges sides. | NEOVIM: f/r on * is enough.",
-      "ANIMATION: Copy the source and reverse all bytes. | NEOVIM: use a string reverse.",
-      "ANIMATION: Set CHECK=1 without inspecting the transfer. | NEOVIM: substitute the metadata only."
+      "ANIMATION: Move only the face; leave the body and tail left-facing. | NEOVIM: one `r` command redraws the six-row ghost.",
+      "ANIMATION: Hand-author the complete right ghost, including curves, accent, tail, and gaps. | NEOVIM: six bounded `0C...<Esc>` passes replace one complete row at a time.",
+      "ANIMATION: Reverse every byte and accept unchanged slash identities. | NEOVIM: C automatically mirrors the text after the cursor.",
+      "ANIMATION: Insert a second ghost beside the first. | NEOVIM: C inserts the target and shifts the right rail."
     ],
     "compact_choices": [
-      "A: all rows judged · V: C each art row",
-      "A: actor only · V: f/r *",
-      "A: copy/reverse · V: string reverse",
-      "A: CHECK only · V: metadata substitute"
+      "A: face only · V: one r redraws rows",
+      "A: complete authored mirror · V: C per row",
+      "A: byte reverse · V: C auto-mirrors",
+      "A: insert second ghost · V: C shifts rail"
     ],
-    "correct_choice": 0,
+    "correct_choice": 1,
     "feedback": [
-      "Correct: rowwise C authoring gives every new directional mark an explicit decision.",
-      "The transfer's arrows, limbs, and spacing also change.",
-      "Byte reversal is not accepted as a hand mirror.",
-      "Validation cannot replace visual authoring of the new still."
+      "The face is only one part of the pose; the body curves, accent, tail, and whitespace also exchange sides.",
+      "Correct: each row is deliberately authored, while Escape prevents one rewrite from spilling into the next row.",
+      "C changes text to what the learner types. It neither reverses bytes nor chooses the correct directional glyphs.",
+      "C replaces the row suffix; it does not insert a second pose or move the fixed right rail."
     ]
   },
   "M18.08.P01": {

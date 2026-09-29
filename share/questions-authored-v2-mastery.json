@@ -783,30 +783,30 @@
     ]
   },
   "M1.06.V2.P01": {
-    "prompt": "ANIMATION\nThis contour is mirrored, so its joint is no longer at the lesson's old column. Only the low comma joint becomes a centred colon; the endpoint, curve, and row width remain fixed.\n\n  BEFORE       AFTER\n  │´._      │    │´._      │\n  │   `-._  │    │   `-._  │\n  │     ,._o│ →  │     :._o│\n\nNEOVIM\nWhy is the comma itself a safer destination than a remembered column count?",
-    "compact_prompt": "ANIMATION\nOn the mirrored contour, only the comma joint becomes a colon.\n\n  │     ,._o│ → │     :._o│\n\nNEOVIM\nWhy use `f,` before `r:`?",
-    "animation_prompt": "ANIMATION\nM1.06 variant 2 centres the joint on a mirrored contour without moving its anchored endpoint.",
-    "animation_answer": "The comma becomes a colon in place; every other contour cell and the final o remain registered.",
-    "neovim_prompt": "NEOVIM\nDecode `G0f,r:` on the mirrored drawing.",
-    "neovim_answer": "G0 selects the last row from its first cell, f, finds the visible comma wherever the mirror placed it, and r: overwrites only that joint.",
+    "prompt": "ANIMATION\nThis alternate Acronian downstroke remains a complete five-row wing. Only the comma joint on its final row becomes a colon; all accents, slashes, and spacing stay fixed.\n\nSTART\n .´‾‾‾‾‾‾‾\\\n/      ´   \\\n|     _____´\\\n| ´ .´     \\/\n\\,.´\n\nTARGET\n .´‾‾‾‾‾‾‾\\\n/      ´   \\\n|     _____´\\\n| ´ .´     \\/\n\\:.´\n\nNEOVIM\nWhy is the comma itself a safer destination than a remembered column?",
+    "compact_prompt": "ANIMATION\nKeep the Acronian downstroke fixed; change its final `,` to `:`.\n\n│| ´ .´     \\/│\n│\\,.´│  →  │\\:.´│\n\nNEOVIM\nWhy use `f,` before `r:`?",
+    "animation_prompt": "ANIMATION\nThe complete downstroke keeps its source contour. Only the punctuation joint changes material in place.",
+    "animation_answer": "Replace the final-row comma with a colon and preserve every other cell of the wing.",
+    "neovim_prompt": "NEOVIM\nDecode `G0f,r:` on the five-row drawing.",
+    "neovim_answer": "G selects the final row, 0 starts at its left edge, f, finds the visible comma, and r: overwrites only that joint.",
     "choices": [
-      "ANIMATION: Only the mirrored joint changes and the anchor stays fixed. | NEOVIM: `f,` uses the visible joint as a landmark, so `r:` does not depend on the old column.",
-      "ANIMATION: The entire bottom contour shifts left. | NEOVIM: `f,` deletes text before the comma while moving to it.",
-      "ANIMATION: The endpoint o becomes the new joint. | NEOVIM: `G0` jumps to the last character of the last row.",
-      "ANIMATION: Every comma in the drawing becomes a colon. | NEOVIM: `r:` is a file-wide replacement once preceded by f."
+      "ANIMATION: Only the final-row joint changes; the wing stays registered. | NEOVIM: `f,` lands on the visible comma and `r:` overwrites that one cell.",
+      "ANIMATION: Shift the final contour left. | NEOVIM: `f,` deletes the cells it crosses.",
+      "ANIMATION: Change the accent on every row. | NEOVIM: `r:` replaces all punctuation in the buffer.",
+      "ANIMATION: Mirror the wing again. | NEOVIM: `G0` reverses the last row before replacement."
     ],
     "compact_choices": [
-      "A: joint only, anchor fixed · V: find landmark + replace",
-      "A: contour shifts · V: f deletes prefix",
-      "A: endpoint changes · V: G0 means row end",
-      "A: every comma changes · V: r is global"
+      "A: joint only · V: find comma + replace",
+      "A: shift contour · V: f deletes prefix",
+      "A: every accent · V: r is global",
+      "A: mirror again · V: G0 reverses"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the landmark survives mirroring even though its column changes, and r preserves the row width.",
-      "f is a motion; it does not delete or shift the prefix it crosses.",
-      "G selects the last line and 0 selects its first cell. The later f, motion finds the joint, not the endpoint.",
-      "r overwrites exactly the cursor cell. It does not search beyond the comma reached by f."
+      "Correct: the comma is a stable visual landmark, and r preserves the row width.",
+      "f is a motion; it does not delete or shift any cell it crosses.",
+      "r overwrites exactly the cursor cell. It is not a global punctuation replacement.",
+      "G selects the last line and 0 moves to its first cell; neither command reverses text."
     ]
   },
   "M2.06.V2.P01": {
@@ -864,57 +864,57 @@
     ]
   },
   "M18.06.V2.P01": {
-    "prompt": "ANIMATION\nThis unfamiliar actor travels from the left end of three fixed-width rows to the right. Arrow direction, arm slash, leg spacing, and dot gaps must be hand-mirrored together; `CHECK=0` is metadata and stays unchanged.\n\n  BEFORE         AFTER\n  │|+--->....|│   │|....<---+|│\n  │|.\\|......|│   │|......|/.|│\n  │|.\\./.....|│ → │|.....\\./.|│\n  │CHECK=0│       │CHECK=0│\n\nNEOVIM\nWhy are three explicit row overwrites safer here than reversing bytes or editing only the actor?",
-    "compact_prompt": "ANIMATION\nHand-mirror actor, arrow, arm, legs, and spacing; keep CHECK=0.\n\n  │|+--->....|│ → │|....<---+|│\n  │|.\\|......|│ → │|......|/.|│\n  │|.\\./.....|│ → │|.....\\./.|│\n\nNEOVIM\nWhat does row-local C own?",
-    "animation_prompt": "ANIMATION\nM18.06 variant 2 hand-authors a mirrored return pose whose directional glyphs and spacing cannot be produced by naive byte reversal.",
-    "animation_answer": "Actor, arrow, arm, legs, and gaps all change consistently across the three art rows; the metadata row remains untouched.",
-    "neovim_prompt": "NEOVIM\nExplain the three `0C...<Esc>` overwrites in the shown four-row buffer.",
-    "neovim_answer": "Each 0C replaces exactly one complete art-row suffix with its deliberately authored mirror, Escape bounds that row, and j advances to the next art row before metadata.",
+    "prompt": "ANIMATION\nPallas's straining ghost moves to its source-authored right-side pose. Preserve the `(> <)` expression while mirroring the accent, body curves, tail wisp, and empty space inside fixed rails.\n\nSTART\n|    .-.   |\n|   (> <)  |\n|   \\ ‾ `-´|\n|    \\ /   |\n|    '/    |\n|    !     |\n\nTARGET\n|   .-.    |\n|  (> <)   |\n|`-´ ‾ /   |\n|   \\ /    |\n|    \\'    |\n|     !    |\n\nNEOVIM\nWhy must all six target rows be authored explicitly?",
+    "compact_prompt": "ANIMATION\nMirror the complete straining Pallas ghost; keep `(> <)` and both rails.\n\n|   \\ ‾ `-´|  →  |`-´ ‾ /   |\n|    '/    |      |    \\'    |\n\nNEOVIM\nWhat does row-local C own?",
+    "animation_prompt": "ANIMATION\nThe complete straining pose changes sides while its expression stays the same. Curves, accent, tail, and gaps must remain coherent.",
+    "animation_answer": "Author the six source-right rows deliberately, preserve `(> <)`, and keep both rails registered.",
+    "neovim_prompt": "NEOVIM\nExplain the six `0C...<Esc>` rewrites.",
+    "neovim_answer": "Each 0C replaces one complete row suffix, Escape bounds that rewrite, and j advances to the next fixed-width row.",
     "choices": [
-      "ANIMATION: Only + moves to the right; arrow and limbs remain left-facing. | NEOVIM: replacing the actor cell is sufficient for a mirror.",
-      "ANIMATION: The three art rows are deliberately mirrored together while CHECK=0 remains metadata. | NEOVIM: each `0C...<Esc>` owns one complete row, and j advances between the three bounded rewrites.",
-      "ANIMATION: Every byte is reversed mechanically, including slash identities. | NEOVIM: C reverses the selected suffix automatically.",
-      "ANIMATION: CHECK changes to 1 as proof of success. | NEOVIM: the final C continues into the next line after Escape."
+      "ANIMATION: Move only the exclamation tail; leave the body left-facing. | NEOVIM: one `r` redraws the complete ghost.",
+      "ANIMATION: Mirror every row but change `(> <)` into `(< >)`. | NEOVIM: C chooses the mirrored face automatically.",
+      "ANIMATION: Hand-author all six right-side rows while preserving `(> <)` and both rails. | NEOVIM: each bounded `0C...<Esc>` rewrites one row, then j advances.",
+      "ANIMATION: Insert the right ghost after the left ghost. | NEOVIM: C inserts cells and moves the right rail."
     ],
     "compact_choices": [
-      "A: actor only · V: one-cell edit mirrors pose",
-      "A: three authored rows · V: row-local C, Escape, j",
-      "A: reverse bytes · V: C auto-reverses",
-      "A: set CHECK=1 · V: C crosses line"
+      "A: tail only · V: one r redraws ghost",
+      "A: alter face · V: C chooses mirror",
+      "A: six authored rows · V: bounded C per row",
+      "A: insert second ghost · V: C shifts rail"
     ],
-    "correct_choice": 1,
+    "correct_choice": 2,
     "feedback": [
-      "A coherent mirror must also reverse arrow direction and exchange slash roles and gaps; one actor cell cannot do that.",
-      "Correct: explicit row targets preserve rails while allowing glyph-aware mirroring, and Escape prevents the edit from reaching metadata.",
-      "C changes a suffix using text supplied by the learner; it has no automatic reverse operation.",
-      "Escape ends each change before j moves. The fourth metadata row is never entered by a C command."
+      "The tail is only one landmark; the accent, body curves, and all six rows change sides.",
+      "The source-right pose keeps the same straining expression. C cannot decide or generate a mirrored face for you.",
+      "Correct: explicit row targets preserve the rails and expression while Escape prevents spill into the next row.",
+      "C replaces a suffix with what you type; it does not insert a second pose or shift the fixed rail."
     ]
   },
   "M19.06.V2.P01": {
-    "prompt": "ANIMATION\nThis fixed-rail still must face right. The head and lower body stay centred, but the shoulder underscore, arrow, slash directions, and internal spacing change across the first three rows; both outer rails stay in their columns.\n\n  BEFORE         AFTER\n  │|   /o\\   |│   │|   /o\\   |│\n  │| _/!\\    |│ → │|    /!\\_ |│\n  │|<--/|\\   |│   │|   /|\\-->|│\n  │|   / \\   |│   │|   / \\   |│\n  │|__/___\\__|│   │|__/___\\__|│\n\nNEOVIM\nWhich method permits a glyph-aware full-row redraw while preserving fixed rails?",
-    "compact_prompt": "ANIMATION\nMirror the directional top three rows; keep both rails and lower body fixed.\n\n  │| _/!\\    |│ → │|    /!\\_ |│\n  │|<--/|\\   |│ → │|   /|\\-->|│\n\nNEOVIM\nWhy use bounded gR rows?",
-    "animation_prompt": "ANIMATION\nM19.06 variant 2 uses a hand-authored fixed-rail mirror rather than byte reversal or insertion.",
-    "animation_answer": "The upper pose faces right with corrected arrow, slash, underscore, and spacing; rails and lower two rows remain registered.",
-    "neovim_prompt": "NEOVIM\nExplain the three `0gR...<Esc>` passes on the five-row still.",
-    "neovim_answer": "0 starts each row at its left rail, gR enters Virtual Replace for the supplied full-row target, Escape bounds the pass, and j advances only through the three directional rows.",
+    "prompt": "ANIMATION\nHand-mirror the complete alternate Acronian downstroke. Judge each accent, slash, interior gap, and feather edge; keep all five rows and both fixed rails registered.\n\nSTART\n|   /‾‾‾‾‾‾‾`. |\n|  /   `      \\|\n| /`_____     ||\n| \\/     `. ` ||\n|          `.,/|\n\nTARGET\n| .´‾‾‾‾‾‾‾\\   |\n|/      ´   \\  |\n||     _____´\\ |\n|| ´ .´     \\/ |\n|\\,.´          |\n\nNEOVIM\nWhich method permits a glyph-aware full-row redraw while preserving both rails?",
+    "compact_prompt": "ANIMATION\nMirror the complete Acronian downstroke; rails stay fixed.\n\n| \\/     `. ` ||\n|| ´ .´     \\/ |\n\nNEOVIM\nWhy use bounded gR rows?",
+    "animation_prompt": "ANIMATION\nThe target is the source-authored opposite wing, not a reversed string. All five directional rows and their spacing are judged by eye.",
+    "animation_answer": "Author the five right-wing rows explicitly and preserve both fixed rails.",
+    "neovim_prompt": "NEOVIM\nExplain the five `0gR...<Esc>` passes.",
+    "neovim_answer": "0 begins at the left rail, gR overwrites display cells with the authored row, Escape bounds the pass, and j advances to the next row.",
     "choices": [
-      "ANIMATION: New right-facing glyphs are inserted beside the old pose. | NEOVIM: gR preserves old cells by shifting them right.",
-      "ANIMATION: The upper pose is byte-reversed, so slash identities need no judgement. | NEOVIM: gR automatically reverses a row when entered at column zero.",
-      "ANIMATION: Only the arrowheads swap; shoulder and limb spacing stay left-facing. | NEOVIM: one `r>` changes the complete directional pose.",
-      "ANIMATION: The first three rows are hand-redrawn into a coherent right-facing pose while rails and lower rows stay fixed. | NEOVIM: each `0gR...<Esc>` overwrites a bounded display row without insertion."
+      "ANIMATION: Insert the right wing beside the left wing. | NEOVIM: gR shifts old cells to preserve them.",
+      "ANIMATION: Reverse each source row mechanically. | NEOVIM: gR automatically reverses bytes and slash direction.",
+      "ANIMATION: Change only the final comma and period. | NEOVIM: one r command redraws all five rows.",
+      "ANIMATION: Hand-author all five target rows while preserving both rails. | NEOVIM: each bounded `0gR...<Esc>` pass overwrites one complete display row."
     ],
     "compact_choices": [
-      "A: insert beside old pose · V: gR shifts cells",
+      "A: insert second wing · V: gR shifts cells",
       "A: byte reverse · V: gR auto-reverses",
-      "A: arrowheads only · V: one r changes pose",
-      "A: authored top-three redraw · V: bounded Virtual Replace rows"
+      "A: punctuation only · V: one r redraws rows",
+      "A: author five rows · V: bounded gR per row"
     ],
     "correct_choice": 3,
     "feedback": [
-      "Virtual Replace overwrites display cells; it does not preserve old text by inserting a second pose.",
-      "gR is an editing mode, not a reversal algorithm. The learner still authors slash direction and spacing explicitly.",
-      "The target changes the shoulder, limbs, arrow shaft, and gaps as well as the arrowhead.",
-      "Correct: full-row authored targets handle the non-mechanical mirror while fixed rails provide an immediate registration check."
+      "Virtual Replace overwrites display cells; it does not insert a second wing or shift the rail.",
+      "gR is an editing mode, not a reversal algorithm. The learner must choose every slash, accent, and gap.",
+      "The target changes every row's direction and spacing, not only the final punctuation.",
+      "Correct: full-row authored targets handle the non-mechanical mirror, and fixed rails expose any width drift."
     ]
   },
   "M14.06.V2.P01": {
@@ -1134,57 +1134,57 @@
     ]
   },
   "M10.06.V2.P01": {
-    "prompt": "ANIMATION\nThis unseen full-width puff has a broken top shoulder. The placeholder `?` becomes the horizontal stroke `￣`; the side strokes, hollow body, and lower bowl remain registered.\n\n  BEFORE       AFTER\n  │　／?＼│     │　／￣＼│\n  │（　　　）│ →  │（　　　）│\n  │　＼＿／│     │　＼＿／│\n\nNEOVIM\nWhich path uses the visible placeholder and preserves the full-width silhouette?",
-    "compact_prompt": "ANIMATION\nReplace only `?` with `￣` in the puff shoulder.\n\n  │　／?＼│ → │　／￣＼│\n  │　＼＿／│   │　＼＿／│\n\nNEOVIM\nWhat does `0f?r￣` do?",
-    "animation_prompt": "ANIMATION\nM10.06 variant 2 completes the shoulder material on an unfamiliar full-width puff without rebuilding its body.",
-    "animation_answer": "The placeholder becomes one horizontal full-width stroke; both lower rows and the surrounding shoulder strokes stay fixed.",
-    "neovim_prompt": "NEOVIM\nDecode `0f?r￣` on the shown three-row puff.",
-    "neovim_answer": "0 starts at the row's left edge, f? finds the explicit placeholder, and r￣ replaces that one glyph without inserting or widening the row.",
+    "prompt": "ANIMATION\nThis alternate AAHub puff uses the same `⌒ヽ` shoulder idiom on a different complete silhouette. Restore only the redacted partner; preserve its full-width spaces, lower contour, and final ﾐ wisp.\n\nSTART\n　　 r'⌒?.\n　 (´　　 　｀)\n　　ゝ,___,ノ´ﾐ\n\nTARGET\n　　 r'⌒ヽ.\n　 (´　　 　｀)\n　　ゝ,___,ノ´ﾐ\n\nNEOVIM\nWhich path repairs the visible defect without reflowing the puff?",
+    "compact_prompt": "ANIMATION\nRestore `⌒ヽ`; keep the complete alternate puff fixed.\n\n　　 r'⌒?.  →  　　 r'⌒ヽ.\n　 (´　　 　｀)\n　　ゝ,___,ノ´ﾐ\n\nNEOVIM\nWhat does `0f?rヽ` do?",
+    "animation_prompt": "ANIMATION\nOnly the redacted shoulder partner changes to `ヽ`; the complete alternate puff and its ﾐ wisp stay registered.",
+    "animation_answer": "Restore one `ヽ` in the shoulder and preserve every other source-authored glyph and space.",
+    "neovim_prompt": "NEOVIM\nDecode `0f?rヽ` on the first row.",
+    "neovim_answer": "0 starts at the row edge, f? finds the placeholder, and rヽ overwrites exactly that glyph.",
     "choices": [
-      "ANIMATION: The complete top row is retyped and may drift. | NEOVIM: `f?` selects the entire shoulder for replacement.",
-      "ANIMATION: The body widens with the repaired shoulder. | NEOVIM: `r￣` inserts a new full-width cell before `?`.",
-      "ANIMATION: The placeholder alone becomes `￣`; the puff silhouette stays registered. | NEOVIM: `0f?` addresses the visible defect and `r￣` overwrites exactly that glyph.",
-      "ANIMATION: The lower `＿` is also changed to `￣`. | NEOVIM: f continues into later rows and r repeats automatically."
+      "ANIMATION: Retype the complete first row and accept spacing drift. | NEOVIM: `f?` selects the whole shoulder for replacement.",
+      "ANIMATION: Widen the body with the shoulder. | NEOVIM: `rヽ` inserts a glyph before `?`.",
+      "ANIMATION: Only `?` becomes `ヽ`; the complete puff stays registered. | NEOVIM: `0f?` addresses the visible defect and `rヽ` overwrites that one glyph.",
+      "ANIMATION: Change the lower `ノ` and ﾐ wisp too. | NEOVIM: one r repeats automatically on later rows."
     ],
     "compact_choices": [
       "A: retype top row · V: f selects shoulder",
-      "A: body widens · V: r inserts",
+      "A: widen body · V: r inserts",
       "A: placeholder only · V: find ? + replace",
-      "A: lower bowl changes · V: f crosses rows"
+      "A: lower strokes too · V: r repeats"
     ],
     "correct_choice": 2,
     "feedback": [
-      "f is a motion to one character, not a row selection; no retyping of the shoulder is required.",
-      "r overwrites one existing glyph and preserves the row's cell count.",
-      "Correct: the placeholder provides a transferable landmark and the one-cell replacement preserves every registered neighbour.",
-      "f is confined to the current row, and r performs one replacement only."
+      "f is a motion to one character, not a row selection; the complete shoulder need not be retyped.",
+      "r overwrites one existing glyph. It does not insert or widen the body.",
+      "Correct: the placeholder is a stable landmark and the one-cell replacement preserves every neighbour.",
+      "A single r command stops after overwriting the addressed shoulder glyph; the lower contour and wisp are untouched."
     ]
   },
   "M5.06.V2.P01": {
-    "prompt": "ANIMATION\nThis unfamiliar still has three depth bands: a foreground triangular form, dotted midground, and wave-textured ground. The vertical bar under x falsely connects the foreground to the dots; only that seam cell becomes blank.\n\n  BEFORE        AFTER\n  │    /\\    │    │    /\\    │\n  │---/  \\   │    │---/  \\   │\n  │  /___x---│    │  /___x---│\n  │......|...│ →  │...... ...│\n  │..........│    │..........│\n  │~~~~~~~~~~│    │~~~~~~~~~~│\n  │__________│    │__________│\n\nNEOVIM\nWhich scope removes the false connection without shifting or repainting a layer?",
-    "compact_prompt": "ANIMATION\nErase only the false bar joining foreground x to the dotted midground.\n\n  │  /___x---│\n  │......|...│ → │...... ...│\n  │~~~~~~~~~~│\n\nNEOVIM\nWhat does `4G06lr ` change?",
-    "animation_prompt": "ANIMATION\nM5.06 variant 2 repairs a seam in an unfamiliar three-material still while preserving its back-to-front order.",
-    "animation_answer": "Only the bar beneath x becomes negative space; the foreground outline, dots, waves, and baseline remain registered.",
-    "neovim_prompt": "NEOVIM\nDecode `4G06lr ` on the shown seven-row composite.",
-    "neovim_answer": "4G0 selects the seam row at column zero, 6l reaches the bar directly under x, and r-space overwrites that one cell without changing row width.",
+    "prompt": "ANIMATION\nThis alternate Ironclad mask has one tutor-injected bar at the start of its final layer. Remove that false depth connection and recover the exact four-row source composite.\n\nSTART\n   _ ._\n  ,\\'-.\\\n  ||\\`~/\n |',``'\n\nTARGET\n   _ ._\n  ,\\'-.\\\n  ||\\`~/\n  ',``'\n\nNEOVIM\nWhich scope removes only the injected bar without shifting the final mask row?",
+    "compact_prompt": "ANIMATION\nRestore the final Ironclad layer by erasing one false leading bar.\n\n│  ||\\`~/│\n│ |',``'│  →  │  ',``'│\n\nNEOVIM\nWhat does `G0f|r ` change?",
+    "animation_prompt": "ANIMATION\nThe complete Ironclad composite stays registered. Only the injected bar on its last row becomes negative space.",
+    "animation_answer": "Remove the false leading bar and preserve every source-authored mask glyph and row width.",
+    "neovim_prompt": "NEOVIM\nDecode `G0f|r ` on the four-row mask.",
+    "neovim_answer": "G selects the final row, 0 starts at its left edge, f| finds the injected bar, and r-space overwrites it in place.",
     "choices": [
-      "ANIMATION: The complete dotted band is erased. | NEOVIM: `6l` selects six whole rows before replacement.",
-      "ANIMATION: Only the false connecting bar becomes blank; all material bands stay registered. | NEOVIM: `4G0` names the row start, `6l` reaches the seam cell, and `r ` overwrites it in place.",
-      "ANIMATION: The foreground triangle moves one cell right. | NEOVIM: replacing a bar with a space inserts a new column.",
-      "ANIMATION: Every vertical edge in the scene is removed. | NEOVIM: `r ` repeats across all matching bars in the file."
+      "ANIMATION: Erase the complete final layer. | NEOVIM: `f|` selects the whole row for deletion.",
+      "ANIMATION: Remove only the injected final-row bar; preserve the mask. | NEOVIM: `G0f|r ` finds that bar and overwrites it with one space.",
+      "ANIMATION: Shift the last layer one cell right. | NEOVIM: `r ` inserts a blank and moves the remaining glyphs.",
+      "ANIMATION: Remove both bars on row 3 as well. | NEOVIM: r-space repeats on every `|` in the file."
     ],
     "compact_choices": [
-      "A: erase dotted band · V: 6l selects rows",
-      "A: seam cell only · V: row, six right, replace",
-      "A: triangle shifts · V: space inserts column",
-      "A: erase every bar · V: r is global"
+      "A: erase final layer · V: f selects row",
+      "A: one false bar · V: last row, find, replace",
+      "A: shift layer · V: r inserts blank",
+      "A: erase row-3 bars · V: r is global"
     ],
     "correct_choice": 1,
     "feedback": [
-      "6l is a horizontal cursor motion, not a row selection; the dotted material remains everywhere except the seam.",
-      "Correct: the command addresses one registered display cell, matching the one-cell depth correction.",
-      "r-space overwrites one cell and preserves row length. It does not insert a column or move the foreground.",
-      "r affects the cursor cell only; it does not search for other bars."
+      "f is a motion to one character; it does not select or delete the complete final row.",
+      "Correct: the command addresses one visible defect and preserves the mask's fixed-width registration.",
+      "r-space overwrites one existing cell. It does not insert a column or shift the layer.",
+      "r affects only the cursor cell; it does not search for bars on other rows."
     ]
   },
   "M6.06.V2.P01": {
