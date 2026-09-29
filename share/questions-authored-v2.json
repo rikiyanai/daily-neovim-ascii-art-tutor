@@ -270,30 +270,30 @@
     ]
   },
   "M0.06.P01": {
-    "prompt": "ANIMATION\nThe unfamiliar comet keeps its three-row silhouette. Only the core brightens and the tail widens.\n\n    BEFORE      AFTER\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │\n\nNEOVIM\nWhich account matches the edit you just performed?",
-    "compact_prompt": "ANIMATION\nBrighten the comet core and widen only its tail.\n\n    BEFORE      AFTER\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │\n\nNEOVIM\nWhich edit preserves row width and the contour?",
-    "animation_prompt": "The transfer applies the learned core-and-ray edit to different art without moving its contour.\n\n    BEFORE      AFTER\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │",
-    "animation_answer": "Change o to O and both tail dashes to equals signs on the middle row only.",
+    "prompt": "ANIMATION\nThis radial Fireworks frame brightens in place. The core changes from `*` to `O` and both outer ASCII rays change from `-` to `=`; the inner em-dash spokes, upper `\\¡/`, lower `/!\\`, and three-row registration stay fixed.\n\n  BEFORE        AFTER\n  │    \\¡/│     │    \\¡/│\n  │   -—*—-│  →  │   =—O—=│\n  │    /!\\│     │    /!\\│\n\nNEOVIM\nWhich account matches the bounded core-and-ray edit?",
+    "compact_prompt": "ANIMATION\nBrighten only the radial core and outer ASCII rays.\n\n  │-—*—-│ → │=—O—=│\n\nNEOVIM\nDecode `j0f*rO:s/-/=/g`.",
+    "animation_prompt": "The learner-authored brightness pass changes three cells inside a real Fireworks shell while the vertical accents stay registered.",
+    "animation_answer": "Change the star core to O and both outer hyphens to equals signs; preserve the inner em dashes and other rows.",
     "neovim_prompt": "Identify a one-cell replacement followed by a current-line all-matches substitute.",
-    "neovim_answer": "rO overwrites the core; :s/-/=/g changes every tail dash on that same row.",
+    "neovim_answer": "j0f* reaches the middle-row core, rO overwrites it, and :s/-/=/g changes both hyphens on that current row.",
     "choices": [
-      "ANIMATION: Brighten the core and widen the two-cell tail while preserving the contour. | NEOVIM: rO overwrites one core cell, then :s/-/=/g changes every dash on the current row.",
-      "ANIMATION: Insert a second core and push the tail right. | NEOVIM: iO inserts before o, increasing the fixed row width.",
-      "ANIMATION: Widen dashes in every frame of the project. | NEOVIM: :%s/-/=/g deliberately uses whole-file scope.",
-      "ANIMATION: Replace the complete comet with the earlier spark. | NEOVIM: p pastes the previous yank over this unfamiliar subject."
+      "ANIMATION: Brighten the core and both outer rays while preserving inner spokes and vertical accents. | NEOVIM: rO overwrites the found star, then current-row :s/-/=/g changes both ASCII hyphens.",
+      "ANIMATION: Insert O beside the star and widen the shell. | NEOVIM: iO preserves the old star and adds a column.",
+      "ANIMATION: Change every dash in every firework frame. | NEOVIM: an omitted range means whole-file scope.",
+      "ANIMATION: Replace the shell with the earlier tutor spark. | NEOVIM: p pastes an old subject instead of editing this source frame."
     ],
     "compact_choices": [
-      "A: core + tail only · V: r overwrite, current-line substitute",
-      "A: insert core; shift tail · V: insert mode",
-      "A: whole project widened · V: % whole-file substitute",
-      "A: replace comet with spark · V: paste old yank"
+      "A: core + outer rays · V: r then current-line substitute",
+      "A: insert beside core · V: keep old star",
+      "A: every frame dash · V: omitted range = whole file",
+      "A: paste tutor spark · V: reuse old subject"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct. The same bounded grammar transfers to unfamiliar art without shifting it.",
-      "Insertion changes the row width and breaks the comet's registered contour.",
-      "% is too broad; the requested tail exists on the current row only.",
-      "Transfer means applying a method to new art, not pasting the old subject."
+      "Correct: one-cell replacement plus a current-row all-matches substitute changes exactly the three nominated cells and leaves em dashes distinct.",
+      "Insertion would retain the star and change the fixed row width instead of producing the shown O core.",
+      "An omitted range means the current row. Whole-file scope would require an explicit percent sign.",
+      "Transfer means applying the method to the visible Fireworks source, not replacing it with earlier lesson art."
     ]
   },
   "M0.08.P01": {

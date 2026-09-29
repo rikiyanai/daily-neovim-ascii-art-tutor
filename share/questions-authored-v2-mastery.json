@@ -756,30 +756,30 @@
     ]
   },
   "M0.06.V2.P01": {
-    "prompt": "ANIMATION\nThis unfamiliar comet faces left. Its three-row silhouette and registration stay fixed; only the core brightens and the two-cell tail changes material.\n\n  BEFORE      AFTER\n  │   |\\  │    │   |\\  │\n  │--< o >│ →  │==< O >│\n  │   |/  │    │   |/  │\n\nNEOVIM\nWhich account explains both edits without shifting any cell?",
-    "compact_prompt": "ANIMATION\nA left-facing comet keeps its silhouette; o becomes O and -- becomes ==.\n\n  │--< o >│ → │==< O >│\n\nNEOVIM\nWhich edit is bounded to the core and current row?",
-    "animation_prompt": "ANIMATION\nM0.06 variant 2 applies the brightness-and-material change to a mirrored, left-facing comet.",
-    "animation_answer": "The registered contour is unchanged; the core becomes O and the two tail dashes become equals signs.",
-    "neovim_prompt": "NEOVIM\nDecode `jforO:s/-/=/g` on the mirrored comet.",
-    "neovim_answer": "j reaches the acting row, fo finds its core, rO overwrites that one cell, and the un-ranged substitute changes every dash on only the current row because of g.",
+    "prompt": "ANIMATION\nThis fuller radial Fireworks state brightens without changing its structure. The star becomes `O` and only the two outer ASCII hyphens become `=`; the edge bullets, inner em-dash spokes, upper `.\\¡/.`, and lower `'/!\\'` remain fixed.\n\n  BEFORE          AFTER\n  │   .\\¡/.│      │   .\\¡/.│\n  │  •-—*—-•│  →   │  •=—O—=•│\n  │   '/!\\' │     │   '/!\\' │\n\nNEOVIM\nWhich account explains why the substitute changes the outer rays but not the inner spokes or bullets?",
+    "compact_prompt": "ANIMATION\nBrighten the core and outer ASCII rays; preserve bullets and em-dash spokes.\n\n  │•-—*—-•│ → │•=—O—=•│\n\nNEOVIM\nDecode the current-row substitute.",
+    "animation_prompt": "ANIMATION\nThe learner-authored brightness pass changes the core and two outer rays of a wider source firework while its inner spokes remain literal.",
+    "animation_answer": "The star becomes O and the two ASCII hyphens become equals signs; bullets, em dashes, and both other rows remain unchanged.",
+    "neovim_prompt": "NEOVIM\nDecode `j0f*rO:s/-/=/g` and distinguish ASCII hyphen from em dash.",
+    "neovim_answer": "j0f* finds the core, rO replaces it, and :s/-/=/g matches both ASCII hyphens on this row but not the distinct em-dash glyphs.",
     "choices": [
-      "ANIMATION: The complete comet moves left by two cells. | NEOVIM: `:s` inserts equals signs before the dashes.",
-      "ANIMATION: Only the core brightens; the tail keeps its dash material. | NEOVIM: the missing `%` makes the substitute affect no row.",
-      "ANIMATION: The core brightens and both tail cells change material while the contour stays registered. | NEOVIM: `rO` overwrites the found core and current-row `:s/-/=/g` replaces both dashes.",
-      "ANIMATION: Both diagonal rays are redrawn. | NEOVIM: `g` extends the substitute into the rows above and below."
+      "ANIMATION: Every dash-shaped glyph becomes equals. | NEOVIM: the pattern `-` matches ASCII hyphen and em dash as the same character.",
+      "ANIMATION: Only the core brightens. | NEOVIM: an omitted percent range makes the substitute affect zero rows.",
+      "ANIMATION: Core and outer rays brighten; inner spokes and other rows stay fixed. | NEOVIM: rO changes the star and current-row :s/-/=/g matches only both ASCII hyphens.",
+      "ANIMATION: Upper and lower accents widen too. | NEOVIM: g extends a substitute vertically into adjacent rows."
     ],
     "compact_choices": [
-      "A: comet moves · V: :s inserts",
-      "A: core only · V: no % means no edit",
-      "A: core + two tail cells · V: r then current-row :s/g",
-      "A: diagonal rays change · V: g spans rows"
+      "A: every dash shape · V: hyphen pattern matches em dash",
+      "A: core only · V: no % means zero rows",
+      "A: core + outer rays · V: r then current-row ASCII-hyphen s/g",
+      "A: other rows widen · V: g spans rows"
     ],
     "correct_choice": 2,
     "feedback": [
-      "Every delimiter remains in its original column. Substitute overwrites matches; it does not insert before them.",
-      "An omitted range means the current row, not zero rows; the g flag reaches both dashes on that row.",
-      "Correct: one-cell replacement handles the core, then current-row substitution changes both tail cells without moving the mirrored silhouette.",
-      "Here g means every match in the addressed row. It does not add vertical scope."
+      "ASCII hyphen-minus and em dash are distinct glyphs; the literal hyphen pattern does not match the inner spokes.",
+      "An omitted range means the current row, not zero rows; g reaches both matching hyphens there.",
+      "Correct: the two glyph classes stay distinct, so the bounded substitute changes only the outer rays after the core edit.",
+      "Here g means every match in the addressed row. It never adds vertical scope."
     ]
   },
   "M1.06.V2.P01": {

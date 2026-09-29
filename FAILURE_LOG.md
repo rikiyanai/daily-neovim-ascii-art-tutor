@@ -5004,3 +5004,33 @@ headed routes at 80x24.
 Full same-process route coverage at all three viewport sizes remains
 unclaimed. The Frog and Skully excerpts remain local-tutor use only; no push or
 publication occurred.
+
+### VD-51 follow-through · revision `.59` — M0 transfer replaces the comet with readable Fireworks states
+
+- M0.06 variant 1 now uses the central three-row crop from
+  `official-Cosmetics/Fireworks` res06 radial frame 3. The learner authors a
+  brightness pass with `j0f*rO:s/-/=/g<CR>`: `*` becomes `O`, both outer ASCII
+  hyphens become equals signs, and the two inner em-dash spokes plus vertical
+  accents remain fixed.
+- Variant 2 uses the denser frame-4 crop, including its edge bullets and larger
+  upper/lower flare. It applies the same bounded grammar while preserving the
+  bullets and em-dash spokes. Both questions print the exact three-row art and
+  teach that literal `-` and `—` are different glyphs, while `g` means every
+  match on the addressed current row rather than vertical or whole-file scope.
+- The first replacement draft used radial frame 2 (`¡ / -*- / !`). Generation
+  rejected it as a toy stimulus: only five nonblank ink cells across three
+  rows. The final frame-3/frame-4 pair satisfies the readable multi-row art
+  gate instead of recreating the operator's earlier “literal dot” failure.
+- U+2014 EM DASH was admitted to the primary-art alphabet only after direct
+  Neovim evidence that `strdisplaywidth('—') == 1`. The escaped-continuation
+  decoder regression from VD-48 also covers its UTF-8 `0x80` byte.
+
+**Proof:** revision `.59` writes 215 cards / 395 questions; question quality
+passes all 395; clean Neovim passes **215/215 cards and 174/174 primary
+recipes**; and both M0.06 radial Fireworks variants pass their real-user-config
+headed routes at 80x24.
+
+**Still open.** Five module transfers still use tutor-authored primary variants
+(M1, M5, M10, M18, M19). Full same-process route coverage at all three
+viewport sizes remains unclaimed. The Fireworks excerpts remain local-tutor
+use only; no push or publication occurred.

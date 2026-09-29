@@ -492,20 +492,28 @@ MODULES = [
                  ["14Gfor.", "lower only the settle core so the loop seam is a transition, not a dead duplicate"]],
             ),
         ],
-        "transfer": step(
-            ["  /|   ", "< o >--", "  \\|   "],
-            ["  /|   ", "< O >==", "  \\|   "],
-            "jforO:s/-/=/g<CR>",
-            [["jforO", "brighten the unfamiliar comet core"],
-             [":s/-/=/g", "widen only its tail rays"]],
-        ),
-        "transfer_alt": step(
-            ["   |\\  ", "--< o >", "   |/  "],
-            ["   |\\  ", "==< O >", "   |/  "],
-            "jforO:s/-/=/g<CR>",
-            [["jforO", "brighten the mirrored comet core"],
-             [":s/-/=/g", "widen only the changed tail"]],
-        ),
+        "transfer": dict(step(
+            stone_story_variants.FIREWORK_RADIAL_F3,
+            [stone_story_variants.FIREWORK_RADIAL_F3[0], "   =—O—=", stone_story_variants.FIREWORK_RADIAL_F3[2]],
+            "j0f*rO:s/-/=/g<CR>",
+            [["j0f*rO", "find and brighten the Fireworks shell core"],
+             [":s/-/=/g", "change both outer rays on that row without touching other rows"]],
+        ), source="official-Cosmetics/Fireworks res06 radial frame 3 crop; authored core-and-outer-ray brightness pass",
+           prompt=(
+               "Brighten the Fireworks shell core from * to O and both outer rays from - to =; "
+               "preserve the vertical accents and all row widths."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.FIREWORK_RADIAL_F4,
+            [stone_story_variants.FIREWORK_RADIAL_F4[0], "  •=—O—=•", stone_story_variants.FIREWORK_RADIAL_F4[2]],
+            "j0f*rO:s/-/=/g<CR>",
+            [["j0f*rO", "find and brighten the wider radial core"],
+             [":s/-/=/g", "change only its two outer ASCII rays; keep the em-dash spokes"]],
+        ), source="official-Cosmetics/Fireworks res06 radial frame 4 crop; authored core-and-outer-ray brightness pass",
+           prompt=(
+               "Brighten the wider radial core from * to O and only its outer ASCII rays from - to =; "
+               "preserve both inner em-dash spokes and the upper/lower accents."
+           )),
         "migration_starts": {
             4: [[" · ", " o "], [" · ", " · "]],
         },

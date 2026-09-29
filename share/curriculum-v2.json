@@ -2480,87 +2480,92 @@
    "project_id": "spark-loop",
    "variant_group": "M0.card-6",
    "start": [
-    "  /|   ",
-    "< o >--",
-    "  \\|   "
+    "    \\¡/",
+    "   -—*—-",
+    "    /!\\"
    ],
    "target": [
-    "  /|   ",
-    "< O >==",
-    "  \\|   "
+    "    \\¡/",
+    "   =—O—=",
+    "    /!\\"
    ],
-   "expected": "jforO:s/-/=/g<CR>",
+   "expected": "j0f*rO:s/-/=/g<CR>",
    "recipe": [
     [
-     "jforO",
-     "brighten the unfamiliar comet core"
+     "j0f*rO",
+     "find and brighten the Fireworks shell core"
     ],
     [
      ":s/-/=/g",
-     "widen only its tail rays"
+     "change both outer rays on that row without touching other rows"
     ]
    ],
    "cursor": "^",
+   "source": "official-Cosmetics/Fireworks res06 radial frame 3 crop; authored core-and-outer-ray brightness pass",
    "prompt": "Brighten and widen an unfamiliar three-row comet without shifting its registered rays.",
    "artifact": "transfer",
    "variants": [
     {
      "start": [
-      "  /|   ",
-      "< o >--",
-      "  \\|   "
+      "    \\¡/",
+      "   -—*—-",
+      "    /!\\"
      ],
      "target": [
-      "  /|   ",
-      "< O >==",
-      "  \\|   "
+      "    \\¡/",
+      "   =—O—=",
+      "    /!\\"
      ],
-     "expected": "jforO:s/-/=/g<CR>",
+     "expected": "j0f*rO:s/-/=/g<CR>",
      "recipe": [
       [
-       "jforO",
-       "brighten the unfamiliar comet core"
+       "j0f*rO",
+       "find and brighten the Fireworks shell core"
       ],
       [
        ":s/-/=/g",
-       "widen only its tail rays"
+       "change both outer rays on that row without touching other rows"
       ]
      ],
      "cursor": "^",
+     "source": "official-Cosmetics/Fireworks res06 radial frame 3 crop; authored core-and-outer-ray brightness pass",
+     "prompt": "Brighten the Fireworks shell core from * to O and both outer rays from - to =; preserve the vertical accents and all row widths.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       "jforO:s/-/=/g<CR>"
+       "j0f*rO:s/-/=/g<CR>"
       ]
      }
     },
     {
      "start": [
-      "   |\\  ",
-      "--< o >",
-      "   |/  "
+      "   .\\¡/.",
+      "  •-—*—-•",
+      "   '/!\\' "
      ],
      "target": [
-      "   |\\  ",
-      "==< O >",
-      "   |/  "
+      "   .\\¡/.",
+      "  •=—O—=•",
+      "   '/!\\' "
      ],
-     "expected": "jforO:s/-/=/g<CR>",
+     "expected": "j0f*rO:s/-/=/g<CR>",
      "recipe": [
       [
-       "jforO",
-       "brighten the mirrored comet core"
+       "j0f*rO",
+       "find and brighten the wider radial core"
       ],
       [
        ":s/-/=/g",
-       "widen only the changed tail"
+       "change only its two outer ASCII rays; keep the em-dash spokes"
       ]
      ],
      "cursor": "^",
+     "source": "official-Cosmetics/Fireworks res06 radial frame 4 crop; authored core-and-outer-ray brightness pass",
+     "prompt": "Brighten the wider radial core from * to O and only its outer ASCII rays from - to =; preserve both inner em-dash spokes and the upper/lower accents.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       "jforO:s/-/=/g<CR>"
+       "j0f*rO:s/-/=/g<CR>"
       ]
      },
      "paired_question_ids": [
@@ -2571,13 +2576,13 @@
    "method_requirement": {
     "label": "perform the unfamiliar-art transfer with its taught command path",
     "exact_any_of": [
-     "jforO:s/-/=/g<CR>"
+     "j0f*rO:s/-/=/g<CR>"
     ]
    },
    "required_before_mastery": true,
    "show_target": true,
    "show_recipe": false,
-   "hint": "Vim toolbox: a line- or range-scoped substitution can change repeated material without redrawing the row. Scope: Treat each 3-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: only the centre glyph changes while the surrounding rays drift or a duplicate has no timing purpose.",
+   "hint": "Vim toolbox: a line- or range-scoped substitution can change repeated material without redrawing the row; a visible character landmark is safer than repeated unit motions. Scope: Treat each 3-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: only the centre glyph changes while the surrounding rays drift or a duplicate has no timing purpose.",
    "review_source_card_id": "M0.06",
    "review_method_family": "required:perform the unfamiliar-art transfer with its taught command path",
    "master_habits": [
@@ -2590,13 +2595,15 @@
    "grammar_families": [
     "ex-substitute-line",
     "normal-replace",
-    "search-landmark"
+    "search-landmark",
+    "normal-motion"
    ],
    "grammar_stage": "hidden",
    "key_vocabulary": [
     "current-line address + s command + pattern + replacement + flags + <CR>",
     "r + replacement glyph; overwrite one cell without shifting the row",
-    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
    ],
    "stage_owner": "A1",
    "artifact_mode": "animation-strip",
@@ -39309,7 +39316,8 @@
    "grammar_breakdown": [
     "current-line address + s command + pattern + replacement + flags + <CR>",
     "r + replacement glyph; overwrite one cell without shifting the row",
-    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "test the smallest readable multi-row subject before adding frames",
    "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
@@ -39317,47 +39325,47 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The key-hidden transfer comes first; afterward, four explicit choices check the command path and animation scope without free-text grading.",
-   "prompt": "ANIMATION\nThe unfamiliar comet keeps its three-row silhouette. Only the core brightens and the tail widens.\n\n    BEFORE      AFTER\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │\n\nNEOVIM\nWhich account matches the edit you just performed?",
+   "prompt": "ANIMATION\nThis radial Fireworks frame brightens in place. The core changes from `*` to `O` and both outer ASCII rays change from `-` to `=`; the inner em-dash spokes, upper `\\¡/`, lower `/!\\`, and three-row registration stay fixed.\n\n  BEFORE        AFTER\n  │    \\¡/│     │    \\¡/│\n  │   -—*—-│  →  │   =—O—=│\n  │    /!\\│     │    /!\\│\n\nNEOVIM\nWhich account matches the bounded core-and-ray edit?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "typed_keys",
    "choices": [
-    "ANIMATION: Brighten the core and widen the two-cell tail while preserving the contour. | NEOVIM: rO overwrites one core cell, then :s/-/=/g changes every dash on the current row.",
-    "ANIMATION: Insert a second core and push the tail right. | NEOVIM: iO inserts before o, increasing the fixed row width.",
-    "ANIMATION: Widen dashes in every frame of the project. | NEOVIM: :%s/-/=/g deliberately uses whole-file scope.",
-    "ANIMATION: Replace the complete comet with the earlier spark. | NEOVIM: p pastes the previous yank over this unfamiliar subject."
+    "ANIMATION: Brighten the core and both outer rays while preserving inner spokes and vertical accents. | NEOVIM: rO overwrites the found star, then current-row :s/-/=/g changes both ASCII hyphens.",
+    "ANIMATION: Insert O beside the star and widen the shell. | NEOVIM: iO preserves the old star and adds a column.",
+    "ANIMATION: Change every dash in every firework frame. | NEOVIM: an omitted range means whole-file scope.",
+    "ANIMATION: Replace the shell with the earlier tutor spark. | NEOVIM: p pastes an old subject instead of editing this source frame."
    ],
    "correct_choice": 0,
    "feedback": [
-    "Correct. The same bounded grammar transfers to unfamiliar art without shifting it.",
-    "Insertion changes the row width and breaks the comet's registered contour.",
-    "% is too broad; the requested tail exists on the current row only.",
-    "Transfer means applying a method to new art, not pasting the old subject."
+    "Correct: one-cell replacement plus a current-row all-matches substitute changes exactly the three nominated cells and leaves em dashes distinct.",
+    "Insertion would retain the star and change the fixed row width instead of producing the shown O core.",
+    "An omitted range means the current row. Whole-file scope would require an explicit percent sign.",
+    "Transfer means applying the method to the visible Fireworks source, not replacing it with earlier lesson art."
    ],
-   "animation_prompt": "The transfer applies the learned core-and-ray edit to different art without moving its contour.\n\n    BEFORE      AFTER\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │",
-   "animation_answer": "Change o to O and both tail dashes to equals signs on the middle row only.",
+   "animation_prompt": "The learner-authored brightness pass changes three cells inside a real Fireworks shell while the vertical accents stay registered.",
+   "animation_answer": "Change the star core to O and both outer hyphens to equals signs; preserve the inner em dashes and other rows.",
    "neovim_prompt": "Identify a one-cell replacement followed by a current-line all-matches substitute.",
-   "neovim_answer": "rO overwrites the core; :s/-/=/g changes every tail dash on that same row.",
-   "compact_prompt": "ANIMATION\nBrighten the comet core and widen only its tail.\n\n    BEFORE      AFTER\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │\n\nNEOVIM\nWhich edit preserves row width and the contour?",
+   "neovim_answer": "j0f* reaches the middle-row core, rO overwrites it, and :s/-/=/g changes both hyphens on that current row.",
+   "compact_prompt": "ANIMATION\nBrighten only the radial core and outer ASCII rays.\n\n  │-—*—-│ → │=—O—=│\n\nNEOVIM\nDecode `j0f*rO:s/-/=/g`.",
    "compact_choices": [
-    "A: core + tail only · V: r overwrite, current-line substitute",
-    "A: insert core; shift tail · V: insert mode",
-    "A: whole project widened · V: % whole-file substitute",
-    "A: replace comet with spark · V: paste old yank"
+    "A: core + outer rays · V: r then current-line substitute",
+    "A: insert beside core · V: keep old star",
+    "A: every frame dash · V: omitted range = whole file",
+    "A: paste tutor spark · V: reuse old subject"
    ],
    "source_answer_contract": {
     "form": "typed_keys",
     "initial_lines": [
-     "  /|   ",
-     "< o >--",
-     "  \\|   "
+     "    \\¡/",
+     "   -—*—-",
+     "    /!\\"
     ],
     "target_lines": [
-     "  /|   ",
-     "< O >==",
-     "  \\|   "
+     "    \\¡/",
+     "   =—O—=",
+     "    /!\\"
     ],
     "initial_cursor": "^",
     "forbidden_side_effects": [
@@ -39366,7 +39374,7 @@
      "extra_window",
      "extra_tab"
     ],
-    "sample_answer": "jforO:s/-/=/g<CR>",
+    "sample_answer": "j0f*rO:s/-/=/g<CR>",
     "effect_version": 1
    },
    "authorship": "manual"
@@ -50449,7 +50457,8 @@
    "grammar_breakdown": [
     "current-line address + s command + pattern + replacement + flags + <CR>",
     "r + replacement glyph; overwrite one cell without shifting the row",
-    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "test the smallest readable multi-row subject before adding frames",
    "source_ref": "ascii-art-authoring §§1,9; Neovim tutor 1.1-1.6",
@@ -50457,39 +50466,39 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
-   "prompt": "ANIMATION\nThis unfamiliar comet faces left. Its three-row silhouette and registration stay fixed; only the core brightens and the two-cell tail changes material.\n\n  BEFORE      AFTER\n  │   |\\  │    │   |\\  │\n  │--< o >│ →  │==< O >│\n  │   |/  │    │   |/  │\n\nNEOVIM\nWhich account explains both edits without shifting any cell?",
+   "prompt": "ANIMATION\nThis fuller radial Fireworks state brightens without changing its structure. The star becomes `O` and only the two outer ASCII hyphens become `=`; the edge bullets, inner em-dash spokes, upper `.\\¡/.`, and lower `'/!\\'` remain fixed.\n\n  BEFORE          AFTER\n  │   .\\¡/.│      │   .\\¡/.│\n  │  •-—*—-•│  →   │  •=—O—=•│\n  │   '/!\\' │     │   '/!\\' │\n\nNEOVIM\nWhich account explains why the substitute changes the outer rays but not the inner spokes or bullets?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "decode",
    "choices": [
-    "ANIMATION: The complete comet moves left by two cells. | NEOVIM: `:s` inserts equals signs before the dashes.",
-    "ANIMATION: Only the core brightens; the tail keeps its dash material. | NEOVIM: the missing `%` makes the substitute affect no row.",
-    "ANIMATION: The core brightens and both tail cells change material while the contour stays registered. | NEOVIM: `rO` overwrites the found core and current-row `:s/-/=/g` replaces both dashes.",
-    "ANIMATION: Both diagonal rays are redrawn. | NEOVIM: `g` extends the substitute into the rows above and below."
+    "ANIMATION: Every dash-shaped glyph becomes equals. | NEOVIM: the pattern `-` matches ASCII hyphen and em dash as the same character.",
+    "ANIMATION: Only the core brightens. | NEOVIM: an omitted percent range makes the substitute affect zero rows.",
+    "ANIMATION: Core and outer rays brighten; inner spokes and other rows stay fixed. | NEOVIM: rO changes the star and current-row :s/-/=/g matches only both ASCII hyphens.",
+    "ANIMATION: Upper and lower accents widen too. | NEOVIM: g extends a substitute vertically into adjacent rows."
    ],
    "correct_choice": 2,
    "feedback": [
-    "Every delimiter remains in its original column. Substitute overwrites matches; it does not insert before them.",
-    "An omitted range means the current row, not zero rows; the g flag reaches both dashes on that row.",
-    "Correct: one-cell replacement handles the core, then current-row substitution changes both tail cells without moving the mirrored silhouette.",
-    "Here g means every match in the addressed row. It does not add vertical scope."
+    "ASCII hyphen-minus and em dash are distinct glyphs; the literal hyphen pattern does not match the inner spokes.",
+    "An omitted range means the current row, not zero rows; g reaches both matching hyphens there.",
+    "Correct: the two glyph classes stay distinct, so the bounded substitute changes only the outer rays after the core edit.",
+    "Here g means every match in the addressed row. It never adds vertical scope."
    ],
-   "animation_prompt": "ANIMATION\nM0.06 variant 2 applies the brightness-and-material change to a mirrored, left-facing comet.",
-   "animation_answer": "The registered contour is unchanged; the core becomes O and the two tail dashes become equals signs.",
-   "neovim_prompt": "NEOVIM\nDecode `jforO:s/-/=/g` on the mirrored comet.",
-   "neovim_answer": "j reaches the acting row, fo finds its core, rO overwrites that one cell, and the un-ranged substitute changes every dash on only the current row because of g.",
-   "compact_prompt": "ANIMATION\nA left-facing comet keeps its silhouette; o becomes O and -- becomes ==.\n\n  │--< o >│ → │==< O >│\n\nNEOVIM\nWhich edit is bounded to the core and current row?",
+   "animation_prompt": "ANIMATION\nThe learner-authored brightness pass changes the core and two outer rays of a wider source firework while its inner spokes remain literal.",
+   "animation_answer": "The star becomes O and the two ASCII hyphens become equals signs; bullets, em dashes, and both other rows remain unchanged.",
+   "neovim_prompt": "NEOVIM\nDecode `j0f*rO:s/-/=/g` and distinguish ASCII hyphen from em dash.",
+   "neovim_answer": "j0f* finds the core, rO replaces it, and :s/-/=/g matches both ASCII hyphens on this row but not the distinct em-dash glyphs.",
+   "compact_prompt": "ANIMATION\nBrighten the core and outer ASCII rays; preserve bullets and em-dash spokes.\n\n  │•-—*—-•│ → │•=—O—=•│\n\nNEOVIM\nDecode the current-row substitute.",
    "compact_choices": [
-    "A: comet moves · V: :s inserts",
-    "A: core only · V: no % means no edit",
-    "A: core + two tail cells · V: r then current-row :s/g",
-    "A: diagonal rays change · V: g spans rows"
+    "A: every dash shape · V: hyphen pattern matches em dash",
+    "A: core only · V: no % means zero rows",
+    "A: core + outer rays · V: r then current-row ASCII-hyphen s/g",
+    "A: other rows widen · V: g spans rows"
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": "jforO:s/-/=/g<CR>",
+    "display": "j0f*rO:s/-/=/g<CR>",
     "required_term_groups": [
      [
       "current line",
@@ -50540,9 +50549,20 @@
      [
       "cursor",
       "cell"
+     ],
+     [
+      "motion",
+      "move",
+      "cursor"
+     ],
+     [
+      "landmark",
+      "row",
+      "column",
+      "cell"
      ]
     ],
-    "sample_answer": "current line substitute pattern replacement flag enter replace cell width search pattern cursor"
+    "sample_answer": "current line substitute pattern replacement flag enter replace cell width search pattern cursor motion landmark"
    },
    "authorship": "manual"
   },
@@ -52465,7 +52485,8 @@
     "hidden_families": [
      "ex-substitute-line",
      "normal-replace",
-     "search-landmark"
+     "search-landmark",
+     "normal-motion"
     ]
    },
    "delivery": {
@@ -55436,6 +55457,11 @@
    "prior_guided_card_id": "M0.01"
   },
   {
+   "hidden_card_id": "M0.06",
+   "grammar_family": "normal-motion",
+   "prior_guided_card_id": "M0.01"
+  },
+  {
    "hidden_card_id": "M0.08",
    "grammar_family": "ex-copy",
    "prior_guided_card_id": "M0.T"
@@ -56851,7 +56877,7 @@
   {
    "grammar_family": "normal-motion",
    "guided_card_id": "M0.01",
-   "review_card_id": "M11.04",
+   "review_card_id": "M0.06",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "evidence": "target-linked changed-art retrieval; method enforcement reported separately"

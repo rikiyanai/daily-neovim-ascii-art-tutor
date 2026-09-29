@@ -790,7 +790,7 @@ with tempfile.TemporaryDirectory() as tmp:
 basic = set("`~!^*()-_+=;:'\",.\\/|<>[]{}")
 # Every extended art glyph here is a one-display-cell glyph in Neovim.  The
 # Snowman source face uses U+2022 BULLET for its paired eyes.
-extended = set("´‾¯¡·•")
+extended = set("´‾¯¡·•—")
 alnum = set("oOvVTL7UcCxXn")
 allowed = basic | extended | alnum | {" "}
 for card in cur["cards"]:
