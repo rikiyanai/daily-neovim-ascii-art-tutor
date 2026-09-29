@@ -1334,9 +1334,11 @@ for sequence, family in (
         assert Path(passed["keylog"]).is_file() and passed["keylog_sha256"]
         assert "LESSON COMPLETE" in output.getvalue()
 
-# Exact contracts reject padded keys even when the target buffer would happen
-# to match. Cards without their own source-linked bank are not silently mapped
-# to the module transfer and therefore are absent from review coverage.
+# Required command paths tolerate harmless navigation, undo/correction, and
+# mapping-prefix replay while exact target equality remains the result gate.
+# Omitting a required token still fails. Cards without their own source-linked
+# bank are not silently mapped to the module transfer and therefore are absent
+# from review coverage.
 for source in [c for c in cur["cards"] if c.get("method_requirement")
                and c.get("review_source_card_id")]:
     review_card = v2._changed_review_card(
@@ -1347,7 +1349,14 @@ for source in [c for c in cur["cards"] if c.get("method_requirement")
     exact = source["method_requirement"].get("exact_any_of", [])
     if exact:
         replay = {"actual_tokens": tokenize("u" + exact[0])}
-        assert v2._required_method_error(method_cfg, source, replay), source["id"]
+        assert v2._required_method_error(method_cfg, source, replay) is None, source["id"]
+        missing = tokenize(exact[0])[:-1]
+        assert v2._required_method_error(
+            method_cfg, source, {"actual_tokens": missing}), source["id"]
+m306 = next(c for c in cur["cards"] if c["id"] == "M3.06")
+mapped_prefix_replay = tokenize('ggggV55j"a"ayG"a"ap8GforOZZ')
+assert v2._required_method_error(
+    method_cfg, m306, {"actual_tokens": mapped_prefix_replay}) is None
 unsupported_review = next(c for c in cur["cards"] if c["id"] == "M12.01")
 assert not unsupported_review.get("review_source_card_id")
 try:

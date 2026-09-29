@@ -5355,13 +5355,13 @@ def build():
             verified_methods.append({
                 "card_id": card["id"],
                 "label": card["method_requirement"]["label"],
-                "evidence": ("runtime-required exact accepted key path" if exact else
+                "evidence": ("runtime-required ordered command path plus exact target" if exact else
                              "runtime-required token pattern and optional key limit"),
             })
         for taught in card.get("method_alternatives", []):
             verified_methods.append({
                 "card_id": card["id"], "label": taught["label"],
-                "evidence": "runtime-recognized exact comparison path",
+                "evidence": "runtime-recognized comparison method",
             })
         if card.get("review_source_card_id"):
             variants = (card.get("review_variants") or card.get("variants") or [])
@@ -5825,7 +5825,7 @@ def validate(cur):
                     if (review_rule.get("exact_any_of")
                             and variant.get("expected") not in review_rule["exact_any_of"]):
                         errors.append(
-                            f"{card['id']}: review variant {index} does not satisfy its exact method")
+                            f"{card['id']}: review variant {index} expected keys are not a declared method")
         review_capable = bool(review_variants or card["kind"] == "transfer")
         if review_capable:
             if (card.get("review_source_card_id") != card["id"]

@@ -65,12 +65,14 @@ def send_spec(socket, pane, spec):
                "<Tab>": "Tab", "<BS>": "BSpace"}
     def flush():
         if literal:
-            # Feed discrete human-like key events. Sending `jforO` as one
-            # terminal byte burst can outrun Flash's asynchronous f-motion
-            # mapping even after VeryLazy, yielding a keylog with no edit.
+            # Feed discrete learner-paced key events.  Thirty milliseconds
+            # still outran Flash/Hardtime mappings on several transfer cards:
+            # the key log contained the recipe but Neovim had not applied the
+            # motion or change.  120 ms remains quick while representing
+            # actual individual presses instead of a terminal byte burst.
             for char in literal:
                 send_text(socket, pane, char)
-                time.sleep(0.03)
+                time.sleep(0.12)
             literal.clear()
     for token in tokens:
         if token in special or re.fullmatch(r"<C-[A-Za-z]>", token):

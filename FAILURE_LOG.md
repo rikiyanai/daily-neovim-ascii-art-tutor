@@ -3967,3 +3967,60 @@ multiple-method contract, not ungraded answer-key padding.
 Physical drag selection in Ghostty remains an operator acceptance check. The
 currently open popup is already using the revised launcher/runtime, so it is
 the correct live surface on which to try ordinary drag followed by Cmd-C.
+
+## VD-34 · 2026-09-29 03:28 — M3.06 exact-target work was rejected by mapping-prefix replay; post-M3 headed routes exposed three separate input failures
+
+The isolated real-config reproduction was:
+
+```text
+python3 share/test_tmux_v2_routes.py --only-transfer=M3.06
+expected: ggV5j"ayG"ap8GforO
+captured: ggggV55j"a"ayG"a"ap8GforO
+saved artifact: exact target
+old result: fail, required exact method missing
+```
+
+Neovim's `-w` key log records mapping-prefix replay from the operator's live
+configuration, so whole-log equality was not evidence that the learner used or
+did not use the taught path. A discarded `vim.on_key(..., typed)` experiment
+also duplicated `g`, counts, and register prefixes and was removed; it did not
+provide a physical-key oracle.
+
+The mastery contract is now two independent gates:
+
+1. the saved artifact must equal the target exactly; and
+2. every token in one declared taught command path must occur in order in the
+   attempt log.
+
+Extra navigation, corrections, undo, Hardtime-blocked input, and mapping replay
+no longer reject correct art. Omitting a required command token still fails.
+The debrief and generated evidence labels now say "required commands in order ·
+exact saved target" instead of claiming an exact whole key log. Regression
+coverage includes the captured M3.06 replay above and a missing-token rejection.
+
+The 80×24 headed popup also clipped row six of M3.06's six-row TARGET. The
+compact brief receives one additional row; it now shows the complete target
+without removing the art window.
+
+**Verified scope:**
+
+- `python3 share/test_v2.py`: 187/187 executable lessons and 146/146 primary
+  recipes pass; command-path replay and missing-token checks pass.
+- M3.06 passes in the real-config headed popup at 80×24, 100×36, and 188×49.
+- M4.06 passes at 80×24 after the route driver was slowed from a 30 ms byte
+  burst to learner-paced 120 ms key events.
+
+**New open failures found by continuing the 80×24 matrix:**
+
+- M9.06 logs `fxro` but saves `[ x ]` instead of `[ o ]`.
+- M12.06 logs `0t+lr*$T+hr*` but saves the unchanged joint row.
+- M18.06 logs all three `C` redraws but saves the original mirror rows.
+
+Each of those three cards passes in clean mode. A test-only probe confirmed for
+M9.06 that, at the real-config ready boundary, the art buffer was current,
+Normal, modifiable, not read-only, and named for the correct project. Removing
+the Flash `f/t` callbacks and trying the mapping-free `3|ro` diagnostic still
+left the art unchanged. Those diagnostic hooks and mapping changes were removed.
+Therefore this entry does not claim a complete post-M3 headed matrix. M8.06,
+M16.06, and M17.06 did pass at 80×24; M9.06, M12.06, and M18.06 remain the
+specific live-config blockers to diagnose next.

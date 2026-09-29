@@ -1802,6 +1802,25 @@ def _contains_tokens(tokens, wanted):
                for index in range(len(tokens) - len(wanted) + 1))
 
 
+def _contains_ordered_tokens(tokens, wanted):
+    """True when every required token occurs in order, allowing other input.
+
+    The final buffer remains an exact equality gate.  This trace gate proves
+    that the taught commands were present without treating look-around keys,
+    undo/correction, Hardtime-blocked presses, or mapping-prefix replay from
+    the operator's real config as a failed lesson.
+    """
+    if not wanted:
+        return False
+    cursor = 0
+    for token in tokens:
+        if token == wanted[cursor]:
+            cursor += 1
+            if cursor == len(wanted):
+                return True
+    return False
+
+
 def _required_method_error(cfg, card, replay):
     """Grade declared method evidence separately from the final buffer."""
     rule = card.get("method_requirement")
@@ -1820,8 +1839,9 @@ def _required_method_error(cfg, card, replay):
         cfg.tokenize(keys) if cfg.tokenize else list(keys)
         for keys in rule.get("all_of", [])
     ]
-    if exact_paths and actual not in exact_paths:
-        return ("The target matches, but the required exact method was not demonstrated: %s."
+    if exact_paths and not any(_contains_ordered_tokens(actual, path)
+                               for path in exact_paths):
+        return ("The target matches, but the required command path was not demonstrated: %s."
                 % rule["label"])
     if alternatives and not any(_contains_tokens(actual, wanted) for wanted in alternatives):
         return ("The target matches, but the required method was not demonstrated: %s."
@@ -2061,7 +2081,7 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
     if not concept_replay:
         path = " → ".join(keys for keys, _why in card.get("recipe", [])
                           if keys != card.get("cursor"))
-        print("%sDO / AVOID%s  %s · no out-of-scope or inexact edits" % (
+        print("%sDO / AVOID%s  %s · required commands in order · exact saved target" % (
             bold, off, path or card.get("expected", "(none)")))
         width = max(40, shutil.get_terminal_size((80, 24)).columns - 4)
         breakdown = _answer_breakdown(card, width=width)

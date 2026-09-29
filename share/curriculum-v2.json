@@ -45570,487 +45570,487 @@
   {
    "card_id": "M0.01",
    "label": "find the visible core, then replace it in place",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M0.05",
    "label": "counted yank and put",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M0.05",
    "label": "addressed copy",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M0.06",
    "label": "perform the unfamiliar-art transfer with its taught command path",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M11.01",
    "label": "overwrite the fixed-width roof with Replace mode",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M11.04",
    "label": "undo and redo a real fixed-width redraw",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M11.05",
    "label": "two local replacements",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M11.05",
    "label": "current-row substitute",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M11.06",
    "label": "transfer the fixed-width redraw with Replace mode",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M11.08",
    "label": "enable virtual editing and place both trails at exact column 14",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M1.05",
    "label": "local plus dot",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M1.05",
    "label": "bounded substitute",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M1.06",
    "label": "perform the unfamiliar-art transfer with its taught command path",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M19.01",
    "label": "replace the nominated still cell with virtual replace",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M19.04",
    "label": "hand-author all five copied mirror rows with virtual replace",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M19.05",
    "label": "virtual replace run",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M19.05",
    "label": "replace-mode run",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M19.06",
    "label": "transfer hand mirroring with virtual replace to unfamiliar art",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M19.08",
    "label": "retain the complete key-pose still and vary one nominated cell",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M2.05",
    "label": "two local replacements",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M2.05",
    "label": "scoped substitute",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M2.06",
    "label": "reach the eye row, find the eye, and replace it in place",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M12.01",
    "label": "approach the left joint with t before replacing it",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M12.02",
    "label": "copy the pose and approach its right joint with T",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M12.04",
    "label": "repeat the lower-joint character search with semicolon",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M12.05",
    "label": "repeated character search",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M12.05",
    "label": "row-scoped substitution",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M12.06",
    "label": "transfer forward and backward till motions to unfamiliar joints",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M12.08",
    "label": "author the opposite mirrored return with both t and T",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M13.01",
    "label": "reach the centre texture WORD with W and replace in place",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M13.02",
    "label": "copy the pose and move the pulse between texture WORDs",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M13.04",
    "label": "address three texture edges with E, counted W, and B",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M13.05",
    "label": "repeated landmark edits",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M13.05",
    "label": "row-scoped material substitution",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M13.06",
    "label": "transfer counted W and B across changed texture WORDs",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M13.08",
    "label": "move the return pulse from centre to left with W and B",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M14.01",
    "label": "use named register a through Replace mode for the palette glyph",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M14.02",
    "label": "duplicate the complete paragraph frame with yap",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M14.04",
    "label": "change only the second variant through its named palette register",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M14.05",
    "label": "paragraph object copy",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M14.05",
    "label": "addressed four-line copy",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M14.06",
    "label": "transfer a named palette glyph through Replace mode",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M14.08",
    "label": "navigate paragraph frames and retrieve a named glyph register",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M10.05",
    "label": "counted yank and put",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M10.05",
    "label": "addressed copy",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M10.06",
    "label": "perform the unfamiliar-art transfer with its taught command path",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M5.05",
    "label": "addressed midpoint",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M5.05",
    "label": "counted midpoint",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M5.06",
    "label": "perform the unfamiliar-art transfer with its taught command path",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M15.01",
    "label": "use explicit shiftwidth=1 and >> for the one-cell brick offset",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M15.02",
    "label": "copy all three material rows as one frame",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M15.04",
    "label": "combine a one-cell brick shift with a row-bounded dither lightening",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M15.05",
    "label": "blockwise end append",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M15.05",
    "label": "bounded range append",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M15.06",
    "label": "transfer the explicit one-cell material offset",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M15.08",
    "label": "record and replay the dither-lightening macro across four landmarks",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M16.01",
    "label": "increment the written frame number with CTRL-A",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M16.02",
    "label": "read the saved plate and increment the imported frame label",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M16.04",
    "label": "copy a complete plan block and count-increment its frame label",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M16.05",
    "label": "addressed plan-block move",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M16.05",
    "label": "linewise delete and put",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M16.06",
    "label": "transfer numeric frame-label increment to a changed plan",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M16.08",
    "label": "append a complete key-pose plan and count-increment the new label",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M3.05",
    "label": "counted yank",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M3.05",
    "label": "addressed copy",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M3.06",
    "label": "perform the unfamiliar-art transfer with its taught command path",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M4.05",
    "label": "addressed seam candidate",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M4.05",
    "label": "counted seam candidate",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M4.06",
    "label": "perform the unfamiliar-art transfer with its taught command path",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M4.08",
    "label": "delete exactly the redundant three-row seam frame",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M17.01",
    "label": "use search repeat plus dot at all three eye anchors",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M17.02",
    "label": "copy the complete three-row pose scaffold",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M17.04",
    "label": "develop the fourth shell without editing its coherent eye",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M17.05",
    "label": "search repeat plus dot",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M17.05",
    "label": "global normal pass",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M17.06",
    "label": "transfer search repeat plus dot to unfamiliar frame anchors",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M17.08",
    "label": "record and replay a search-bearing macro across four frame anchors",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M7.05",
    "label": "recorded visual macro",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M7.05",
    "label": "global normal",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M7.06",
    "label": "perform the unfamiliar-art transfer with its taught command path",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M6.04",
    "label": "clear the apex row while retaining the five-row frame",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M6.05",
    "label": "counted yank then clear",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M6.05",
    "label": "addressed copy then clear",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M6.06",
    "label": "perform the unfamiliar-art transfer with its taught command path",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M18.01",
    "label": "hand-author all three mirrored art rows without a software flip",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M18.02",
    "label": "copy the complete four-line mirrored frame",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M18.04",
    "label": "hand-author the copied return overshoot across all three art rows",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M18.05",
    "label": "manual verification markers",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M18.05",
    "label": "expression validation only",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M18.06",
    "label": "transfer full-frame hand mirroring to unfamiliar directional art",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M18.08",
    "label": "reuse complete approved frame ranges in reverse order",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M8.05",
    "label": "local replacement",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M8.05",
    "label": "scoped substitute",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M8.06",
    "label": "perform the unfamiliar-art transfer with its taught command path",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M9.05",
    "label": "direct three-row insert",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M9.05",
    "label": "copy then vary",
-   "evidence": "runtime-recognized exact comparison path"
+   "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M9.06",
    "label": "perform the unfamiliar-art transfer with its taught command path",
-   "evidence": "runtime-required exact accepted key path"
+   "evidence": "runtime-required ordered command path plus exact target"
   }
  ],
  "verified_review_coverage": [

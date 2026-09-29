@@ -753,7 +753,11 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
                 "local ls=vim.fn.readfile(%s);local aw=vim.api.nvim_get_current_win();"
                 "local ab=vim.api.nvim_get_current_buf();"
                 "local wide=vim.o.columns>=120;"
-                "local mh=(vim.o.lines<28) and math.max(10,math.floor(vim.o.lines*0.65)) or math.max(8,math.floor(vim.o.lines*0.55));"
+                # At 80x24 the personal tabline, both winbars, lualine, and the
+                # command row consume enough screen rows that a six-row pose
+                # lost its final TARGET row.  Give the compact brief one more
+                # row while leaving the art window usable and scrollable.
+                "local mh=(vim.o.lines<28) and math.max(11,math.floor(vim.o.lines*0.65)+1) or math.max(8,math.floor(vim.o.lines*0.55));"
                 "if wide then local mw=math.min(84,math.max(58,math.floor(vim.o.columns*0.48)));"
                 "vim.cmd('topleft '..mw..'vnew') else "
                 "vim.cmd('aboveleft '..math.min(math.max(#ls+2,8),mh)..'new') end;"
@@ -764,7 +768,7 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
                 "vim.wo[hw].foldcolumn='0';if wide then vim.wo[hw].winfixwidth=true else vim.wo[hw].winfixheight=true end;"
                 "vim.wo[hw].wrap=true;vim.wo[hw].linebreak=true;"
                 "vim.wo[hw].winbar=' TASK · TARGET · HINT · CTRL-W W SWITCHES PANE ';"
-                "vim.g.vim_daily_brief_win=hw;"
+                "vim.g.vim_daily_brief_win=hw;vim.g.vim_daily_art_win=aw;"
                 "vim.api.nvim_set_current_win(aw);vim.wo[aw].wrap=false;"
                 "vim.api.nvim_create_autocmd('BufWinLeave',{buffer=ab,once=true,callback=function()"
                 "vim.schedule(function() if vim.api.nvim_win_is_valid(hw) then vim.cmd('qa!') end end) end})"
@@ -778,7 +782,9 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
             # there is no VeryLazy contract to wait for.
             signal_lua = (
                 "do local sent=false;local function signal() if sent then return end;sent=true;"
-                "vim.defer_fn(function() vim.fn.system({'tmux','wait-for','-U',%s}) end,300) end;"
+                "vim.defer_fn(function() local aw=vim.g.vim_daily_art_win;"
+                "if aw and vim.api.nvim_win_is_valid(aw) then vim.api.nvim_set_current_win(aw) end;"
+                "vim.fn.system({'tmux','wait-for','-U',%s}) end,300) end;"
                 "if vim.g.did_very_lazy then signal() elseif package.loaded['lazy'] then "
                 "vim.api.nvim_create_autocmd('User',{pattern='VeryLazy',once=true,callback=signal}) "
                 "else signal() end end" % json.dumps(ready_signal)
