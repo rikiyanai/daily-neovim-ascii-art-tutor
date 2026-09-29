@@ -6320,74 +6320,78 @@
    ],
    "review_variants": [
     {
+     "prompt": "Cave Party lava: mark the first two crests as the leading pulse; do not touch the offset row below.",
+     "hint": "Find one ~, repeat that find forward, then reverse the same find.",
      "start": [
-      "! /---\\ |",
-      "! : : : |",
-      "! \\---/ |"
+      "   o",
+      "  /|\\",
+      "    ~ ~ ~ ~ ~ ~ ~"
      ],
      "target": [
-      "! /---\\ |",
-      "! ! ! : |",
-      "! \\---/ |"
+      "   o",
+      "  /|\\",
+      "    ! ! ~ ~ ~ ~ ~"
      ],
-     "expected": "2G0f:;r!,r!",
+     "expected": "3G0f~;r!,r!",
      "recipe": [
       [
-       "2G0f:",
-       "find the first colon landmark"
+       "3G0f~",
+       "find the first lava crest on the acting row"
       ],
       [
-       ";",
-       "repeat the character find forward"
+       ";r!",
+       "repeat the find forward and mark the second crest"
       ],
       [
-       "r!",
-       "replace that second landmark in place"
-      ],
-      [
-       ",",
-       "repeat the find in the reverse direction"
-      ],
-      [
-       "r!",
-       "replace the earlier landmark in place"
+       ",r!",
+       "reverse the same find and mark the first crest"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Cosmetics/CaveParty res06 lava frame 1",
+     "method_requirement": {
+      "label": "find, repeat, and reverse across one animated lava row",
+      "exact_any_of": [
+       "3G0f~;r!,r!"
+      ]
+     }
     },
     {
+     "prompt": "Stone Story drill tread: mark the first two moving tread cells; the lower track remains registered.",
+     "hint": "Use ; to repeat the dash find and , to reverse it.",
      "start": [
-      "+ /---\\ |",
-      "+ : : : |",
-      "+ \\---/ |"
+      "'  |---------|~~.",
+      " - - - - - -",
+      "\\ _ _ _ _ _ /"
      ],
      "target": [
-      "+ /---\\ |",
-      "+ ! ! : |",
-      "+ \\---/ |"
+      "'  |---------|~~.",
+      " ! ! - - - -",
+      "\\ _ _ _ _ _ /"
      ],
-     "expected": "2G0f:;r!,r!",
+     "expected": "2G0f-;r!,r!",
      "recipe": [
       [
-       "2G0f:",
-       "find the first colon landmark"
+       "2G0f-",
+       "find the first bright tread cell"
       ],
       [
-       ";",
-       "repeat the character find forward"
+       ";r!",
+       "repeat forward to the second tread cell"
       ],
       [
-       "r!",
-       "replace that second landmark in place"
-      ],
-      [
-       ",",
-       "repeat the find in the reverse direction"
-      ],
-      [
-       "r!",
-       "replace the earlier landmark in place"
+       ",r!",
+       "return to the first tread cell"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Cosmetics/Drill res26 tread shimmer layer",
+     "method_requirement": {
+      "label": "find, repeat, and reverse across a moving tread pattern",
+      "exact_any_of": [
+       "2G0f-;r!,r!"
+      ]
+     }
     }
    ],
    "review_source_card_id": "M12.FIND",
@@ -7405,58 +7409,78 @@
    "labels": true,
    "review_variants": [
     {
+     "prompt": "Cave Party lava: retouch three internal crest cells while the first crest and the lower phase stay fixed.",
+     "hint": "Spaces make each ~ a WORD; use the starts and ends rather than counting columns.",
      "start": [
-      "! aa bb cc |",
-      "! aa bb cc |",
-      "! aa bb cc |"
+      "   o",
+      "  /|\\",
+      "    ~ ~ ~ ~ ~ ~ ~"
      ],
      "target": [
-      "! a! +b ?c |",
-      "! aa bb cc |",
-      "! aa bb cc |"
+      "   o",
+      "  /|\\",
+      "    ~ ! + ? ~ ~ ~"
      ],
-     "expected": "gg0WEr!2Wr?Br+",
+     "expected": "3G0WEr!2Wr?Br+",
      "recipe": [
       [
-       "W/E",
-       "move to a WORD start, then its end"
+       "3G0WE",
+       "reach the end of the next lava cell"
       ],
       [
-       "2W",
-       "count two WORD starts forward"
+       "r!2Wr?",
+       "mark it, then count two WORD starts to the next mark"
       ],
       [
-       "B",
-       "move back one WORD start before the final replacement"
+       "Br+",
+       "move back one WORD start for the middle mark"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Cosmetics/CaveParty res06 lava frame 1",
+     "method_requirement": {
+      "label": "retouch bounded lava cells with W, E, and B",
+      "exact_any_of": [
+       "3G0WEr!2Wr?Br+"
+      ]
+     }
     },
     {
+     "prompt": "Cave Party lava, shifted phase: retouch the same three internal cells without moving either row.",
+     "hint": "Treat each separated ~ as one WORD-shaped texture cell.",
      "start": [
-      "+ aa bb cc |",
-      "+ aa bb cc |",
-      "+ aa bb cc |"
+      "   o",
+      "  /|\\",
+      "   ~ ~ ~ ~ ~ ~ ~"
      ],
      "target": [
-      "+ a! +b ?c |",
-      "+ aa bb cc |",
-      "+ aa bb cc |"
+      "   o",
+      "  /|\\",
+      "   ~ ! + ? ~ ~ ~"
      ],
-     "expected": "gg0WEr!2Wr?Br+",
+     "expected": "3G0WEr!2Wr?Br+",
      "recipe": [
       [
-       "W/E",
-       "move to a WORD start, then its end"
+       "3G0WE",
+       "reach the end of the next crest cell"
       ],
       [
-       "2W",
-       "count two WORD starts forward"
+       "r!2Wr?",
+       "mark it and count forward by WORD starts"
       ],
       [
-       "B",
-       "move back one WORD start before the final replacement"
+       "Br+",
+       "return one WORD start for the middle mark"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Cosmetics/CaveParty res06 lava frame 2",
+     "method_requirement": {
+      "label": "retouch bounded cells in the shifted lava phase",
+      "exact_any_of": [
+       "3G0WEr!2Wr?Br+"
+      ]
+     }
     }
    ],
    "review_source_card_id": "M13.BE",
@@ -8238,58 +8262,68 @@
    },
    "review_variants": [
     {
+     "prompt": "Skully palette: store = from the visible palette, then apply it to only the left eye.",
+     "hint": "Yank the palette cell into register a; Replace mode can insert that register without changing width.",
      "start": [
-      "/o\\  [#@]",
-      "|.|       ",
-      "\\_/       ",
-      ""
+      " ,--. [=]",
+      "(_o,o)",
+      "  `\"´"
      ],
      "target": [
-      "/o\\  [#@]",
-      "|#|       ",
-      "\\_/       ",
-      ""
+      " ,--. [=]",
+      "(_=,o)",
+      "  `\"´"
      ],
-     "expected": "f#\"aylj0f.R<C-r>a<Esc>",
+     "expected": "ggf=\"aylj0foR<C-r>a<Esc>",
      "recipe": [
       [
-       "\"ayl / R<C-r>a",
-       "retrieve the changed palette glyph without inserting a cell"
+       "ggf=\"ayl",
+       "store the blink material in register a"
+      ],
+      [
+       "j0foR<C-r>a<Esc>",
+       "retrieve it over the left eye without shifting the skull"
       ]
      ],
      "cursor": "^",
+     "source": "official-Hats/Skully res01 + res06 eye material",
      "method_requirement": {
-      "label": "retrieve the changed palette through named register a",
+      "label": "retrieve a real Skully eye material through register a",
       "exact_any_of": [
-       "f#\"aylj0f.R<C-r>a<Esc>"
+       "ggf=\"aylj0foR<C-r>a<Esc>"
       ]
      }
     },
     {
+     "prompt": "Skully look: store O from the visible palette, then widen only the left eye.",
+     "hint": "The palette is on the top row; the acting eye is one row below.",
      "start": [
-      "<^>  [x+]",
-      "[o]       ",
-      "-_-       ",
-      ""
+      " ,--. [O]",
+      "(_o,o)",
+      "  `\"´"
      ],
      "target": [
-      "<^>  [x+]",
-      "[x]       ",
-      "-_-       ",
-      ""
+      " ,--. [O]",
+      "(_O,o)",
+      "  `\"´"
      ],
-     "expected": "fx\"aylj0foR<C-r>a<Esc>",
+     "expected": "ggfO\"aylj0foR<C-r>a<Esc>",
      "recipe": [
       [
-       "\"ayl / R<C-r>a",
-       "reuse the alternate palette in a changed shell"
+       "ggfO\"ayl",
+       "store the wide look material in register a"
+      ],
+      [
+       "j0foR<C-r>a<Esc>",
+       "retrieve it over the left eye"
       ]
      ],
      "cursor": "^",
+     "source": "official-Hats/Skully res01 + res04 look material",
      "method_requirement": {
-      "label": "retrieve the alternate palette through named register a",
+      "label": "retrieve the alternate Skully eye material through register a",
       "exact_any_of": [
-       "fx\"aylj0foR<C-r>a<Esc>"
+       "ggfO\"aylj0foR<C-r>a<Esc>"
       ]
      }
     }
@@ -8558,74 +8592,84 @@
    },
    "review_variants": [
     {
+     "prompt": "Two Skully frames: leave the first open-eyed; apply the blink material only to the copy.",
+     "hint": "Start on the copied palette row, then replace one eye in the row below.",
      "start": [
-      "/o\\ [#@]",
-      "|#|      ",
-      "\\_/      ",
+      " ,--. [=]",
+      "(_o,o)",
+      "  `\"´",
       "",
-      "/o\\ [#@]",
-      "|#|      ",
-      "\\_/      ",
-      ""
+      " ,--. [=]",
+      "(_o,o)",
+      "  `\"´"
      ],
      "target": [
-      "/o\\ [#@]",
-      "|#|      ",
-      "\\_/      ",
+      " ,--. [=]",
+      "(_o,o)",
+      "  `\"´",
       "",
-      "/o\\ [#@]",
-      "|@|      ",
-      "\\_/      ",
-      ""
+      " ,--. [=]",
+      "(_=,o)",
+      "  `\"´"
      ],
-     "expected": "5Gf@\"aylj0f#R<C-r>a<Esc>",
+     "expected": "5Gf=\"aylj0foR<C-r>a<Esc>",
      "recipe": [
       [
-       "\"ayl / R<C-r>a",
-       "change only the copied unfamiliar eye"
+       "5Gf=\"ayl",
+       "store = from the copied pose's palette"
+      ],
+      [
+       "j0foR<C-r>a<Esc>",
+       "blink only the copied left eye"
       ]
      ],
      "cursor": "^",
+     "source": "official-Hats/Skully res01 + res06 eye material",
      "method_requirement": {
-      "label": "retrieve the second changed-art palette glyph",
+      "label": "change only the copied Skully pose through register a",
       "exact_any_of": [
-       "5Gf@\"aylj0f#R<C-r>a<Esc>"
+       "5Gf=\"aylj0foR<C-r>a<Esc>"
       ]
      }
     },
     {
+     "prompt": "Two Skully frames: the first holds; widen only the copied frame's left eye.",
+     "hint": "Use the palette belonging to the second paragraph frame.",
      "start": [
-      "<^> [x+]",
-      "[x]     ",
-      "-_-     ",
+      " ,--. [O]",
+      "(_o,o)",
+      "  `\"´",
       "",
-      "<^> [x+]",
-      "[x]     ",
-      "-_-     ",
-      ""
+      " ,--. [O]",
+      "(_o,o)",
+      "  `\"´"
      ],
      "target": [
-      "<^> [x+]",
-      "[x]     ",
-      "-_-     ",
+      " ,--. [O]",
+      "(_o,o)",
+      "  `\"´",
       "",
-      "<^> [x+]",
-      "[+]     ",
-      "-_-     ",
-      ""
+      " ,--. [O]",
+      "(_O,o)",
+      "  `\"´"
      ],
-     "expected": "5Gf+\"aylj0fxR<C-r>a<Esc>",
+     "expected": "5GfO\"aylj0foR<C-r>a<Esc>",
      "recipe": [
       [
-       "\"ayl / R<C-r>a",
-       "change only the alternate copied eye"
+       "5GfO\"ayl",
+       "store O from the copied pose's palette"
+      ],
+      [
+       "j0foR<C-r>a<Esc>",
+       "make only the copy look left"
       ]
      ],
      "cursor": "^",
+     "source": "official-Hats/Skully res01 + res04 look material",
      "method_requirement": {
-      "label": "retrieve the alternate second palette glyph",
+      "label": "change only the copied Skully look through register a",
       "exact_any_of": [
-       "5Gf+\"aylj0fxR<C-r>a<Esc>"
+       "5GfO\"aylj0foR<C-r>a<Esc>"
       ]
      }
     }
@@ -8784,86 +8828,102 @@
    ],
    "review_variants": [
     {
+     "prompt": "Skully strip: copy the complete open-eyed frame and place it before the blink frame as an anticipation hold.",
+     "hint": "The blank line is part of the paragraph boundary; yank the object, not three counted rows.",
      "start": [
-      "! /^\\  |",
-      "! |o|   |",
-      "! \\_/   |",
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´",
       "",
-      "! /^\\  |",
-      "! |+|   |",
-      "! \\_/   |",
+      "     ,--.",
+      "    (_=,=)",
+      "      `\"´",
       ""
      ],
      "target": [
-      "! /^\\  |",
-      "! |o|   |",
-      "! \\_/   |",
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´",
       "",
-      "! /^\\  |",
-      "! |o|   |",
-      "! \\_/   |",
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´",
       "",
-      "! /^\\  |",
-      "! |+|   |",
-      "! \\_/   |",
+      "     ,--.",
+      "    (_=,=)",
+      "      `\"´",
       ""
      ],
      "expected": "ggyapgg}jP",
      "recipe": [
       [
        "ggyap",
-       "yank one complete blank-line-separated frame object"
+       "yank the complete open-eyed Skully paragraph"
       ],
       [
        "gg}",
-       "jump from the first frame to the next paragraph boundary"
+       "cross its blank-line frame boundary"
       ],
       [
        "jP",
-       "place the stored frame above the next frame"
+       "put the saved frame above the blink frame"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Skully res01 + res04 blink overlay",
+     "method_requirement": {
+      "label": "copy one complete Skully paragraph frame with yap and P",
+      "exact_any_of": [
+       "ggyapgg}jP"
+      ]
+     }
     },
     {
+     "prompt": "Snow bunny strip: insert one complete open-eyed hold before the blink without reconstructing the pose.",
+     "hint": "Use the paragraph object so ears, face, body, and separator travel together.",
      "start": [
-      "+ /^\\  |",
-      "+ |o|   |",
-      "+ \\_/   |",
+      "   (\\(\\",
+      "  ( n.n)",
+      "o(,`_\"_)",
       "",
-      "+ /^\\  |",
-      "+ |+|   |",
-      "+ \\_/   |",
+      "   (\\(\\",
+      "  ( -.-)",
+      "o(,`_\"_)",
       ""
      ],
      "target": [
-      "+ /^\\  |",
-      "+ |o|   |",
-      "+ \\_/   |",
+      "   (\\(\\",
+      "  ( n.n)",
+      "o(,`_\"_)",
       "",
-      "+ /^\\  |",
-      "+ |o|   |",
-      "+ \\_/   |",
+      "   (\\(\\",
+      "  ( n.n)",
+      "o(,`_\"_)",
       "",
-      "+ /^\\  |",
-      "+ |+|   |",
-      "+ \\_/   |",
+      "   (\\(\\",
+      "  ( -.-)",
+      "o(,`_\"_)",
       ""
      ],
      "expected": "ggyapgg}jP",
      "recipe": [
       [
        "ggyap",
-       "yank one complete blank-line-separated frame object"
+       "yank the complete open-eyed bunny paragraph"
       ],
       [
-       "gg}",
-       "jump from the first frame to the next paragraph boundary"
-      ],
-      [
-       "jP",
-       "place the stored frame above the next frame"
+       "gg}jP",
+       "cross the boundary and put it above the blink"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/SnowBunny res01 + res03 blink overlay",
+     "method_requirement": {
+      "label": "copy one complete SnowBunny paragraph frame with yap and P",
+      "exact_any_of": [
+       "ggyapgg}jP"
+      ]
+     }
     }
    ],
    "review_source_card_id": "M14.PARA",
@@ -9398,90 +9458,108 @@
    },
    "review_variants": [
     {
+     "prompt": "Skully sequence: open, blink, blink. Restore the left eye only in frame 3 from frame 1's palette.",
+     "hint": "Two } motions cross the two frame boundaries; then edit the eye row.",
      "start": [
-      "/o\\ [#@]",
-      "|#|      ",
-      "\\_/      ",
+      " ,--. [o=]",
+      "(_o,o)",
+      "  `\"´",
       "",
-      "/o\\ [#@]",
-      "|@|      ",
-      "\\_/      ",
+      " ,--. [o=]",
+      "(_=,=)",
+      "  `\"´",
       "",
-      "/o\\ [#@]",
-      "|@|      ",
-      "\\_/      ",
-      ""
+      " ,--. [o=]",
+      "(_=,=)",
+      "  `\"´"
      ],
      "target": [
-      "/o\\ [#@]",
-      "|#|      ",
-      "\\_/      ",
+      " ,--. [o=]",
+      "(_o,o)",
+      "  `\"´",
       "",
-      "/o\\ [#@]",
-      "|@|      ",
-      "\\_/      ",
+      " ,--. [o=]",
+      "(_=,=)",
+      "  `\"´",
       "",
-      "/o\\ [#@]",
-      "|#|      ",
-      "\\_/      ",
-      ""
+      " ,--. [o=]",
+      "(_o,=)",
+      "  `\"´"
      ],
-     "expected": "ggf#\"bylgg}}jj0f@R<C-r>b<Esc>",
+     "expected": "ggfo\"bylgg}}jj0f=R<C-r>b<Esc>",
      "recipe": [
       [
-       "}} / R<C-r>b",
-       "retrieve the first changed palette in the third frame"
+       "ggfo\"byl",
+       "store the first frame's open-eye material in register b"
+      ],
+      [
+       "gg}}jj",
+       "cross two blank-line-separated frame objects"
+      ],
+      [
+       "0f=R<C-r>b<Esc>",
+       "restore the third frame's left eye"
       ]
      ],
      "cursor": "^",
+     "source": "official-Hats/Skully res01 + res06 blink material",
      "method_requirement": {
-      "label": "navigate changed paragraph frames and retrieve register b",
+      "label": "carry an eye material across three paragraph frames",
       "exact_any_of": [
-       "ggf#\"bylgg}}jj0f@R<C-r>b<Esc>"
+       "ggfo\"bylgg}}jj0f=R<C-r>b<Esc>"
       ]
      }
     },
     {
+     "prompt": "Snow bunny sequence: open, blink, blink. Reopen only the left eye of frame 3.",
+     "hint": "Use paragraph motion for frames; use the saved material only after reaching frame 3.",
      "start": [
-      "<^> [x+]",
-      "[x]     ",
-      "-_-     ",
+      "   (\\(\\ [n-]",
+      "  ( n.n)",
+      "o(,`_\"_)",
       "",
-      "<^> [x+]",
-      "[+]     ",
-      "-_-     ",
+      "   (\\(\\ [n-]",
+      "  ( -.-)",
+      "o(,`_\"_)",
       "",
-      "<^> [x+]",
-      "[+]     ",
-      "-_-     ",
-      ""
+      "   (\\(\\ [n-]",
+      "  ( -.-)",
+      "o(,`_\"_)"
      ],
      "target": [
-      "<^> [x+]",
-      "[x]     ",
-      "-_-     ",
+      "   (\\(\\ [n-]",
+      "  ( n.n)",
+      "o(,`_\"_)",
       "",
-      "<^> [x+]",
-      "[+]     ",
-      "-_-     ",
+      "   (\\(\\ [n-]",
+      "  ( -.-)",
+      "o(,`_\"_)",
       "",
-      "<^> [x+]",
-      "[x]     ",
-      "-_-     ",
-      ""
+      "   (\\(\\ [n-]",
+      "  ( n.-)",
+      "o(,`_\"_)"
      ],
-     "expected": "ggfx\"bylgg}}jj0f+R<C-r>b<Esc>",
+     "expected": "ggfn\"bylgg}}jj0f-R<C-r>b<Esc>",
      "recipe": [
       [
-       "}} / R<C-r>b",
-       "retrieve the alternate first palette in the third frame"
+       "ggfn\"byl",
+       "store the open-eye material in register b"
+      ],
+      [
+       "gg}}jj",
+       "cross two complete bunny frame objects"
+      ],
+      [
+       "0f-R<C-r>b<Esc>",
+       "reopen the third frame's left eye"
       ]
      ],
      "cursor": "^",
+     "source": "official-Pets/SnowBunny res01 + res03 blink overlay",
      "method_requirement": {
-      "label": "navigate alternate paragraph frames and retrieve register b",
+      "label": "carry a SnowBunny eye material across three frames",
       "exact_any_of": [
-       "ggfx\"bylgg}}jj0f+R<C-r>b<Esc>"
+       "ggfn\"bylgg}}jj0f-R<C-r>b<Esc>"
       ]
      }
     }
@@ -11198,54 +11276,72 @@
    },
    "review_variants": [
     {
+     "prompt": "Drill tread shimmer: offset only the lower track by one cell; the upper phase stays fixed.",
+     "hint": "Set the width of one indent step before shifting the acting row.",
      "start": [
-      "!!::!!::!!",
-      "<>__<>__<>",
-      "\\========/"
+      "'  |---------|~~.",
+      " - - - - - -",
+      "\\ _ _ _ _ _ /"
      ],
      "target": [
-      "!!::!!::!!",
-      " <>__<>__<>",
-      "\\========/"
+      "'  |---------|~~.",
+      " - - - - - -",
+      " \\ _ _ _ _ _ /"
      ],
-     "expected": "j:set shiftwidth=1<CR>>>",
+     "expected": "2j:set shiftwidth=1<CR>>>",
      "recipe": [
       [
-       "shiftwidth=1 / >>",
-       "offset the unfamiliar brick band by one cell"
+       "2j",
+       "select the lower moving tread row"
+      ],
+      [
+       ":set shiftwidth=1<CR>",
+       "make one indent step one fixed-grid cell"
+      ],
+      [
+       ">>",
+       "offset only that tread row"
       ]
      ],
      "cursor": "^",
+     "source": "official-Cosmetics/Drill res26 tread shimmer layer",
      "method_requirement": {
-      "label": "repeat the one-cell offset on changed texture",
+      "label": "offset one real tread row by exactly one cell",
       "exact_any_of": [
-       "j:set shiftwidth=1<CR>>>"
+       "2j:set shiftwidth=1<CR>>>"
       ]
      }
     },
     {
+     "prompt": "Cave Party lava: shift the upper phase one cell right; leave the staggered lower phase registered.",
+     "hint": "The two figure rows are stable; 2j lands on the acting texture row.",
      "start": [
-      "++..++..++",
-      "{}__{}__{}",
-      "\\~~~~~~~~/"
+      "   o",
+      "  /|\\",
+      "    ~ ~ ~ ~ ~ ~ ~"
      ],
      "target": [
-      "++..++..++",
-      " {}__{}__{}",
-      "\\~~~~~~~~/"
+      "   o",
+      "  /|\\",
+      "     ~ ~ ~ ~ ~ ~ ~"
      ],
-     "expected": "j:set shiftwidth=1<CR>>>",
+     "expected": "2j:set shiftwidth=1<CR>>>",
      "recipe": [
       [
-       "shiftwidth=1 / >>",
-       "offset the alternate material band by one cell"
+       "2j",
+       "select the lava-material row"
+      ],
+      [
+       ":set shiftwidth=1<CR>>>",
+       "offset that row by one cell"
       ]
      ],
      "cursor": "^",
+     "source": "official-Cosmetics/CaveParty res06 lava frame 1",
      "method_requirement": {
-      "label": "repeat the alternate one-cell material offset",
+      "label": "offset one lava phase row by exactly one cell",
       "exact_any_of": [
-       "j:set shiftwidth=1<CR>>>"
+       "2j:set shiftwidth=1<CR>>>"
       ]
      }
     }
@@ -11676,70 +11772,82 @@
    ],
    "review_variants": [
     {
+     "prompt": "TowerDefense missile: add the right registration edge only to frame 2; its three uneven rows keep their contents.",
+     "hint": "Blockwise $A appends at each selected row's true end, not one shared column.",
      "start": [
-      "!..::..::..|",
-      "! []__[]__[]|",
-      "!\\________/|",
-      "!..........|",
-      "!  []__[]__[]|",
-      "!\\________/|"
+      "  ____/",
+      "< / / |:.",
+      "  ¯¯¯¯\\",
+      "  ____/",
+      "< / / |:'",
+      "  ¯¯¯¯\\"
      ],
      "target": [
-      "!..::..::..|",
-      "! []__[]__[]|",
-      "!\\________/|",
-      "!..........||",
-      "!  []__[]__[]||",
-      "!\\________/||"
+      "  ____/",
+      "< / / |:.",
+      "  ¯¯¯¯\\",
+      "  ____/|",
+      "< / / |:'|",
+      "  ¯¯¯¯\\|"
      ],
      "expected": "4G0<C-v>2j$A|<Esc>",
      "recipe": [
       [
-       "4G0",
-       "land on the first row of the selected final frame"
-      ],
-      [
-       "<C-v>2j",
-       "select one rectangular block through the three rows"
+       "4G0<C-v>2j",
+       "select the complete second missile as a three-row block"
       ],
       [
        "$A|<Esc>",
-       "append the edge at every selected row end and return to Normal"
+       "append a registration edge at each selected row end"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Games/TowerDefense res18 missile frames 1 -> 2",
+     "method_requirement": {
+      "label": "append an edge to every row of one complete missile frame",
+      "exact_any_of": [
+       "4G0<C-v>2j$A|<Esc>"
+      ]
+     }
     },
     {
+     "prompt": "Skully comparison: append one right edge to all three rows of the blink frame; leave the open frame unchanged.",
+     "hint": "Use blockwise append so short and long rows each receive exactly one edge.",
      "start": [
-      "+..::..::..|",
-      "+ []__[]__[]|",
-      "+\\________/|",
-      "+..........|",
-      "+  []__[]__[]|",
-      "+\\________/|"
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´",
+      "     ,--.",
+      "    (_=,=)",
+      "      `\"´"
      ],
      "target": [
-      "+..::..::..|",
-      "+ []__[]__[]|",
-      "+\\________/|",
-      "+..........||",
-      "+  []__[]__[]||",
-      "+\\________/||"
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´",
+      "     ,--.|",
+      "    (_=,=)|",
+      "      `\"´|"
      ],
      "expected": "4G0<C-v>2j$A|<Esc>",
      "recipe": [
       [
-       "4G0",
-       "land on the first row of the selected final frame"
-      ],
-      [
-       "<C-v>2j",
-       "select one rectangular block through the three rows"
+       "4G0<C-v>2j",
+       "select all three rows of the blink frame"
       ],
       [
        "$A|<Esc>",
-       "append the edge at every selected row end and return to Normal"
+       "append its comparison edge at each row end"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Skully res01 -> res04 blink overlay",
+     "method_requirement": {
+      "label": "append an edge to every row of the Skully blink frame",
+      "exact_any_of": [
+       "4G0<C-v>2j$A|<Esc>"
+      ]
+     }
     }
    ],
    "review_source_card_id": "M15.BA",
@@ -12690,62 +12798,76 @@
    },
    "review_variants": [
     {
+     "prompt": "FrogBog lily pad: advance the written frame label from 1 to 2; the pad silhouette stays identical.",
+     "hint": "CTRL-A increments the number under the cursor and preserves the surrounding art.",
      "start": [
-      "   *   ",
-      "  /|\\  ",
-      "  / \\  ",
-      "F03 KEY",
-      "T12 FPS"
+      "    _",
+      " ,'   `.",
+      "/    1  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
      "target": [
-      "   *   ",
-      "  /|\\  ",
-      "  / \\  ",
-      "F04 KEY",
-      "T12 FPS"
+      "    _",
+      " ,'   `.",
+      "/    2  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
-     "expected": "Gk0f3<C-a>",
+     "expected": "3G0f1<C-a>",
      "recipe": [
       [
-       "CTRL-A",
-       "increment the changed plan label without retyping it"
+       "3G0f1",
+       "find the written frame number on the pad"
+      ],
+      [
+       "<C-a>",
+       "increment 1 to 2 without retyping the pose"
       ]
      ],
      "cursor": "^",
+     "source": "official-Games/FrogBog res05 -> res06 lily-pad frames",
      "method_requirement": {
-      "label": "increment a changed written frame number",
+      "label": "increment a real animation frame label in place",
       "exact_any_of": [
-       "Gk0f3<C-a>"
+       "3G0f1<C-a>"
       ]
      }
     },
     {
+     "prompt": "FrogBog lily pad: advance label 2 to label 3 without redrawing the pad.",
+     "hint": "Find the digit first; CTRL-A changes only the number.",
      "start": [
-      "   +   ",
-      "  <|>  ",
-      "  / \\  ",
-      "F07 KEY",
-      "T06 FPS"
+      "    _",
+      " ,'   `.",
+      "/    2  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
      "target": [
-      "   +   ",
-      "  <|>  ",
-      "  / \\  ",
-      "F08 KEY",
-      "T06 FPS"
+      "    _",
+      " ,'   `.",
+      "/    3  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
-     "expected": "Gk0f7<C-a>",
+     "expected": "3G0f2<C-a>",
      "recipe": [
       [
-       "CTRL-A",
-       "increment the alternate plan label in place"
+       "3G0f2",
+       "find the second written frame number"
+      ],
+      [
+       "<C-a>",
+       "increment 2 to 3"
       ]
      ],
      "cursor": "^",
+     "source": "official-Games/FrogBog res06 -> res07 lily-pad frames",
      "method_requirement": {
-      "label": "increment an alternate written frame number",
+      "label": "increment the next FrogBog frame label in place",
       "exact_any_of": [
-       "Gk0f7<C-a>"
+       "3G0f2<C-a>"
       ]
      }
     }
@@ -14533,96 +14655,106 @@
    ],
    "review_variants": [
     {
+     "prompt": "FaceHUD shock: the first six-row pose holds; widen only the copied pose's left eye.",
+     "hint": "ci( keeps the eye's enclosing parentheses, so the head does not shift.",
      "start": [
-      "  !\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'",
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'"
      ],
      "target": [
-      "  !\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (O)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'",
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (O) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'"
      ],
-     "expected": "8Gci(O<Esc>",
+     "expected": "9G0f(ci(O<Esc>",
      "recipe": [
       [
-       "8G",
-       "move to the copied pose's eye row"
+       "9G0f(",
+       "reach the copied pose's first parenthesised eye"
       ],
       [
-       "ci(",
-       "change only the text object inside the matching parentheses"
-      ],
-      [
-       "O<Esc>",
-       "set the acting feature and leave the enclosing head intact"
+       "ci(O<Esc>",
+       "widen only the eye inside its parentheses"
       ]
      ],
-     "cursor": "^"
+     "cursor": "^",
+     "source": "official-UI/FaceHUD res08 shock pose (copied)",
+     "method_requirement": {
+      "label": "change one acting feature inside the copied FaceHUD pose",
+      "exact_any_of": [
+       "9G0f(ci(O<Esc>"
+      ]
+     }
     },
     {
+     "prompt": "FaceHUD shock: the first six-row pose holds; widen only the copied pose's right eye.",
+     "hint": "Repeat the parenthesis find once, then ci( keeps the enclosing eye shape fixed.",
      "start": [
-      "  +\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___.",
+      "\\  /___\\` /",
+      " `._   _.'",
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___.",
+      "\\  /___\\` /",
+      " `._   _.'"
      ],
      "target": [
-      "  +\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (O)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___.",
+      "\\  /___\\` /",
+      " `._   _.'",
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (O)",
+      "    ___.",
+      "\\  /___\\` /",
+      " `._   _.'"
      ],
-     "expected": "8Gci(O<Esc>",
+     "expected": "9G0f(;ci(O<Esc>",
      "recipe": [
       [
-       "8G",
-       "move to the copied pose's eye row"
+       "9G0f(;",
+       "reach the copied pose's second parenthesised eye"
       ],
       [
-       "ci(",
-       "change only the text object inside the matching parentheses"
-      ],
-      [
-       "O<Esc>",
-       "set the acting feature and leave the enclosing head intact"
+       "ci(O<Esc>",
+       "widen only that eye inside its parentheses"
       ]
      ],
-     "cursor": "^"
+     "cursor": "^",
+     "source": "official-UI/FaceHUD res08 shock pose + res10 wound overlay (copied, right eye)",
+     "method_requirement": {
+      "label": "change the other acting feature inside a copied FaceHUD pose",
+      "exact_any_of": [
+       "9G0f(;ci(O<Esc>"
+      ]
+     }
     }
    ],
    "review_source_card_id": "M3.04",
@@ -15340,50 +15472,70 @@
    ],
    "review_variants": [
     {
+     "prompt": "Stone Story frog: mark the left eye with a centred middle-dot as an in-between guide; the head width stays fixed.",
+     "hint": "Use replace plus the .M digraph; insertion would shift the other eye.",
      "start": [
-      " /---\\ ",
-      "!  O  |",
-      " \\---/ "
+      "     ,Oo",
+      "  (\\/ .-)",
+      "  ´ ·-\\´\\"
      ],
      "target": [
-      " /---\\ ",
-      "!  ·  |",
-      " \\---/ "
+      "     ,·o",
+      "  (\\/ .-)",
+      "  ´ ·-\\´\\"
      ],
-     "expected": "2G0fOr<C-k>.M",
+     "expected": "gg0fOr<C-k>.M",
      "recipe": [
       [
-       "2G0fO",
-       "land on the one-cell core"
+       "gg0fO",
+       "find the frog's left eye"
       ],
       [
        "r<C-k>.M",
-       "replace it with the .M middle-dot digraph"
+       "replace it with the middle-dot digraph"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Frog res01 open-eye pose",
+     "method_requirement": {
+      "label": "enter a middle-dot in-between marker with a digraph",
+      "exact_any_of": [
+       "gg0fOr<C-k>.M"
+      ]
+     }
     },
     {
+     "prompt": "Chick hatch: add the middle-dot crack speck before the semicolon; shell width stays fixed.",
+     "hint": "Find the existing crack, step left onto its blank cell, then replace that cell.",
      "start": [
-      " /---\\ ",
-      "+  O  |",
-      " \\---/ "
+      "      ,-.",
+      "     : ; :",
+      "     '._.'"
      ],
      "target": [
-      " /---\\ ",
-      "+  ·  |",
-      " \\---/ "
+      "      ,-.",
+      "     :·; :",
+      "     '._.'"
      ],
-     "expected": "2G0fOr<C-k>.M",
+     "expected": "2G0f;hr<C-k>.M",
      "recipe": [
       [
-       "2G0fO",
-       "land on the one-cell core"
+       "2G0f;h",
+       "land on the blank cell immediately before the crack"
       ],
       [
        "r<C-k>.M",
-       "replace it with the .M middle-dot digraph"
+       "place the next crack speck with the middle-dot digraph"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Chick res01 hatch frame 2 -> 3",
+     "method_requirement": {
+      "label": "enter the egg's next crack speck with a digraph",
+      "exact_any_of": [
+       "2G0f;hr<C-k>.M"
+      ]
+     }
     }
    ],
    "review_source_card_id": "M3.DI",
@@ -15495,112 +15647,130 @@
    "pass_questions": 4,
    "review_variants": [
     {
+     "prompt": "Three held shock poses: change only the final pose's left eye to a middle-dot in-between guide.",
+     "hint": "Each complete pose is six rows; the final eye row is row 15.",
      "start": [
-      "  !\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (O)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'",
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'",
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'"
      ],
      "target": [
-      "  !\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (O)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (·)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'",
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (o) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'",
+      " .' ._. `.",
+      "/ --. .-- \\",
+      "  (·) (o)",
+      "    ___",
+      "\\  /___\\  /",
+      " `._   _.'"
      ],
-     "expected": "14Gfor<C-k>.M",
+     "expected": "15G0for<C-k>.M",
      "recipe": [
       [
-       "14Gfo",
-       "go directly to the final pose's acting eye"
+       "15G0fo",
+       "go to the final complete FaceHUD pose's left eye"
       ],
       [
        "r<C-k>.M",
-       "give only that frame a middle-dot accent"
+       "give only that pose the middle-dot guide"
       ]
      ],
-     "cursor": "^"
+     "cursor": "^",
+     "source": "official-UI/FaceHUD res08 shock pose x3",
+     "method_requirement": {
+      "label": "accent only the final complete six-row face pose",
+      "exact_any_of": [
+       "15G0for<C-k>.M"
+      ]
+     }
     },
     {
+     "prompt": "Three held neutral faces: change only the final left pupil to the middle-dot guide.",
+     "hint": "The final complete face starts on row 13; its eye row is row 15.",
      "start": [
-      "  +\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (O)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .'     `.",
+      "/ __   __ \\",
+      "  <o) (o>",
+      "",
+      "\\   ---   /",
+      " `._   _.'",
+      " .'     `.",
+      "/ __   __ \\",
+      "  <o) (o>",
+      "",
+      "\\   ---   /",
+      " `._   _.'",
+      " .'     `.",
+      "/ __   __ \\",
+      "  <o) (o>",
+      "",
+      "\\   ---   /",
+      " `._   _.'"
      ],
      "target": [
-      "  +\\   ",
-      " (o)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (O)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  ",
-      "  /\\   ",
-      " (·)   ",
-      " /|\\   ",
-      "  |    ",
-      " / \\   ",
-      "/___\\  "
+      " .'     `.",
+      "/ __   __ \\",
+      "  <o) (o>",
+      "",
+      "\\   ---   /",
+      " `._   _.'",
+      " .'     `.",
+      "/ __   __ \\",
+      "  <o) (o>",
+      "",
+      "\\   ---   /",
+      " `._   _.'",
+      " .'     `.",
+      "/ __   __ \\",
+      "  <·) (o>",
+      "",
+      "\\   ---   /",
+      " `._   _.'"
      ],
-     "expected": "14Gfor<C-k>.M",
+     "expected": "15G0for<C-k>.M",
      "recipe": [
       [
-       "14Gfo",
-       "go directly to the final pose's acting eye"
+       "15G0fo",
+       "go to the final neutral pose's left pupil"
       ],
       [
        "r<C-k>.M",
-       "give only that frame a middle-dot accent"
+       "replace only that pupil with the middle-dot guide"
       ]
      ],
-     "cursor": "^"
+     "cursor": "^",
+     "source": "official-UI/FaceHUD res02 neutral pose x3",
+     "method_requirement": {
+      "label": "accent only the final complete neutral face pose",
+      "exact_any_of": [
+       "15G0for<C-k>.M"
+      ]
+     }
     }
    ],
    "review_source_card_id": "M3.08",
@@ -15994,58 +16164,74 @@
    ],
    "review_variants": [
     {
+     "prompt": "Willow firework: turn column 5 into a vertical tween guide across the three-row shell; neighbouring sparks stay fixed.",
+     "hint": "The pivot is a column, so select vertically before replacing.",
      "start": [
-      " /x\\ ",
-      "! x |",
-      " \\x/ "
+      "    .'.",
+      "    ,*,",
+      "    '.'"
      ],
      "target": [
-      " /|\\ ",
-      "! | |",
-      " \\|/ "
+      "    |'.",
+      "    |*,",
+      "    |.'"
      ],
-     "expected": "gg02l<C-v>2jr|",
+     "expected": "gg04l<C-v>2jr|",
      "recipe": [
       [
-       "gg02l",
-       "land on the top centre cell"
+       "gg04l",
+       "land on column 5 of the shell's top row"
       ],
       [
        "<C-v>2j",
-       "select that exact column through three rows"
+       "select the same pivot column through all three rows"
       ],
       [
        "r|",
-       "replace every selected cell in place"
+       "replace the column in place"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Cosmetics/Fireworks res03 willow frame 2 crop",
+     "method_requirement": {
+      "label": "replace one aligned firework pivot column blockwise",
+      "exact_any_of": [
+       "gg04l<C-v>2jr|"
+      ]
+     }
     },
     {
+     "prompt": "TowerDefense missile: mark column 3 through hull, exhaust, and lower contour as the tween registration guide.",
+     "hint": "A vertical block preserves every cell to the left and right of the guide.",
      "start": [
-      " /x\\ ",
-      "+ x |",
-      " \\x/ "
+      "  ____/",
+      "< / / |:.",
+      "  ¯¯¯¯\\"
      ],
      "target": [
-      " /|\\ ",
-      "+ | |",
-      " \\|/ "
+      "  |___/",
+      "< | / |:.",
+      "  |¯¯¯\\"
      ],
      "expected": "gg02l<C-v>2jr|",
      "recipe": [
       [
        "gg02l",
-       "land on the top centre cell"
+       "land on column 3 of the missile"
       ],
       [
-       "<C-v>2j",
-       "select that exact column through three rows"
-      ],
-      [
-       "r|",
-       "replace every selected cell in place"
+       "<C-v>2jr|",
+       "replace that registered column through all rows"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Games/TowerDefense res18 missile frame 1",
+     "method_requirement": {
+      "label": "replace one aligned missile registration column blockwise",
+      "exact_any_of": [
+       "gg02l<C-v>2jr|"
+      ]
+     }
     }
    ],
    "review_source_card_id": "M4.VB",
@@ -18492,62 +18678,82 @@
    ],
    "review_variants": [
     {
+     "prompt": "Missile exhaust strip: change the first : to . in every frame row with one recorded edit plus three replays.",
+     "hint": "Reset to column 1 before each replay so f: finds the homologous exhaust landmark.",
      "start": [
-      "! : |",
-      "! : |",
-      "! : |",
-      "! : |"
+      "< / / |:.",
+      "< / / |:'",
+      "< / / |::'",
+      "< / / |::."
      ],
      "target": [
-      "! . |",
-      "! . |",
-      "! . |",
-      "! . |"
+      "< / / |..",
+      "< / / |.'",
+      "< / / |.:'",
+      "< / / |.:."
      ],
      "expected": "ggqaf:r.qj0@aj0@aj0@a",
      "recipe": [
       [
-       "qa",
-       "start recording into register a"
+       "ggqa",
+       "start macro a on the first exhaust row"
       ],
       [
        "f:r.",
-       "change one landmark while recording"
+       "find and soften one exhaust landmark"
       ],
       [
        "qj0@aj0@aj0@a",
-       "stop, reset each row anchor, and replay on three more rows"
+       "replay on the other three frame rows"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Games/TowerDefense res18 missile frames 1-4 exhaust rows",
+     "method_requirement": {
+      "label": "record one exhaust edit and replay it across four frames",
+      "exact_any_of": [
+       "ggqaf:r.qj0@aj0@aj0@a"
+      ]
+     }
     },
     {
+     "prompt": "Missile return strip: apply the same first-puff edit to all four reversed frame rows.",
+     "hint": "The art order changed; the row-local macro remains valid because it starts from column 1.",
      "start": [
-      "+ : |",
-      "+ : |",
-      "+ : |",
-      "+ : |"
+      "< / / |::.",
+      "< / / |::'",
+      "< / / |:'",
+      "< / / |:."
      ],
      "target": [
-      "+ . |",
-      "+ . |",
-      "+ . |",
-      "+ . |"
+      "< / / |.:.",
+      "< / / |.:'",
+      "< / / |.'",
+      "< / / |.."
      ],
      "expected": "ggqaf:r.qj0@aj0@aj0@a",
      "recipe": [
       [
-       "qa",
-       "start recording into register a"
+       "ggqa",
+       "record from the first row of the reversed exhaust strip"
       ],
       [
        "f:r.",
-       "change one landmark while recording"
+       "soften its first exhaust landmark"
       ],
       [
        "qj0@aj0@aj0@a",
-       "stop, reset each row anchor, and replay on three more rows"
+       "replay on each following frame row"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Games/TowerDefense res18 missile frames 4-1 exhaust rows",
+     "method_requirement": {
+      "label": "replay the same macro over the reversed exhaust timing",
+      "exact_any_of": [
+       "ggqaf:r.qj0@aj0@aj0@a"
+      ]
+     }
     }
    ],
    "review_source_card_id": "M7.MAC",
@@ -18633,58 +18839,74 @@
    ],
    "review_variants": [
     {
+     "prompt": "Drill tank: brighten only the first three cells of the long upper hull band; every rail stays registered.",
+     "hint": "Characterwise Visual mode should cover three dashes, no more.",
      "start": [
-      "! --- |",
-      "! --- |",
-      "! --- |"
+      " /-\\     /|\\_",
+      "'  |---------|~~.",
+      "   |: |-|   :|=-~\\"
      ],
      "target": [
-      "! --- |",
-      "! === |",
-      "! --- |"
+      " /-\\     /|\\_",
+      "'  |===------|~~.",
+      "   |: |-|   :|=-~\\"
      ],
      "expected": "2G0f-v2lr=",
      "recipe": [
       [
        "2G0f-",
-       "land on the first dash of the acting band"
+       "find the first hull-band cell"
       ],
       [
        "v2l",
-       "select exactly the three character cells"
+       "select exactly three material cells"
       ],
       [
        "r=",
-       "replace the selected cells without shifting the row"
+       "replace that band in place"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Cosmetics/Drill res04 tank body (ASCII-safe crop)",
+     "method_requirement": {
+      "label": "replace a bounded hull band without shifting the tank",
+      "exact_any_of": [
+       "2G0f-v2lr="
+      ]
+     }
     },
     {
+     "prompt": "FaceHUD: change only the three-cell mouth band from --- to ===; cheeks and eyes do not move.",
+     "hint": "Select the exact three-cell band before replacing it.",
      "start": [
-      "+ --- |",
-      "+ --- |",
-      "+ --- |"
+      "  <o) (o>",
+      "\\   ---   /",
+      " `._   _.'"
      ],
      "target": [
-      "+ --- |",
-      "+ === |",
-      "+ --- |"
+      "  <o) (o>",
+      "\\   ===   /",
+      " `._   _.'"
      ],
      "expected": "2G0f-v2lr=",
      "recipe": [
       [
        "2G0f-",
-       "land on the first dash of the acting band"
+       "find the start of the neutral mouth band"
       ],
       [
-       "v2l",
-       "select exactly the three character cells"
-      ],
-      [
-       "r=",
-       "replace the selected cells without shifting the row"
+       "v2lr=",
+       "select its three cells and replace them together"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-UI/FaceHUD res02 neutral face (ASCII-safe crop)",
+     "method_requirement": {
+      "label": "replace the complete FaceHUD mouth band characterwise",
+      "exact_any_of": [
+       "2G0f-v2lr="
+      ]
+     }
     }
    ],
    "review_source_card_id": "M7.VIS",
@@ -20289,80 +20511,86 @@
    },
    "review_variants": [
     {
+     "prompt": "GrowPlants flower: remove the copied ( ) head for the subtractive in-between; keep its blank row above the stem.",
+     "hint": "D clears from column 1 through the row but leaves the row itself in the frame.",
      "start": [
-      "    +    ",
-      "   /-\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
-      "    +    ",
-      "   /-\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\"
+      "   ( )",
+      "    ζ",
+      "    |",
+      "  . | ,",
+      "   \\|/",
+      "   ( )",
+      "    ζ",
+      "    |",
+      "  . | ,",
+      "   \\|/"
      ],
      "target": [
-      "    +    ",
-      "   /-\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\",
+      "   ( )",
+      "    ζ",
+      "    |",
+      "  . | ,",
+      "   \\|/",
       "",
-      "   /-\\   ",
-      "  /---\\  ",
-      " /-----\\ ",
-      "/-------\\"
+      "    ζ",
+      "    |",
+      "  . | ,",
+      "   \\|/"
      ],
      "expected": "6G0D",
      "recipe": [
       [
        "6G0D",
-       "clear the changed apex without deleting its row"
+       "clear the copied flower-head row without deleting the row"
       ]
      ],
      "cursor": "^",
+     "source": "official-Games/GrowPlants res03 flower frame 5 crop (copied)",
      "method_requirement": {
-      "label": "clear the changed apex row while retaining frame height",
+      "label": "clear only the copied flower apex while preserving frame height",
       "exact_any_of": [
        "6G0D"
       ]
      }
     },
     {
+     "prompt": "Willow firework: blank only the copied frame's top shell row; the star row and five-row registration remain.",
+     "hint": "Clear the row's contents with D; dd would collapse the frame.",
      "start": [
-      "    *    ",
-      "   /_\\   ",
-      "  /___\\  ",
-      " /_____\\ ",
-      "/_______\\",
-      "    *    ",
-      "   /_\\   ",
-      "  /___\\  ",
-      " /_____\\ ",
-      "/_______\\"
+      " .''.'.''.",
+      "  .,,*,,.",
+      "'  .'.'. '",
+      " ,  .  ,",
+      "  '  .  '",
+      " .''.'.''.",
+      "  .,,*,,.",
+      "'  .'.'. '",
+      " ,  .  ,",
+      "  '  .  '"
      ],
      "target": [
-      "    *    ",
-      "   /_\\   ",
-      "  /___\\  ",
-      " /_____\\ ",
-      "/_______\\",
+      " .''.'.''.",
+      "  .,,*,,.",
+      "'  .'.'. '",
+      " ,  .  ,",
+      "  '  .  '",
       "",
-      "   /_\\   ",
-      "  /___\\  ",
-      " /_____\\ ",
-      "/_______\\"
+      "  .,,*,,.",
+      "'  .'.'. '",
+      " ,  .  ,",
+      "  '  .  '"
      ],
      "expected": "6G0D",
      "recipe": [
       [
        "6G0D",
-       "clear the alternate apex while keeping five rows"
+       "clear the copied shell's top row without deleting it"
       ]
      ],
      "cursor": "^",
+     "source": "official-Cosmetics/Fireworks res03 willow frame 5 (copied)",
      "method_requirement": {
-      "label": "clear the alternate apex row while retaining frame height",
+      "label": "clear the copied firework apex for a subtractive fade",
       "exact_any_of": [
        "6G0D"
       ]
@@ -21674,58 +21902,90 @@
    "labels": true,
    "review_variants": [
     {
+     "prompt": "FrogBog pad: copy CHECK 1's digit into the stale final CHECK row; the five art rows stay untouched.",
+     "hint": "The expression reads metadata from line 1; it must not calculate any art cell.",
      "start": [
       "CHECK 1",
-      "!  o  |",
+      "    _",
+      " ,'   `.",
+      "/    1  \\",
+      "\\       /",
       "CHECK 0"
      ],
      "target": [
       "CHECK 1",
-      "!  o  |",
+      "    _",
+      " ,'   `.",
+      "/    1  \\",
+      "\\       /",
       "CHECK 1"
      ],
-     "expected": ":3s/0/\\=getline(1)[-1:]/<CR>",
+     "expected": ":6s/0/\\=getline(1)[-1:]/<CR>",
      "recipe": [
       [
-       ":3s/0/",
-       "on CHECK row 3, replace the zero"
+       ":6s/0/",
+       "replace the stale digit on CHECK row 6"
       ],
       [
        "\\=getline(1)[-1:]",
-       "evaluate a validation-only replacement from row 1"
+       "evaluate the digit from CHECK row 1"
       ],
       [
        "<CR>",
-       "execute without generating any art row"
+       "update metadata without touching the pad art"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Games/FrogBog res05 lily-pad frame + validation rows",
+     "method_requirement": {
+      "label": "derive a check digit beside a real pose without generating art",
+      "exact_any_of": [
+       ":6s/0/\\=getline(1)[-1:]/<CR>"
+      ]
+     }
     },
     {
+     "prompt": "Willow firework: update CHECK 0 to CHECK 2 from line 1; do not generate or mirror any shell glyph.",
+     "hint": "Use the expression only on the final metadata row.",
      "start": [
-      "CHECK 1",
-      "+  o  |",
+      "CHECK 2",
+      " .''.'.''.",
+      "  .,,*,,.",
+      "'  .'.'. '",
+      " ,  .  ,",
       "CHECK 0"
      ],
      "target": [
-      "CHECK 1",
-      "+  o  |",
-      "CHECK 1"
+      "CHECK 2",
+      " .''.'.''.",
+      "  .,,*,,.",
+      "'  .'.'. '",
+      " ,  .  ,",
+      "CHECK 2"
      ],
-     "expected": ":3s/0/\\=getline(1)[-1:]/<CR>",
+     "expected": ":6s/0/\\=getline(1)[-1:]/<CR>",
      "recipe": [
       [
-       ":3s/0/",
-       "on CHECK row 3, replace the zero"
+       ":6s/0/",
+       "replace the stale final check digit"
       ],
       [
        "\\=getline(1)[-1:]",
-       "evaluate a validation-only replacement from row 1"
+       "copy the leading metadata digit by expression"
       ],
       [
        "<CR>",
-       "execute without generating any art row"
+       "leave all five firework rows literal"
       ]
-     ]
+     ],
+     "cursor": "^",
+     "source": "official-Cosmetics/Fireworks res03 willow frame 5 + validation rows",
+     "method_requirement": {
+      "label": "derive validation metadata beside a firework frame",
+      "exact_any_of": [
+       ":6s/0/\\=getline(1)[-1:]/<CR>"
+      ]
+     }
     }
    ],
    "review_source_card_id": "M18.EXPR",

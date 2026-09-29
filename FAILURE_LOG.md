@@ -4053,3 +4053,71 @@ scrolling away. The feedback body already ends with a newline, while
 redundant row keeps `ATTEMPT NOT PASSED`, the two-column replay, ledger, source,
 and progress prompt visible together. The main client-attached real-config
 popup now passes at 80×24, 100×36, and 188×49.
+
+## VD-35 · 2026-09-29 04:02 — every remaining border-swap review replaced with manually authored Stone Story animation work
+
+**Failure carried from VD-29/VD-34:** eighteen detected review variants still
+changed only the source card's first border glyph to `!` or `+`. A fresh scan
+after the first replacement pass found eight more generic variants that the
+earlier list had omitted: both variants of `M14.PARA`, `M15.BA`, `M4.VB`, and
+`M7.MAC`. These were valid executable buffers but not unfamiliar art and did
+not test transfer of the Vim method to another animation subject.
+
+**Manual replacements:** every variant below was written individually in
+`share/stone_story_variants.py`, with its own source, art-specific DO THIS
+prompt, action hint, command breakdown, exact expected target, and enforced
+method path. No question or prompt prose was template-generated.
+
+| cards | Stone Story material | Neovim retrieval |
+|---|---|---|
+| `M12.FIND` | CaveParty lava pulse; Drill tread shimmer | `f`, `;`, `,`, then in-place `r` |
+| `M13.BE` | two authored CaveParty lava phases | `W`, `E`, and `B` over separated texture cells |
+| `M14.01`, `M14.04`, `M14.08` | Skully open/blink/look palettes; SnowBunny open/blink | named registers, Replace-mode register insertion, `}` across frame paragraphs |
+| `M14.PARA` | complete Skully and SnowBunny paragraph frames | `yap`, `}`, and `P` on whole frame objects |
+| `M15.01` | Drill tread and CaveParty lava material layers | `shiftwidth=1` plus a one-cell `>>` offset |
+| `M15.BA` | TowerDefense missile and Skully blink frames | blockwise `$A` at each selected row's true end |
+| `M16.01` | FrogBog lily-pad labels 1→2 and 2→3 | numeric increment with `<C-a>` |
+| `M3.04` | FaceHUD shock pose, plain and with the wound overlay | `ci(` on one eye inside the copied six-row pose |
+| `M3.DI`, `M3.08` | Frog, Chick hatch, and FaceHUD full-pose strips | middle-dot digraph entry with in-place `r<C-k>.M` |
+| `M4.VB` | willow firework shell and TowerDefense missile | exact-column Visual Block replacement |
+| `M6.04` | GrowPlants flower and willow firework subtractive frames | `D` clears contents but preserves the frame row |
+| `M7.VIS` | Drill hull band and FaceHUD mouth band | bounded characterwise Visual replacement |
+| `M7.MAC` | four missile exhaust frames, forward and reverse | record once and replay on homologous frame rows |
+| `M18.EXPR` | FrogBog pad and willow firework beside CHECK metadata | `\=` derives only the check digit; it never generates or mirrors art |
+
+The source sheets are the audited local corpus under
+`~/Downloads/stone-story-consolidated/` and the corresponding official source
+scripts under `~/Downloads/stone-story-official/`. The file records each
+`official-*/Name resNN` reference. `#` transparency was converted to spaces;
+rows were right-trimmed; where the audit already required an ASCII-safe copy,
+overscore/em-dash material was written as `-`. The FrogBog UTF-8 corruption
+`Â´` was not copied into the curriculum. Source ownership is unchanged:
+third-party Stone Story material is permitted for this local tutor, but a push
+from this public repository remains a separate publication/licensing decision
+and is **not** authorized by this entry.
+
+**Direct evidence:**
+
+- `python3 share/gen_curriculum_v2.py` rebuilt 20 modules, 187 cards, and 347
+  questions with no visual-stimulus error.
+- `python3 share/test_stone_story_variants.py` replayed all 70 source-linked
+  review variants in isolated Neovim; every exact target passed and the
+  border-swap count is now **0**.
+- `python3 share/test_v2.py` passes 187/187 executable lessons and 146/146
+  primary recipes; the rebuilt graph, questions, state, method evidence, and
+  all 57 changed-art transfer/review routes validate.
+- `python3 share/test_question_quality.py` passes all 347 questions.
+- `python3 share/test_animation_lesson_pack.py` and
+  `python3 share/test_animation_curriculum_integration.py` pass the 12-lesson,
+  24-question animation pack and its guided-before-hidden integration.
+- The real-user-config headed popup passes at 80×24, 100×36, and 188×49 after
+  the rebuilt curriculum.
+
+**Still open; this entry does not close the course audit:** module transfer
+variants still require per-variant paired questions before their first source
+art can be replaced without contradicting the question; much of the primary
+module art remains invented; dedicated command practice is still missing for
+the VD-26 list (`gR`, `g_`, lowercase `w`, blockwise `I/c`, `gv`, `zp`, `ga`,
+`:diffthis`, `scrollbind`, display-column tools, whitespace cleanup, undo-tree
+travel, and `dap`); and the current mixed modules do not yet enforce the
+requested complete S0–S7 still-authoring sequence before A0–A7 animation.
