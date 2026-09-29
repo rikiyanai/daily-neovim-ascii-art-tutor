@@ -9,7 +9,7 @@ license and redistribution permission that covers this repository.
 
 > **2026-09-29 status correction.** This document records the boundary at its
 > 2026-09-28 audit date. The operator later authorized exact excerpts for the
-> local tutor only; revision `.51` contains 70 changed-art review banks, with
+> local tutor only; revision `.52` contains 70 changed-art review banks, with
 > 92 variant rows citing 16 `official-*` subjects. That local-use decision did
 > **not** supply a redistribution license
 > or authorize a push from this public repository. Statements below saying

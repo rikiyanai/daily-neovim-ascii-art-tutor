@@ -1728,30 +1728,30 @@
     ]
   },
   "M14.06.P01": {
-    "prompt": "ANIMATION\nThe transfer face uses a new shell and palette but keeps one fixed eye cell.\n\n    BEFORE         AFTER\n    │/--\\ [xo] │   │/--\\ [xo] │\n    │| .|      │   │| x|      │\n    │\\__/      │   │\\__/      │\n    │          │   │          │\n\nNEOVIM\nWhich bounded path reaches TARGET after the edit?",
-    "compact_prompt": "ANIMATION\nUnfamiliar shell; one eye cell changes.\n\n    │/--\\ [xo] │\n    │| .|      │   │| x|      │\n    │\\__/      │\n\nNEOVIM\nUse palette register + Replace.",
-    "animation_prompt": "The transfer changes only the eye from `.` to the palette's `x`; shell and separator stay fixed.\n\n    BEFORE         AFTER\n    │/--\\ [xo] │   │/--\\ [xo] │\n    │| .|      │   │| x|      │\n    │\\__/      │   │\\__/      │\n    │          │   │          │",
-    "animation_answer": "One unfamiliar palette glyph replaces the eye in place; the shell remains fixed-width.",
-    "neovim_prompt": "Which option identifies one valid command path?",
-    "neovim_answer": "Store `x` in named register `a`, reach the eye, and retrieve it in Replace mode with `<C-r>a`.",
+    "prompt": "ANIMATION\nSkully's visible palette contains O. The look pose widens only the left eye from o to O; the right eye, skull outline, mouth, and blank frame separator stay fixed.\n\n  BEFORE        AFTER\n  │ ,--. [O]│   │ ,--. [O]│\n  │(_o,o)│   →  │(_O,o)│\n  │  `\"´│      │  `\"´│\n  ││            ││\n\nNEOVIM\nWhich path copies the visible material and retrieves it over exactly one eye?",
+    "compact_prompt": "ANIMATION\nUse the visible O palette for Skully's left-eye look.\n\n  │ ,--. [O]│\n  │(_o,o)│ → │(_O,o)│\n\nNEOVIM\nWhy use register a plus Replace retrieval?",
+    "animation_prompt": "The official Skully look overlay widens only the left eye while the complete face stays registered.",
+    "animation_answer": "The left o becomes O; the source palette, right eye, outline, mouth, and frame boundary remain fixed.",
+    "neovim_prompt": "Identify the palette yank, named register, eye landmark, and fixed-width retrieval.",
+    "neovim_answer": "fO finds the palette material, \"ayl copies it into register a, j0fo reaches the left eye, and R<C-r>a retrieves O over that cell.",
     "choices": [
-      "ANIMATION: Only the eye changes; shell and separator remain fixed. | NEOVIM: named-register yank plus Replace retrieval reaches TARGET.",
-      "ANIMATION: The shell expands around `x`. | NEOVIM: insert `x` before the eye.",
-      "ANIMATION: All punctuation becomes `x`. | NEOVIM: substitute the whole paragraph globally.",
-      "ANIMATION: The eye is deleted to expose the shell. | NEOVIM: use `x` and leave a gap."
+      "ANIMATION: The source O is moved out of the palette into the eye. | NEOVIM: yl deletes the palette glyph after storing it.",
+      "ANIMATION: Only Skully's left eye widens; palette and face stay fixed. | NEOVIM: copy O into register a, find the left o, then retrieve with `R<C-r>a`.",
+      "ANIMATION: Both eyes widen to O. | NEOVIM: a named register automatically repeats at every matching eye.",
+      "ANIMATION: O is inserted before the left eye and widens the face. | NEOVIM: Replace retrieval retains the old o to the right."
     ],
     "compact_choices": [
-      "A: eye only; shell fixed · V: register + Replace",
-      "A: shell expands · V: insert `x`",
-      "A: all punctuation `x` · V: global paragraph substitute",
-      "A: eye deleted · V: `x` leave gap"
+      "A: move palette O · V: yl deletes",
+      "A: left eye only · V: named yank + Replace retrieval",
+      "A: both eyes · V: register auto-repeats",
+      "A: insert before eye · V: old o remains"
     ],
-    "correct_choice": 0,
+    "correct_choice": 1,
     "feedback": [
-      "Correct: the transfer keeps the named-register one-cell method and fixed shell.",
-      "Shell expansion is not in TARGET.",
-      "The palette material is one eye cell, not a paragraph-wide pattern.",
-      "A blank eye is not the target material variant."
+      "y copies text and leaves the visible palette source unchanged.",
+      "Correct: the source look overlay and the named-register edit both own exactly the left eye cell.",
+      "Registers store text; they do not search for or modify later matching glyphs by themselves.",
+      "Replace-mode retrieval overwrites the existing o, so the face width cannot grow."
     ]
   },
   "M14.08.P01": {

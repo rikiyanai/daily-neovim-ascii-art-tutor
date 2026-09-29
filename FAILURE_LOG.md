@@ -4821,3 +4821,22 @@ M11.06 source variants pass their real-user-config headed routes at 80x24.
 **Still open.** Thirteen module transfers still use tutor-authored primary
 variants. The Snail excerpts are local-tutor use only; no push or publication
 occurred.
+
+### VD-44 follow-through · revision `.52` — M14 primary transfer now uses real face states
+
+- M14.06 variant 1 uses the official Skully idle-to-look change. The tutor adds
+  a visible `[O]` palette annotation, then the learner copies that O into named
+  register `a` and retrieves it over only the left eye.
+- Variant 2 uses the official SnowBunny idle-to-blink change. The visible
+  `[n-]` palette supplies one dash that is yanked once and retrieved over both
+  eyes; ears, nose, outline, body, and separator remain fixed.
+- Both questions print the full source-backed BEFORE/AFTER face and ask about
+  animation scope and named-register/Replace-mode scope together.
+
+**Proof:** revision `.52` writes 215 cards / 395 questions; question quality,
+all 215 cards / 174 primary recipes, and every changed-art replay pass. Both
+M14.06 source-backed palette routes pass with the real user config at 80x24.
+
+**Still open.** Twelve module transfers still use tutor-authored primary
+variants. These excerpts remain local-tutor use only; no push or publication
+occurred.

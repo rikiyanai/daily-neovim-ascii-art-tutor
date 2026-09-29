@@ -140,8 +140,10 @@ PAD_2 = ["    _", " ,'   `.", "/    2  \\", "\\       /", " \\/|..-'"]
 PAD_3 = ["    _", " ,'   `.", "/    3  \\", "\\       /", " \\/|..-'"]
 SKULLY_EQ_PALETTE = [" ,--. [=]", "(_o,o)", "  `\"´"]
 SKULLY_O_PALETTE = [" ,--. [O]", "(_o,o)", "  `\"´"]
+SKULLY_O_PALETTE_LOOK = [" ,--. [O]", "(_O,o)", "  `\"´"]
 SKULLY_OE_PALETTE = [" ,--. [o=]", "(_o,o)", "  `\"´"]
 SNOWBUNNY_FACE_PALETTE = ["   (\\(\\ [n-]", "  ( n.n)", "o(,`_\"_)"]
+SNOWBUNNY_FACE_PALETTE_BLINK = ["   (\\(\\ [n-]", "  ( -.-)", "o(,`_\"_)"]
 
 
 # card id -> {"review_variants": [...]}

@@ -1,6 +1,6 @@
 # Curriculum v2 — animation projects, Vim fluency, and durable mastery
 
-Status: revision `.51` contains 215 cards and 395 manually authored questions.
+Status: revision `.52` contains 215 cards and 395 manually authored questions.
 The clean-Neovim suite passes all 174 recipe-bearing paths. The base headed
 popup path renders the stage tree at 80x24, 100x36, and 188x49; the full
 post-M2 route matrix and real-config suite remain separate acceptance evidence.

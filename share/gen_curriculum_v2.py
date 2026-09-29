@@ -2032,26 +2032,35 @@ MODULES = [
                 ],
             ),
         ],
-        "transfer": step(
-            ["/--\\ [xo]", "| .|      ", "\\__/      ", ""],
-            ["/--\\ [xo]", "| x|      ", "\\__/      ", ""],
-            "fx\"aylj0f.R<C-r>a<Esc>",
-            [["fx\"ayl", "capture the unfamiliar x palette in register a"],
-             ["j0f.R<C-r>a<Esc>", "replace the acting cell without shifting its wall"]],
+        "transfer": dict(step(
+            stone_story_variants.SKULLY_O_PALETTE + [""],
+            stone_story_variants.SKULLY_O_PALETTE_LOOK + [""],
+            "fO\"aylj0foR<C-r>a<Esc>",
+            [["fO\"ayl", "copy the visible O material into named register a"],
+             ["j0foR<C-r>a<Esc>", "retrieve it over Skully's left eye without shifting the face"]],
             method_requirement=require_method(
-                "transfer a named palette glyph through Replace mode",
-                exact_any_of=["fx\"aylj0f.R<C-r>a<Esc>"]),
-        ),
-        "transfer_alt": step(
-            ["<==> [@+]", "[ .]      ", "-__-      ", ""],
-            ["<==> [@+]", "[ @]      ", "-__-      ", ""],
-            "f@\"aylj0f.R<C-r>a<Esc>",
-            [["f@\"ayl", "capture the alternate @ palette"],
-             ["j0f.R<C-r>a<Esc>", "reuse it in the changed shell without insertion"]],
+                "transfer the visible O palette through named register a",
+                exact_any_of=["fO\"aylj0foR<C-r>a<Esc>"]),
+        ), source="official-Pets/Skully res01 to res02 look overlay with tutor palette annotation",
+           prompt=(
+               "Copy the visible O material from Skully's palette into register a, "
+               "then widen only the left eye into the look pose."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.SNOWBUNNY_FACE_PALETTE + [""],
+            stone_story_variants.SNOWBUNNY_FACE_PALETTE_BLINK + [""],
+            "f-\"aylj0fnR<C-r>a<Esc>2lR<C-r>a<Esc>",
+            [["f-\"ayl", "copy the visible dash material into named register a"],
+             ["j0fnR<C-r>a<Esc>", "retrieve it over the first eye"],
+             ["2lR<C-r>a<Esc>", "reuse the same register over the second eye to complete the blink"]],
             method_requirement=require_method(
-                "transfer the alternate named palette glyph through Replace mode",
-                exact_any_of=["f@\"aylj0f.R<C-r>a<Esc>"]),
-        ),
+                "reuse one named palette register for both blink eyes",
+                exact_any_of=["f-\"aylj0fnR<C-r>a<Esc>2lR<C-r>a<Esc>"]),
+        ), source="official-Pets/SnowBunny res01 to res03 blink overlay with tutor palette annotation",
+           prompt=(
+               "Copy the visible dash material into register a, then reuse it over both "
+               "SnowBunny eyes to complete the blink without shifting the face."
+           )),
     },
     {
         "id": "M15", "title": "Texture ground", "node": "S7/V15",
@@ -6369,7 +6378,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.51",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.52",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,
