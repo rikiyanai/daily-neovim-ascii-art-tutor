@@ -392,7 +392,7 @@ mastery_extension_contract = {
     "M14.DAPH": ("paragraph-delete", "ggdap"),
     "M15.ZPH": ("trimmed-block-copy", "gg0<C-v>2j6|zy4G2|zp"),
     "M11.WSH": ("whitespace-column-audit", ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=7<CR>:%s/\\s\\+$//e<CR>"),
-    "M4.DIFFH": ("onion-diff-view", ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:close!<CR>"),
+    "M4.DIFFH": ("onion-diff-view", ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:bwipeout!<CR>"),
     "M11.UTH": ("undo-tree-travel", "2G0fnr!ur-g-g+:earlier 1<CR>g+"),
 }
 for card_id, (family, expected) in mastery_extension_contract.items():

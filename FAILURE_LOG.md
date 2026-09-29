@@ -4270,6 +4270,16 @@ The client-attached base popup also passes concurrently at 80×24, 100×36, and
 copy, edit, debrief, progress, retry/repeat, and cleanup surface; the two new
 hidden command cards have the separate direct-route evidence above.
 
+The first clean-Neovim full replay then hung at `M4.DIFF`: closing the
+reference *window* left its modified unnamed buffer hidden, so the final
+`:wq` refused to exit with E37/E162. The live popup happened to complete, but
+that was not a portable teardown contract. The lesson now uses
+`:bwipeout!` on the disposable reference after `:diffoff!`; `:silent 0read #`
+also suppresses the reference-read hit-enter message in clean Neovim. The
+corrected direct `M4.DIFFH` popup still passes at 80×24, and the complete clean
+suite now passes **209/209 executable lessons and 168/168 primary recipes**,
+including all four diff-review variants and all four undo-tree variants.
+
 **Scope correction:** the concrete command gaps enumerated by VD-26 are now
 represented by executable guided → hidden-method → changed-art-review paths;
 that does **not** make the course complete. The remaining curriculum failures

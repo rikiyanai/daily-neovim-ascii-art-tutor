@@ -5101,9 +5101,9 @@ def mastery_extension_cards(module):
         ])
 
         def onion_diff_keys(edit_keys):
-            return (":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR>"
+            return (":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR>"
                     "<C-w>p:diffthis<CR>:set scrollbind<CR>" + edit_keys +
-                    ":diffoff!<CR><C-w>p:close!<CR>")
+                    ":diffoff!<CR><C-w>p:bwipeout!<CR>")
 
         diff_label = "compare a working frame against a scroll-bound reference"
         missile_diff = onion_diff_keys("2G0f'r.")
@@ -5115,22 +5115,22 @@ def mastery_extension_cards(module):
                 "DIFF", "Onion-skin a missile exhaust frame in a bound diff view",
                 "Open a disposable vertical reference of missile frame 3, enable diff and scroll binding in both views, change only the final exhaust puff to frame 4, then close only the reference window.",
                 ss.MISSILE_F3, ss.MISSILE_F4, missile_diff,
-                [[":vnew<CR>:0read #<CR>ggdd", "make a disposable reference from the saved prior frame"],
+                [[":vnew<CR>:silent 0read #<CR>ggdd", "make a disposable reference from the saved prior frame"],
                  [":diffthis<CR>:set scrollbind<CR>", "enable aligned comparison in the reference"],
                  ["<C-w>p:diffthis<CR>:set scrollbind<CR>", "return to the working frame and bind its comparison view"],
                  ["2G0f'r.", "advance only the final exhaust puff"],
-                 [":diffoff!<CR><C-w>p:close!<CR>", "end comparison and close only the disposable reference"]],
+                 [":diffoff!<CR><C-w>p:bwipeout!<CR>", "end comparison and discard only the disposable reference buffer"]],
                 "onion-diff-view", 3.4,
                 "official-Games/TowerDefense res18 missile frame 3 -> 4", guided=True)),
             ("M4.06", card(
                 "DIFFH", "Retrieve onion-skin diff on a Chick peep frame",
                 "On the unfamiliar Chick pose, build a disposable scroll-bound diff reference, close only the beak from < to -, then tear down the comparison without closing the tutor brief.",
                 ss.CHICK_PEEP_F3, ss.CHICK_PEEP_F4, chick_diff,
-                [[":vnew<CR>:0read #<CR>ggdd", "copy the prior Chick frame into a disposable reference"],
+                [[":vnew<CR>:silent 0read #<CR>ggdd", "copy the prior Chick frame into a disposable reference"],
                  [":diffthis<CR>:set scrollbind<CR>", "align that reference"],
                  ["<C-w>p:diffthis<CR>:set scrollbind<CR>", "bind the working pose to it"],
                  ["gg0f<r-", "close only the beak endpoint"],
-                 [":diffoff!<CR><C-w>p:close!<CR>", "remove diff mode and close the reference"]],
+                 [":diffoff!<CR><C-w>p:bwipeout!<CR>", "remove diff mode and discard the reference buffer"]],
                 "onion-diff-view", 5.4,
                 "official-Pets/Chick res03 peep frame 3 -> 4", guided=False,
                 reviews=[
@@ -5138,7 +5138,7 @@ def mastery_extension_cards(module):
                            [["reference + diffthis", "open the prior Skully pose beside the work"],
                             ["scrollbind", "keep corresponding pose rows aligned"],
                             ["2G0for=;r=", "close both eyes with repeated bounded find and replace"],
-                            ["diffoff + close", "tear down only the disposable reference"]],
+                            ["diffoff + bwipeout", "tear down only the disposable reference"]],
                            "official-Pets/Skully res01 -> res04 blink overlay", diff_label,
                            "Skully review: compare the open pose beside the working blink, keep rows bound, and close the disposable reference after verifying both eye changes.",
                            "The reference is a temporary window; the working art remains the submitted buffer."),
@@ -5146,7 +5146,7 @@ def mastery_extension_cards(module):
                            [["reference + diffthis", "open the prior bunny pose beside the work"],
                             ["scrollbind", "align the three pose rows"],
                             ["2G0fnr-;r-", "close the two eyes around the unchanged nose"],
-                            ["diffoff + close", "remove only the reference view"]],
+                            ["diffoff + bwipeout", "remove only the reference view"]],
                            "official-Pets/SnowBunny res01 -> res03 blink overlay", diff_label,
                            "SnowBunny review: onion-skin the open pose, make the blink in the working frame, then close only the disposable comparison window.",
                            "Use window-local comparison tools; do not close the tutor's upper brief."),

@@ -18328,10 +18328,10 @@
     "< / / |::.",
     "  ¯¯¯¯\\"
    ],
-   "expected": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0f'r.:diffoff!<CR><C-w>p:close!<CR>",
+   "expected": ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0f'r.:diffoff!<CR><C-w>p:bwipeout!<CR>",
    "recipe": [
     [
-     ":vnew<CR>:0read #<CR>ggdd",
+     ":vnew<CR>:silent 0read #<CR>ggdd",
      "make a disposable reference from the saved prior frame"
     ],
     [
@@ -18347,8 +18347,8 @@
      "advance only the final exhaust puff"
     ],
     [
-     ":diffoff!<CR><C-w>p:close!<CR>",
-     "end comparison and close only the disposable reference"
+     ":diffoff!<CR><C-w>p:bwipeout!<CR>",
+     "end comparison and discard only the disposable reference buffer"
     ]
    ],
    "cursor": "^",
@@ -18369,7 +18369,7 @@
    "method_requirement": {
     "label": "use the taught onion-diff-view path",
     "exact_any_of": [
-     ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0f'r.:diffoff!<CR><C-w>p:close!<CR>"
+     ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0f'r.:diffoff!<CR><C-w>p:bwipeout!<CR>"
     ]
    },
    "paired_question_ids": [
@@ -19110,10 +19110,10 @@
     "`{/ ;",
     "  ^^"
    ],
-   "expected": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:close!<CR>",
+   "expected": ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:bwipeout!<CR>",
    "recipe": [
     [
-     ":vnew<CR>:0read #<CR>ggdd",
+     ":vnew<CR>:silent 0read #<CR>ggdd",
      "copy the prior Chick frame into a disposable reference"
     ],
     [
@@ -19129,8 +19129,8 @@
      "close only the beak endpoint"
     ],
     [
-     ":diffoff!<CR><C-w>p:close!<CR>",
-     "remove diff mode and close the reference"
+     ":diffoff!<CR><C-w>p:bwipeout!<CR>",
+     "remove diff mode and discard the reference buffer"
     ]
    ],
    "cursor": "^",
@@ -19151,7 +19151,7 @@
    "method_requirement": {
     "label": "use the taught onion-diff-view path",
     "exact_any_of": [
-     ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:close!<CR>"
+     ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:bwipeout!<CR>"
     ]
    },
    "review_variants": [
@@ -19166,7 +19166,7 @@
       "    (_=,=)",
       "      `\"´"
      ],
-     "expected": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0for=;r=:diffoff!<CR><C-w>p:close!<CR>",
+     "expected": ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0for=;r=:diffoff!<CR><C-w>p:bwipeout!<CR>",
      "recipe": [
       [
        "reference + diffthis",
@@ -19181,7 +19181,7 @@
        "close both eyes with repeated bounded find and replace"
       ],
       [
-       "diffoff + close",
+       "diffoff + bwipeout",
        "tear down only the disposable reference"
       ]
      ],
@@ -19192,7 +19192,7 @@
      "method_requirement": {
       "label": "compare a working frame against a scroll-bound reference",
       "exact_any_of": [
-       ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0for=;r=:diffoff!<CR><C-w>p:close!<CR>"
+       ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0for=;r=:diffoff!<CR><C-w>p:bwipeout!<CR>"
       ]
      }
     },
@@ -19207,7 +19207,7 @@
       "  ( -.-)",
       "o(,`_\"_)"
      ],
-     "expected": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0fnr-;r-:diffoff!<CR><C-w>p:close!<CR>",
+     "expected": ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0fnr-;r-:diffoff!<CR><C-w>p:bwipeout!<CR>",
      "recipe": [
       [
        "reference + diffthis",
@@ -19222,7 +19222,7 @@
        "close the two eyes around the unchanged nose"
       ],
       [
-       "diffoff + close",
+       "diffoff + bwipeout",
        "remove only the reference view"
       ]
      ],
@@ -19233,7 +19233,7 @@
      "method_requirement": {
       "label": "compare a working frame against a scroll-bound reference",
       "exact_any_of": [
-       ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0fnr-;r-:diffoff!<CR><C-w>p:close!<CR>"
+       ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0fnr-;r-:diffoff!<CR><C-w>p:bwipeout!<CR>"
       ]
      }
     }
@@ -44831,7 +44831,7 @@
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0f'r.:diffoff!<CR><C-w>p:close!<CR>",
+    "display": ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>2G0f'r.:diffoff!<CR><C-w>p:bwipeout!<CR>",
     "required_term_groups": [
      [
       "vnew",
@@ -45252,7 +45252,7 @@
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": ":vnew<CR>:0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:close!<CR>",
+    "display": ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:bwipeout!<CR>",
     "required_term_groups": [
      [
       "vnew",
