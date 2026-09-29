@@ -3341,3 +3341,218 @@ the same invariant. The generated JSON contains zero `<C-u>` occurrences.
 primary recipes; it asserts 328/328 multiple-choice questions, rejects any
 live `<C-u>`, rejects stale open-response instructions, and checks four choices
 plus four feedback messages on every question. `git diff --check` passes.
+
+## VD-28 · 2026-09-28 — rev `.27` "all questions multiple choice" shipped template nonsense; popup copy proof never copied
+
+**Status:** OPEN. Audit and log only; no product code changed. Audited the
+committed live bank `share/curriculum-v2.json` (revision `.27`, 176 cards,
+328 questions). The working-tree generator could not be audited: it currently
+fails in `build()` with `M18.EXPR: taught family expression-substitute never
+returns as hidden changed art` (a concurrent uncommitted edit).
+
+**Operator evidence:** a live M0 popup showed choices such as
+`ANIMATION: Spark loop • Foundation edit accepts the module's named defect: …`
+and `… makes only its named change while every cell outside the stated scope
+stays registered`, clipped and unreadable, and the operator could not select
+or copy popup text: "NOT ONLY CAN I NOT COPY SELECT ETC, WHAT THE FUCK ARE
+THESE BS QUESTIONS?"
+
+**Reproduce:** `python3 share/audits/question_choice_audit.py share/curriculum-v2.json`.
+The script calls the runtime's own `_compact_choice_text`.
+
+### Measured gaps (same class: a gate checked for the presence of a form, not for the result the learner sees)
+
+1. **Generated jargon in place of authored content.** 137/328 questions (all
+   VD-27 conversions: 41 decode, 39 predict, 19 why, 19 typed-key, 19
+   complete) take their ANIMATION half from the template in
+   `convert_to_multiple_choice` (`gen_curriculum_v2.py`, `animation_correct` /
+   `animation_wrong`): "<card title> makes only its named change while every
+   cell outside the stated scope stays registered" versus "<card title>
+   accepts the module's named defect: <module defect>". Neither half describes
+   the art on screen. "Named change", "named defect", "stated scope" and
+   "registered" are generator vocabulary that no lesson defines. Across all
+   choices: `registered` 686, `scope` 372, `named change` 274, `named defect`
+   274. Across feedback: `registered` 562, `bounded` 553, `registration
+   contract` 137.
+2. **At 80×24 the compact choices are unanswerable.** In all 137 converted
+   questions the four compact choices reduce to two distinct strings. The
+   28-cell ANIMATION half becomes `A: Spark loop · Foundation…` in every
+   choice, so the right and wrong animation halves look the same, and the
+   NEOVIM half is cut before the clause that differs. Example M0.01.P01:
+   `A: Spark loop · Foundation… · V: It only moved the cursor; no…` appears
+   twice, and `… · V: It made the stated bounded…` appears twice. VD-24 ("four complete
+   one-line `A · V` choices") checked only that the `A:`/`V:` markers were
+   present (`test_v2.py` ~L211, `test_tmux_v2_routes.py`
+   `assert_compact_choices_fit`). No test checks that the choices are
+   distinct or that the differing words are visible.
+3. **The answer can be found from the wording alone.** In all 137 converted
+   questions the correct choice is the one whose wording is "makes only its
+   named change" / "It made the stated bounded edit" / "TARGET exactly". A
+   learner who reads no art still scores 100%. The wrong halves repeat across
+   questions: "It only moved the cursor; no requested art cell changed." ×40,
+   "START unchanged; navigation alone proves the skill." ×38, and "is an
+   unrelated project-wide command" in every converted complete question.
+   These questions do not measure what they claim to measure.
+4. **All 328 questions use one 2×2 grid** (two ANIMATION halves × two NEOVIM
+   halves). The learner never makes one decision; each question is two
+   binary checks joined. With the template halves in (1), one of those two
+   checks is empty.
+5. **Full-layout choices overflow.** 1312/1312 full-layout choice lines are
+   longer than the ~70-column interior of a 90% popup on an 80-column client.
+   They wrap mid-word across 3–4 rows and have no hanging indent. This is
+   what the operator saw.
+6. **VD-27's claim does not hold.** VD-27 says "animation halves name the card
+   and its module's documented defect" and "Neovim distractors contradict the
+   shown command … instead of reusing one generic wrong sentence". Measured:
+   the animation halves are one template, and the distractors are reused up
+   to 40 times. The VD-27 evidence line checks count and form only (4 choices,
+   4 feedback, `multiple_choice`); it contains no check that the content is
+   correct or readable.
+
+### Popup copy/select (VD-23/VD-25 claim not supported)
+
+- The popup routes run `tmux display-popup -E` (`tmux/vim-drill-popup.sh`),
+  and tmux here is 3.6a. The repair enabled `mouse on` and bound
+  `copy-mode-vi MouseDragEnd1Pane`/`y`/`Enter` to `copy-pipe-and-cancel
+  pbcopy`. Those bindings act on **pane** copy mode. Per the tmux manual, a
+  popup is "drawn over the top of any panes" and is not a pane.
+  Inferred (from tmux behaviour, not yet run here): a drag inside popup
+  content never enters copy mode. Also, global `mouse on` makes tmux take the
+  drag away from the terminal's own selection, so the terminal's bypass
+  modifier (e.g. Shift-drag) is needed. The repair may therefore have made
+  plain selection *worse* in panes and in the popup.
+- `test_tmux_v2.py` ~L196–205 asserts only that the options and bindings
+  exist. No test drags, checks `pbpaste`, or compares the result with the
+  shown text. The "drag copies · Cmd-V pastes" title is therefore a claim
+  with no test behind it.
+- **Falsifier:** a plain mouse drag in the real `display-popup`, then
+  `pbpaste`, returns the selected popup text. If so, the inference above is
+  wrong.
+- **Required proof:** that exact real-client drag → `pbpaste` comparison,
+  plus the same for Shift-drag. The copy method must stay the same for the
+  whole session. If popup copy is not possible, give the lesson text another
+  copy path (e.g. a key that runs `pbcopy` on the current question), and the
+  title must state that method.
+
+### Required correction (not implemented)
+
+- Delete the template ANIMATION halves. Each converted question needs an
+  authored, art-specific pair built from the card's START/TARGET, like the
+  native M0.Q01 ("only the core changes from . to o; all six rays stay
+  registered"). If a question cannot be authored that way, remove it.
+- Remove generator vocabulary from choices and feedback, or teach each term
+  in a lesson before a question uses it.
+- Add gates on the displayed strings at 80×24, 100×36 and full width: the
+  four choices are pairwise distinct after the runtime's own truncation;
+  every choice shows the words that make it differ; no wrong half repeats
+  across more than N questions; and the correct answer cannot be found by a
+  phrase shared across the bank.
+- Wrap full-layout choices with a hanging indent at the actual popup width.
+- Replace the copy test's option/binding checks with a real copy round
+  trip.
+
+## VD-29 · 2026-09-28 19:40 — "changed-art" reviews and transfers reuse one subject; 885 Stone Story animation sheets unused
+
+**Status:** OPEN — manual audit running; replacement started (see below).
+
+**Operator:** "THE ANIMATIONS SHOULD VARY … there are literal dozens of unused
+Stone Story animation txt files, manually audit them and start fixing
+replacing." Earlier records of the same gap: VD-17 (1,908 sheets found, 0
+used) and VD-18 (86 animation-grade sets / 885 sheets, 0 used).
+
+**Measured on the live bank** (revision `.28`, 187 cards; `share/curriculum-v2.json`):
+
+- 57 cards carry 114 `review_variants`, described as "source-linked
+  changed-art review bank" (the `verified_review_coverage` evidence string).
+  44/114 are the card's own art with the first non-space cell of one row
+  replaced by `!` or `+` (`attach_command_review_variants` +
+  `REVIEW_PERTURB_ROWS`, and the bridge-card equivalent). Example: M3.CI
+  ` /---\ ⏎ | (.) | ⏎  \---/` becomes ` /---\ ⏎ ! (.) | ⏎  \---/`. That
+  overwrites the silhouette's border and teaches no new art. Another 8/114
+  change one row. The rest recolour the same subject (spark `-- x --` /
+  `== ? ==`, brick `[]`→`<>`→`{}`, stick figure `o`→`*`→`+`).
+- Every module transfer (`M*.06`) has two `variants`. Variant 1 is
+  byte-identical to the card's own start. Variant 2 is the same silhouette
+  mirrored or recoloured. "Unfamiliar art" transfer therefore never shows
+  unfamiliar art.
+- The bridge labs (M0.SL, M1.DD, M3.CI, M3.REG, M3.DI, M6.D, M6.MOVE, M11.UR,
+  M12.FIND …) all draw one generic `/---\ | o | \---/` box.
+- `test_v2.py` executes each variant in Neovim and checks that there are two
+  distinct starts. It never checks that a variant is different art.
+- Result for the learner: all ~190 edit surfaces are ~20 invented
+  programmer-art subjects. No real Stone Story animation frame is used,
+  though 885 animation sheets sit in `~/Downloads/stone-story-consolidated/`.
+
+**Licence note:** VD-18 recorded the operator's waiver for logging, not for
+publishing. The GitHub repo is PUBLIC (`gh repo view`: visibility PUBLIC), so
+committing or pushing vendored sheets publishes third-party art. Local
+working-tree edits only until the operator decides.
+
+### VD-29 progress · 2026-09-28 20:45 — manual audit complete; 22 review variants replaced
+
+**Audit (manual; 4 subagents; every listed sheet opened and its StoneScript
+source read):** `share/audits/stone-story-animation-audit/batch-0.md` …
+`batch-3.md`. The 86 sets split USE 40 / MAYBE 16 / REJECT 30 (b0 10/5/6,
+b1 12/4/6, b2 10/4/8, b3 8/3/10). Each USE/MAYBE section pastes the frames,
+the per-pair cell diff, a proposed Neovim edit and a module slot. Findings
+that constrain import:
+- `#` is transparent, but a space in an overlay layer may clear the cell
+  below. The Boo and BurgerRush composites are inferred, not exact.
+- Full-width glyphs (`］ ＂ ｛ ［`) in SillyGoose, Knight, Turret, CavePets,
+  Mushroom res15/16, Dragon attack, Mech, and four batch-1 rejects break the
+  grid.
+- `´ ¯ ‾ · •` are ambiguous width and need digraphs to type.
+- The RootBats `@HE@` placeholder is template text.
+The subagents wrote their proposed edits by hand; they were not run in Neovim.
+Only rows imported below were executed.
+
+**Replaced (working tree, not committed):**
+- New `share/stone_story_variants.py`: 22 review variants on 9 cards — M0.01,
+  M0.SL, M11.02, M11.UR, M11.04, M11.05, M11.VE, M11.08, M1.DD, M3.CI,
+  M3.REG. Sources: Dracula walk, SnowBunny/Skully/Frog blinks, TowerDefense
+  missile exhaust, Chick egg crack and peep.
+- Every frame was re-read from the raw sheet
+  (`share/audits/stone-story-animation-audit/show_sheet.py`).
+- Each variant carries its own `prompt` and `hint`: `_changed_review_card`
+  otherwise showed the source card's "spark" wording over different art.
+- Each variant also carries a `source` naming the sheet and frame, and an
+  exact `method_requirement`.
+- `gen_curriculum_v2.py` calls `stone_story_variants.apply(module_cards)` —
+  two added lines plus the import. `apply` rejects any variant whose art is
+  less than 50% different from the card's own art.
+- The existing toy-stimulus gate (≥3 rows, ≥5 wide, ≥7 ink per module frame)
+  rejected the 3-column StoneasaurGame runner and the 4–5-row
+  Stonehead/Dragon/Mushroom frames in 3-row modules. Those were swapped for
+  3-row sprites.
+
+**Evidence:**
+- `python3 share/test_stone_story_variants.py`: 22/22 PASS. Each variant's
+  keys run in `nvim -u NONE` (the test_v2 command) and reach the target.
+  The test also checks that every source sheet exists and that the JSON was
+  regenerated. Exit 0.
+- `python3 share/gen_curriculum_v2.py` writes 187 cards / 347 questions and
+  passes the generator validation, including the toy gate.
+- `_changed_review_card` builds all 18 replaced reviews (9 cards × 2 stages)
+  with the Stone Story prompt.
+- **Not run:** full `share/test_v2.py`. It stops at
+  `validate_curriculum` with "question M0.Q01 has an invalid compact paired
+  prompt". That is the concurrent uncommitted question rework
+  (`share/questions-authored-v2.json`); it fails the same way with the
+  replacement table emptied.
+- **Not seen:** a headed popup showing a Stone Story review. The operator's
+  M0.01 review (next_due 23:22) is the first live surface.
+
+**Still open:**
+1. 32 border-swap (`!`/`+`) review variants remain (M3.04, M3.DI, M3.08,
+   M4.VB, M6.D, M6.MOVE, M7.*, M8.04, M12.FIND, M13.BE, M14.PARA, M15.*,
+   M16.MOVE, M18.EXPR). So do the recoloured same-subject variants on the
+   other review cards.
+2. Transfer `variants` (every `M*.06`): not replaced. `run_edit` asks the
+   card's paired question after each attempt, and that question renders the
+   card's own art, so a Stone Story variant would contradict its question.
+   This needs per-variant paired questions first.
+3. The main module art (spark, `/---\` box, stick figure …) is unchanged.
+   The best-fit USE rows per module are in the batch tables' "best module"
+   column.
+4. Publishing: repo is PUBLIC; commit/push of Stone Story frames awaits the
+   operator's decision (VD-18 waiver covered logging only).

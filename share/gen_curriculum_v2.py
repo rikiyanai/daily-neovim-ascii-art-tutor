@@ -11,6 +11,10 @@ import json
 import re
 import textwrap
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import stone_story_variants  # noqa: E402  (VD-29 art table beside this file)
 
 
 ROOT = Path(__file__).resolve().parent
@@ -5032,6 +5036,8 @@ def build():
                 expanded.extend(by_before.get(existing["id"], []))
                 expanded.append(existing)
             module_cards = expanded
+        # VD-29: real Stone Story frames replace same-subject "changed art".
+        stone_story_variants.apply(module_cards)
         modules.append({
             "id": module["id"], "title": module["title"], "node": module["node"],
             "project_id": module["project"], "skill": module["skill"],
