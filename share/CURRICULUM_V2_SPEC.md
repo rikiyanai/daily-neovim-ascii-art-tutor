@@ -1,6 +1,6 @@
 # Curriculum v2 — animation projects, Vim fluency, and durable mastery
 
-Status: revision `.42` contains 215 cards and 389 manually authored questions.
+Status: revision `.43` contains 215 cards and 392 manually authored questions.
 The clean-Neovim suite passes all 174 recipe-bearing paths. The base headed
 popup path renders the stage tree at 80x24, 100x36, and 188x49; the full
 post-M2 route matrix and real-config suite remain separate acceptance evidence.
@@ -59,7 +59,7 @@ refer to its 2026-09-26 state; no existing user edits were reverted to prepare t
 |---|---|---|
 | E01 | Legacy `share/curriculum.json:10-20` has only three tier thresholds, 0/8/16 lifetime passes; legacy `unlocked` at `bin/vim-daily-gate:325-328` checks total passes, not prerequisites. | A learner could unlock later legacy material by repeating unrelated easy drills. V2 supersedes this route with module prerequisites. |
 | E02 | Legacy `bin/vim-daily-gate:331-355` chooses by `passed - failed`; the three-item recency exclusion sorts `last`, which legacy `do_drill` sets only on success (`:723-750`). | A failed legacy drill can reappear after one intervening slot, while repeats remain exact. V2 reviews use item variants and explicit due times. |
-| E03 | Legacy `bin/vim-daily-gate:390-427` defines eight fixed questions only for `grammar` and `modes`; `:879-881` runs them only by explicit `--quiz`; `:469-474` stores best score, total, and last date. | The legacy bank has no animation-reading, interstitial, or unlock role. V2 provides 389 item-level questions and check evidence. |
+| E03 | Legacy `bin/vim-daily-gate:390-427` defines eight fixed questions only for `grammar` and `modes`; `:879-881` runs them only by explicit `--quiz`; `:469-474` stores best score, total, and last date. | The legacy bank has no animation-reading, interstitial, or unlock role. V2 provides 392 item-level questions and check evidence. |
 | E04 | Legacy `bin/vim-daily-gate:499-546` prints the full concept, recipe, and visible target before an edit. | V2 keeps the visible target on every edit. Guided cards also expose the recipe; retrieval/check cards expose a non-key hint while withholding only the exact command answer. |
 | E05 | Legacy `bin/vim-daily-gate:723-750` writes a date-and-drill-specific lesson file and records one drill result. | V2 adds authoritative continuing `strip.txt`, transfer, manifest, checkpoint, and next-card state. |
 | E06 | Legacy `bin/vim-daily-gate:358-383` calls one-pass coverage `concept_mastery`; `:866-903` exposes it in manual export/status. | Legacy evidence remains visible through `--legacy-status`; V2 `--tree` now exposes prerequisite-backed module state. |
@@ -146,7 +146,7 @@ Module completion remains visible, but it cannot override the stage gate.
 
 ## 5. Module sequence and lesson inventory
 
-Implemented content is **20 modules / 215 cards**, plus **389 distinct paired
+Implemented content is **20 modules / 215 cards**, plus **392 distinct paired
 conceptual items** and transfer/review variants. Each card has one
 new decision or edit; no popup silently expands into a 45-minute session. A module
 shares one `strip.txt` across its eight cards. The table is the authoring order,

@@ -836,6 +836,87 @@
       "Correct: the command grammar names one row, one visible landmark, and one-cell replacement, matching the acting-part boundary."
     ]
   },
+  "M14.06.V2.P01": {
+    "prompt": "ANIMATION\nThis unfamiliar still carries its own palette `[@+]` beside the shell. The eye dot must become the palette's `@`; the source palette, shell, and row widths remain unchanged.\n\n  BEFORE         AFTER\n  │<==> [@+]│    │<==> [@+]│\n  │[ .]      │ → │[ @]      │\n  │-__-      │    │-__-      │\n\nNEOVIM\nWhich sequence treats the palette glyph as reusable material rather than typing from memory?",
+    "compact_prompt": "ANIMATION\nCopy `@` from the visible palette into the eye cell; keep palette and shell fixed.\n\n  │<==> [@+]│\n  │[ .]      │ → │[ @]      │\n\nNEOVIM\nWhy use register a with Replace mode?",
+    "animation_prompt": "ANIMATION\nM14.06 variant 2 transfers a visible symbol-table material into one eye cell of an unfamiliar shell.",
+    "animation_answer": "The eye dot becomes @ while the palette's source @, shell outline, and fixed width remain unchanged.",
+    "neovim_prompt": "NEOVIM\nDecode `f@\"aylj0f.R<C-r>a<Esc>` on the shown palette and shell.",
+    "neovim_answer": "f@ lands on the palette glyph, \"ay yanks it into register a, j0f. reaches the eye, R enters Replace mode, and Ctrl-r a retrieves the stored glyph over that cell.",
+    "choices": [
+      "ANIMATION: The source @ is moved out of the palette into the eye. | NEOVIM: y deletes the selected glyph after storing it.",
+      "ANIMATION: The eye receives the palette's @ while source, shell, and width stay fixed. | NEOVIM: `\"ayl` stores the visible glyph in register a and `R<C-r>a` retrieves it over the eye cell.",
+      "ANIMATION: Every dot becomes @. | NEOVIM: a named register automatically replaces all matching glyphs.",
+      "ANIMATION: @ is inserted before the dot and widens the shell. | NEOVIM: Replace mode retains the old cell to the right."
+    ],
+    "compact_choices": [
+      "A: move source @ · V: y deletes",
+      "A: copy palette @ to eye · V: named yank + Replace retrieval",
+      "A: every dot changes · V: register is global",
+      "A: insert before dot · V: Replace retains old cell"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "y copies into the register and leaves the palette source in place.",
+      "Correct: the visible symbol table supplies the exact material, and Replace mode preserves the eye's registered column.",
+      "Registers store text; they do not search the buffer or apply themselves to matching cells.",
+      "Replace mode overwrites the dot when the register is inserted there, so the row does not widen."
+    ]
+  },
+  "M15.06.V2.P01": {
+    "prompt": "ANIMATION\nThis unfamiliar texture study has dither on top, a brace-brick band in the middle, and a wave shadow below. Only the middle band offsets one cell to the right; its glyph pattern and both neighbouring layers stay unchanged.\n\n  BEFORE          AFTER\n  │++..++..++│    │++..++..++│\n  │{}__{}__{}│ →  │ {}__{}__{}│\n  │\\~~~~~~~~/│    │\\~~~~~~~~/│\n\nNEOVIM\nWhich account explains why `shiftwidth=1` is part of the material operation?",
+    "compact_prompt": "ANIMATION\nOffset only the brace-brick band by one cell.\n\n  │++..++..++│\n  │{}__{}__{}│ → │ {}__{}__{}│\n  │\\~~~~~~~~/│\n\nNEOVIM\nWhat does `j:set shiftwidth=1` then `>>` do?",
+    "animation_prompt": "ANIMATION\nM15.06 variant 2 applies a one-cell brick offset while preserving dither and shadow registration.",
+    "animation_answer": "The complete middle material row gains one leading space; its internal pattern and the top and bottom layers do not change.",
+    "neovim_prompt": "NEOVIM\nDecode `j:set shiftwidth=1<CR>>>` on the three-row texture study.",
+    "neovim_answer": "j selects the middle row, the option makes one indent step equal one cell, and >> shifts only that current row by exactly that step.",
+    "choices": [
+      "ANIMATION: All three material layers move right together. | NEOVIM: >> always indents the complete buffer.",
+      "ANIMATION: Brace glyphs are replaced with spaces. | NEOVIM: shiftwidth controls substitution width, not indentation.",
+      "ANIMATION: Only the brace-brick band offsets one cell; dither and shadow stay registered. | NEOVIM: j chooses that row, `shiftwidth=1` defines the step, and >> applies one row-local indent.",
+      "ANIMATION: The middle pattern stretches by one cell between every brick. | NEOVIM: >> inserts one space after each text object."
+    ],
+    "compact_choices": [
+      "A: all layers shift · V: >> indents buffer",
+      "A: braces erased · V: shiftwidth substitutes",
+      "A: middle row +1 cell · V: row-local one-step indent",
+      "A: gaps stretch · V: >> spaces every object"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      ">> operates on the current line unless given a larger linewise scope; the top and shadow rows are not selected.",
+      "shiftwidth sets indentation size. It does not identify or replace brace glyphs.",
+      "Correct: an explicit one-cell step produces the intended offset without rewriting the material pattern.",
+      "Indentation adds a prefix to the acting line; it does not modify gaps inside the row."
+    ]
+  },
+  "M16.06.V2.P01": {
+    "prompt": "ANIMATION\nThis unfamiliar key-pose card keeps its plus pose and `T06 FPS` plan. Only the frame label advances from `F07` to `F08`.\n\n  BEFORE       AFTER\n  │   +   │     │   +   │\n  │  <|>  │     │  <|>  │\n  │  / \\  │  →  │  / \\  │\n  │F07 KEY│     │F08 KEY│\n  │T06 FPS│     │T06 FPS│\n\nNEOVIM\nHow does number increment distinguish the frame label from the unchanged timing line?",
+    "compact_prompt": "ANIMATION\nAdvance F07 to F08; keep the pose and T06 unchanged.\n\n  │F07 KEY│ → │F08 KEY│\n  │T06 FPS│   │T06 FPS│\n\nNEOVIM\nWhy `Gk0f7<C-a>`?",
+    "animation_prompt": "ANIMATION\nM16.06 variant 2 advances one frame label without changing the pose drawing or its FPS annotation.",
+    "animation_answer": "F07 becomes F08; the plus pose and T06 timing line remain byte-for-byte unchanged.",
+    "neovim_prompt": "NEOVIM\nDecode `Gk0f7<C-a>` on the five-row card.",
+    "neovim_answer": "G reaches the FPS row, k moves to the frame-label row, 0f7 lands inside the 07 number, and Ctrl-a increments that numeric token to 08.",
+    "choices": [
+      "ANIMATION: Both F07 and T06 advance. | NEOVIM: Ctrl-a increments every number in the buffer from one cursor position.",
+      "ANIMATION: The frame label becomes F08 while pose and T06 stay fixed. | NEOVIM: `Gk` selects the label row, `f7` lands in its number, and Ctrl-a increments only that token.",
+      "ANIMATION: A new F08 pose card is appended. | NEOVIM: Ctrl-a duplicates the current paragraph with the next number.",
+      "ANIMATION: The plus pose changes into frame 8 artwork automatically. | NEOVIM: incrementing a label transforms nearby ASCII glyphs."
+    ],
+    "compact_choices": [
+      "A: label + FPS advance · V: Ctrl-a changes all numbers",
+      "A: F07→F08 only · V: address label token + increment",
+      "A: append F08 card · V: Ctrl-a duplicates",
+      "A: pose auto-transforms · V: number controls art"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "Ctrl-a changes the number at or after the cursor, not every numeric token in the file.",
+      "Correct: row and glyph motions establish the numeric scope before the increment, isolating the frame label from FPS.",
+      "Ctrl-a edits one numeric token in place. It does not copy rows or create a new card.",
+      "The label is metadata only; changing it cannot redraw the surrounding pose."
+    ]
+  },
   "M11.06.V2.P01": {
     "prompt": "ANIMATION\nThis unfamiliar two-shell still uses stars as indicators and apostrophes as feet. Only the first shell's two roof dashes become equals signs; its corner dots and every cell of the second shell stay fixed.\n\n  BEFORE         AFTER\n  │.--.  .--.│   │.==.  .--.│\n  │| *|  |* |│ → │| *|  |* |│\n  │'__'  '  '│   │'__'  '  '│\n\nNEOVIM\nWhy is `R==<Esc>` bounded differently from inserting `==`?",
     "compact_prompt": "ANIMATION\nOnly the first roof's `--` becomes `==`; both shells keep their width.\n\n  │.--.  .--.│ → │.==.  .--.│\n\nNEOVIM\nWhat does `0lR==<Esc>` replace?",

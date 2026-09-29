@@ -4614,3 +4614,25 @@ config at 80x24.
 questions. Stone Story primary-art migration, provenance intake, the full
 headed route matrix, and publication decision remain open. No third-party art
 was pushed.
+
+### VD-40 follow-through · revision `.43` — M14/M15/M16 alternates own palette, offset, and label scope
+
+- `M14.06` variant 2 prints the local `[@+]` palette and unfamiliar shell. Its
+  question follows the actual named-register grammar from visible source yank
+  through Replace-mode retrieval, while preserving the palette source.
+- `M15.06` variant 2 prints dither, brace-brick, and wave-shadow layers. It
+  ties `shiftwidth=1` plus row-local `>>` to the exact one-cell middle-band
+  offset rather than describing indentation abstractly.
+- `M16.06` variant 2 prints the plus pose, `F07 KEY`, and `T06 FPS`. Its
+  question makes the cursor's numeric-token scope explicit so only F07 becomes
+  F08.
+
+**Proof:** generator `.43` writes 215 cards / 392 manually authored questions;
+question quality passes 392; clean Neovim remains **215/215 cards and 174/174
+primary recipes**; and all three alternate routes pass with the real user
+config at 80x24.
+
+**Still open.** Three `.06` cards still lack manually authored variant-2
+questions. Stone Story primary-art migration, provenance intake, the full
+headed route matrix, and publication decision remain open. No third-party art
+was pushed.
