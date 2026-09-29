@@ -79,23 +79,23 @@ transcript Part 1 `:339-401`.
 | M0.07 | Q | Read the ordered five-frame strip and distinguish a purposeful flare hold from drift or an arbitrary duplicate. |
 | M0.08 | K | Add the registered dim settle frame and pass the mixed conceptual/artifact checkpoint. |
 
-## M1 — `line-run`: glyph geometry and precise landmarks
+## M1 — `acronian-wing-joint`: glyph geometry and precise landmarks
 
-Continue the original small-scene lineage with a moving slash/line run, but
-checkpoint it as its own `strip.txt` revision. Source spine: spec §5 M1;
-legacy `count-motion`, `search`, `find-char`, `replace-char`, `mirror-run`,
-`cheer-eyes`, `append`; archived tutorial page sections 5-6 as cited in spec.
+Use Acronian Guardian's sourced left and right wing poses to study directional
+glyph roles, whole-pose scope, and homologous feather joints. Source spine:
+official Stone Story `Cosmetics/AcronianGuardian` res06/res11;
+ascii-art-authoring §§4.4,4.7; Neovim tutor 2.1,2.4,4.2.
 
 | Card | Kind | One new decision/edit and artifact result |
 |---|---|---|
-| M1.01 | G | Find an uncertain comma joint inside a three-row contour and replace only it with the chosen colon material. |
-| M1.02 | G | Copy the complete anchored contour as a working frame. |
-| M1.03 | Q | Read the complete contour and choose the interpretation that preserves its anchor and slope vocabulary. |
-| M1.04 | G | Replace the copied frame with a hand-authored descending counterpart instead of software-flipping the glyphs. |
-| M1.05 | X | Change the joint material in both frames by local edit-plus-dot and by a bounded substitute. |
-| M1.06 | T | Repair the corresponding joint in an unfamiliar anchored or mirrored contour. |
-| M1.07 | Q | Diagnose endpoint drift, broken material, or an unsafe scope in a changed contour. |
-| M1.08 | K | Return to the registered rising contour and pass a mixed landmark/material checkpoint. |
+| M1.01 | G | Find the comma joint on row 4 of the complete left wing and replace only it with a colon. |
+| M1.02 | G | Copy all five rows of the approved left-wing pose as a working candidate. |
+| M1.03 | Q | Read both complete wing poses and identify the evidence a hand mirror must preserve. |
+| M1.04 | G | Replace the copied left wing with the five-row right-facing source pose by hand, not by reversing bytes. |
+| M1.05 | X | Change the homologous joint in both wing poses by local edit-plus-dot or by a bounded substitute. |
+| M1.06 | T | Repair the corresponding joint in an unfamiliar Acronian wing still. |
+| M1.07 | Q | Diagnose lost rows, broken feather edges, or an unsafe material scope. |
+| M1.08 | K | Append the complete registered return wing and pass a mixed landmark/material checkpoint. |
 
 ## M2 — `shape-edit`: operator/motion grammar on a contour
 

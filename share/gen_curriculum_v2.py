@@ -432,6 +432,18 @@ M0_PRIMARY_SOURCE = (
     "official-Cosmetics/Fireworks res06 radial frame 3 crop; "
     "authored core/outer-ray energy states"
 )
+M1_LEFT_SOURCE = stone_story_variants.ACRONIAN_WING_LEFT_F1
+M1_LEFT_COLON = M1_LEFT_SOURCE[:3] + ["  \\`/     `:/", M1_LEFT_SOURCE[4]]
+M1_LEFT_TIGHT = M1_LEFT_SOURCE[:3] + ["  \\`/     `!/", M1_LEFT_SOURCE[4]]
+M1_RIGHT_SOURCE = stone_story_variants.ACRONIAN_WING_RIGHT_F2
+M1_RIGHT_COLON = M1_RIGHT_SOURCE[:4] + ["\\:.´"]
+M1_RIGHT_TIGHT = M1_RIGHT_SOURCE[:4] + ["\\!.´"]
+M1_RIGHT_INSERT_KEYS = "6G5ddG" + "".join(
+    "o%s<Esc>" % row for row in M1_RIGHT_COLON)
+M1_PRIMARY_SOURCE = (
+    "official-Cosmetics/AcronianGuardian res06 left-wing frame 1 and "
+    "res11 right-wing frame 2; authored comma/colon/tight-joint study"
+)
 M11_MISSILE_BASE = stone_story_variants.MISSILE_F1
 M11_MISSILE_TAUT = ["  ==__/", M11_MISSILE_BASE[1], M11_MISSILE_BASE[2]]
 M11_MISSILE_SLACK = ["  ~~__/", M11_MISSILE_BASE[1], M11_MISSILE_BASE[2]]
@@ -551,85 +563,72 @@ MODULES = [
         },
     },
     {
-        "id": "M1", "title": "Contour run", "node": "S1/V1", "project": "line-run",
-        "skill": "glyph geometry, shallow curves, and precise landmarks", "frame_rows": 3,
+        "id": "M1", "title": "Acronian wing joint", "node": "S1/V1", "project": "acronian-wing-joint",
+        "skill": "glyph geometry, hand-mirrored wings, and precise landmarks", "frame_rows": 5,
         "source_ref": "ascii-art-authoring §§4.4,4.7; Neovim tutor 2.1,2.4,4.2",
-        "meaning": "an anchored shallow contour rises and falls without moving its endpoint",
-        "first_reading": "the uncertain comma joint becomes the chosen colon joint while the contour and anchor stay fixed",
-        "principle": "reuse one memorised slope vocabulary across every frame",
-        "defect": "the endpoint or material spelling shifts when only the contour angle should change",
-        "basic": "reach a visible joint with f and replace only that joint",
-        "scaled": "use a bounded substitute or dot repeat for the same joint in several complete frames",
+        "meaning": "a complete Acronian wing opens left, then closes on its hand-mirrored right pose without losing feather joints",
+        "first_reading": "one low comma joint becomes a colon while all five source rows remain registered",
+        "principle": "author the opposite wing by eye; directional glyphs and spacing do not survive a byte reversal",
+        "defect": "the wing endpoint, row count, or feather spelling drifts when only the nominated joint should change",
+        "basic": "reach the visible comma joint with f and replace that one cell",
+        "scaled": "copy complete five-row poses, then use a bounded substitute or dot repeat on homologous joints",
         "steps": [
-            step(
-                ["       ´", "    _., ", "o_.-    "],
-                ["       ´", "    _.: ", "o_.-    "],
-                "/,<CR>r:",
-                [["/,", "search forward for the uncertain joint instead of counting columns"],
-                 ["<CR>", "accept the match inside the full contour"],
-                 ["r:", "choose the middle-height joint while leaving its anchor fixed"]],
-            ),
-            step(
-                ["       ´", "    _.: ", "o_.-    "],
-                ["       ´", "    _.: ", "o_.-    ",
-                 "       ´", "    _.: ", "o_.-    "],
-                "gg3yyGp",
-                [["gg3yy", "copy the complete three-row contour frame"],
-                 ["Gp", "put the working copy after the approved frame"]],
-            ),
-            step(
-                ["       ´", "    _.: ", "o_.-    ",
-                 "       ´", "    _.: ", "o_.-    "],
-                ["       ´", "    _.: ", "o_.-    ",
-                 "´       ", " `-.:   ", "o_.-    "],
-                "4G3ddGo´<CR> `-.:<CR>o_.-<Esc>",
-                [["4G3ddGo", "remove only the copied frame and open its replacement"],
-                 ["´ / `-.: / o_.-", "hand-author the opposite contour while keeping the o anchor fixed"]],
-            ),
-            step(
-                ["       ´", "    _.: ", "o_.-    ",
-                 "´       ", " `-.:   ", "o_.-    "],
-                ["       ´", "    _.; ", "o_.-    ",
-                 "´       ", " `-.;   ", "o_.-    "],
-                ":%s/:/;/g<CR>",
-                [[":%s/:/;/g", "change the declared joint material in both complete frames"]], alternatives=[
-                method("local plus dot", "2G0f:r;3j0f:.", "edit the first joint and repeat that change at the second"),
-                method("bounded substitute", ":%s/:/;/g<CR>", "replace only the known joint glyph throughout this two-frame strip"),
-            ]),
-            step(
-                ["       ´", "    _.; ", "o_.-    ",
-                 "´       ", " `-.;   ", "o_.-    "],
-                ["       ´", "    _.; ", "o_.-    ",
-                 "´       ", " `-.;   ", "o_.-    ",
-                 "       ´", "    _.: ", "o_.-    "],
-                ":1,3t$<CR>8G0f;r:",
-                [[":1,3t$", "copy the registered rising contour as the settle scaffold"],
-                 ["8G0f;r:", "soften only the settle joint so the loop seam is not a dead duplicate"]],
-            ),
+            dict(step(
+                M1_LEFT_SOURCE, M1_LEFT_COLON, "4G0f,r:",
+                [["4G0f,", "land on the low comma joint in the fourth source row"],
+                 ["r:", "approve that one feather joint without shifting either edge"]],
+            ), source=M1_PRIMARY_SOURCE),
+            dict(step(
+                M1_LEFT_COLON, M1_LEFT_COLON + M1_LEFT_COLON, "gg5yyGp",
+                [["gg5yy", "copy all five rows of the approved left-wing pose"],
+                 ["Gp", "put the complete working pose below the source"]],
+            ), source=M1_PRIMARY_SOURCE),
+            dict(step(
+                M1_LEFT_COLON + M1_LEFT_COLON,
+                M1_LEFT_COLON + M1_RIGHT_COLON,
+                M1_RIGHT_INSERT_KEYS,
+                [["6G5ddGo", "remove only the copied five-row pose and open its replacement"],
+                 ["type five source rows", "hand-author the right-facing wing and preserve each directional glyph by eye"]],
+            ), source=M1_PRIMARY_SOURCE),
+            dict(step(
+                M1_LEFT_COLON + M1_RIGHT_COLON,
+                M1_LEFT_TIGHT + M1_RIGHT_TIGHT,
+                "4G0f:r!6j0f:.",
+                [["4G0f:r!", "replace the left colon with a tightened exclamation joint"],
+                 ["6j0f:.", "find the right colon and repeat the verified replacement"]], alternatives=[
+                method("local plus dot", "4G0f:r!6j0f:.", "edit the left joint and repeat that replacement on the right pose"),
+                method("bounded substitute", ":%s/:/!/g<CR>", "replace the only two colon joints in the owned ten-row strip"),
+            ]), source=M1_PRIMARY_SOURCE),
+            dict(step(
+                M1_LEFT_TIGHT + M1_RIGHT_TIGHT,
+                M1_LEFT_TIGHT + M1_RIGHT_TIGHT + M1_LEFT_COLON,
+                ":1,5t$<CR>14G0f!r:",
+                [[":1,5t$", "copy the complete left-wing pose as the return scaffold"],
+                 ["14G0f!r:", "change only the return joint so it is not a dead duplicate"]],
+            ), source=M1_PRIMARY_SOURCE),
         ],
         "transfer": dict(step(
-            stone_story_variants.ACRONIAN_WING_LEFT_F1,
-            stone_story_variants.ACRONIAN_WING_LEFT_F1[:3]
-            + ["  \\`/     `:/", stone_story_variants.ACRONIAN_WING_LEFT_F1[4]],
-            "4G0f,r:",
-            [["4G0f,", "find the low punctuation joint on the fourth wing row"],
+            stone_story_variants.ACRONIAN_WING_LEFT_F2,
+            stone_story_variants.ACRONIAN_WING_LEFT_F2[:4] + ["          `.:/"],
+            "G0f,r:",
+            [["G0f,", "find the low comma joint on the final wing row"],
              ["r:", "centre that one joint without moving the feather contour"]],
         ), frame_rows=5,
-           source="official-Cosmetics/AcronianGuardian res06 left-wing frame 1; authored comma-to-colon joint study",
+           source="official-Cosmetics/AcronianGuardian res07 left-wing frame 2; authored comma-to-colon joint study",
            prompt=(
                "On Acronian Guardian's complete left wing, centre only the low comma "
-               "joint as a colon; preserve all five source rows and every feather edge."
+               "joint on the final row as a colon; preserve all five source rows and every feather edge."
            )),
         "transfer_alt": dict(step(
-            stone_story_variants.ACRONIAN_WING_RIGHT_F2,
-            stone_story_variants.ACRONIAN_WING_RIGHT_F2[:4] + ["\\:.´"],
-            "G0f,r:",
-            [["G0f,", "find the comma joint on the final row of the downstroke wing"],
-             ["r:", "centre only that joint while the full wing remains registered"]],
+            stone_story_variants.ACRONIAN_WING_RIGHT_F1,
+            stone_story_variants.ACRONIAN_WING_RIGHT_F1[:4] + ["        :/"],
+            "G$hr:",
+            [["G$h", "take the final row's slash endpoint, then move one cell left onto the joint"],
+             ["r:", "centre only that joint while the complete wing remains registered"]],
         ), frame_rows=5,
-           source="official-Cosmetics/AcronianGuardian res11 right-wing frame 2; authored comma-to-colon joint study",
+           source="official-Cosmetics/AcronianGuardian res10 right-wing frame 1; authored semicolon-to-colon joint study",
            prompt=(
-               "On the mirrored downstroke wing, centre only the final-row comma joint "
+               "On the mirrored downstroke wing, centre only the final-row semicolon joint "
                "as a colon; preserve the complete source silhouette."
            )),
     },
@@ -3141,10 +3140,10 @@ STILL_PROMPT_REWRITES = {
     "M11.WSH": "On the unfamiliar Chick still, turn on the whitespace and column guides, then remove only the three invisible tail spaces from each row. Preserve every visible drawing cell.",
     "M11.UTH": "On the unfamiliar SnowBunny still, try ! as an exaggerated left-eye take, undo and author the chosen dash, inspect the abandoned take chronologically, then return to the half-closed eye for submission.",
     "M11.07": "Diagnose the displayed fixed-width redraw, then choose the bounded repair that preserves every registered cell outside the named change.",
-    "M1.02": "Copy the complete anchored contour as a second still candidate.",
-    "M1.DD": "Remove only the second redundant three-row contour candidate; keep the first candidate registered.",
-    "M1.04": "Replace the copied still with a hand-authored descending counterpart instead of software-flipping the glyphs.",
-    "M1.07": "Diagnose the displayed contour run, then choose the bounded repair that preserves its line quality, anchor, and declared material.",
+    "M1.02": "Copy all five rows of the approved Acronian left-wing pose as a second still candidate.",
+    "M1.DD": "Remove only the second redundant five-row wing candidate; keep the first complete pose registered.",
+    "M1.04": "Replace the copied left wing with the shown five-row right-facing source pose, typing its directional glyphs by eye instead of software-flipping bytes.",
+    "M1.07": "Diagnose the displayed Acronian wing study, then choose the bounded repair that preserves all five rows, feather edges, and the nominated joint material.",
     "M19.01": "Approve one uncertain eye cell with `gR`, preserving both fixed-width rails of the five-row still.",
     "M19.02": "Copy the complete five-row still as the working opposite-facing candidate.",
     "M19.03": "Inspect the complete hand-mirrored still below, then choose the interpretation supported by its visible glyph and spacing evidence.",
@@ -3320,16 +3319,16 @@ QUESTION_PROMPTS = {
         ("A proposed global change would also rewrite stable rays. What repair preserves the animation?", "Which scope check should happen before replacing '-' with '=' in an ASCII frame?"),
     ],
     "M1": [
-        ("At the contour joint, what changed while the anchor and slope remained fixed?", "Which search command reaches the comma joint without counting punctuation columns?"),
-        ("Why should one slope spelling be reused across the rising and falling poses?", "How does a count with yy or dd keep a three-row contour operation frame-sized?"),
-        ("The endpoint moved although only the joint was meant to change. What failed?", "Which operator-plus-motion deletes one punctuation WORD without consuming the anchored row?"),
-        ("A descending pose must be authored from the approved rise. What must remain registered?", "When should 3dd be used instead of dd while replacing a complete three-line pose?"),
-        ("Two joint glyphs need the same local correction. What makes dot repeat appropriate?", "Which sequence edits the first joint and repeats that exact replacement at the second?"),
-        ("The mirrored transfer changes direction but not material. What property should carry over?", "Which / search and r replacement is independent of the mirrored joint's column?"),
-        ("Across rise, fall, and return, what is the stable visual landmark?", "Which command returns to the next search match when the same joint glyph recurs?"),
-        ("Why is hand-authoring the mirror more instructive than reversing bytes?", "Which Visual-line selection covers exactly one complete three-row contour candidate?"),
-        ("If :%s/:/;/g is run on the strip, what visual property changes and what stays fixed?", "What does the % range add to :s compared with a substitution on the current row?"),
-        ("A shorter command would change every colon in unrelated art. What bounded alternative fits?", "How can a line range before :s constrain the edit to the contour frames under review?"),
+        ("Which Acronian feather joint changes while both wing edges remain fixed?", "How do 4G0f, and r: divide row selection, landmark motion, and one-cell replacement?"),
+        ("Why must all five source rows travel together when the left wing is copied?", "How does the count in 5yy make the complete wing the linewise object?"),
+        ("Why may the HOLD planning label disappear while every wing row remains?", "Which operator-motion deletes one whitespace-delimited WORD below the art?"),
+        ("Which duplicate pose may be discarded before the right wing is authored?", "Why does 6G5dd own the second five-row candidate and not the first?"),
+        ("Which two homologous feather joints tighten from colon to exclamation?", "How does dot repeat one verified r! change at the second colon?"),
+        ("Where is the joint in the unfamiliar left-wing pose?", "Why do G and f, transfer the landmark method without reusing an old coordinate?"),
+        ("Which repeated apostrophe feather mark should navigation revisit without editing the wing?", "Which key repeats the last f/t character find in the same direction?"),
+        ("Why is the right wing authored by eye instead of reversing the left wing's bytes?", "Which Visual-line selection owns exactly five complete source rows?"),
+        ("If :%s/:/!/g is run on the art-only buffer, what changes and what remains fixed?", "What does the % range add to :s across the two five-row poses?"),
+        ("How can the two wing joints change while a calibration colon on row 11 remains?", "Which line range constrains :s to the ten owned art rows?"),
     ],
     "M2": [
         ("After the note disappears, which parts prove the face silhouette did not move?", "Which text-object command removes 'note' together with its adjacent space?"),
@@ -3563,16 +3562,16 @@ QUESTION_ANSWERS = {
         ("restrict the change to the intended flare row and verify stable glyphs before accepting it", "use a line address or current-row :s before the substitution; do not use an unchecked % range"),
     ],
     "M1": [
-        ("the comma joint becomes a colon while the anchored slope remains unchanged", "/,<CR> searches to the comma joint and r: replaces only that match"),
-        ("one consistent slope alphabet lets rise and fall read as one material in motion", "a count of 3 makes yy or dd operate on the entire three-row contour frame"),
-        ("the endpoint drifted even though the animation called for only a joint change", "dW deletes one whitespace-delimited punctuation run; dw may stop inside line-art punctuation"),
-        ("the mirrored pose keeps the same endpoint and material vocabulary while its direction reverses", "3dd removes the full three-line candidate before its replacement is authored"),
-        ("the same joint correction recurs at a known corresponding landmark", "2G0f:r;3j0f:. makes the first r: change and repeats it with . at the second joint"),
-        ("the mirrored contour keeps its anchor and declared joint material", "/,<CR>r: finds and replaces the joint without relying on its old column"),
-        ("the o endpoint stays fixed while the shallow contour rises, falls, and returns", "; repeats the last f/F/t/T character search; n repeats a / search"),
-        ("manual mirroring forces each directional glyph and its placement to be judged", "V2j selects exactly three complete lines before a yank, delete, or replacement"),
-        ("only the declared joint material changes from : to ; across the strip", "% gives :s the whole file as its range; an explicit smaller range is safer when unrelated colons exist"),
-        ("apply the substitution only to the reviewed contour-frame range", ":1,6s/:/;/g confines the material change to the six owned lines"),
+        ("only the low comma joint becomes a colon; every feather edge stays registered", "4G0f, finds the row-4 comma and r: overwrites one cell"),
+        ("all five source rows travel together as one working wing pose", "gg5yyGp yanks five whole lines and puts the complete copy below"),
+        ("only the HOLD label disappears below an unchanged five-row wing", "dW deletes one whitespace-delimited WORD without touching an art row"),
+        ("the first left wing remains while only its five-row duplicate is discarded", "6G5dd addresses and deletes the duplicate's complete five-line boundary"),
+        ("the same colon-to-exclamation correction applies to one joint in each wing", "4G0f:r!6j0f:. makes the first r! change and repeats it at the second colon"),
+        ("the unfamiliar left wing keeps all edges while its final comma becomes a colon", "G0f,r: selects that pose's final row, finds its comma, and replaces one cell"),
+        ("the right-wing row remains unchanged while the cursor revisits its next apostrophe", "; repeats the last f/F/t/T character find; n repeats a slash search"),
+        ("hand mirroring preserves directional glyph roles that byte reversal would corrupt", "V4j selects exactly five complete lines before a pose-level operation"),
+        ("only the two declared colon joints become exclamation joints across the art-only buffer", "% gives :s every line in the ten-row current buffer"),
+        ("the two five-row poses change while the calibration colon remains outside scope", ":1,10s/:/!/g confines the replacement to the ten owned art rows"),
     ],
     "M2": [
         ("the note disappears while all four contour, eye, mouth, and chin rows stay registered", "/note<CR>daw lands on the annotation and deletes that word plus its adjacent space"),
@@ -4215,9 +4214,9 @@ WHY_SPECS = {
         "sample": "Addressed copy does not depend on cursor position; both methods must duplicate the complete three-row flare frame.",
     },
     "M1.05": {
-        "question": "How do local edit plus dot and bounded substitution differ, and which joint-only scope must both preserve?",
-        "groups": [["dot", "repeat", "local"], ["substitute", "pattern"], ["joint", "colon", "semicolon"]],
-        "sample": "Dot repeats a verified local joint edit; substitution uses a joint pattern, and both must change only the colon joints to semicolons.",
+        "question": "How do local edit plus dot and whole-buffer substitution differ on this art-only pair, and which two-cell Acronian scope must both preserve?",
+        "groups": [["dot", "repeat", "local"], ["substitute", "pattern"], ["joint", "colon", "exclamation"]],
+        "sample": "Dot repeats one verified local joint edit; substitution uses the colon pattern across the ten-row art-only buffer, and both must tighten only the two wing joints.",
     },
     "M2.05": {
         "question": "Why might two local eye replacements be safer than a regex, and what must a scoped substitute avoid matching?",
@@ -4941,14 +4940,16 @@ def guided_bridge_cards(module):
         )
         rows.append(("M0.06", current_line))
     elif mid == "M1":
-        rows.append(("M1.04", bridge(
+        delete_pose = bridge(
             "DD", "Delete one complete redundant frame",
-            "Remove only the second three-row contour frame; keep the first frame registered.",
-            [" /---\\ ", "|  o  |", " \\---/ ", " /---\\ ", "|  O  |", " \\---/ "],
-            [" /---\\ ", "|  o  |", " \\---/ "], "4G3dd",
-            [["4G", "land on the first row of the redundant frame"],
-             ["3dd", "count three whole rows and delete them linewise"]],
-            "linewise-delete", 3.5)))
+            "Remove only the second five-row Acronian wing candidate; keep the first complete pose registered.",
+            M1_LEFT_COLON + M1_LEFT_COLON,
+            M1_LEFT_COLON, "6G5dd",
+            [["6G", "land on the first row of the redundant wing pose"],
+             ["5dd", "count all five source rows and delete that pose linewise"]],
+            "linewise-delete", 3.5)
+        delete_pose["source"] = M1_PRIMARY_SOURCE
+        rows.append(("M1.04", delete_pose))
     elif mid == "M3":
         register_bridge = bridge(
             "REG", "Copy a complete pose through a named register",
@@ -6336,7 +6337,7 @@ def attach_command_review_variants(card):
 DUPLICATE_META = {
     "M0.05": [duplicate((3, 4), "hold", "sustain the flare impact before release", True, 2)],
     "M0.08": [duplicate((3, 4), "hold", "retain the verified flare impact hold", True, 2)],
-    "M1.02": [duplicate((1, 2), "scaffold", "working copy for the descending contour", False)],
+    "M1.02": [duplicate((1, 2), "scaffold", "working left-wing copy for the hand-authored right pose", False)],
     "M2.02": [duplicate((1, 2), "scaffold", "working copy for the changed focus", False)],
     "M2.05": [duplicate((1, 2), "material-normalization", "method comparison normalizes two eye spellings; not accepted as a timing hold", False)],
     "M2.08": [duplicate((1, 2), "material-normalization", "the normalized open-focus pair remains visible before the blink", False)],
@@ -6737,7 +6738,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.63",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.64",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

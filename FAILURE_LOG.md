@@ -5406,3 +5406,58 @@ driver exit can no longer be reported as evidence for unexecuted later cards.
 both pass at **80×24, 100×36, and 188×49** with the real user config. No claim
 is made that this source conversion or route proof closes VD-55's remaining
 113 unsourced primary cards.
+
+### VD-55 follow-through · revision `.64` — M1 is now one sourced Acronian wing study
+
+M1 no longer uses the invented three-row `o_.-` contour. Its seven executable
+cards now use complete `official-Cosmetics/AcronianGuardian` wing poses: the
+res06 left wing supplies the main joint/copy study, the res11 right wing is the
+hand-authored opposite candidate, and res07/res10 provide unfamiliar transfer
+poses. The sequence owns five-row pose boundaries throughout: approve one
+joint, copy five rows, remove one redundant five-row candidate, type the
+opposite pose by eye, compare two joint-edit methods, transfer to unfamiliar
+wing geometry, then append a complete return candidate.
+
+All **18 M1 question records** (17 main records plus the alternate transfer)
+were edited individually against the displayed Acronian rows. They now cover
+row/landmark/replacement grammar, `5yy`, `6G5dd`, a planning-label `dW`,
+hand-mirroring versus byte reversal, local edit plus dot, `%` on an art-only
+ten-row buffer, `V4j`, an explicit `1,10` boundary, and a different endpoint
+landmark on the alternate source pose. Raw backtick glyphs in the source art
+also exposed a test bug: command-token checking now ignores whitespace-spanning
+backtick pairs, which are drawing cells rather than Markdown key spans.
+
+The sourced-primary total rises from 62/178 to **68/178**. The no-source total
+falls from 113 to **107**; three other primary cards retain non-official source
+metadata. This converts M1, not the remaining 107-card inventory.
+
+**Proof:** all 219 cards and 178 clean-Neovim recipes pass; all 399 questions,
+Stone Story variants/provenance, animation pack/integration, 46 drills, and
+installer fixtures pass. Every M1 card passes the real-user-config popup at
+**80×24, 100×36, and 188×49**. Its alternate unfamiliar transfer also passes
+all three sizes. The baseline automatic popup remains green at all three sizes.
+
+## VD-57 · 2026-09-29 — real config changed literal punctuation and hid method comparison
+
+Three defects appeared only in the headed M1 routes:
+
+1. Typing a source row whose last glyph was `\` followed immediately by Enter
+   triggered completion and inserted an `/Applications/...` path. The
+   hand-author recipe now leaves Insert mode after each row and uses a fresh
+   `o` for the next row, so every trailing backslash is committed literally.
+2. The operator's semicolon mapping intercepted `r;`, `f;`, and even `/;` in
+   the headed route. Required main-study paths now use
+   `!` as the tightened joint (`r!` plus dot). The alternate source retains its
+   authentic semicolon but reaches it geometrically with `G$h`, never typing a
+   normal-mode semicolon.
+3. A successful compact comparison debrief printed only `METHOD CHECK:
+   demonstrated …`; it omitted the alternative method even though the lesson
+   promised a comparison. Compact feedback now prints every method label,
+   exact keys, and concrete tradeoff, while omitting the redundant default
+   key-by-key paragraph so the title remains visible. Both M1 methods pass at
+   **80×24, 100×36, and 188×49**; the existing M0.05 corrected-method route
+   also passes at 80×24.
+
+These are real-user-config compatibility repairs. Clean-Neovim success alone
+did not predict them, which is why the three-size headed proof remains required.
+No source archive, remote, or publication state changed.

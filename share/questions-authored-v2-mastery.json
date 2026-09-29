@@ -783,28 +783,28 @@
     ]
   },
   "M1.06.V2.P01": {
-    "prompt": "ANIMATION\nThis alternate Acronian downstroke remains a complete five-row wing. Only the comma joint on its final row becomes a colon; all accents, slashes, and spacing stay fixed.\n\nSTART\n .´‾‾‾‾‾‾‾\\\n/      ´   \\\n|     _____´\\\n| ´ .´     \\/\n\\,.´\n\nTARGET\n .´‾‾‾‾‾‾‾\\\n/      ´   \\\n|     _____´\\\n| ´ .´     \\/\n\\:.´\n\nNEOVIM\nWhy is the comma itself a safer destination than a remembered column?",
-    "compact_prompt": "ANIMATION\nKeep the Acronian downstroke fixed; change its final `,` to `:`.\n\n│| ´ .´     \\/│\n│\\,.´│  →  │\\:.´│\n\nNEOVIM\nWhy use `f,` before `r:`?",
+    "prompt": "ANIMATION\nThis alternate Acronian downstroke remains a complete five-row wing. Only the semicolon joint on its final row becomes a colon; all accents, slashes, and spacing stay fixed.\n\nSTART\n   .´‾‾‾‾‾\\\n .´     ´  \\\n/ ´_____   /\n\\.´     \\´/\n        ;/\n\nTARGET\n   .´‾‾‾‾‾\\\n .´     ´  \\\n/ ´_____   /\n\\.´     \\´/\n        :/\n\nNEOVIM\nWhy is the semicolon itself a safer destination than a remembered column?",
+    "compact_prompt": "ANIMATION\nKeep the alternate wing fixed; change final `;` to `:`.\n\n│        ;/│ → │        :/│\n\nNEOVIM\nHow does `G$h` reach that joint without typing `;`?",
     "animation_prompt": "ANIMATION\nThe complete downstroke keeps its source contour. Only the punctuation joint changes material in place.",
-    "animation_answer": "Replace the final-row comma with a colon and preserve every other cell of the wing.",
-    "neovim_prompt": "NEOVIM\nDecode `G0f,r:` on the five-row drawing.",
-    "neovim_answer": "G selects the final row, 0 starts at its left edge, f, finds the visible comma, and r: overwrites only that joint.",
+    "animation_answer": "Replace the final-row semicolon with a colon and preserve every other cell of the wing.",
+    "neovim_prompt": "NEOVIM\nDecode `G$hr:` on the five-row drawing.",
+    "neovim_answer": "G selects the final row, $ lands on its final slash, h moves one cell left onto the joint, and r: overwrites it.",
     "choices": [
-      "ANIMATION: Only the final-row joint changes; the wing stays registered. | NEOVIM: `f,` lands on the visible comma and `r:` overwrites that one cell.",
-      "ANIMATION: Shift the final contour left. | NEOVIM: `f,` deletes the cells it crosses.",
+      "ANIMATION: Only the final-row joint changes; the wing stays registered. | NEOVIM: `G$h` moves from the slash endpoint onto the joint and `r:` overwrites one cell.",
+      "ANIMATION: Shift the final contour left. | NEOVIM: `$h` deletes the cells before the endpoint.",
       "ANIMATION: Change the accent on every row. | NEOVIM: `r:` replaces all punctuation in the buffer.",
       "ANIMATION: Mirror the wing again. | NEOVIM: `G0` reverses the last row before replacement."
     ],
     "compact_choices": [
-      "A: joint only · V: find comma + replace",
+      "A: joint only · V: final row, endpoint, left, replace",
       "A: shift contour · V: f deletes prefix",
       "A: every accent · V: r is global",
       "A: mirror again · V: G0 reverses"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the comma is a stable visual landmark, and r preserves the row width.",
-      "f is a motion; it does not delete or shift any cell it crosses.",
+      "Correct: the slash endpoint is a stable landmark; one h reaches its joint and r preserves row width.",
+      "$ and h are motions; neither deletes or shifts the cells they cross.",
       "r overwrites exactly the cursor cell. It is not a global punctuation replacement.",
       "G selects the last line and 0 moves to its first cell; neither command reverses text."
     ]

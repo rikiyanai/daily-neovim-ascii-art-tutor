@@ -486,17 +486,17 @@
     ]
   },
   "M1.Q01": {
-    "prompt": "ANIMATION\nThe contour keeps its anchor while one uncertain joint is chosen.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _., │   │    _.: │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich search reaches the joint without counting punctuation columns?",
-    "compact_prompt": "ANIMATION\nOnly the comma joint becomes a colon.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _., │   │    _.: │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich bounded search-and-replace matches that read?",
-    "animation_prompt": "ANIMATION\nThe anchor and slope stay fixed; the uncertain comma becomes a colon.\n\n    │       ´│\n    │    _., │  →  │    _.: │\n    │o_.-    │      │o_.-    │",
-    "animation_answer": "Only the joint glyph changes from comma to colon; the endpoint and material run remain registered.",
-    "neovim_prompt": "NEOVIM\nHow can the visible comma joint be found and replaced?\n\n    │       ´│\n    │    _., │\n    │o_.-    │",
-    "neovim_answer": "/,<CR> searches for the comma and r: replaces that one match.",
+    "prompt": "ANIMATION\nThe complete five-row Acronian left wing keeps every feather edge; only the low comma joint changes.\n\nBEFORE\n│  /‾‾‾‾‾`.│\n│ /  `     `.│\n│ \\   _____` \\│\n│  \\`/     `,/│\n│   \\;│\n\nAFTER\n│  /‾‾‾‾‾`.│\n│ /  `     `.│\n│ \\   _____` \\│\n│  \\`/     `:/│\n│   \\;│\n\nNEOVIM\nWhich landmark edit owns that one cell?",
+    "compact_prompt": "ANIMATION\nKeep the Acronian wing fixed; change only `,` to `:`.\n\n│  \\`/     `,/│ → │  \\`/     `:/│\n\nNEOVIM\nWhich landmark edit owns that one cell?",
+    "animation_prompt": "ANIMATION\nOnly the low feather joint changes; all five wing rows stay registered.\n\n│  \\`/     `,/│ → │  \\`/     `:/│",
+    "animation_answer": "Replace the comma joint with a colon and preserve every other Acronian wing cell.",
+    "neovim_prompt": "NEOVIM\nHow do `4G0f,` and `r:` divide the work?\n\n│  \\`/     `,/│",
+    "neovim_answer": "4G selects the fourth row, 0f, finds its comma, and r: overwrites that one cell.",
     "choices": [
-      "ANIMATION: The comma joint becomes a colon while anchor and endpoint stay fixed. | NEOVIM: /,<CR> then r: changes only that match.",
-      "ANIMATION: The anchor moves right to meet a new joint. | NEOVIM: 0w inserts a colon before the contour.",
-      "ANIMATION: Every punctuation mark in the strip becomes a colon. | NEOVIM: :%s/./:/g rewrites the whole file.",
-      "ANIMATION: The complete contour frame is replaced by a blank row. | NEOVIM: dd deletes the joint's line."
+      "ANIMATION: The comma joint becomes a colon while both wing edges stay fixed. | NEOVIM: 4G0f,r: addresses the row, finds the comma, and replaces one cell.",
+      "ANIMATION: The lower feather shifts right. | NEOVIM: i: inserts a colon and moves every later cell.",
+      "ANIMATION: Every punctuation mark becomes a colon. | NEOVIM: :%s/./:/g rewrites the complete wing.",
+      "ANIMATION: The fourth wing row disappears. | NEOVIM: dd deletes the row containing the joint."
     ],
     "compact_choices": [
       "A: joint only; anchor fixed · V: search comma, replace one",
@@ -506,24 +506,24 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the visible change is one landmark, and the search avoids guessing its column.",
-      "The anchor is unchanged, and insertion would shift later contour cells.",
-      "A whole-file substitute changes unrelated material and exceeds the frame scope.",
-      "The frame remains present; only its joint glyph is replaced."
+      "Correct: the row address and visible comma locate one joint without shifting the wing.",
+      "Insertion would push the slash endpoint and break fixed-cell registration.",
+      "That dot pattern matches every character, not the nominated feather joint.",
+      "All five source rows remain; linewise deletion destroys the silhouette."
     ]
   },
   "M1.Q02": {
-    "prompt": "ANIMATION\nA three-row contour frame is copied as one working pose.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.: │\n    │o_.-    │   │o_.-    │\n                  │       ´│\n                  │    _.: │\n                  │o_.-    │\n\nNEOVIM\nWhy does a count on a linewise copy matter?",
-    "compact_prompt": "ANIMATION\nThe complete contour appears below itself.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n                  │       ´│\n                  │    _.: │\n                  │o_.-    │\n\nNEOVIM\nWhat does the count own?",
-    "animation_prompt": "ANIMATION\nThe copied object has its top joint, middle slope, and anchored base.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n    │       ´│\n    │    _.: │\n    │o_.-    │",
-    "animation_answer": "The entire three-row contour is one frame and must stay together during the copy.",
-    "neovim_prompt": "NEOVIM\nWhich counted operation owns all three rows?\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
-    "neovim_answer": "A count of 3 makes yy or dd operate on three complete lines rather than one row.",
+    "prompt": "ANIMATION\nThe approved Acronian left wing is copied as one complete working pose.\n\n│  /‾‾‾‾‾`.│\n│ /  `     `.│\n│ \\   _____` \\│\n│  \\`/     `:/│\n│   \\;│\n             ↓ complete copy\n│  /‾‾‾‾‾`.│\n│ /  `     `.│\n│ \\   _____` \\│\n│  \\`/     `:/│\n│   \\;│\n\nNEOVIM\nWhat does the count in `gg5yyGp` own?",
+    "compact_prompt": "ANIMATION\nCopy the whole five-row wing, including both feather edges.\n\n│  /‾‾‾‾‾`.│\n│  \\`/     `:/│\n│   \\;│\n             ↓ five-row copy\n│  /‾‾‾‾‾`.│\n│  \\`/     `:/│\n│   \\;│\n\nNEOVIM\nWhat does `5yy` own?",
+    "animation_prompt": "ANIMATION\nThe copied object contains all five source rows, from upper arc through lower tip.",
+    "animation_answer": "The entire five-row Acronian wing is one pose and must stay together during the copy.",
+    "neovim_prompt": "NEOVIM\nWhich counted operation owns all five wing rows?\n\n│  /‾‾‾‾‾`.│\n│  \\`/     `:/│\n│   \\;│",
+    "neovim_answer": "gg5yy yanks five complete lines; Gp puts that five-line pose below.",
     "choices": [
-      "ANIMATION: Copy the complete three-row contour as one frame. | NEOVIM: 3yy followed by p yanks and puts three whole lines.",
-      "ANIMATION: Copy only the anchor row; other rows are regenerated. | NEOVIM: yy copies the current character.",
-      "ANIMATION: Move the original contour to the lower position. | NEOVIM: 3dd then p transfers the three rows.",
-      "ANIMATION: Add three empty timing rows. | NEOVIM: 3o creates the rows without copying the art."
+      "ANIMATION: Copy all five wing rows as one pose. | NEOVIM: gg5yyGp yanks five whole lines and puts them below.",
+      "ANIMATION: Copy only the joint row. | NEOVIM: yy copies the character under the cursor.",
+      "ANIMATION: Move the original wing downward. | NEOVIM: 5dd then p transfers the source rows.",
+      "ANIMATION: Add five empty rows. | NEOVIM: 5o reconstructs the wing automatically."
     ],
     "compact_choices": [
       "A: full three-row frame · V: count 3 linewise yank",
@@ -533,78 +533,78 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the count makes the full contour frame the copied object.",
-      "A single row would detach the contour's slope or anchor.",
-      "The original remains for comparison, so this is not a move.",
-      "Blank lines do not preserve any authored contour glyphs."
+      "Correct: the count makes the full five-row source pose the copied object.",
+      "yy is linewise, not characterwise; without the count it still loses four wing rows.",
+      "The original remains above, so deletion is the wrong ownership decision.",
+      "Open lines contain no sourced feather geometry."
     ]
   },
   "M1.Q03": {
-    "prompt": "ANIMATION\nThe pose stays intact while its obsolete timing label is removed from the plan line.\n\n    BEFORE              AFTER\n    │ /---\\ │           │ /---\\ │\n    │|  o  |│            │|  o  |│\n    │ \\---/ │           │ \\---/ │\n    PLAN HOLD            PLAN\n\nNEOVIM\nWith the cursor on HOLD, which motion deletes that whole whitespace-delimited WORD without deleting an art row?",
-    "compact_prompt": "ANIMATION\nRemove the obsolete HOLD label; keep the pose.\n\n    BEFORE              AFTER\n    │ /---\\ │           │ /---\\ │\n    │|  o  |│            │|  o  |│\n    │ \\---/ │           │ \\---/ │\n    PLAN HOLD            PLAN\n\nNEOVIM\nWhich operator owns one whitespace-delimited WORD?",
-    "animation_prompt": "ANIMATION\nOnly the selected punctuation run is removed; the anchor and rails remain.\n\n    │ /---\\ │  →  │ /---\\ │\n    │|  o  |│      │|     |│\n    │ \\---/ │      │ \\---/ │",
-    "animation_answer": "Delete one punctuation WORD while preserving the row's anchor and contour bounds.",
-    "neovim_prompt": "NEOVIM\nWhich operator-plus-motion deletes one whitespace-delimited punctuation word?\n\n    │|  o  |│",
-    "neovim_answer": "dW deletes one WORD-sized punctuation run; dw may stop inside punctuation art.",
+    "prompt": "ANIMATION\nRemove the obsolete HOLD note below the sourced wing; none of the five drawing rows may change.\n\n│  /‾‾‾‾‾`.│\n│ /  `     `.│\n│ \\   _____` \\│\n│  \\`/     `:/│\n│   \\;│\nPLAN HOLD  →  PLAN\n\nNEOVIM\nWith the cursor on HOLD, which operator-motion owns that whitespace-delimited WORD?",
+    "compact_prompt": "ANIMATION\nDelete HOLD; preserve the complete Acronian wing.\n\n│  \\`/     `:/│\nPLAN HOLD  →  PLAN\n\nNEOVIM\nWhich operator owns one whitespace-delimited WORD?",
+    "animation_prompt": "ANIMATION\nOnly the planning label disappears; the sourced wing remains byte-for-byte unchanged.",
+    "animation_answer": "Delete the HOLD label without touching any of the five wing rows.",
+    "neovim_prompt": "NEOVIM\nWhich operator-plus-motion deletes one whitespace-delimited WORD?\n\nPLAN HOLD",
+    "neovim_answer": "dW deletes one whitespace-delimited WORD; it leaves every wing row above untouched.",
     "choices": [
       "ANIMATION: Remove only the obsolete HOLD timing label and keep the pose. | NEOVIM: dW owns one whitespace-delimited WORD.",
       "ANIMATION: Delete the complete middle art row. | NEOVIM: dd is the precise one-WORD edit.",
-      "ANIMATION: Remove the whole three-row pose. | NEOVIM: 3dd deletes only the timing label.",
+      "ANIMATION: Remove three wing rows. | NEOVIM: 3dd deletes only the HOLD word.",
       "ANIMATION: Erase punctuation throughout the file. | NEOVIM: :%s/[^a-z]/ /g is bounded to HOLD."
     ],
     "compact_choices": [
       "A: remove HOLD only; pose stays · V: dW",
       "A: middle art row deleted · V: dd",
-      "A: whole pose deleted · V: 3dd as one word",
+      "A: three wing rows deleted · V: 3dd as one word",
       "A: punctuation erased globally · V: broad class substitute"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: uppercase W treats HOLD as one whitespace-delimited WORD, while the three art rows remain untouched.",
+      "Correct: uppercase W treats HOLD as one whitespace-delimited WORD, while all five art rows remain untouched.",
       "dd removes the entire plan line or art row, not just the HOLD word under the cursor.",
       "3dd is a three-line delete, not a one-WORD operation.",
       "A whole-file character-class substitution would damage punctuation in the pose instead of removing one label."
     ]
   },
   "M1.Q04": {
-    "prompt": "ANIMATION\nA complete three-line candidate must be removed before a replacement contour is authored.\n\n    BEFORE       AFTER\n    │ /---\\ │   │ /---\\ │\n    │|  o  |│    │|  o  |│\n    │ \\---/ │   │ \\---/ │\n    │ /---\\ │   │       │\n    │|  O  |│    │       │\n    │ \\---/ │   │       │\n\nNEOVIM\nWhen does a three-line delete make sense?",
-    "compact_prompt": "ANIMATION\nOnly the second three-row candidate is removed.\n\n    │ /---\\ │\n    │|  o  |│\n    │ \\---/ │\n    │ /---\\ │\n    │|  O  |│\n    │ \\---/ │\n\nNEOVIM\nWhich count owns the candidate?",
-    "animation_prompt": "ANIMATION\nThe first frame remains; the second three-row candidate is the deleted object.\n\n    │ /---\\ │\n    │|  o  |│\n    │ \\---/ │",
-    "animation_answer": "Use a three-line deletion only when the whole second frame is the intended discarded candidate.",
-    "neovim_prompt": "NEOVIM\nWhich command removes the second complete frame?\n\n    │ /---\\ │\n    │|  O  |│\n    │ \\---/ │",
-    "neovim_answer": "4G3dd addresses the second frame and deletes its three whole rows.",
+    "prompt": "ANIMATION\nTwo identical five-row left wings are present. Discard only the second candidate before authoring the right wing.\n\nFIRST\n│  /‾‾‾‾‾`.│\n│  \\`/     `:/│\n│   \\;│\nSECOND\n│  /‾‾‾‾‾`.│\n│  \\`/     `:/│\n│   \\;│\n\nNEOVIM\nWhich address and count remove exactly the second five-row pose?",
+    "compact_prompt": "ANIMATION\nKeep the first wing; remove all five rows of the duplicate.\n\nFIRST  │  \\`/     `:/│\nSECOND │  \\`/     `:/│\n\nNEOVIM\nWhich counted line delete owns the duplicate?",
+    "animation_prompt": "ANIMATION\nThe first complete Acronian wing remains; the second five-row candidate is gone.",
+    "animation_answer": "Delete the whole duplicate pose, not one feather row and not both candidates.",
+    "neovim_prompt": "NEOVIM\nWhich command starts at line 6 and removes five whole lines?\n\nSECOND │  \\`/     `:/│",
+    "neovim_answer": "6G5dd lands on the duplicate's first row and deletes its five-line pose.",
     "choices": [
-      "ANIMATION: Discard the second complete three-row candidate and keep the first. | NEOVIM: 4G3dd deletes exactly those three lines.",
-      "ANIMATION: Delete one joint inside the second frame. | NEOVIM: dd is always a three-row delete.",
-      "ANIMATION: Delete both frames so a new one can be typed. | NEOVIM: 4Gdd removes every frame below the cursor.",
-      "ANIMATION: Copy the second frame below the first. | NEOVIM: 4G3yyGp deletes and copies its rows."
+      "ANIMATION: Discard the second complete five-row wing and keep the first. | NEOVIM: 6G5dd deletes exactly lines 6–10.",
+      "ANIMATION: Delete one feather joint. | NEOVIM: dd is a one-cell delete at the comma.",
+      "ANIMATION: Delete both wings. | NEOVIM: gg10dd preserves the first candidate.",
+      "ANIMATION: Copy the second wing again. | NEOVIM: 6G5yyGp deletes its rows."
     ],
     "compact_choices": [
-      "A: discard second frame · V: address + 3dd",
-      "A: delete one joint · V: dd means three rows",
-      "A: delete both frames · V: 4Gdd all below",
-      "A: copy second frame · V: 3yy/p after delete"
+      "A: discard second wing · V: line 6 + 5dd",
+      "A: delete one joint · V: dd means one cell",
+      "A: delete both wings · V: ten-line delete",
+      "A: copy duplicate · V: 5yy/p"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: 3dd matches the complete frame boundary at the addressed line.",
-      "A one-joint edit needs a character replacement, not a linewise delete.",
-      "The first frame must remain for comparison; 4Gdd is not all-below deletion.",
-      "Copying would preserve the frame rather than discard it."
+      "Correct: line 6 begins the duplicate and 5dd matches its complete pose boundary.",
+      "dd is linewise; a joint-only edit needs r or another character-bounded operation.",
+      "That deletes both candidates, including the source that must remain for comparison.",
+      "5yy is a copy, not a delete; it leaves the redundant candidate in place."
     ]
   },
   "M1.Q05": {
-    "prompt": "ANIMATION\nTwo homologous joints need the same semicolon material.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.;   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich bounded method repeats one verified local edit?",
-    "compact_prompt": "ANIMATION\nBoth joint colons become semicolons; anchors stay fixed.\n\n    │    _.: │   │    _.; │\n    │ `-.;   │   │ `-.;   │\n\nNEOVIM\nWhich method reaches the second homologous joint?",
-    "animation_prompt": "ANIMATION\nThe slope vocabulary changes at the two joints only.\n\n    │    _.: │  →  │    _.; │\n    │ `-.;   │      │ `-.;   │",
-    "animation_answer": "The same local joint change is applied to both frames without moving their anchors.",
-    "neovim_prompt": "NEOVIM\nWhich path demonstrates local replacement plus repeat?\n\n    │    _.: │\n    │ `-.;   │",
-    "neovim_answer": "2G0f:r;3j0f:. finds the first joint, replaces it, then repeats the last change at the second.",
+    "prompt": "ANIMATION\nThe left and right Acronian wing poses each have one approved colon joint. Both tighten into exclamation joints; no other punctuation changes.\n\nLEFT   │  \\`/     `:/│ → │  \\`/     `!/│\nRIGHT  │\\:.´│          → │\\!.´│\n\nNEOVIM\nWhich local path verifies the first replacement before repeating it at the homologous joint?",
+    "compact_prompt": "ANIMATION\nChange only the two homologous `:` joints to `!`.\n\n│  \\`/     `:/│ → │  \\`/     `!/│\n│\\:.´│          → │\\!.´│\n\nNEOVIM\nWhich local path reaches both?",
+    "animation_prompt": "ANIMATION\nOnly the two homologous feather joints change material; both complete wing silhouettes remain fixed.",
+    "animation_answer": "Apply the same colon-to-exclamation change to one joint in each five-row pose.",
+    "neovim_prompt": "NEOVIM\nWhich path demonstrates local replacement plus repeat?\n\n│  \\`/     `:/│\n│\\:.´│",
+    "neovim_answer": "4G0f:r!6j0f:. replaces the left joint, moves to the right joint six rows below, and repeats r! with dot.",
     "choices": [
-      "ANIMATION: Both joints become semicolons and anchors remain fixed. | NEOVIM: 2G0f:r;3j0f:. verifies one local change before repeating it.",
-      "ANIMATION: Every colon in the file becomes a semicolon. | NEOVIM: :%s/:/;/g is always safer than a local edit.",
-      "ANIMATION: The second contour is flipped byte-for-byte. | NEOVIM: 3ddGp reverses the frame before replacement.",
-      "ANIMATION: Only the first joint changes. | NEOVIM: 2G0f:r<Esc> has no navigation to the second joint."
+      "ANIMATION: Both joints become ! and both wing silhouettes remain fixed. | NEOVIM: 4G0f:r!6j0f:. verifies one replacement before repeating it.",
+      "ANIMATION: Every colon in the file becomes !. | NEOVIM: :%s/:/!/g is always safer than a local edit.",
+      "ANIMATION: The right wing is flipped byte-for-byte. | NEOVIM: 5ddGp reverses a pose before replacement.",
+      "ANIMATION: Only the first joint changes. | NEOVIM: 4G0f:r has no navigation to the second joint."
     ],
     "compact_choices": [
       "A: both homologous joints · V: local replace then dot",
@@ -614,21 +614,21 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: a verified local change is repeated at the homologous landmark.",
-      "Whole-file substitution may touch unrelated colons outside the contour frames.",
+      "Correct: dot repeats the verified one-cell replacement only after the second colon is found.",
+      "This buffer happens to be art-only, but `always safer` is false; scope must be checked before choosing `%`.",
       "Mirroring and copying are not the target; the two joints need the same material change.",
       "The path explicitly moves to the second joint before repeating."
     ]
   },
   "M1.Q06": {
-    "prompt": "ANIMATION\nA mirrored contour places its uncertain joint at a different column.\n\n    BEFORE       AFTER\n    │      _.´│   │      _.´│\n    │   _.-  │    │   _.-  │\n    │o_.,    │    │o_.:    │\n\nNEOVIM\nWhich action transfers the material rule without a coordinate guess?",
-    "compact_prompt": "ANIMATION\nOnly the unfamiliar comma joint becomes colon.\n\n    │      _.´│\n    │   _.-  │\n    │o_.,    │  →  │o_.:    │\n\nNEOVIM\nWhich search is column-independent?",
-    "animation_prompt": "ANIMATION\nThe endpoint and anchor stay fixed in the unfamiliar contour.\n\n    │      _.´│\n    │   _.-  │\n    │o_.,    │  →  │o_.:    │",
-    "animation_answer": "Search for the visible joint glyph, then replace it in place; do not rely on its old column.",
-    "neovim_prompt": "NEOVIM\nWhich path searches for the comma itself?\n\n    │      _.´│\n    │   _.-  │\n    │o_.,    │",
-    "neovim_answer": "/,<CR>r: finds and replaces the comma without assuming its position.",
+    "prompt": "ANIMATION\nThis unfamiliar Acronian left wing has a comma joint on its final row. The complete five-row silhouette stays fixed.\n\nSTART\n│   /‾‾‾‾‾‾‾`.│\n│  /   `      \\│\n│ /`_____     |│\n│ \\/     `. ` |│\n│          `.,/│\nTARGET\n│          `.:/│\n\nNEOVIM\nWhich action transfers the landmark rule without reusing the old row-4 coordinate?",
+    "compact_prompt": "ANIMATION\nOn the unfamiliar final row, change only `,` to `:`.\n\n│          `.,/│ → │          `.:/│\n\nNEOVIM\nWhich search is independent of the old row?",
+    "animation_prompt": "ANIMATION\nOnly the final-row joint changes; all five unfamiliar wing rows remain registered.",
+    "animation_answer": "Find the comma in this pose and replace it in place without assuming the earlier wing's coordinates.",
+    "neovim_prompt": "NEOVIM\nWhich path selects the final row and finds its comma?\n\n│          `.,/│",
+    "neovim_answer": "G selects the final row, 0f, finds its comma, and r: replaces one cell.",
     "choices": [
-      "ANIMATION: Change only the unfamiliar joint and retain the anchor and endpoint. | NEOVIM: /,<CR>r: is independent of the old column.",
+      "ANIMATION: Change only the unfamiliar final-row joint and retain the whole wing. | NEOVIM: G0f,r: uses this pose's row and comma landmark.",
       "ANIMATION: Rebuild the mirrored contour from reversed bytes. | NEOVIM: :%s/,/:/g reverses and replaces all rows.",
       "ANIMATION: Shift the endpoint until it lines up with the old frame. | NEOVIM: 7l then r: counts from the previous pose.",
       "ANIMATION: Replace every dot and comma with colon. | NEOVIM: :%s/[.,]/:/g changes the material vocabulary globally."
@@ -641,24 +641,24 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the glyph landmark, not its prior column, identifies the acting cell.",
+      "Correct: G selects this pose's final row and f, finds its visible joint, so no old coordinate is reused.",
       "A byte reversal is not a hand-authored contour decision and changes more than the joint.",
       "The endpoint is stable; counting from another pose is brittle.",
       "The material rule applies to one nominated joint, not every dot or comma."
     ]
   },
   "M1.Q07": {
-    "prompt": "ANIMATION\nA repeated joint glyph appears in the next contour frame while the endpoint stays fixed.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.: │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.;   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich repeat belongs to an f/t landmark search?",
-    "compact_prompt": "ANIMATION\nThe contour is unchanged; the same kind of joint is revisited.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n\nNEOVIM\nWhich key repeats a character find?",
-    "animation_prompt": "ANIMATION\nThe anchor, endpoint, and slope remain stable while the homologous joint is reached.\n\n    │    _.: │\n    │ `-.;   │",
+    "prompt": "ANIMATION\nA wing row contains two visible apostrophe feather marks; navigation should revisit the next mark without editing either.\n\n│| ´ .´     \\/│\n\nNEOVIM\nAfter `f´` lands on the first mark, which key repeats that character find in the same direction?",
+    "compact_prompt": "ANIMATION\nRevisit the next feather mark; leave the wing unchanged.\n\n│| ´ .´     \\/│\n\nNEOVIM\nWhich key repeats the last f/t find?",
+    "animation_prompt": "ANIMATION\nThe right-wing row remains unchanged while the cursor moves between homologous apostrophe marks.",
     "animation_answer": "Revisit the next homologous landmark without changing the registered contour structure.",
-    "neovim_prompt": "NEOVIM\nWhich key repeats the same-direction character find?\n\n    │    _.: │\n    │ `-.;   │",
+    "neovim_prompt": "NEOVIM\nWhich key repeats the same-direction character find?\n\n│| ´ .´     \\/│",
     "neovim_answer": "; repeats the last f/F/t/T character search; n repeats a slash search.",
     "choices": [
-      "ANIMATION: Revisit the next homologous joint while preserving the contour. | NEOVIM: ; repeats the last character find in the same direction.",
-      "ANIMATION: Reverse the entire contour. | NEOVIM: n repeats an f search and flips every slash.",
-      "ANIMATION: Move the endpoint to the next row. | NEOVIM: G jumps to the matching character automatically.",
-      "ANIMATION: Replace every joint at once. | NEOVIM: dd repeats a character find across the file."
+      "ANIMATION: Revisit the next apostrophe while preserving the wing row. | NEOVIM: ; repeats the last character find in the same direction.",
+      "ANIMATION: Reverse the wing row. | NEOVIM: n repeats an f search and flips every slash.",
+      "ANIMATION: Move to the final row. | NEOVIM: G jumps to the next apostrophe automatically.",
+      "ANIMATION: Delete both feather marks. | NEOVIM: dd repeats a character find across the file."
     ],
     "compact_choices": [
       "A: next joint; contour stable · V: semicolon repeats find",
@@ -675,17 +675,17 @@
     ]
   },
   "M1.Q08": {
-    "prompt": "ANIMATION\nOne complete three-row contour candidate must be selected for a bounded operation.\n\n    │       ´│\n    │    _.; │\n    │o_.-    │\n\nNEOVIM\nWhich Visual-line selection covers exactly this frame?",
-    "compact_prompt": "ANIMATION\nSelect one full contour candidate, not one glyph.\n\n    │       ´│\n    │    _.; │\n    │o_.-    │\n\nNEOVIM\nWhich selection spans three complete lines?",
-    "animation_prompt": "ANIMATION\nThe selected unit is the complete three-row contour, including anchor, joint, and base.\n\n    │       ´│\n    │    _.; │\n    │o_.-    │",
-    "animation_answer": "The frame boundary is three whole lines; selection must include all three rows.",
-    "neovim_prompt": "NEOVIM\nWhich Visual-line range owns the frame?\n\n    │       ´│\n    │    _.; │\n    │o_.-    │",
-    "neovim_answer": "V2j selects the current line and the next two complete lines.",
+    "prompt": "ANIMATION\nSelect one complete Acronian wing candidate, from upper arc through lower tip.\n\n│  /‾‾‾‾‾`.│\n│ /  `     `.│\n│ \\   _____` \\│\n│  \\`/     `;/│\n│   \\;│\n\nNEOVIM\nStarting on its first row, which Visual-line selection owns exactly this five-row still?",
+    "compact_prompt": "ANIMATION\nSelect all five wing rows, not one feather glyph.\n\n│  /‾‾‾‾‾`.│\n│  \\`/     `;/│\n│   \\;│\n\nNEOVIM\nWhich selection spans five complete lines?",
+    "animation_prompt": "ANIMATION\nThe selected unit is the complete five-row wing, including both edges and its lower joint.",
+    "animation_answer": "The pose boundary is five whole lines; selection must include every source row.",
+    "neovim_prompt": "NEOVIM\nWhich Visual-line range owns the five-row wing?\n\n│  /‾‾‾‾‾`.│\n│   \\;│",
+    "neovim_answer": "V4j selects the current line and the next four complete lines.",
     "choices": [
-      "ANIMATION: Select the entire three-row contour candidate. | NEOVIM: V2j selects three complete lines.",
-      "ANIMATION: Select only the joint cell. | NEOVIM: v2j selects two characters and the whole frame.",
-      "ANIMATION: Select the first row and the row after the frame. | NEOVIM: Vj skips the middle line.",
-      "ANIMATION: Select every frame in the file. | NEOVIM: ggVG selects only this candidate because V is linewise."
+      "ANIMATION: Select the entire five-row wing candidate. | NEOVIM: V4j selects five complete lines.",
+      "ANIMATION: Select only the joint cell. | NEOVIM: v4j is linewise and owns the complete pose.",
+      "ANIMATION: Select only the first and final rows. | NEOVIM: V4j skips the three rows between them.",
+      "ANIMATION: Select every wing in the file. | NEOVIM: ggVG selects only this candidate."
     ],
     "compact_choices": [
       "A: one three-row frame · V: Visual line + 2j",
@@ -695,21 +695,21 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: V2j owns exactly three complete lines from the current row.",
+      "Correct: V includes the current line and 4j extends through four more, for five complete rows.",
       "Characterwise selection is too narrow for a frame-level operation.",
       "Visual-line movement does not skip the middle row.",
       "ggVG selects the whole buffer, not one candidate."
     ]
   },
   "M1.Q09": {
-    "prompt": "ANIMATION\nThis art buffer contains exactly two three-row contour frames, and both colon joints should become semicolons.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.:   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhat scope does % give :s?",
-    "compact_prompt": "ANIMATION\nAll nominated frame joints change; unrelated text should not.\n\n    │    _.: │   │    _.; │\n    │ `-.:   │   │ `-.;   │\n\nNEOVIM\nWhat is the blast radius of %?",
-    "animation_prompt": "ANIMATION\nThe two contour frames receive the same joint-material change.\n\n    │    _.: │  →  │    _.; │\n    │ `-.:   │      │ `-.;   │",
-    "animation_answer": "The intended scope is the authored contour frames, not unrelated lesson prose or other modules.",
-    "neovim_prompt": "NEOVIM\nHow does % differ from a current-row substitute?\n\n    │    _.: │\n    │ `-.:   │",
-    "neovim_answer": "% supplies the whole-file range; an explicit smaller range is safer when only contour frames are owned.",
+    "prompt": "ANIMATION\nThis art-only buffer contains exactly two five-row Acronian wing poses. Their two colon joints should tighten into exclamation joints.\n\nLEFT  │  \\`/     `:/│ → │  \\`/     `!/│\nRIGHT │\\:.´│          → │\\!.´│\n\nNEOVIM\nWhat scope does `%` give `:s`?",
+    "compact_prompt": "ANIMATION\nBoth nominated wing joints change; no text lies outside the ten art rows.\n\n│  \\`/     `:/│ → │  \\`/     `!/│\n│\\:.´│          → │\\!.´│\n\nNEOVIM\nWhat is the blast radius of `%`?",
+    "animation_prompt": "ANIMATION\nThe two complete wing poses receive the same joint-material change and nothing else moves.",
+    "animation_answer": "The intended scope is all ten rows of this art-only two-pose buffer.",
+    "neovim_prompt": "NEOVIM\nHow does `%` differ from a current-row substitute?\n\n│  \\`/     `:/│\n│\\:.´│",
+    "neovim_answer": "% supplies the whole-buffer range; here all ten rows are the two owned wing poses.",
     "choices": [
-      "ANIMATION: Change both colon joints in this six-line art buffer. | NEOVIM: % addresses every line in the current buffer.",
+      "ANIMATION: Change both colon joints in this ten-line art buffer. | NEOVIM: % addresses every line in the current buffer.",
       "ANIMATION: Change only the current row. | NEOVIM: % means current line and cannot touch other frames.",
       "ANIMATION: Change every glyph in the contour. | NEOVIM: % limits :s to punctuation cells only.",
       "ANIMATION: Duplicate both frames. | NEOVIM: % is the Ex copy command for a complete frame."
@@ -722,49 +722,49 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: % supplies the whole-buffer range; here the entire six-line buffer is intentionally in scope.",
+      "Correct: % supplies the whole-buffer range; here all ten lines are intentionally owned art rows.",
       "% is not the current-line address; a bare :s is current-line scope.",
       "The substitution pattern, not %, determines matching glyphs, and the range is still broad.",
       "% is a range marker, not an Ex copy command."
     ]
   },
   "M1.Q10": {
-    "prompt": "ANIMATION\nOnly the first six contour rows may change; the calibration colon on row 7 must remain unchanged.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.:   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n  7 │CALIBRATE:│  │CALIBRATE:│\n\nNEOVIM\nWhich range communicates that boundary?",
-    "compact_prompt": "ANIMATION\nThe substitution stays inside two three-row frames.\n\n    │    _.: │   │    _.; │\n    │ `-.:   │   │ `-.;   │\n\nNEOVIM\nWhich Ex range is bounded?",
-    "animation_prompt": "ANIMATION\nBoth complete contour frames change only at their nominated joints.\n\n    │    _.: │  →  │    _.; │\n    │ `-.:   │      │ `-.;   │",
-    "animation_answer": "The range contains exactly the six authored frame rows and excludes surrounding prose.",
-    "neovim_prompt": "NEOVIM\nWhich substitute is explicitly limited to those six lines?\n\n    │    _.: │\n    │ `-.:   │",
-    "neovim_answer": ":1,6s/:/;/g confines the material change to lines 1 through 6.",
+    "prompt": "ANIMATION\nOnly the first ten rows—the left and right five-row wing poses—may change. The calibration colon on row 11 must remain.\n\nLEFT  │  \\`/     `:/│ → │  \\`/     `!/│\nRIGHT │\\:.´│          → │\\!.´│\n  11  │CALIBRATE:│       │CALIBRATE:│\n\nNEOVIM\nWhich range states that ownership boundary?",
+    "compact_prompt": "ANIMATION\nTighten two wing joints; preserve row 11's colon.\n\n│  \\`/     `:/│ → │  \\`/     `!/│\n│\\:.´│          → │\\!.´│\n11 CALIBRATE:\n\nNEOVIM\nWhich Ex range owns only the two poses?",
+    "animation_prompt": "ANIMATION\nBoth complete wing poses change only at their nominated joints; the calibration row is outside the art scope.",
+    "animation_answer": "The range contains exactly the ten wing rows and excludes row 11.",
+    "neovim_prompt": "NEOVIM\nWhich substitute is explicitly limited to lines 1–10?\n\n│  \\`/     `:/│\n│\\:.´│",
+    "neovim_answer": ":1,10s/:/!/g confines the material change to lines 1 through 10.",
     "choices": [
-      "ANIMATION: Change the joints in both three-row frames (six rows total) and preserve row 7. | NEOVIM: :1,6s/:/;/g scopes the replacement to rows 1–6.",
-      "ANIMATION: Change every colon in the lesson file. | NEOVIM: :%s/:/;/g is equivalent because the frames are first.",
-      "ANIMATION: Change the current joint and every later row. | NEOVIM: :s/:/;/g automatically follows the contour.",
-      "ANIMATION: Remove the six rows and append a new frame. | NEOVIM: :1,6d then p is a substitution."
+      "ANIMATION: Tighten the joints in both five-row poses and preserve row 11. | NEOVIM: :1,10s/:/!/g scopes the replacement to rows 1–10.",
+      "ANIMATION: Change every colon in the lesson file. | NEOVIM: :%s/:/!/g is equivalent because the poses are first.",
+      "ANIMATION: Change the current joint and every later row. | NEOVIM: :s/:/!/g automatically follows the wing.",
+      "ANIMATION: Remove the ten wing rows and append new art. | NEOVIM: :1,10d then p is a substitution."
     ],
     "compact_choices": [
-      "A: six owned rows · V: 1,6 substitute",
+      "A: ten owned rows · V: 1,10 substitute",
       "A: every file colon · V: whole-file substitute",
       "A: current/later rows · V: current-line substitute follows",
       "A: delete/append frame · V: delete/put is substitute"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the explicit range mirrors the two three-row frame boundaries.",
+      "Correct: the explicit range mirrors the two five-row pose boundaries and stops before calibration.",
       "Whole-file scope can alter lesson prose and unrelated art.",
       "A current-line substitution does not automatically follow later rows.",
       "Deletion and put are not substitution and would destroy the authored rows."
     ]
   },
   "M1.01.P01": {
-    "prompt": "ANIMATION\nThe guided contour edit changes one uncertain joint.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _., │   │    _.: │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich summary describes the completed change?",
-    "compact_prompt": "ANIMATION\nComma becomes colon; anchor and endpoint stay fixed.\n\n    │       ´│   │       ´│\n    │    _., │   │    _.: │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhat did the guided search and replace do?",
-    "animation_prompt": "ANIMATION\nThe joint is the only changed cell.\n\n    │    _., │  →  │    _.: │\n    │o_.-    │      │o_.-    │",
-    "animation_answer": "The uncertain comma joint was replaced by the chosen colon without shifting the contour.",
-    "neovim_prompt": "NEOVIM\nWhich summary matches the guided path?\n\n    │       ´│\n    │    _., │\n    │o_.-    │",
-    "neovim_answer": "/,<CR>r: searches the comma and overwrites one cell.",
+    "prompt": "ANIMATION\nYou changed one joint in the complete Acronian left wing.\n\n│  \\`/     `,/│ → │  \\`/     `:/│\n\nNEOVIM\nWhich summary explains `4G0f,r:`?",
+    "compact_prompt": "ANIMATION\nOnly the wing's comma joint became a colon.\n\n│  \\`/     `,/│ → │  \\`/     `:/│\n\nNEOVIM\nWhat did the guided address, find, and replace do?",
+    "animation_prompt": "ANIMATION\nThe low feather joint is the only changed cell; all five rows stay registered.",
+    "animation_answer": "The comma joint was replaced by a colon without shifting the wing.",
+    "neovim_prompt": "NEOVIM\nWhich summary matches `4G0f,r:`?\n\n│  \\`/     `,/│",
+    "neovim_answer": "4G selects row 4, 0f, finds its comma, and r: overwrites one cell.",
     "choices": [
-      "ANIMATION: One joint changes; the anchor remains fixed. | NEOVIM: search for comma, then r: overwrites it.",
-      "ANIMATION: The whole contour shifts. | NEOVIM: i: inserts a colon and moves the endpoint.",
+      "ANIMATION: One joint changes; both wing edges remain fixed. | NEOVIM: 4G0f, finds the comma, then r: overwrites it.",
+      "ANIMATION: The lower wing shifts. | NEOVIM: i: inserts a colon and moves the slash endpoint.",
       "ANIMATION: Every punctuation glyph changes. | NEOVIM: :%s/./:/g is the guided path.",
       "ANIMATION: The middle row is removed. | NEOVIM: dd deletes the row containing the joint."
     ],
@@ -776,24 +776,24 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: search finds the visible landmark and r preserves fixed width.",
+      "Correct: the address and find reach the visible landmark; r preserves fixed width.",
       "Insertion would shift the endpoint and is not the guided result.",
       "The guided action is one-cell, not a global rewrite.",
       "The row remains intact; only its joint glyph changed."
     ]
   },
   "M1.02.P01": {
-    "prompt": "ANIMATION\nA complete anchored contour is copied as a working frame.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.: │\n    │o_.-    │   │o_.-    │\n                  │       ´│\n                  │    _.: │\n                  │o_.-    │\n\nNEOVIM\nWhich explanation decomposes the copy?",
-    "compact_prompt": "ANIMATION\nThe full three-row contour appears below.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n                  │       ´│\n                  │    _.: │\n                  │o_.-    │\n\nNEOVIM\nWhat did the count own?",
-    "animation_prompt": "ANIMATION\nTwo complete three-row contours are visible, preserving each anchor and endpoint.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n    │       ´│\n    │    _.: │\n    │o_.-    │",
-    "animation_answer": "The copy preserves all three rows as one frame.",
-    "neovim_prompt": "NEOVIM\nWhich grammar describes the operation?\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
-    "neovim_answer": "gg3yyGp goes to the top, yanks three whole lines, and puts them below.",
+    "prompt": "ANIMATION\nA complete five-row Acronian left wing appears as a second candidate.\n\n│  /‾‾‾‾‾`.│\n│  \\`/     `:/│\n│   \\;│\n             ↓ complete copy\n│  /‾‾‾‾‾`.│\n│  \\`/     `:/│\n│   \\;│\n\nNEOVIM\nWhich explanation decomposes `gg5yyGp`?",
+    "compact_prompt": "ANIMATION\nThe full five-row wing appears below itself.\n\n│  /‾‾‾‾‾`.│\n│  \\`/     `:/│\n│   \\;│\n             ↓ five-row copy\n│  /‾‾‾‾‾`.│\n│  \\`/     `:/│\n│   \\;│\n\nNEOVIM\nWhat did the count own?",
+    "animation_prompt": "ANIMATION\nTwo complete five-row wing candidates are visible; neither edge is detached.",
+    "animation_answer": "The copy preserves all five source rows as one still.",
+    "neovim_prompt": "NEOVIM\nWhich grammar describes the operation?\n\n│  /‾‾‾‾‾`.│\n│   \\;│",
+    "neovim_answer": "gg5yyGp goes to the top, yanks five whole lines, and puts them below.",
     "choices": [
-      "ANIMATION: Duplicate the complete anchored contour. | NEOVIM: gg3yyGp copies three whole lines and puts them below.",
-      "ANIMATION: Duplicate only the base row. | NEOVIM: yy copies the visible punctuation word.",
-      "ANIMATION: Move the original contour. | NEOVIM: 3dd then p transfers it.",
-      "ANIMATION: Add blank rows. | NEOVIM: 3o opens timing lines with no contour."
+      "ANIMATION: Duplicate the complete five-row wing. | NEOVIM: gg5yyGp copies five whole lines and puts them below.",
+      "ANIMATION: Duplicate only the joint row. | NEOVIM: yy copies the visible punctuation word.",
+      "ANIMATION: Move the original wing. | NEOVIM: 5dd then p transfers it.",
+      "ANIMATION: Add blank rows. | NEOVIM: 5o opens lines with no wing art."
     ],
     "compact_choices": [
       "A: complete contour · V: 3 linewise yank/put",
@@ -803,105 +803,105 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the count protects the contour's three-row frame boundary.",
+      "Correct: the count protects the wing's five-row pose boundary.",
       "A one-row copy cannot preserve the complete shape.",
       "The original remains above, so it was copied rather than moved.",
       "The new frame contains contour glyphs, not blank timing rows."
     ]
   },
   "M1.DD.P01": {
-    "prompt": "ANIMATION\nOnly the second contour candidate disappears.\n\n    BEFORE       AFTER\n    │ /---\\ │   │ /---\\ │\n    │|  o  |│    │|  o  |│\n    │ \\---/ │   │ \\---/ │\n    │ /---\\ │   │       │\n    │|  O  |│    │       │\n    │ \\---/ │   │       │\n\nNEOVIM\nWhich explanation matches the deletion scope?",
-    "compact_prompt": "ANIMATION\nThe first three-row contour stays; the second is removed.\n\n    │ /---\\ │\n    │|  o  |│\n    │ \\---/ │\n    │ /---\\ │\n    │|  O  |│\n    │ \\---/ │\n\nNEOVIM\nWhat does a counted dd own?",
-    "animation_prompt": "ANIMATION\nThe first frame remains registered and the second three-row candidate is gone.\n\n    │ /---\\ │\n    │|  o  |│\n    │ \\---/ │",
-    "animation_answer": "Only the second complete three-line frame is deleted.",
-    "neovim_prompt": "NEOVIM\nWhich command deletes that frame?\n\n    │ /---\\ │\n    │|  O  |│\n    │ \\---/ │",
-    "neovim_answer": "4G3dd moves to the second frame and deletes three whole lines.",
+    "prompt": "ANIMATION\nOnly the second five-row Acronian wing candidate disappears.\n\nFIRST  │  /‾‾‾‾‾`.│\n       │  \\`/     `:/│\n       │   \\;│\nSECOND │  /‾‾‾‾‾`.│\n       │  \\`/     `:/│\n       │   \\;│\n\nNEOVIM\nWhich explanation matches `6G5dd`?",
+    "compact_prompt": "ANIMATION\nKeep the first wing; remove all five rows of the duplicate.\n\nFIRST  │  \\`/     `:/│\nSECOND │  \\`/     `:/│\n\nNEOVIM\nWhat does the count own?",
+    "animation_prompt": "ANIMATION\nThe first complete wing remains registered and the second five-row candidate is gone.",
+    "animation_answer": "Only the second complete five-line pose is deleted.",
+    "neovim_prompt": "NEOVIM\nWhich command deletes that pose?\n\nSECOND │  \\`/     `:/│",
+    "neovim_answer": "6G5dd moves to the duplicate's first row and deletes five whole lines.",
     "choices": [
-      "ANIMATION: Remove only the second complete contour. | NEOVIM: 4G3dd deletes the three rows at that frame.",
+      "ANIMATION: Remove only the second complete wing. | NEOVIM: 6G5dd deletes the five rows at that pose.",
       "ANIMATION: Remove one comma joint. | NEOVIM: dd deletes one punctuation cell.",
-      "ANIMATION: Remove both frames. | NEOVIM: 4Gdd deletes every row in the buffer.",
-      "ANIMATION: Copy the second frame below. | NEOVIM: 4G3ddGp both deletes and copies it."
+      "ANIMATION: Remove both wings. | NEOVIM: gg10dd deletes every art row.",
+      "ANIMATION: Copy the second wing below. | NEOVIM: 6G5ddGp both deletes and copies it."
     ],
     "compact_choices": [
-      "A: second frame only · V: 3dd at line 4",
+      "A: second wing only · V: 5dd at line 6",
       "A: one joint · V: dd one cell",
       "A: both frames · V: all-buffer delete",
       "A: copy frame · V: delete plus put"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: a count of 3 matches the second frame's three-line boundary.",
+      "Correct: a count of 5 matches the second wing's five-line boundary.",
       "Linewise dd does not target a single punctuation cell.",
       "The first frame remains, so the deletion is not buffer-wide.",
       "No copied frame appears in the result."
     ]
   },
   "M1.04.P01": {
-    "prompt": "ANIMATION\nKeep the original rising contour and replace only its copied frame with a hand-authored descending one.\n\n    BEFORE       AFTER\n  1 │       ´│   │       ´│\n  2 │    _.: │   │    _.: │\n  3 │o_.-    │   │o_.-    │\n  4 │       ´│   │´       │\n  5 │    _.: │   │ `-.:   │\n  6 │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich result preserves the anchor while exchanging direction?",
-    "compact_prompt": "ANIMATION\nA new descending frame is authored by hand.\n\n    │       ´│   │´       │\n    │    _.: │   │ `-.:   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhat remains registered?",
-    "animation_prompt": "ANIMATION\nThe copied frame changes direction but keeps the o anchor and row width.\n\n    │       ´│  →  │´       │\n    │    _.: │      │ `-.:   │\n    │o_.-    │      │o_.-    │",
-    "animation_answer": "Author the descending glyph sequence by hand while retaining the anchor and fixed row width.",
-    "neovim_prompt": "NEOVIM\nWhich scope describes the edit?\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
-    "neovim_answer": "Delete only the copied three-row frame, open its replacement, and type each descending row deliberately.",
+    "prompt": "ANIMATION\nKeep the sourced left wing and replace only its copied candidate with the sourced right-facing pose. The glyphs are hand-authored, not byte-reversed.\n\nLEFT\n│  /‾‾‾‾‾`.│\n│  \\`/     `:/│\n│   \\;│\nRIGHT\n│ .´‾‾‾‾‾‾‾\\│\n│| ´ .´     \\/│\n│\\:.´│\n\nNEOVIM\nWhich result and scope are correct?",
+    "compact_prompt": "ANIMATION\nReplace the copied left wing with the five-row right pose by eye.\n\nLEFT  │  \\`/     `:/│\nRIGHT │| ´ .´     \\/│\n      │\\:.´│\n\nNEOVIM\nWhat must remain?",
+    "animation_prompt": "ANIMATION\nThe second candidate changes direction while preserving five-row pose boundaries and directional glyph roles.",
+    "animation_answer": "Type the right-facing source pose by hand; do not reverse the left wing's bytes.",
+    "neovim_prompt": "NEOVIM\nWhich scope describes the edit?\n\nLEFT │  \\`/     `:/│\nRIGHT│\\:.´│",
+    "neovim_answer": "Delete only the copied five-row pose, open its replacement, and type the five right-wing rows deliberately.",
     "choices": [
-      "ANIMATION: Hand-author a descending contour while keeping o and row width fixed. | NEOVIM: remove only the copied frame, then type its replacement rows.",
-      "ANIMATION: Byte-reverse the stored frame and accept every glyph position. | NEOVIM: ! flips the buffer automatically.",
-      "ANIMATION: Move the anchor to the opposite endpoint. | NEOVIM: i inserts reversed rows before the o.",
-      "ANIMATION: Delete both frames before drawing a new one. | NEOVIM: gg6dd removes all six contour rows."
+      "ANIMATION: Hand-author the right wing while preserving five rows and glyph roles. | NEOVIM: remove only the copied pose, then type its replacement rows.",
+      "ANIMATION: Byte-reverse the left wing and accept every slash position. | NEOVIM: ! mirrors fixed-width art automatically.",
+      "ANIMATION: Shift the right wing until its tip aligns. | NEOVIM: i inserts reversed rows before the source.",
+      "ANIMATION: Delete both poses before drawing. | NEOVIM: gg10dd preserves the source wing."
     ],
     "compact_choices": [
-      "A: hand-authored descent; anchor fixed · V: replace copied frame",
+      "A: hand-authored right wing · V: replace copied pose",
       "A: byte reversal · V: automatic flip",
-      "A: anchor moves · V: insert reversed rows",
-      "A: both frames deleted · V: six-line delete"
+      "A: wing tip shifts · V: insert reversed rows",
+      "A: both poses deleted · V: ten-line delete"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: mirroring is a new still authored row by row, not a byte reversal.",
+      "Correct: the opposite wing is a new five-row still authored by eye, not a byte reversal.",
       "Reversing bytes does not exchange each directional glyph correctly.",
-      "The o anchor stays fixed; moving it changes the contour's landmark.",
-      "The first frame is needed for comparison and must remain."
+      "Both wing boundaries are visible; shifting the tip breaks their registration.",
+      "The sourced left wing is needed for comparison and must remain."
     ]
   },
   "M1.05.P01": {
-    "prompt": "ANIMATION\nBoth frames' joint material changes from colon to semicolon.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.:   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich comparison respects the one-method rule?",
-    "compact_prompt": "ANIMATION\nTwo joints change; all anchors stay.\n\n    │    _.: │   │    _.; │\n    │ `-.:   │   │ `-.;   │\n\nNEOVIM\nCompare local repeat with bounded substitute.",
-    "animation_prompt": "ANIMATION\nOnly the two homologous joints change to semicolons.\n\n    │    _.: │  →  │    _.; │\n    │ `-.:   │      │ `-.;   │",
-    "animation_answer": "Either one accepted method changes the two nominated joints and preserves the contour frames.",
-    "neovim_prompt": "NEOVIM\nWhat is the real tradeoff?\n\n    │    _.: │\n    │ `-.:   │",
+    "prompt": "ANIMATION\nOnly the homologous colon joint in each complete Acronian wing tightens to exclamation.\n\nLEFT   │  \\`/     `:/│ → │  \\`/     `!/│\nRIGHT  │\\:.´│          → │\\!.´│\n\nNEOVIM\nWhich comparison respects the instruction to use one accepted method?",
+    "compact_prompt": "ANIMATION\nTwo wing joints tighten; both silhouettes stay fixed.\n\n│  \\`/     `:/│ → │  \\`/     `!/│\n│\\:.´│          → │\\!.´│\n\nNEOVIM\nCompare local repeat with bounded substitute.",
+    "animation_prompt": "ANIMATION\nOnly the two homologous feather joints change to exclamation marks.",
+    "animation_answer": "Either accepted method changes two nominated cells and preserves both five-row wings.",
+    "neovim_prompt": "NEOVIM\nWhat is the real tradeoff?\n\n│  \\`/     `:/│\n│\\:.´│",
     "neovim_answer": "Local-plus-dot repeats one verified change; a bounded substitute matches the known joint pattern across the owned strip.",
     "choices": [
-      "ANIMATION: Both joints change while contour endpoints stay fixed. | NEOVIM: local-plus-dot or a bounded substitute can reach the same result; choose one.",
+      "ANIMATION: Both joints change while wing edges stay fixed. | NEOVIM: local-plus-dot or a bounded substitute can reach the same result; choose one.",
       "ANIMATION: Every punctuation glyph changes. | NEOVIM: a whole-file substitute is always safest.",
-      "ANIMATION: The second frame is deleted. | NEOVIM: 3dd is the substitute path.",
+      "ANIMATION: The right wing is deleted. | NEOVIM: 5dd is the substitute path.",
       "ANIMATION: Only the first joint changes. | NEOVIM: dot cannot repeat after moving to the second frame."
     ],
     "compact_choices": [
-      "A: two joints; frame fixed · V: local-dot or bounded substitute",
+      "A: two joints; wings fixed · V: local-dot or bounded substitute",
       "A: all punctuation · V: whole-file substitute",
-      "A: second frame deleted · V: 3dd substitute",
+      "A: right wing deleted · V: 5dd substitute",
       "A: first joint only · V: dot cannot repeat"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: both taught paths are bounded, but the learner should execute only one.",
+      "Correct: both taught paths reach the same two cells, but this attempt should execute only one method.",
       "Changing every punctuation glyph exceeds the named joint scope.",
       "Deletion is not a substitute and would remove the frame.",
       "Dot repetition is precisely what carries the verified change to the second joint."
     ]
   },
   "M1.06.P01": {
-    "prompt": "ANIMATION\nThis Acronian wing study keeps its five-row silhouette. Only the comma joint on row 4 becomes a colon; every slash, gap, and endpoint stays registered.\n\nSTART\n  /‾‾‾‾‾`.\n /  `     `.\n \\   _____` \\\n  \\`/     `,/\n   \\;\n\nTARGET\n  /‾‾‾‾‾`.\n /  `     `.\n \\   _____` \\\n  \\`/     `:/\n   \\;\n\nNEOVIM\nWhich choice changes that one visible joint without relying on a memorised column?",
-    "compact_prompt": "ANIMATION\nKeep the complete Acronian wing fixed; change only `,` to `:` on row 4.\n\n│ \\   _____` \\ │\n│  \\`/     `,/ │  →  │  \\`/     `:/ │\n\nNEOVIM\nWhich bounded landmark edit does that?",
-    "animation_prompt": "ANIMATION\nThe source-authored wing remains a complete five-row still. The punctuation joint changes material in place; the contour does not shift.",
+    "prompt": "ANIMATION\nThis unfamiliar Acronian wing keeps its five-row silhouette. Only the comma joint on the final row becomes a colon.\n\nSTART\n   /‾‾‾‾‾‾‾`.\n  /   `      \\\n /`_____     |\n \\/     `. ` |\n          `.,/\n\nTARGET\n   /‾‾‾‾‾‾‾`.\n  /   `      \\\n /`_____     |\n \\/     `. ` |\n          `.:/\n\nNEOVIM\nWhich choice changes that one visible joint without reusing the earlier row coordinate?",
+    "compact_prompt": "ANIMATION\nKeep the unfamiliar wing fixed; change only final-row `,` to `:`.\n\n│          `.,/│ → │          `.:/│\n\nNEOVIM\nWhich bounded landmark edit does that?",
+    "animation_prompt": "ANIMATION\nThe unfamiliar source wing remains a complete five-row still; only its final-row joint changes.",
     "animation_answer": "Change only the comma joint to a colon and preserve every other cell of the Acronian wing.",
-    "neovim_prompt": "NEOVIM\nDecode `4G0f,r:`: which part finds the visible joint, and which part overwrites it?",
-    "neovim_answer": "4G selects row 4, 0 starts at its left edge, f, finds the comma landmark, and r: overwrites that one cell.",
+    "neovim_prompt": "NEOVIM\nDecode `G0f,r:`: which part selects this pose's row, and which part overwrites the joint?",
+    "neovim_answer": "G selects the final row, 0 starts at its left edge, f, finds the comma, and r: overwrites one cell.",
     "choices": [
-      "ANIMATION: Change only the row-4 comma joint; preserve the whole wing. | NEOVIM: `4G0f,r:` finds the comma and replaces that cell with a colon.",
+      "ANIMATION: Change only the final-row comma joint; preserve the whole wing. | NEOVIM: `G0f,r:` selects the final row, finds the comma, and replaces that cell.",
       "ANIMATION: Move the lower contour one cell left. | NEOVIM: `f,` deletes everything before the comma.",
       "ANIMATION: Replace every punctuation mark in the wing. | NEOVIM: `r:` changes all commas after the cursor.",
-      "ANIMATION: Reverse the five source rows. | NEOVIM: `4G` mirrors the current row automatically."
+      "ANIMATION: Reverse the five source rows. | NEOVIM: `G` mirrors the current row automatically."
     ],
     "compact_choices": [
       "A: joint only · V: row, find comma, replace",
@@ -918,14 +918,14 @@
     ]
   },
   "M1.08.P01": {
-    "prompt": "ANIMATION\nAppend a complete rising contour, then change only its joint from semicolon to colon.\n\n  1 │       ´│\n  2 │    _.; │\n  3 │o_.-    │\n  4 │´       │\n  5 │ `-.;   │\n  6 │o_.-    │\n  7 │       ´│\n  8 │    _.: │\n  9 │o_.-    │\n\nNEOVIM\nWhich choice preserves the registered frames and completes the command?",
-    "compact_prompt": "ANIMATION\nA complete three-row rising contour is appended with one colon joint.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n\nNEOVIM\nWhat final grammar piece executes the Ex copy?",
-    "animation_prompt": "ANIMATION\nThe return pose is a complete three-row contour; only its nominated joint differs.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
-    "animation_answer": "Keep each contour frame complete and return with the intended joint material, without shifting its anchor.",
-    "neovim_prompt": "NEOVIM\nWhich command grammar is completed by the missing piece?\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
+    "prompt": "ANIMATION\nAppend the complete five-row left wing as a return candidate, then relax only its joint from exclamation back to colon.\n\nLEFT HOLD   │  \\`/     `!/│\nRIGHT       │\\!.´│\nLEFT RETURN │  \\`/     `:/│\n\nNEOVIM\nWhich choice preserves every pose boundary and executes the addressed copy?",
+    "compact_prompt": "ANIMATION\nAppend a full five-row return wing with one colon joint.\n\n│  /‾‾‾‾‾`.│\n│  \\`/     `:/│\n│   \\;│\n\nNEOVIM\nWhat executes `:1,5t$` before the joint edit?",
+    "animation_prompt": "ANIMATION\nThe return candidate is a complete five-row left wing; only its nominated joint differs from the hold.",
+    "animation_answer": "Copy all five return rows and restore only the joint material, without shifting an edge.",
+    "neovim_prompt": "NEOVIM\nWhich grammar piece executes the range copy?\n\n│  \\`/     `!/│",
     "neovim_answer": "The Ex copy command is executed with <CR>; the remaining motions and replacement stay bounded.",
     "choices": [
-      "ANIMATION: Append a complete rising contour and keep its anchor fixed. | NEOVIM: finish the Ex command with <CR> before the landmark edit.",
+      "ANIMATION: Append a complete five-row return wing and keep both edges fixed. | NEOVIM: finish the Ex command with <CR> before the landmark edit.",
       "ANIMATION: Append only the changed joint. | NEOVIM: omit <CR>; Vim executes the copy on its own.",
       "ANIMATION: Reverse every stored contour row. | NEOVIM: use dd and p instead of an addressed copy.",
       "ANIMATION: Replace all frames with the final rising pose. | NEOVIM: :%s/;/:/g is the frame-copy grammar."
@@ -938,8 +938,8 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the edit still operates on a complete frame and the Ex copy does not run until Enter.",
-      "A one-cell fragment is not a registered contour frame, and Ex waits for <CR>.",
+      "Correct: the edit owns a complete five-row pose and the Ex copy does not run until Enter.",
+      "A one-cell fragment is not a complete wing pose, and Ex waits for <CR>.",
       "The return is authored from the visible contour; deletion and put do not perform the intended copy grammar.",
       "The substitution changes material, not frame structure."
     ]

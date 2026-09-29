@@ -2118,6 +2118,9 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
                 replay["method_evidence_error"], 68))
         elif replay.get("method_family"):
             print("METHOD CHECK  demonstrated: %s" % replay["method_family"])
+            for method in card.get("method_alternatives", []):
+                print("  %s  %s: %s" % (
+                    method["label"], method["keys"], _clip(method["why"], 28)))
     elif replay and replay.get("type") == "paired_question":
         q = replay["question"]
         print("%sANSWER EXPLANATION%s  %s" % (
@@ -2175,8 +2178,12 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
         print("%sDO / AVOID%s  %s · exact target" % (
             bold, off, path or card.get("expected", "(none)")))
         width = max(40, shutil.get_terminal_size((80, 24)).columns - 4)
-        breakdown = _answer_breakdown(card, width=width)
-        if breakdown and (breakdown_packed or minimal):
+        method_compare = bool(replay and replay.get("method_family")
+                              and card.get("method_alternatives"))
+        breakdown = [] if method_compare else _answer_breakdown(card, width=width)
+        if method_compare:
+            pass
+        elif breakdown and (breakdown_packed or minimal):
             # Tight popup: one wrapped paragraph instead of one row per command.
             items = " · ".join(line.strip() for line in breakdown[1:])
             wrapped = textwrap.wrap("%s  %s" % (breakdown[0], items), width=width) or [""]

@@ -171,6 +171,11 @@ for card in cur["cards"]:
     for question_id in card.get("question_placement", {}).get("before", []):
         question = question_by_id[question_id]
         for quoted in re.findall(r"`([^`]+)`", question.get("prompt", "")):
+            # Source art legitimately contains backtick glyphs.  Two of those
+            # marks on different rows are not a Markdown command span; only a
+            # compact no-whitespace token can be a quoted key sequence.
+            if any(char.isspace() for char in quoted):
+                continue
             key_like = (quoted.startswith((":", "/", "?")) or "<" in quoted
                         or bool(re.match(r"\d", quoted)) or quoted in single_key_commands)
             if not key_like or quoted.startswith("["):
@@ -198,10 +203,23 @@ assert all(card.get("source", "").startswith("official-Cosmetics/Fireworks")
 assert not any("\\|/" in line or "/|\\" in line
                for card in m0_edits
                for line in card.get("start", []) + card.get("target", []))
+m1_edits = [card for card in cur["cards"]
+            if card["module_id"] == "M1" and card.get("expected")]
+assert len(m1_edits) == 7
+assert all(card.get("source", "").startswith("official-Cosmetics/AcronianGuardian")
+           for card in m1_edits)
+m1_questions = [question for question in cur["questions"]
+                if question["module_id"] == "M1"]
+assert len(m1_questions) == 18
+assert all(question["prompt"].count("\n") >= 4 and "│" in question["compact_prompt"]
+           for question in m1_questions)
+assert not any(token in json.dumps(question, ensure_ascii=False)
+               for question in m1_questions
+               for token in ("o_.-", " /---\\", "three-row contour", "V2j"))
 primary_edits = [card for card in cur["cards"] if card.get("expected")]
 assert sum(str(card.get("source", "")).startswith(("official-", "aahub-"))
-           for card in primary_edits) == 62
-assert sum(not card.get("source") for card in primary_edits) == 113
+           for card in primary_edits) == 68
+assert sum(not card.get("source") for card in primary_edits) == 107
 # The beginner must perform each concrete prerequisite visibly before the old
 # combined card or any hidden retrieval can demand it.  M0.O is intentionally
 # one open-line action, not a second-frame typing test.

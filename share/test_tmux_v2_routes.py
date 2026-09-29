@@ -387,6 +387,8 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                         or ("verified outcome" in feedback_screen
                             and "exact target" in feedback_screen)
                         or "RESULT COMPARISON exact target" in feedback_screen), feedback_screen
+                if ROWS < 28:
+                    assert "LESSON COMPLETE" in feedback_screen, feedback_screen
             if route == "concept":
                 assert "ANSWER EXPLANATION" in feedback_screen
                 assert "QUESTION REPLAY" not in feedback_screen
@@ -396,8 +398,12 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 assert all(method["label"] in feedback_screen
                            for method in CARDS[card_id]["method_alternatives"]), feedback_screen
                 assert CARDS[card_id]["expected"] in feedback_screen, feedback_screen
-                expected_family = next(method["label"] for method in CARDS[card_id]["method_alternatives"]
-                                       if method["keys"] == CARDS[card_id]["expected"])
+                submitted_method = (key_sequence[:-2]
+                                    if key_sequence and key_sequence.endswith("ZZ")
+                                    else CARDS[card_id]["expected"])
+                expected_family = next(
+                    method["label"] for method in CARDS[card_id]["method_alternatives"]
+                    if method["keys"] == submitted_method)
                 assert "METHOD CHECK" in feedback_screen and expected_family in feedback_screen
             if route == "check":
                 assert "CHECK ANSWERS" in feedback_screen and "5/5" in feedback_screen
@@ -426,8 +432,6 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             if route == "compare":
                 passed_event = next(row for row in reversed(events)
                                     if row.get("card_id") == card_id and row.get("result") == "pass")
-                expected_family = next(method["label"] for method in CARDS[card_id]["method_alternatives"]
-                                       if method["keys"] == CARDS[card_id]["expected"])
                 assert passed_event.get("method_family") == expected_family, passed_event
                 keylog = Path(passed_event.get("keylog", ""))
                 assert re.fullmatch(
@@ -485,10 +489,12 @@ if only_card:
     route = route_by_kind.get(only["kind"])
     if route is None:
         raise AssertionError("unsupported card kind: %s" % only["kind"])
+    override_keys = os.environ.get("VIM_DAILY_TEST_KEYS")
     exercise("%s direct card" % only_card, passed=0, route=route,
              card_id=only_card,
              artifact_card=(only_card if only.get("expected") else None),
-             progress_to=only_card)
+             progress_to=only_card,
+             key_sequence=(override_keys + "ZZ") if override_keys else None)
     raise SystemExit(0)
 
 only_transfer = next((arg.split("=", 1)[1] for arg in sys.argv
