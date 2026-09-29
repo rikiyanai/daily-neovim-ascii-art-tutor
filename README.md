@@ -104,7 +104,7 @@ copy the previous frame, then change only the cells that move.
 - **20 method-contrast cards** and **70 changed-art review banks**; every primary
   edit path is
   replayed through Neovim by the v2 suite.
-- **375 manually authored paired conceptual items** spanning visual reading,
+- **377 manually authored paired conceptual items** spanning visual reading,
   command/output prediction, diagnosis, method comparison, transfer reasoning,
   and coherence checks. Every item requires both an animation/authoring reading
   and a Neovim edit-scope or command decision. Choices are shuffled and carry
@@ -272,7 +272,7 @@ VIM_DAILY_TEST_COLUMNS=100 VIM_DAILY_TEST_ROWS=36 share/test_tmux_v2_routes.py
 VIM_DAILY_TEST_COLUMNS=80 VIM_DAILY_TEST_ROWS=24 share/test_tmux_v2_routes.py
 ```
 
-The v2 suite validates the S0-S7/A0-A7 stage chain, optional P branch, 215 cards, 375
+The v2 suite validates the S0-S7/A0-A7 stage chain, optional P branch, 215 cards, 377
 complete questions, the complete 46-ID disposition table, one representative
 legacy-to-v2 surface-job comparison, persistent start→target continuity,
 review state, every one of the 174 primary edit recipes, and both executable
@@ -298,7 +298,7 @@ The learner's own Neovim chrome remains the default: lualine owns
 the live mode, WhichKey and Hardtime remain active, and only clean fallback mode
 adds the tutor statusline/F1 UI. Retrieval cards show TARGET plus an action
 hint while hiding only the exact keys, and results retain the two-column
-keystroke ledger. Revision `.37` gives every card one stage owner and makes
+keystroke ledger. Revision `.38` gives every card one stage owner and makes
 stage advancement depend on both card completion and the stage's required
 spaced reviews. P unlocks after S5 but never blocks S6. The clean suite passes
 215/215 cards and 174/174 primary recipes. The base headed popup path shows the

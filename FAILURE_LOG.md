@@ -4474,3 +4474,38 @@ headed `M5.S6C` route passes with the real user config at 80x24, 100x36, and
 **Still open.** This does not close the broader Stone Story primary-art
 migration, `.06` variant-specific question work, archive provenance, or the
 full headed route matrix. No third-party art was pushed or published.
+
+## VD-40 · 2026-09-29 — transfer questions can now follow the selected art variant (first two cards)
+
+**Finding.** `run_edit()` selects a transfer variant before paired questions,
+but every variant inherited the card's one base `paired_question_ids` list.
+On a retry the learner could receive different art while the question still
+printed the first variant. That is the same picture/question contradiction the
+operator reported; a generic command question would not cure it because every
+multiple-choice item must print the actual ASCII evidence.
+
+**Implemented in revision `.38` as a vertical slice:**
+
+- A transfer variant may now override `paired_question_ids`. Because runtime
+  already overlays the selected variant before `run_paired_questions()`, the
+  exact selected art now determines the question bank.
+- `M3.06` variant 2 owns `M3.06.V2.P01`, manually written around its unfamiliar
+  six-row figure and `6yy` whole-object scope. `M4.06` variant 2 owns
+  `M4.06.V2.P01`, manually written around its two diagonal extremes, inserted
+  vertical midpoint, addressed copy, and row-local `C` rewrites.
+- Both full and compact forms print their own BEFORE/AFTER art. All four choices
+  answer the animation and Neovim halves, and every distractor explains its
+  particular object-scope or command error.
+- The headed route harness gained `--only-transfer-alt=<card>` and derives the
+  before/after question ids and target from the same selected variant. Both
+  `M3.06` and `M4.06` alternate routes pass at 80x24 with the real config.
+
+**Proof:** generator `.38` writes 215 cards / 377 manually authored questions;
+question quality passes 377; clean Neovim remains **215/215 cards and 174/174
+primary recipes**; headed alternate transfers pass for M3.06 and M4.06.
+
+**Still open.** Eighteen other `.06` cards still lack a manually authored
+question for variant 2, and no first variant has yet been replaced by Stone
+Story art. The implementation is intentionally not described as course-wide
+variant-question parity. Archive provenance and publication remain open; no
+third-party art was pushed.

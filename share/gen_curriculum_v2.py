@@ -2958,6 +2958,11 @@ STILL_PROMPT_REWRITES = {
     "M15.07": "Diagnose the displayed texture-and-ground study, then choose the repair that preserves dither density, offset, and shadow rules.",
 }
 
+# Vertical slice for variant-accurate transfer questioning.  Each listed
+# card's second changed-art variant owns its own manually authored question;
+# runtime card.update(variant) then selects that question before the editor.
+ALT_VARIANT_QUESTION_CARDS = {"M3.06", "M4.06"}
+
 FIRST_READING_DISTRACTORS = {
     "M0": [
         "the whole spark translates one cell even though its core keeps the same value",
@@ -6176,6 +6181,18 @@ def build():
             "rationale": {q["id"]: q["placement_reason"] for q in paired},
         }
         card["pairing_exception"] = None
+    for card in cards:
+        if card["id"] not in ALT_VARIANT_QUESTION_CARDS:
+            continue
+        variant = card["variants"][1]
+        variant_card = dict(card)
+        variant_card.update(variant)
+        variant_card["id"] = card["id"] + ".V2"
+        pair = paired_question(module_map[card["module_id"]], variant_card)
+        pair["card_id"] = card["id"]
+        questions.append(pair)
+        qmap[pair["id"]] = pair
+        variant["paired_question_ids"] = [pair["id"]]
     legacy = json.loads(LEGACY.read_text(encoding="utf-8"))
     legacy_drills = {drill["id"]: drill for drill in legacy["drills"]}
     card_map = {card["id"]: card for card in cards}
@@ -6301,7 +6318,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.37",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.38",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,
@@ -6781,6 +6798,10 @@ def validate(cur):
                    for variant in variants):
                 errors.append(f"{card['id']}: incomplete transfer variant")
             for index, variant in enumerate(variants, 1):
+                for qid in variant.get("paired_question_ids", []):
+                    if qid not in qids:
+                        errors.append(
+                            f"{card['id']}: transfer variant {index} lacks paired question {qid}")
                 frame_rows = module_map[card["module_id"]].get("frame_rows")
                 check_visual(card["id"], f"transfer variant {index} start", variant["start"], frame_rows)
                 check_visual(card["id"], f"transfer variant {index} target", variant["target"], frame_rows)

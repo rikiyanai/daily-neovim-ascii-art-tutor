@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.37",
+ "revision": "2026-09-29.38",
  "review_intervals_hours": [
   4,
   24,
@@ -16872,7 +16872,10 @@
       "exact_any_of": [
        "gg6yyGp8GfxrX"
       ]
-     }
+     },
+     "paired_question_ids": [
+      "M3.06.V2.P01"
+     ]
     }
    ],
    "method_requirement": {
@@ -19298,7 +19301,10 @@
       "exact_any_of": [
        ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>"
       ]
-     }
+     },
+     "paired_question_ids": [
+      "M4.06.V2.P01"
+     ]
     }
    ],
    "method_requirement": {
@@ -50255,6 +50261,229 @@
      "the Enter key"
     ],
     "sample_answer": "<CR>"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M3.06.V2.P01",
+   "card_id": "M3.06",
+   "module_id": "M3",
+   "grammar_family": "visual-scope",
+   "grammar_breakdown_id": "visual-scope",
+   "grammar_breakdown": [
+    "Visual mode + bounded selection + operator; selection shape owns the edit scope",
+    "r + replacement glyph; overwrite one cell without shifting the row",
+    "\"{register} selects storage; yank fills it and p/P or <C-r>{register} retrieves it",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
+   ],
+   "paired_invariant": "derive every later frame from the approved complete primary pose",
+   "source_ref": "ascii-art-authoring §§9c-9f; Neovim tutor 3.1 and 6.4",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThis transfer uses an unfamiliar six-row figure, not the face from the earlier lesson. The complete figure is copied as one new candidate and only the copied eye changes from x to X.\n\n  BEFORE       AFTER COPY\n  │  /\\   │     │  /\\   │\n  │ (x)   │     │ (x)   │\n  │ \\|/   │     │ \\|/   │\n  │  |    │     │  |    │\n  │ / \\   │     │ / \\   │\n  │/___\\  │     │/___\\  │\n                 │  /\\   │\n                 │ (X)   │\n                 │ \\|/   │\n                 │  |    │\n                 │ / \\   │\n                 │/___\\  │\n\nNEOVIM\nWhich path preserves the complete six-row object while changing only the copied eye?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Only the head is copied; the body is shared between candidates. | NEOVIM: `yy` copies the complete six-row object without a count.",
+    "ANIMATION: A complete second figure is created and only its eye becomes X. | NEOVIM: `6yy` owns the whole figure, `p` puts it below, and `fxrX` edits the copied eye.",
+    "ANIMATION: The original eye also becomes X. | NEOVIM: `rX` changes every x in both objects after one find.",
+    "ANIMATION: The copied figure shifts one column right. | NEOVIM: linewise `p` inserts one leading space on every yanked row."
+   ],
+   "correct_choice": 1,
+   "feedback": [
+    "A linewise yank needs the count 6 here; one yy would detach the head from its body.",
+    "Correct: the yank count preserves the object boundary and the later find/replacement is confined to the copy.",
+    "r overwrites only the cursor cell. The original six rows are never revisited after the put.",
+    "Linewise put preserves each row's stored text; it does not manufacture indentation."
+   ],
+   "animation_prompt": "ANIMATION\nM3.06 variant 2 transfers whole-object copying to an unfamiliar full-body candidate rather than reusing the lesson face.",
+   "animation_answer": "The original six-row figure stays intact; a second complete figure appears below with only x changed to X.",
+   "neovim_prompt": "NEOVIM\nDecode `gg6yyGp8GfxrX` on the shown twelve-row result.",
+   "neovim_answer": "gg6yy copies all six source rows, Gp puts the complete copy below, 8G reaches its eye row, fx finds the copied eye, and rX overwrites that one cell.",
+   "compact_prompt": "ANIMATION\nCopy the complete figure; only the copied eye becomes X.\n\n  │ (x) │          │ (x) │\n  │ \\|/ │   →      │ \\|/ │\n                   │ (X) │\n                   │ \\|/ │\n\nNEOVIM\nWhich scope copies all six rows before the eye edit?",
+   "compact_choices": [
+    "A: head only · V: yy means six rows",
+    "A: full copy; copied eye only · V: 6yy, p, fxrX",
+    "A: both eyes change · V: r is global",
+    "A: copy shifts right · V: p indents"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "gg6yyGp8GfxrX",
+    "required_term_groups": [
+     [
+      "visual",
+      "selection"
+     ],
+     [
+      "line",
+      "block",
+      "column",
+      "scope"
+     ],
+     [
+      "replace",
+      "overwrite",
+      "r"
+     ],
+     [
+      "cell",
+      "glyph"
+     ],
+     [
+      "width",
+      "shift",
+      "registered"
+     ],
+     [
+      "register",
+      "palette"
+     ],
+     [
+      "yank",
+      "copy"
+     ],
+     [
+      "put",
+      "retrieve",
+      "paste"
+     ],
+     [
+      "search",
+      "find",
+      "landmark"
+     ],
+     [
+      "pattern",
+      "character"
+     ],
+     [
+      "cursor",
+      "cell"
+     ],
+     [
+      "motion",
+      "move",
+      "cursor"
+     ],
+     [
+      "landmark",
+      "row",
+      "column",
+      "cell"
+     ]
+    ],
+    "sample_answer": "visual line replace cell width register yank put search pattern cursor motion landmark"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M4.06.V2.P01",
+   "card_id": "M4.06",
+   "module_id": "M4",
+   "grammar_family": "ex-copy",
+   "grammar_breakdown_id": "ex-copy",
+   "grammar_breakdown": [
+    "source address/range + t/copy command + destination address + <CR> execution",
+    "C is c$; change from the cursor through row end, type replacement text, then <Esc>",
+    "motion or landmark command + optional count; movement alone must not change art"
+   ],
+   "paired_invariant": "draw both complete extremes before inserting the middle in-between",
+   "source_ref": "ascii-art-authoring §§4.4,9f-9g; P2 00:37:34; Neovim help visual-block, :copy",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThis transfer starts with two diagonal extremes around a fixed x pivot. The target inserts a two-row vertical midpoint between them; both original three-row extremes remain unchanged.\n\n  BEFORE       AFTER\n  │    /  │     │    /  │\n  │   /   │     │   /   │\n  │---x---│     │---x---│\n  │  \\    │     │   |   │\n  │   \\   │  →  │   |   │\n  │---x---│     │---x---│\n                 │  \\    │\n                 │   \\   │\n                 │---x---│\n\nNEOVIM\nWhy does the addressed copy come before the two row rewrites?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: The first extreme is moved and disappears. | NEOVIM: `t` removes the addressed source after transfer.",
+    "ANIMATION: Only one vertical row is inserted. | NEOVIM: both C commands act on the same row because 5G is ignored.",
+    "ANIMATION: The lower extreme is overwritten by the midpoint. | NEOVIM: `:1,3t3` replaces rows 4-6 instead of inserting a copy.",
+    "ANIMATION: A complete midpoint scaffold is inserted, then its two moving rows become vertical while the pivot and extremes stay fixed. | NEOVIM: the addressed copy establishes three-row scope before row-local C rewrites."
+   ],
+   "correct_choice": 3,
+   "feedback": [
+    "The Ex t command copies its source range; m would be the move command.",
+    "4G and 5G explicitly address two different scaffold rows.",
+    "The addressed copy inserts new rows after line 3 and preserves the existing lower extreme.",
+    "Correct: object scope is established first, then only the moving part of that copied object is redrawn."
+   ],
+   "animation_prompt": "ANIMATION\nM4.06 variant 2 transfers in-between construction to a different two-extreme pivot drawing.",
+   "animation_answer": "A complete copy of the first extreme becomes the midpoint scaffold, then only its two moving rows become vertical bars.",
+   "neovim_prompt": "NEOVIM\nDecode `:1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>`.",
+   "neovim_answer": ":1,3t3 copies the complete first extreme after row 3; the two C commands redraw only scaffold rows 4 and 5, leaving the pivot row and both bounding extremes registered.",
+   "compact_prompt": "ANIMATION\nInsert a vertical midpoint between two diagonal extremes.\n\n  │   /│        │   /│\n  │---x│        │---x│\n  │  \\ │   →    │   |│\n  │---x│        │---x│\n                │  \\ │\n                │---x│\n\nNEOVIM\nWhat does `:1,3t3` establish before C rewrites rows 4-5?",
+   "compact_choices": [
+    "A: source moved · V: t deletes source",
+    "A: one vertical row · V: both C hit row 4",
+    "A: lower extreme overwritten · V: t replaces",
+    "A: full scaffold then two rewrites · V: range copy + row C"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>",
+    "required_term_groups": [
+     [
+      "range",
+      "source",
+      "lines",
+      "rows"
+     ],
+     [
+      "copy",
+      "t"
+     ],
+     [
+      "destination",
+      "after",
+      "end"
+     ],
+     [
+      "enter",
+      "execute"
+     ],
+     [
+      "change",
+      "operator",
+      "C"
+     ],
+     [
+      "end",
+      "row",
+      "line"
+     ],
+     [
+      "escape",
+      "normal"
+     ],
+     [
+      "width",
+      "shift"
+     ],
+     [
+      "motion",
+      "move",
+      "cursor"
+     ],
+     [
+      "landmark",
+      "row",
+      "column",
+      "cell"
+     ]
+    ],
+    "sample_answer": "range copy destination enter change end escape width motion landmark"
    },
    "authorship": "manual"
   }

@@ -215,9 +215,19 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             pane = tmux(outer, "list-panes", "-t", "terminal", "-F", "#{pane_id}",
                         capture_output=True).stdout.strip()
 
+            route_card = CARDS.get(card_id)
+            if route == "transfer" and route_card and route_card.get("variants"):
+                route_card = dict(route_card)
+                route_card.update(route_card["variants"][
+                    failed_attempts % len(route_card["variants"])])
+
             if route not in ("concept", "review"):
-                card = CARDS[card_id]
-                for qid in card.get("question_placement", {}).get("before", []):
+                card = route_card
+                before_qids = [
+                    qid for qid in card.get("paired_question_ids", [])
+                    if QUESTIONS[qid].get("placement") in ("before", "both")
+                ]
+                for qid in before_qids:
                     wait_signal(inner, question)
                     paired_prompt = " ".join(capture(outer, pane).split())
                     assert "ANIMATION" in paired_prompt and "NEOVIM" in paired_prompt
@@ -313,7 +323,7 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                     ) from exc
                 brief_raw = capture(outer, pane)
                 brief = " ".join(brief_raw.split())
-                card = CARDS[card_id]
+                card = route_card
                 assert card_id in brief and card["prompt"][:30] in brief, brief
                 assert "TARGET" in brief, brief
                 visible_target_rows = card["target"] if ROWS >= 28 else card["target"][:6]
@@ -341,7 +351,11 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 send_spec(outer, pane, route_keys or card["expected"] + "ZZ")
 
             if route not in ("concept", "review"):
-                for qid in CARDS[card_id].get("question_placement", {}).get("after", []):
+                after_qids = [
+                    qid for qid in route_card.get("paired_question_ids", [])
+                    if QUESTIONS[qid].get("placement") in ("after", "both")
+                ]
+                for qid in after_qids:
                     try:
                         wait_signal(inner, question)
                     except AssertionError as exc:
@@ -474,6 +488,21 @@ if only_transfer:
              card_id=only_transfer, artifact_card=only_transfer,
              progress_to=only_transfer,
              key_sequence=(override_keys + "ZZ") if override_keys else None)
+    raise SystemExit(0)
+
+only_transfer_alt = next((arg.split("=", 1)[1] for arg in sys.argv
+                          if arg.startswith("--only-transfer-alt=")), None)
+if only_transfer_alt:
+    if (only_transfer_alt not in CARDS
+            or CARDS[only_transfer_alt].get("kind") != "transfer"):
+        raise AssertionError("unknown transfer card: " + only_transfer_alt)
+    variants = CARDS[only_transfer_alt]["variants"]
+    if len(variants) < 2 or not variants[1].get("paired_question_ids"):
+        raise AssertionError("transfer has no question-bound alternate variant: " + only_transfer_alt)
+    exercise("%s alternate live transfer" % only_transfer_alt, passed=0,
+             route="transfer", card_id=only_transfer_alt,
+             artifact_card=only_transfer_alt, progress_to=only_transfer_alt,
+             failed_attempts=1, key_sequence=variants[1]["expected"] + "ZZ")
     raise SystemExit(0)
 
 if "--only-m005" in sys.argv:

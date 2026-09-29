@@ -97,11 +97,13 @@ for legacy_id, drill in legacy_drills.items():
 
 assert len(cur["modules"]) == 20
 assert len(cur["cards"]) == 215
-assert len(cur["questions"]) == 375
+assert len(cur["questions"]) == 377
 assert len({card["title"] for card in cur["cards"]}) == 215
 assert len({card["prompt"] for card in cur["cards"]}) == 215
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
+assert card_by_id["M3.06"]["variants"][1]["paired_question_ids"] == ["M3.06.V2.P01"]
+assert card_by_id["M4.06"]["variants"][1]["paired_question_ids"] == ["M4.06.V2.P01"]
 
 
 def card_lines(card, lines):
@@ -113,7 +115,7 @@ def card_lines(card, lines):
 mc_questions = [question for question in cur["questions"]
                 if question["form"] == "multiple_choice"]
 assert {question["form"] for question in cur["questions"]} == {"multiple_choice"}
-assert len(mc_questions) == len(cur["questions"]) == 375
+assert len(mc_questions) == len(cur["questions"]) == 377
 assert not any(
     phrase in question["prompt"]
     for question in cur["questions"]
@@ -223,7 +225,7 @@ assert all("ANIMATION" in q["compact_prompt"] and "NEOVIM" in q["compact_prompt"
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == len(mc_questions) == 375
+            for q in mc_questions}) == len(mc_questions) == 377
 def contains_ascii_visual(value):
     if "│" in value:
         return True
