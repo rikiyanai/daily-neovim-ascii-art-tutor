@@ -432,30 +432,30 @@
     ]
   },
   "M6.06.P01": {
-    "prompt": "ANIMATION\nThe unfamiliar finished pyramid should follow its reduced predecessor, so the two five-row blocks swap order.\n\n    BEFORE          AFTER\n    │   ^   │       │   .   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│\n    │   .   │       │   ^   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│\n\nNEOVIM\nWhich bounded path reaches the displayed TARGET?",
-    "compact_prompt": "ANIMATION\nReduced block first, finished block second.\n\n    ^-frame    .-frame\n       ↓          ↑\n    .-frame    ^-frame\n\nNEOVIM\nChoose a complete-range move.",
-    "animation_prompt": "Both five-row blocks remain equal-height; only their playback order is corrected.\n\n    BEFORE          AFTER\n    │   ^   │       │   .   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│\n    │   .   │       │   ^   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│",
-    "animation_answer": "Move the finished five-row block after the reduced block.",
+    "prompt": "ANIMATION\nThe FrogBog lily-pad frames are filed as 2 then 1. Playback must read 1 then 2, and each number must travel with its complete five-row pad contour.\n\n  BEFORE         AFTER\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    2  \\│      │/    1  \\│\n  │\\       /│  →   │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    1  \\│      │/    2  \\│\n  │\\       /│      │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n\nNEOVIM\nWhich addressed command reorders one complete pad without copying it?",
+    "compact_prompt": "ANIMATION\nReorder complete five-row pads from 2→1 to 1→2.\n\n  │/    2  \\│     │/    1  \\│\n       ↓ move      ↓\n  │/    1  \\│     │/    2  \\│\n\nNEOVIM\nWhy `:1,5m$`?",
+    "animation_prompt": "Both five-row FrogBog pads remain intact; only their playback order changes from 2,1 to 1,2.",
+    "animation_answer": "Move the complete pad-2 block after the complete pad-1 block.",
     "neovim_prompt": "Use an addressed range that covers exactly one complete frame.",
     "neovim_answer": ":1,5m$<CR> moves the first five lines after the second block.",
     "choices": [
-      "ANIMATION: Reduced frame precedes finished frame. | NEOVIM: :1,5m$<CR> moves one complete block.",
-      "ANIMATION: Finished frame precedes reduced frame. | NEOVIM: :1,5t$<CR> copies the first block.",
-      "ANIMATION: Only the apex rows swap. | NEOVIM: 1Gdd then 6Gp.",
-      "ANIMATION: The art is already correct; only navigation is needed. | NEOVIM: gg is sufficient."
+      "ANIMATION: Pad 1 precedes pad 2 and each five-row contour remains intact. | NEOVIM: `:1,5m$<CR>` moves the complete first pad after the current last line.",
+      "ANIMATION: A third pad 2 is appended as a hold. | NEOVIM: `:1,5t$<CR>` is equivalent because copying and moving produce the same strip.",
+      "ANIMATION: Only the 1 and 2 glyphs swap while their contours remain in place. | NEOVIM: two one-cell r commands prove whole-frame order.",
+      "ANIMATION: Pad 2 is deleted from playback. | NEOVIM: `$` discards the moved range rather than naming a destination."
     ],
     "compact_choices": [
-      "A: reduced→finished · V: :1,5m$",
-      "A: finished→reduced · V: :1,5t$",
-      "A: swap apex only · V: dd/Gp",
-      "A: no art change · V: gg"
+      "A: complete pads 1→2 · V: :1,5m$",
+      "A: append third pad · V: :t equals :m",
+      "A: swap digits only · V: one-cell r proves order",
+      "A: delete pad 2 · V: $ discards"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: moving the complete first block establishes forward growth.",
-      "That keeps deconstruction order and copies instead of moving.",
-      "A five-row pose cannot be reordered by moving only its apex.",
-      "The BEFORE order differs from TARGET; navigation alone cannot fix it."
+      "Correct: the five-line range is the frame boundary, and moving it after the last line reverses the two-pad order without duplication.",
+      "The target contains two pads, not three. Ex t copies, while m removes the source range from its old position.",
+      "The numbered centre identifies the frame but does not own its contour; changing digits would falsify rather than reorder the source frames.",
+      "The dollar sign is the last-line destination. The moved pad remains present after it."
     ]
   },
   "M6.08.P01": {

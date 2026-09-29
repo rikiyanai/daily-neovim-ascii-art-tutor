@@ -432,30 +432,30 @@
     ]
   },
   "M4.06.P01": {
-    "prompt": "ANIMATION\nThe unfamiliar ===O=== base stays fixed while a complete middle frame adds two vertical prop strokes.\n\n  1 │  \\    │\n  2 │   |    │\n  3 │===O===│\n  4 │   |    │\n  BEFORE: \\ / over ===O===\n  AFTER:  | | over ===O===\n\nNEOVIM\nWhich path reaches this unseen target?",
-    "compact_prompt": "ANIMATION\nBase ===O=== fixed; prop \\ /→| |.\n\n  1 │  \\    │\n  2 │   |    │\n  3 │===O===│\n\nNEOVIM\nChoose the bounded transfer.",
-    "animation_prompt": "The unfamiliar base remains unchanged; only the copied prop becomes vertical.\n\n  base: ===O===\n  prop: \\ / → | |",
-    "animation_answer": "Copy the complete unfamiliar extreme and redraw only the moving strokes.",
-    "neovim_prompt": "Apply addressed copy plus local C edits.",
-    "neovim_answer": ":1,3t3<CR> inserts the three-row frame; local C edits the two moving rows while ===O=== stays fixed.",
+    "prompt": "ANIMATION\nTowerDefense missile exhaust frames 1 and 4 are present, but frame 2 is missing. The target inserts a complete copy of frame 1 between them, then changes only that copy's exhaust endpoint from `.` to `'`.\n\n  BEFORE\n  │  ____/│\n  │< / / |:.│\n  │  ¯¯¯¯\\│\n  │  ____/│\n  │< / / |::.│\n  │  ¯¯¯¯\\│\n\n  AFTER\n  │  ____/│\n  │< / / |:.│\n  │  ¯¯¯¯\\│\n  │  ____/│\n  │< / / |:'│\n  │  ¯¯¯¯\\│\n  │  ____/│\n  │< / / |::.│\n  │  ¯¯¯¯\\│\n\nNEOVIM\nWhich path establishes full-frame scope before advancing one copied exhaust cell?",
+    "compact_prompt": "ANIMATION\nInsert missile frame 2 between frames 1 and 4.\n\n  │< / / |:.│\n       ↓ copy + vary\n  │< / / |:'│\n  │< / / |::.│\n\nNEOVIM\nWhy copy rows 1-3 before `5G$r'`?",
+    "animation_prompt": "The missing missile in-between preserves the complete hull and changes only the exhaust endpoint.",
+    "animation_answer": "Insert all three rows of frame 1 as a scaffold, then advance the copied exhaust from dot to apostrophe.",
+    "neovim_prompt": "Decode addressed frame copy followed by a one-cell row-5 replacement.",
+    "neovim_answer": ":1,3t3 copies the complete first frame after row 3; 5G$r' reaches the copied exhaust row's final cell and overwrites only its endpoint.",
     "choices": [
-      "ANIMATION: ===O=== stays fixed and the copied prop becomes vertical. | NEOVIM: :1,3t3<CR> copies three rows, then local C edits moving rows.",
-      "ANIMATION: Normalize ===O=== to ---o--- first. | NEOVIM: Globally substitute the unfamiliar base before copying.",
-      "ANIMATION: Add only one vertical stroke. | NEOVIM: Copy one row and insert a bar.",
-      "ANIMATION: Delete the original after making the midpoint. | NEOVIM: Delete the original range before copying."
+      "ANIMATION: A complete hull frame is inserted and only its exhaust endpoint advances to apostrophe. | NEOVIM: `:1,3t3` copies the three-row frame, then `5G$r'` overwrites one cell in the copy.",
+      "ANIMATION: Only the exhaust row is copied; hull rows are shared between frames. | NEOVIM: `:2t3` is equivalent to a complete frame copy.",
+      "ANIMATION: Frame 1 is moved into the middle and disappears from the start. | NEOVIM: Ex `t` relocates its addressed source range.",
+      "ANIMATION: Every exhaust dot becomes apostrophe, including frame 4. | NEOVIM: `r'` replaces all matching cells after `$`."
     ],
     "compact_choices": [
-      "A: base fixed; prop vertical · V: :1,3t3 + local C",
-      "A: normalize base · V: global substitute",
-      "A: one stroke · V: row copy + insert",
-      "A: original deleted · V: delete before copy"
+      "A: full midpoint; copied endpoint only · V: range t + row-5 r",
+      "A: exhaust row only · V: :2t3 is full frame",
+      "A: move frame 1 · V: t relocates",
+      "A: every dot changes · V: r is global"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: transfer preserves the new base vocabulary and applies the same frame scope.",
-      "Changing the base defeats the unfamiliar-art transfer.",
-      "A midpoint needs both moving cells and all three frame rows.",
-      "The original extreme remains needed to define the rotation arc."
+      "Correct: whole-frame copy preserves the registered hull, then one replacement creates the source-authored in-between.",
+      "A missile frame is three rows. Copying only row 2 detaches the exhaust from its hull.",
+      "The Ex t command copies and leaves its source in place; m would relocate it.",
+      "r overwrites one cursor cell. It does not search later frames for matching dots."
     ]
   },
   "M4.08.P01": {

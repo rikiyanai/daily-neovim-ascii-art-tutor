@@ -138,9 +138,9 @@ SNOWBUNNY_FACE_PALETTE = ["   (\\(\\ [n-]", "  ( n.n)", "o(,`_\"_)"]
 
 
 # card id -> {"review_variants": [...]}
-# Transfer `variants` are NOT replaced yet: run_edit asks the card's paired
-# question after each transfer attempt, and that question shows the card's own
-# art.  A Stone Story variant there would contradict its question (VD-29).
+# Transfer variants are migrated only after their paired questions are manually
+# rewritten around the exact new START/TARGET. M3 and M4 now do this in the
+# generator; the remaining module transfers still retain tutor-authored art.
 REPLACEMENTS = {
     # M0.01 teaches j0f.ro (find the visible core, replace it in place).
     "M0.01": {"review_variants": [

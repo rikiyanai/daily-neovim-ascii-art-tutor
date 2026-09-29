@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.45",
+ "revision": "2026-09-29.47",
  "review_intervals_hours": [
   4,
   24,
@@ -19232,114 +19232,119 @@
    "project_id": "rotation-tween",
    "variant_group": "M4.card-6",
    "start": [
-    "  \\    ",
-    "   \\   ",
-    "===O===",
-    "    /  ",
-    "   /   ",
-    "===O==="
+    "  ____/",
+    "< / / |:.",
+    "  ¯¯¯¯\\",
+    "  ____/",
+    "< / / |::.",
+    "  ¯¯¯¯\\"
    ],
    "target": [
-    "  \\    ",
-    "   \\   ",
-    "===O===",
-    "   |",
-    "   |",
-    "===O===",
-    "    /  ",
-    "   /   ",
-    "===O==="
+    "  ____/",
+    "< / / |:.",
+    "  ¯¯¯¯\\",
+    "  ____/",
+    "< / / |:'",
+    "  ¯¯¯¯\\",
+    "  ____/",
+    "< / / |::.",
+    "  ¯¯¯¯\\"
    ],
-   "expected": ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>",
+   "expected": ":1,3t3<CR>5G$r'",
    "recipe": [
     [
      ":1,3t3",
-     "copy a complete unfamiliar extreme into the gap"
+     "copy the complete first missile frame into the gap"
     ],
     [
-     "4G/5G C",
-     "redraw only its moving strokes as the midpoint"
+     "5G$r'",
+     "advance only the copied exhaust endpoint from dot to apostrophe"
     ]
    ],
    "cursor": "^",
+   "source": "official-Games/TowerDefense res18 missile frames 1, 2, and 4",
    "prompt": "Tween a different original rotating glyph between unseen extremes without changing its fixed base.",
    "artifact": "transfer",
    "variants": [
     {
      "start": [
-      "  \\    ",
-      "   \\   ",
-      "===O===",
-      "    /  ",
-      "   /   ",
-      "===O==="
+      "  ____/",
+      "< / / |:.",
+      "  ¯¯¯¯\\",
+      "  ____/",
+      "< / / |::.",
+      "  ¯¯¯¯\\"
      ],
      "target": [
-      "  \\    ",
-      "   \\   ",
-      "===O===",
-      "   |",
-      "   |",
-      "===O===",
-      "    /  ",
-      "   /   ",
-      "===O==="
+      "  ____/",
+      "< / / |:.",
+      "  ¯¯¯¯\\",
+      "  ____/",
+      "< / / |:'",
+      "  ¯¯¯¯\\",
+      "  ____/",
+      "< / / |::.",
+      "  ¯¯¯¯\\"
      ],
-     "expected": ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>",
+     "expected": ":1,3t3<CR>5G$r'",
      "recipe": [
       [
        ":1,3t3",
-       "copy a complete unfamiliar extreme into the gap"
+       "copy the complete first missile frame into the gap"
       ],
       [
-       "4G/5G C",
-       "redraw only its moving strokes as the midpoint"
+       "5G$r'",
+       "advance only the copied exhaust endpoint from dot to apostrophe"
       ]
      ],
      "cursor": "^",
+     "source": "official-Games/TowerDefense res18 missile frames 1, 2, and 4",
+     "prompt": "Insert missile exhaust frame 2 between frames 1 and 4: copy the complete first frame, then change only the copied exhaust endpoint from . to '.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>"
+       ":1,3t3<CR>5G$r'"
       ]
      }
     },
     {
      "start": [
-      "    /  ",
-      "   /   ",
-      "---x---",
-      "  \\    ",
-      "   \\   ",
-      "---x---"
+      "      ,-.",
+      "     :   :",
+      "     '._.'",
+      "      ,-.",
+      "     :·;,:",
+      "     '._.'"
      ],
      "target": [
-      "    /  ",
-      "   /   ",
-      "---x---",
-      "   |",
-      "   |",
-      "---x---",
-      "  \\    ",
-      "   \\   ",
-      "---x---"
+      "      ,-.",
+      "     :   :",
+      "     '._.'",
+      "      ,-.",
+      "     : ; :",
+      "     '._.'",
+      "      ,-.",
+      "     :·;,:",
+      "     '._.'"
      ],
-     "expected": ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>",
+     "expected": ":1,3t3<CR>5G0f:2lR;<Esc>",
      "recipe": [
       [
        ":1,3t3",
-       "copy the reversed unfamiliar extreme"
+       "copy the complete uncracked egg frame into the gap"
       ],
       [
-       "4G/5G C",
-       "resolve a registered vertical midpoint"
+       "5G0f:2lR;<Esc>",
+       "replace the centred blank with the first crack mark"
       ]
      ],
      "cursor": "^",
+     "source": "official-Pets/Chick res01 hatch frames 1, 2, and 4",
+     "prompt": "Insert hatch frame 2 between the uncracked egg and frame 4: copy the complete first egg, then add only its first semicolon crack.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>"
+       ":1,3t3<CR>5G0f:2lR;<Esc>"
       ]
      },
      "paired_question_ids": [
@@ -19350,7 +19355,7 @@
    "method_requirement": {
     "label": "perform the unfamiliar-art transfer with its taught command path",
     "exact_any_of": [
-     ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>"
+     ":1,3t3<CR>5G$r'"
     ]
    },
    "required_before_mastery": true,
@@ -19374,13 +19379,13 @@
    ],
    "grammar_families": [
     "ex-copy",
-    "change-to-end",
+    "normal-replace",
     "normal-motion"
    ],
    "grammar_stage": "hidden",
    "key_vocabulary": [
     "source address/range + t/copy command + destination address + <CR> execution",
-    "C is c$; change from the cursor through row end, type replacement text, then <Esc>",
+    "r + replacement glyph; overwrite one cell without shifting the row",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
    "stage_owner": "A2",
@@ -25304,73 +25309,78 @@
    "project_id": "pyramid-build",
    "variant_group": "M6.card-6",
    "start": [
-    "   ^   ",
-    "  /_\\  ",
-    " /---\\ ",
-    "/-----\\",
-    "=======",
-    "   .   ",
-    "  /_\\  ",
-    " /---\\ ",
-    "/-----\\",
-    "======="
+    "    _",
+    " ,'   `.",
+    "/    2  \\",
+    "\\       /",
+    " \\/|..-'",
+    "    _",
+    " ,'   `.",
+    "/    1  \\",
+    "\\       /",
+    " \\/|..-'"
    ],
    "target": [
-    "   .   ",
-    "  /_\\  ",
-    " /---\\ ",
-    "/-----\\",
-    "=======",
-    "   ^   ",
-    "  /_\\  ",
-    " /---\\ ",
-    "/-----\\",
-    "======="
+    "    _",
+    " ,'   `.",
+    "/    1  \\",
+    "\\       /",
+    " \\/|..-'",
+    "    _",
+    " ,'   `.",
+    "/    2  \\",
+    "\\       /",
+    " \\/|..-'"
    ],
    "expected": ":1,5m$<CR>",
    "recipe": [
     [
      ":1,5m$",
-     "move the unfamiliar finished frame after its reduced predecessor"
+     "move complete lily-pad frame 2 after frame 1"
     ]
    ],
    "cursor": "^",
+   "source": "official-Games/FrogBog res06 and res05 lily-pad frames 2 then 1",
+   "labels": true,
    "prompt": "Move an unfamiliar finished five-row build after its reduced state to establish forward playback order.",
    "artifact": "transfer",
    "variants": [
     {
      "start": [
-      "   ^   ",
-      "  /_\\  ",
-      " /---\\ ",
-      "/-----\\",
-      "=======",
-      "   .   ",
-      "  /_\\  ",
-      " /---\\ ",
-      "/-----\\",
-      "======="
+      "    _",
+      " ,'   `.",
+      "/    2  \\",
+      "\\       /",
+      " \\/|..-'",
+      "    _",
+      " ,'   `.",
+      "/    1  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
      "target": [
-      "   .   ",
-      "  /_\\  ",
-      " /---\\ ",
-      "/-----\\",
-      "=======",
-      "   ^   ",
-      "  /_\\  ",
-      " /---\\ ",
-      "/-----\\",
-      "======="
+      "    _",
+      " ,'   `.",
+      "/    1  \\",
+      "\\       /",
+      " \\/|..-'",
+      "    _",
+      " ,'   `.",
+      "/    2  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
      "expected": ":1,5m$<CR>",
      "recipe": [
       [
        ":1,5m$",
-       "move the unfamiliar finished frame after its reduced predecessor"
+       "move complete lily-pad frame 2 after frame 1"
       ]
      ],
      "cursor": "^",
+     "source": "official-Games/FrogBog res06 and res05 lily-pad frames 2 then 1",
+     "labels": true,
+     "prompt": "Correct the reversed FrogBog plan: move the complete five-row pad 2 after pad 1 without copying or separating its numbered centre.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
@@ -25380,37 +25390,40 @@
     },
     {
      "start": [
-      "   O   ",
-      "  /-\\  ",
-      " /---\\ ",
-      "/-----\\",
-      "=======",
-      "   o   ",
-      "  /-\\  ",
-      " /---\\ ",
-      "/-----\\",
-      "======="
+      "    _",
+      " ,'   `.",
+      "/    3  \\",
+      "\\       /",
+      " \\/|..-'",
+      "    _",
+      " ,'   `.",
+      "/    2  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
      "target": [
-      "   o   ",
-      "  /-\\  ",
-      " /---\\ ",
-      "/-----\\",
-      "=======",
-      "   O   ",
-      "  /-\\  ",
-      " /---\\ ",
-      "/-----\\",
-      "======="
+      "    _",
+      " ,'   `.",
+      "/    2  \\",
+      "\\       /",
+      " \\/|..-'",
+      "    _",
+      " ,'   `.",
+      "/    3  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
      "expected": ":1,5m$<CR>",
      "recipe": [
       [
        ":1,5m$",
-       "move the alternate finished build after its reduced state"
+       "move complete lily-pad frame 3 after frame 2"
       ]
      ],
      "cursor": "^",
+     "source": "official-Games/FrogBog res07 and res06 lily-pad frames 3 then 2",
+     "labels": true,
+     "prompt": "Correct the second FrogBog plan: move the complete five-row pad 3 after pad 2 while preserving every contour and water-mark row.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
@@ -46567,7 +46580,7 @@
    "grammar_breakdown_id": "ex-copy",
    "grammar_breakdown": [
     "source address/range + t/copy command + destination address + <CR> execution",
-    "C is c$; change from the cursor through row end, type replacement text, then <Esc>",
+    "r + replacement glyph; overwrite one cell without shifting the row",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "draw both complete extremes before inserting the middle in-between",
@@ -46576,56 +46589,56 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The key-hidden transfer comes first; afterward, four explicit choices check the command path and animation scope without free-text grading.",
-   "prompt": "ANIMATION\nThe unfamiliar ===O=== base stays fixed while a complete middle frame adds two vertical prop strokes.\n\n  1 │  \\    │\n  2 │   |    │\n  3 │===O===│\n  4 │   |    │\n  BEFORE: \\ / over ===O===\n  AFTER:  | | over ===O===\n\nNEOVIM\nWhich path reaches this unseen target?",
+   "prompt": "ANIMATION\nTowerDefense missile exhaust frames 1 and 4 are present, but frame 2 is missing. The target inserts a complete copy of frame 1 between them, then changes only that copy's exhaust endpoint from `.` to `'`.\n\n  BEFORE\n  │  ____/│\n  │< / / |:.│\n  │  ¯¯¯¯\\│\n  │  ____/│\n  │< / / |::.│\n  │  ¯¯¯¯\\│\n\n  AFTER\n  │  ____/│\n  │< / / |:.│\n  │  ¯¯¯¯\\│\n  │  ____/│\n  │< / / |:'│\n  │  ¯¯¯¯\\│\n  │  ____/│\n  │< / / |::.│\n  │  ¯¯¯¯\\│\n\nNEOVIM\nWhich path establishes full-frame scope before advancing one copied exhaust cell?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "typed_keys",
    "choices": [
-    "ANIMATION: ===O=== stays fixed and the copied prop becomes vertical. | NEOVIM: :1,3t3<CR> copies three rows, then local C edits moving rows.",
-    "ANIMATION: Normalize ===O=== to ---o--- first. | NEOVIM: Globally substitute the unfamiliar base before copying.",
-    "ANIMATION: Add only one vertical stroke. | NEOVIM: Copy one row and insert a bar.",
-    "ANIMATION: Delete the original after making the midpoint. | NEOVIM: Delete the original range before copying."
+    "ANIMATION: A complete hull frame is inserted and only its exhaust endpoint advances to apostrophe. | NEOVIM: `:1,3t3` copies the three-row frame, then `5G$r'` overwrites one cell in the copy.",
+    "ANIMATION: Only the exhaust row is copied; hull rows are shared between frames. | NEOVIM: `:2t3` is equivalent to a complete frame copy.",
+    "ANIMATION: Frame 1 is moved into the middle and disappears from the start. | NEOVIM: Ex `t` relocates its addressed source range.",
+    "ANIMATION: Every exhaust dot becomes apostrophe, including frame 4. | NEOVIM: `r'` replaces all matching cells after `$`."
    ],
    "correct_choice": 0,
    "feedback": [
-    "Correct: transfer preserves the new base vocabulary and applies the same frame scope.",
-    "Changing the base defeats the unfamiliar-art transfer.",
-    "A midpoint needs both moving cells and all three frame rows.",
-    "The original extreme remains needed to define the rotation arc."
+    "Correct: whole-frame copy preserves the registered hull, then one replacement creates the source-authored in-between.",
+    "A missile frame is three rows. Copying only row 2 detaches the exhaust from its hull.",
+    "The Ex t command copies and leaves its source in place; m would relocate it.",
+    "r overwrites one cursor cell. It does not search later frames for matching dots."
    ],
-   "animation_prompt": "The unfamiliar base remains unchanged; only the copied prop becomes vertical.\n\n  base: ===O===\n  prop: \\ / → | |",
-   "animation_answer": "Copy the complete unfamiliar extreme and redraw only the moving strokes.",
-   "neovim_prompt": "Apply addressed copy plus local C edits.",
-   "neovim_answer": ":1,3t3<CR> inserts the three-row frame; local C edits the two moving rows while ===O=== stays fixed.",
-   "compact_prompt": "ANIMATION\nBase ===O=== fixed; prop \\ /→| |.\n\n  1 │  \\    │\n  2 │   |    │\n  3 │===O===│\n\nNEOVIM\nChoose the bounded transfer.",
+   "animation_prompt": "The missing missile in-between preserves the complete hull and changes only the exhaust endpoint.",
+   "animation_answer": "Insert all three rows of frame 1 as a scaffold, then advance the copied exhaust from dot to apostrophe.",
+   "neovim_prompt": "Decode addressed frame copy followed by a one-cell row-5 replacement.",
+   "neovim_answer": ":1,3t3 copies the complete first frame after row 3; 5G$r' reaches the copied exhaust row's final cell and overwrites only its endpoint.",
+   "compact_prompt": "ANIMATION\nInsert missile frame 2 between frames 1 and 4.\n\n  │< / / |:.│\n       ↓ copy + vary\n  │< / / |:'│\n  │< / / |::.│\n\nNEOVIM\nWhy copy rows 1-3 before `5G$r'`?",
    "compact_choices": [
-    "A: base fixed; prop vertical · V: :1,3t3 + local C",
-    "A: normalize base · V: global substitute",
-    "A: one stroke · V: row copy + insert",
-    "A: original deleted · V: delete before copy"
+    "A: full midpoint; copied endpoint only · V: range t + row-5 r",
+    "A: exhaust row only · V: :2t3 is full frame",
+    "A: move frame 1 · V: t relocates",
+    "A: every dot changes · V: r is global"
    ],
    "source_answer_contract": {
     "form": "typed_keys",
     "initial_lines": [
-     "  \\    ",
-     "   \\   ",
-     "===O===",
-     "    /  ",
-     "   /   ",
-     "===O==="
+     "  ____/",
+     "< / / |:.",
+     "  ¯¯¯¯\\",
+     "  ____/",
+     "< / / |::.",
+     "  ¯¯¯¯\\"
     ],
     "target_lines": [
-     "  \\    ",
-     "   \\   ",
-     "===O===",
-     "   |",
-     "   |",
-     "===O===",
-     "    /  ",
-     "   /   ",
-     "===O==="
+     "  ____/",
+     "< / / |:.",
+     "  ¯¯¯¯\\",
+     "  ____/",
+     "< / / |:'",
+     "  ¯¯¯¯\\",
+     "  ____/",
+     "< / / |::.",
+     "  ¯¯¯¯\\"
     ],
     "initial_cursor": "^",
     "forbidden_side_effects": [
@@ -46634,7 +46647,7 @@
      "extra_window",
      "extra_tab"
     ],
-    "sample_answer": ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>",
+    "sample_answer": ":1,3t3<CR>5G$r'",
     "effect_version": 1
    },
    "authorship": "manual"
@@ -48918,61 +48931,61 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The key-hidden transfer comes first; afterward, four explicit choices check the command path and animation scope without free-text grading.",
-   "prompt": "ANIMATION\nThe unfamiliar finished pyramid should follow its reduced predecessor, so the two five-row blocks swap order.\n\n    BEFORE          AFTER\n    │   ^   │       │   .   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│\n    │   .   │       │   ^   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│\n\nNEOVIM\nWhich bounded path reaches the displayed TARGET?",
+   "prompt": "ANIMATION\nThe FrogBog lily-pad frames are filed as 2 then 1. Playback must read 1 then 2, and each number must travel with its complete five-row pad contour.\n\n  BEFORE         AFTER\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    2  \\│      │/    1  \\│\n  │\\       /│  →   │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    1  \\│      │/    2  \\│\n  │\\       /│      │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n\nNEOVIM\nWhich addressed command reorders one complete pad without copying it?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "typed_keys",
    "choices": [
-    "ANIMATION: Reduced frame precedes finished frame. | NEOVIM: :1,5m$<CR> moves one complete block.",
-    "ANIMATION: Finished frame precedes reduced frame. | NEOVIM: :1,5t$<CR> copies the first block.",
-    "ANIMATION: Only the apex rows swap. | NEOVIM: 1Gdd then 6Gp.",
-    "ANIMATION: The art is already correct; only navigation is needed. | NEOVIM: gg is sufficient."
+    "ANIMATION: Pad 1 precedes pad 2 and each five-row contour remains intact. | NEOVIM: `:1,5m$<CR>` moves the complete first pad after the current last line.",
+    "ANIMATION: A third pad 2 is appended as a hold. | NEOVIM: `:1,5t$<CR>` is equivalent because copying and moving produce the same strip.",
+    "ANIMATION: Only the 1 and 2 glyphs swap while their contours remain in place. | NEOVIM: two one-cell r commands prove whole-frame order.",
+    "ANIMATION: Pad 2 is deleted from playback. | NEOVIM: `$` discards the moved range rather than naming a destination."
    ],
    "correct_choice": 0,
    "feedback": [
-    "Correct: moving the complete first block establishes forward growth.",
-    "That keeps deconstruction order and copies instead of moving.",
-    "A five-row pose cannot be reordered by moving only its apex.",
-    "The BEFORE order differs from TARGET; navigation alone cannot fix it."
+    "Correct: the five-line range is the frame boundary, and moving it after the last line reverses the two-pad order without duplication.",
+    "The target contains two pads, not three. Ex t copies, while m removes the source range from its old position.",
+    "The numbered centre identifies the frame but does not own its contour; changing digits would falsify rather than reorder the source frames.",
+    "The dollar sign is the last-line destination. The moved pad remains present after it."
    ],
-   "animation_prompt": "Both five-row blocks remain equal-height; only their playback order is corrected.\n\n    BEFORE          AFTER\n    │   ^   │       │   .   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│\n    │   .   │       │   ^   │\n    │  /_\\  │       │  /_\\  │\n    │ /---\\ │       │ /---\\ │\n    │/-----\\│       │/-----\\│\n    │=======│       │=======│",
-   "animation_answer": "Move the finished five-row block after the reduced block.",
+   "animation_prompt": "Both five-row FrogBog pads remain intact; only their playback order changes from 2,1 to 1,2.",
+   "animation_answer": "Move the complete pad-2 block after the complete pad-1 block.",
    "neovim_prompt": "Use an addressed range that covers exactly one complete frame.",
    "neovim_answer": ":1,5m$<CR> moves the first five lines after the second block.",
-   "compact_prompt": "ANIMATION\nReduced block first, finished block second.\n\n    ^-frame    .-frame\n       ↓          ↑\n    .-frame    ^-frame\n\nNEOVIM\nChoose a complete-range move.",
+   "compact_prompt": "ANIMATION\nReorder complete five-row pads from 2→1 to 1→2.\n\n  │/    2  \\│     │/    1  \\│\n       ↓ move      ↓\n  │/    1  \\│     │/    2  \\│\n\nNEOVIM\nWhy `:1,5m$`?",
    "compact_choices": [
-    "A: reduced→finished · V: :1,5m$",
-    "A: finished→reduced · V: :1,5t$",
-    "A: swap apex only · V: dd/Gp",
-    "A: no art change · V: gg"
+    "A: complete pads 1→2 · V: :1,5m$",
+    "A: append third pad · V: :t equals :m",
+    "A: swap digits only · V: one-cell r proves order",
+    "A: delete pad 2 · V: $ discards"
    ],
    "source_answer_contract": {
     "form": "typed_keys",
     "initial_lines": [
-     "   ^   ",
-     "  /_\\  ",
-     " /---\\ ",
-     "/-----\\",
-     "=======",
-     "   .   ",
-     "  /_\\  ",
-     " /---\\ ",
-     "/-----\\",
-     "======="
+     "    _",
+     " ,'   `.",
+     "/    2  \\",
+     "\\       /",
+     " \\/|..-'",
+     "    _",
+     " ,'   `.",
+     "/    1  \\",
+     "\\       /",
+     " \\/|..-'"
     ],
     "target_lines": [
-     "   .   ",
-     "  /_\\  ",
-     " /---\\ ",
-     "/-----\\",
-     "=======",
-     "   ^   ",
-     "  /_\\  ",
-     " /---\\ ",
-     "/-----\\",
-     "======="
+     "    _",
+     " ,'   `.",
+     "/    1  \\",
+     "\\       /",
+     " \\/|..-'",
+     "    _",
+     " ,'   `.",
+     "/    2  \\",
+     "\\       /",
+     " \\/|..-'"
     ],
     "initial_cursor": "^",
     "forbidden_side_effects": [
@@ -51431,7 +51444,7 @@
    "grammar_breakdown_id": "ex-copy",
    "grammar_breakdown": [
     "source address/range + t/copy command + destination address + <CR> execution",
-    "C is c$; change from the cursor through row end, type replacement text, then <Esc>",
+    "r + replacement glyph; overwrite one cell without shifting the row",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "draw both complete extremes before inserting the middle in-between",
@@ -51440,39 +51453,39 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
-   "prompt": "ANIMATION\nThis transfer starts with two diagonal extremes around a fixed x pivot. The target inserts a two-row vertical midpoint between them; both original three-row extremes remain unchanged.\n\n  BEFORE       AFTER\n  │    /  │     │    /  │\n  │   /   │     │   /   │\n  │---x---│     │---x---│\n  │  \\    │     │   |   │\n  │   \\   │  →  │   |   │\n  │---x---│     │---x---│\n                 │  \\    │\n                 │   \\   │\n                 │---x---│\n\nNEOVIM\nWhy does the addressed copy come before the two row rewrites?",
+   "prompt": "ANIMATION\nThe Chick hatch strip jumps from an uncracked egg directly to the later `·;,:` crack state. The target inserts the missing first-crack frame: a complete copy of the uncracked egg with one semicolon added inside its middle row.\n\n  BEFORE\n  │      ,-.│\n  │     :   :│\n  │     '._.'│\n  │      ,-.│\n  │     :·;,:│\n  │     '._.'│\n\n  AFTER\n  │      ,-.│\n  │     :   :│\n  │     '._.'│\n  │      ,-.│\n  │     : ; :│\n  │     '._.'│\n  │      ,-.│\n  │     :·;,:│\n  │     '._.'│\n\nNEOVIM\nWhy must the complete three-row egg be copied before the semicolon is added?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "decode",
    "choices": [
-    "ANIMATION: The first extreme is moved and disappears. | NEOVIM: `t` removes the addressed source after transfer.",
-    "ANIMATION: Only one vertical row is inserted. | NEOVIM: both C commands act on the same row because 5G is ignored.",
-    "ANIMATION: The lower extreme is overwritten by the midpoint. | NEOVIM: `:1,3t3` replaces rows 4-6 instead of inserting a copy.",
-    "ANIMATION: A complete midpoint scaffold is inserted, then its two moving rows become vertical while the pivot and extremes stay fixed. | NEOVIM: the addressed copy establishes three-row scope before row-local C rewrites."
+    "ANIMATION: Only the semicolon row is inserted between two complete eggs. | NEOVIM: copying line 2 alone preserves frame registration.",
+    "ANIMATION: The uncracked source egg moves away from the first position. | NEOVIM: Ex `t` deletes its source after placing the range.",
+    "ANIMATION: The later `·;,:` egg is overwritten to become less cracked. | NEOVIM: `:1,3t3` replaces existing rows 4-6 rather than inserting new rows.",
+    "ANIMATION: A complete uncracked egg is inserted as the scaffold, then one copied interior cell becomes `;`. | NEOVIM: the addressed three-row copy preserves the frame before `5G0f:2lR;<Esc>` writes one bounded crack cell."
    ],
    "correct_choice": 3,
    "feedback": [
-    "The Ex t command copies its source range; m would be the move command.",
-    "4G and 5G explicitly address two different scaffold rows.",
-    "The addressed copy inserts new rows after line 3 and preserves the existing lower extreme.",
-    "Correct: object scope is established first, then only the moving part of that copied object is redrawn."
+    "The roof, middle, and base together define the registered egg frame; a lone middle row is detached art.",
+    "The Ex t command copies its source range; m would move it.",
+    "The copy is inserted after row 3, pushing the later egg down while preserving it unchanged.",
+    "Correct: full-frame scope establishes continuity, and the one-cell overwrite creates the first crack without shifting the shell."
    ],
-   "animation_prompt": "ANIMATION\nM4.06 variant 2 transfers in-between construction to a different two-extreme pivot drawing.",
-   "animation_answer": "A complete copy of the first extreme becomes the midpoint scaffold, then only its two moving rows become vertical bars.",
-   "neovim_prompt": "NEOVIM\nDecode `:1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>`.",
-   "neovim_answer": ":1,3t3 copies the complete first extreme after row 3; the two C commands redraw only scaffold rows 4 and 5, leaving the pivot row and both bounding extremes registered.",
-   "compact_prompt": "ANIMATION\nInsert a vertical midpoint between two diagonal extremes.\n\n  │   /│        │   /│\n  │---x│        │---x│\n  │  \\ │   →    │   |│\n  │---x│        │---x│\n                │  \\ │\n                │---x│\n\nNEOVIM\nWhat does `:1,3t3` establish before C rewrites rows 4-5?",
+   "animation_prompt": "ANIMATION\nM4.06 variant 2 constructs a real missing hatch in-between from the complete preceding egg.",
+   "animation_answer": "The inserted egg retains its roof and base and adds only the first semicolon crack in the middle row.",
+   "neovim_prompt": "NEOVIM\nExplain the complete-frame copy and the one-cell crack edit.",
+   "neovim_answer": ":1,3t3 inserts all three uncracked-egg rows; 5G0f:2l reaches the centred interior blank, R; overwrites it, and Escape stops Replace mode before the next cell.",
+   "compact_prompt": "ANIMATION\nInsert the missing first-crack egg between uncracked and later-crack poses.\n\n  │     :   :│\n       ↓ copy + vary\n  │     : ; :│\n  │     :·;,:│\n\nNEOVIM\nDecode `:1,3t3` then `5G0f:2lR;<Esc>`.",
    "compact_choices": [
-    "A: source moved · V: t deletes source",
-    "A: one vertical row · V: both C hit row 4",
-    "A: lower extreme overwritten · V: t replaces",
-    "A: full scaffold then two rewrites · V: range copy + row C"
+    "A: middle row only · V: one line is a frame",
+    "A: source moves · V: t deletes source",
+    "A: later egg overwritten · V: t replaces rows",
+    "A: full egg scaffold + one crack · V: range copy + local r"
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>",
+    "display": ":1,3t3<CR>5G0f:2lR;<Esc>",
     "required_term_groups": [
      [
       "range",
@@ -51494,22 +51507,18 @@
       "execute"
      ],
      [
-      "change",
-      "operator",
-      "C"
+      "replace",
+      "overwrite",
+      "r"
      ],
      [
-      "end",
-      "row",
-      "line"
-     ],
-     [
-      "escape",
-      "normal"
+      "cell",
+      "glyph"
      ],
      [
       "width",
-      "shift"
+      "shift",
+      "registered"
      ],
      [
       "motion",
@@ -51523,7 +51532,7 @@
       "cell"
      ]
     ],
-    "sample_answer": "range copy destination enter change end escape width motion landmark"
+    "sample_answer": "range copy destination enter replace cell width motion landmark"
    },
    "authorship": "manual"
   },
@@ -51837,35 +51846,35 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
-   "prompt": "ANIMATION\nTwo complete five-row pyramid poses are in reverse playback order. The small-o apex must come first and the capital-O apex second; every base row travels with its apex.\n\n  BEFORE       AFTER\n  │   O   │     │   o   │\n  │  /-\\  │     │  /-\\  │\n  │ /---\\ │     │ /---\\ │\n  │/-----\\│     │/-----\\│\n  │=======│     │=======│\n  │   o   │     │   O   │\n  │  /-\\  │     │  /-\\  │\n  │ /---\\ │  →  │ /---\\ │\n  │/-----\\│     │/-----\\│\n  │=======│     │=======│\n\nNEOVIM\nWhich Ex grammar moves one whole pose instead of copying or detaching its apex?",
+   "prompt": "ANIMATION\nThe next FrogBog pair is also reversed: lily-pad frame 3 appears before frame 2. The target moves the complete five-row pad 3 after pad 2; contours and number labels are not redrawn.\n\n  BEFORE         AFTER\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    3  \\│      │/    2  \\│\n  │\\       /│  →   │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    2  \\│      │/    3  \\│\n  │\\       /│      │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n\nNEOVIM\nWhich Ex grammar moves the whole first frame instead of changing only its number?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "decode",
    "choices": [
-    "ANIMATION: Only O and o exchange cells while their bodies stay put. | NEOVIM: the range `1,5` addresses only the first and fifth characters.",
-    "ANIMATION: A third hold pose is appended. | NEOVIM: `m` copies the addressed rows and leaves the source intact.",
-    "ANIMATION: The complete o pose precedes the complete O pose with no duplicate. | NEOVIM: `1,5` owns the first full block, `m` moves it, and `$` places it after the former last row.",
-    "ANIMATION: The first pyramid is deleted without reappearing. | NEOVIM: `$` is a discard destination."
+    "ANIMATION: Only digits 3 and 2 exchange while the pad contours stay in their old temporal positions. | NEOVIM: `1,5` addresses two characters rather than five lines.",
+    "ANIMATION: A third pad 3 is appended as a hold. | NEOVIM: m copies the addressed rows and leaves the source intact.",
+    "ANIMATION: Complete pad 2 precedes complete pad 3 with no duplicate. | NEOVIM: `1,5` owns the first full frame, m moves it, and `$` places it after the former last row.",
+    "ANIMATION: Pad 3 disappears from the strip. | NEOVIM: `$` is a discard destination."
    ],
    "correct_choice": 2,
    "feedback": [
-    "In Ex command position, 1,5 is a line range. It keeps each apex attached to four body rows.",
+    "In Ex command position, 1,5 is a line range. It keeps each numbered centre attached to the four other pad rows.",
     "The move command removes the source range from its old position; `t` would copy it.",
-    "Correct: the line range is the pose boundary, and moving it after the last line reverses the two-block order without duplication.",
+    "Correct: the line range is the pad-frame boundary, and moving it after the last line restores 2→3 without duplication.",
     "The dollar sign names the current last line as a destination; it does not throw rows away."
    ],
-   "animation_prompt": "ANIMATION\nM6.06 variant 2 corrects playback order while preserving each five-row pyramid as one pose.",
-   "animation_answer": "The lower o-apex pose moves ahead of the O-apex pose; neither pose is duplicated or split.",
+   "animation_prompt": "ANIMATION\nM6.06 variant 2 restores the source-authored FrogBog order while preserving both complete pad contours.",
+   "animation_answer": "The complete pad-2 frame precedes the complete pad-3 frame; neither is duplicated or split.",
    "neovim_prompt": "NEOVIM\nDecode the range, command, and destination in `:1,5m$`.",
    "neovim_answer": "1,5 is the complete first-pose range, m moves that range, and $ names the last-line destination, so the former second pose becomes first.",
-   "compact_prompt": "ANIMATION\nPut the complete o-apex pose before the complete O-apex pose.\n\n  │ O │     │ o │\n  │===│  →  │===│\n  │ o │     │ O │\n  │===│     │===│\n\nNEOVIM\nWhy `:1,5m$`?",
+   "compact_prompt": "ANIMATION\nReorder full pads from 3→2 to 2→3.\n\n  │/    3  \\│     │/    2  \\│\n       ↓ move      ↓\n  │/    2  \\│     │/    3  \\│\n\nNEOVIM\nDecode `:1,5m$`.",
    "compact_choices": [
-    "A: apex cells swap · V: 1,5 are columns",
-    "A: append third pose · V: m copies",
-    "A: whole poses reorder · V: range + move + last line",
-    "A: delete first pose · V: $ discards"
+    "A: digits swap only · V: 1,5 are characters",
+    "A: append third pad · V: m copies",
+    "A: whole pads reorder · V: range + move + last line",
+    "A: pad 3 disappears · V: $ discards"
    ],
    "source_answer_contract": {
     "form": "decode",
@@ -52437,7 +52446,7 @@
     ],
     "hidden_families": [
      "ex-copy",
-     "change-to-end",
+     "normal-replace",
      "normal-motion"
     ]
    },
@@ -56120,8 +56129,8 @@
   },
   {
    "hidden_card_id": "M4.06",
-   "grammar_family": "change-to-end",
-   "prior_guided_card_id": "M10.02"
+   "grammar_family": "normal-replace",
+   "prior_guided_card_id": "M0.01"
   },
   {
    "hidden_card_id": "M4.06",
@@ -56828,7 +56837,7 @@
   {
    "grammar_family": "change-to-end",
    "guided_card_id": "M10.02",
-   "review_card_id": "M4.06",
+   "review_card_id": "M18.04",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "evidence": "target-linked changed-art retrieval; method enforcement reported separately"

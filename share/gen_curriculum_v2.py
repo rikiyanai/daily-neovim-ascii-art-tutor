@@ -847,26 +847,30 @@ MODULES = [
                 ],
             ),
         ],
-        "transfer": step(
-            ["  \\    ", "   \\   ", "===O===",
-             "    /  ", "   /   ", "===O==="],
-            ["  \\    ", "   \\   ", "===O===",
-             "   |", "   |", "===O===",
-             "    /  ", "   /   ", "===O==="],
-            ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>",
-            [[":1,3t3", "copy a complete unfamiliar extreme into the gap"],
-             ["4G/5G C", "redraw only its moving strokes as the midpoint"]],
-        ),
-        "transfer_alt": step(
-            ["    /  ", "   /   ", "---x---",
-             "  \\    ", "   \\   ", "---x---"],
-            ["    /  ", "   /   ", "---x---",
-             "   |", "   |", "---x---",
-             "  \\    ", "   \\   ", "---x---"],
-            ":1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>",
-            [[":1,3t3", "copy the reversed unfamiliar extreme"],
-             ["4G/5G C", "resolve a registered vertical midpoint"]],
-        ),
+        "transfer": dict(step(
+            stone_story_variants.MISSILE_F1 + stone_story_variants.MISSILE_F4,
+            stone_story_variants.MISSILE_F1 + stone_story_variants.MISSILE_F2
+            + stone_story_variants.MISSILE_F4,
+            ":1,3t3<CR>5G$r'",
+            [[":1,3t3", "copy the complete first missile frame into the gap"],
+             ["5G$r'", "advance only the copied exhaust endpoint from dot to apostrophe"]],
+        ), source="official-Games/TowerDefense res18 missile frames 1, 2, and 4",
+           prompt=(
+               "Insert missile exhaust frame 2 between frames 1 and 4: copy the complete "
+               "first frame, then change only the copied exhaust endpoint from . to '."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.CHICK_EGG_F1 + stone_story_variants.CHICK_EGG_F4,
+            stone_story_variants.CHICK_EGG_F1 + stone_story_variants.CHICK_EGG_F2
+            + stone_story_variants.CHICK_EGG_F4,
+            ":1,3t3<CR>5G0f:2lR;<Esc>",
+            [[":1,3t3", "copy the complete uncracked egg frame into the gap"],
+             ["5G0f:2lR;<Esc>", "replace the centred blank with the first crack mark"]],
+        ), source="official-Pets/Chick res01 hatch frames 1, 2, and 4",
+           prompt=(
+               "Insert hatch frame 2 between the uncracked egg and frame 4: copy the "
+               "complete first egg, then add only its first semicolon crack."
+           )),
     },
     {
         "id": "M5", "title": "Layered scene", "node": "S6/V5", "project": "layered-scene",
@@ -1044,22 +1048,28 @@ MODULES = [
                  [":11,15m5", "place the intermediate reduction before the finished keyframe"]],
             ),
         ],
-        "transfer": step(
-            ["   ^   ", "  /_\\  ", " /---\\ ", "/-----\\", "=======",
-             "   .   ", "  /_\\  ", " /---\\ ", "/-----\\", "======="],
-            ["   .   ", "  /_\\  ", " /---\\ ", "/-----\\", "=======",
-             "   ^   ", "  /_\\  ", " /---\\ ", "/-----\\", "======="],
+        "transfer": dict(step(
+            stone_story_variants.PAD_2 + stone_story_variants.PAD_1,
+            stone_story_variants.PAD_1 + stone_story_variants.PAD_2,
             ":1,5m$<CR>",
-            [[":1,5m$", "move the unfamiliar finished frame after its reduced predecessor"]],
-        ),
-        "transfer_alt": step(
-            ["   O   ", "  /-\\  ", " /---\\ ", "/-----\\", "=======",
-             "   o   ", "  /-\\  ", " /---\\ ", "/-----\\", "======="],
-            ["   o   ", "  /-\\  ", " /---\\ ", "/-----\\", "=======",
-             "   O   ", "  /-\\  ", " /---\\ ", "/-----\\", "======="],
+            [[":1,5m$", "move complete lily-pad frame 2 after frame 1"]],
+        ), source="official-Games/FrogBog res06 and res05 lily-pad frames 2 then 1",
+           labels=True,
+           prompt=(
+               "Correct the reversed FrogBog plan: move the complete five-row pad 2 "
+               "after pad 1 without copying or separating its numbered centre."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.PAD_3 + stone_story_variants.PAD_2,
+            stone_story_variants.PAD_2 + stone_story_variants.PAD_3,
             ":1,5m$<CR>",
-            [[":1,5m$", "move the alternate finished build after its reduced state"]],
-        ),
+            [[":1,5m$", "move complete lily-pad frame 3 after frame 2"]],
+        ), source="official-Games/FrogBog res07 and res06 lily-pad frames 3 then 2",
+           labels=True,
+           prompt=(
+               "Correct the second FrogBog plan: move the complete five-row pad 3 "
+               "after pad 2 while preserving every contour and water-mark row."
+           )),
     },
     {
         "id": "M7", "title": "Timed build", "node": "A4/V7", "project": "timed-pyramid-build",
@@ -6329,7 +6339,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.45",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.47",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

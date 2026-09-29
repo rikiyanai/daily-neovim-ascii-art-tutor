@@ -1188,29 +1188,29 @@
     ]
   },
   "M6.06.V2.P01": {
-    "prompt": "ANIMATION\nTwo complete five-row pyramid poses are in reverse playback order. The small-o apex must come first and the capital-O apex second; every base row travels with its apex.\n\n  BEFORE       AFTER\n  │   O   │     │   o   │\n  │  /-\\  │     │  /-\\  │\n  │ /---\\ │     │ /---\\ │\n  │/-----\\│     │/-----\\│\n  │=======│     │=======│\n  │   o   │     │   O   │\n  │  /-\\  │     │  /-\\  │\n  │ /---\\ │  →  │ /---\\ │\n  │/-----\\│     │/-----\\│\n  │=======│     │=======│\n\nNEOVIM\nWhich Ex grammar moves one whole pose instead of copying or detaching its apex?",
-    "compact_prompt": "ANIMATION\nPut the complete o-apex pose before the complete O-apex pose.\n\n  │ O │     │ o │\n  │===│  →  │===│\n  │ o │     │ O │\n  │===│     │===│\n\nNEOVIM\nWhy `:1,5m$`?",
-    "animation_prompt": "ANIMATION\nM6.06 variant 2 corrects playback order while preserving each five-row pyramid as one pose.",
-    "animation_answer": "The lower o-apex pose moves ahead of the O-apex pose; neither pose is duplicated or split.",
+    "prompt": "ANIMATION\nThe next FrogBog pair is also reversed: lily-pad frame 3 appears before frame 2. The target moves the complete five-row pad 3 after pad 2; contours and number labels are not redrawn.\n\n  BEFORE         AFTER\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    3  \\│      │/    2  \\│\n  │\\       /│  →   │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    2  \\│      │/    3  \\│\n  │\\       /│      │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n\nNEOVIM\nWhich Ex grammar moves the whole first frame instead of changing only its number?",
+    "compact_prompt": "ANIMATION\nReorder full pads from 3→2 to 2→3.\n\n  │/    3  \\│     │/    2  \\│\n       ↓ move      ↓\n  │/    2  \\│     │/    3  \\│\n\nNEOVIM\nDecode `:1,5m$`.",
+    "animation_prompt": "ANIMATION\nM6.06 variant 2 restores the source-authored FrogBog order while preserving both complete pad contours.",
+    "animation_answer": "The complete pad-2 frame precedes the complete pad-3 frame; neither is duplicated or split.",
     "neovim_prompt": "NEOVIM\nDecode the range, command, and destination in `:1,5m$`.",
     "neovim_answer": "1,5 is the complete first-pose range, m moves that range, and $ names the last-line destination, so the former second pose becomes first.",
     "choices": [
-      "ANIMATION: Only O and o exchange cells while their bodies stay put. | NEOVIM: the range `1,5` addresses only the first and fifth characters.",
-      "ANIMATION: A third hold pose is appended. | NEOVIM: `m` copies the addressed rows and leaves the source intact.",
-      "ANIMATION: The complete o pose precedes the complete O pose with no duplicate. | NEOVIM: `1,5` owns the first full block, `m` moves it, and `$` places it after the former last row.",
-      "ANIMATION: The first pyramid is deleted without reappearing. | NEOVIM: `$` is a discard destination."
+      "ANIMATION: Only digits 3 and 2 exchange while the pad contours stay in their old temporal positions. | NEOVIM: `1,5` addresses two characters rather than five lines.",
+      "ANIMATION: A third pad 3 is appended as a hold. | NEOVIM: m copies the addressed rows and leaves the source intact.",
+      "ANIMATION: Complete pad 2 precedes complete pad 3 with no duplicate. | NEOVIM: `1,5` owns the first full frame, m moves it, and `$` places it after the former last row.",
+      "ANIMATION: Pad 3 disappears from the strip. | NEOVIM: `$` is a discard destination."
     ],
     "compact_choices": [
-      "A: apex cells swap · V: 1,5 are columns",
-      "A: append third pose · V: m copies",
-      "A: whole poses reorder · V: range + move + last line",
-      "A: delete first pose · V: $ discards"
+      "A: digits swap only · V: 1,5 are characters",
+      "A: append third pad · V: m copies",
+      "A: whole pads reorder · V: range + move + last line",
+      "A: pad 3 disappears · V: $ discards"
     ],
     "correct_choice": 2,
     "feedback": [
-      "In Ex command position, 1,5 is a line range. It keeps each apex attached to four body rows.",
+      "In Ex command position, 1,5 is a line range. It keeps each numbered centre attached to the four other pad rows.",
       "The move command removes the source range from its old position; `t` would copy it.",
-      "Correct: the line range is the pose boundary, and moving it after the last line reverses the two-block order without duplication.",
+      "Correct: the line range is the pad-frame boundary, and moving it after the last line restores 2→3 without duplication.",
       "The dollar sign names the current last line as a destination; it does not throw rows away."
     ]
   },
@@ -1269,30 +1269,30 @@
     ]
   },
   "M4.06.V2.P01": {
-    "prompt": "ANIMATION\nThis transfer starts with two diagonal extremes around a fixed x pivot. The target inserts a two-row vertical midpoint between them; both original three-row extremes remain unchanged.\n\n  BEFORE       AFTER\n  │    /  │     │    /  │\n  │   /   │     │   /   │\n  │---x---│     │---x---│\n  │  \\    │     │   |   │\n  │   \\   │  →  │   |   │\n  │---x---│     │---x---│\n                 │  \\    │\n                 │   \\   │\n                 │---x---│\n\nNEOVIM\nWhy does the addressed copy come before the two row rewrites?",
-    "compact_prompt": "ANIMATION\nInsert a vertical midpoint between two diagonal extremes.\n\n  │   /│        │   /│\n  │---x│        │---x│\n  │  \\ │   →    │   |│\n  │---x│        │---x│\n                │  \\ │\n                │---x│\n\nNEOVIM\nWhat does `:1,3t3` establish before C rewrites rows 4-5?",
-    "animation_prompt": "ANIMATION\nM4.06 variant 2 transfers in-between construction to a different two-extreme pivot drawing.",
-    "animation_answer": "A complete copy of the first extreme becomes the midpoint scaffold, then only its two moving rows become vertical bars.",
-    "neovim_prompt": "NEOVIM\nDecode `:1,3t3<CR>4G0C   |<Esc>5G0C   |<Esc>`.",
-    "neovim_answer": ":1,3t3 copies the complete first extreme after row 3; the two C commands redraw only scaffold rows 4 and 5, leaving the pivot row and both bounding extremes registered.",
+    "prompt": "ANIMATION\nThe Chick hatch strip jumps from an uncracked egg directly to the later `·;,:` crack state. The target inserts the missing first-crack frame: a complete copy of the uncracked egg with one semicolon added inside its middle row.\n\n  BEFORE\n  │      ,-.│\n  │     :   :│\n  │     '._.'│\n  │      ,-.│\n  │     :·;,:│\n  │     '._.'│\n\n  AFTER\n  │      ,-.│\n  │     :   :│\n  │     '._.'│\n  │      ,-.│\n  │     : ; :│\n  │     '._.'│\n  │      ,-.│\n  │     :·;,:│\n  │     '._.'│\n\nNEOVIM\nWhy must the complete three-row egg be copied before the semicolon is added?",
+    "compact_prompt": "ANIMATION\nInsert the missing first-crack egg between uncracked and later-crack poses.\n\n  │     :   :│\n       ↓ copy + vary\n  │     : ; :│\n  │     :·;,:│\n\nNEOVIM\nDecode `:1,3t3` then `5G0f:2lR;<Esc>`.",
+    "animation_prompt": "ANIMATION\nM4.06 variant 2 constructs a real missing hatch in-between from the complete preceding egg.",
+    "animation_answer": "The inserted egg retains its roof and base and adds only the first semicolon crack in the middle row.",
+    "neovim_prompt": "NEOVIM\nExplain the complete-frame copy and the one-cell crack edit.",
+    "neovim_answer": ":1,3t3 inserts all three uncracked-egg rows; 5G0f:2l reaches the centred interior blank, R; overwrites it, and Escape stops Replace mode before the next cell.",
     "choices": [
-      "ANIMATION: The first extreme is moved and disappears. | NEOVIM: `t` removes the addressed source after transfer.",
-      "ANIMATION: Only one vertical row is inserted. | NEOVIM: both C commands act on the same row because 5G is ignored.",
-      "ANIMATION: The lower extreme is overwritten by the midpoint. | NEOVIM: `:1,3t3` replaces rows 4-6 instead of inserting a copy.",
-      "ANIMATION: A complete midpoint scaffold is inserted, then its two moving rows become vertical while the pivot and extremes stay fixed. | NEOVIM: the addressed copy establishes three-row scope before row-local C rewrites."
+      "ANIMATION: Only the semicolon row is inserted between two complete eggs. | NEOVIM: copying line 2 alone preserves frame registration.",
+      "ANIMATION: The uncracked source egg moves away from the first position. | NEOVIM: Ex `t` deletes its source after placing the range.",
+      "ANIMATION: The later `·;,:` egg is overwritten to become less cracked. | NEOVIM: `:1,3t3` replaces existing rows 4-6 rather than inserting new rows.",
+      "ANIMATION: A complete uncracked egg is inserted as the scaffold, then one copied interior cell becomes `;`. | NEOVIM: the addressed three-row copy preserves the frame before `5G0f:2lR;<Esc>` writes one bounded crack cell."
     ],
     "compact_choices": [
-      "A: source moved · V: t deletes source",
-      "A: one vertical row · V: both C hit row 4",
-      "A: lower extreme overwritten · V: t replaces",
-      "A: full scaffold then two rewrites · V: range copy + row C"
+      "A: middle row only · V: one line is a frame",
+      "A: source moves · V: t deletes source",
+      "A: later egg overwritten · V: t replaces rows",
+      "A: full egg scaffold + one crack · V: range copy + local r"
     ],
     "correct_choice": 3,
     "feedback": [
-      "The Ex t command copies its source range; m would be the move command.",
-      "4G and 5G explicitly address two different scaffold rows.",
-      "The addressed copy inserts new rows after line 3 and preserves the existing lower extreme.",
-      "Correct: object scope is established first, then only the moving part of that copied object is redrawn."
+      "The roof, middle, and base together define the registered egg frame; a lone middle row is detached art.",
+      "The Ex t command copies its source range; m would move it.",
+      "The copy is inserted after row 3, pushing the later egg down while preserving it unchanged.",
+      "Correct: full-frame scope establishes continuity, and the one-cell overwrite creates the first crack without shifting the shell."
     ]
   }
 }

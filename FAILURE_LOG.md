@@ -4703,3 +4703,30 @@ primary variants, and most earlier guided/independent module art is still tutor-
 authored scaffolding. M19.06's alternate headed proof and the revision-wide
 route matrix remain unclaimed. Archive provenance and public-repository
 publication remain separate open decisions; no push occurred.
+
+### VD-41 follow-through · revision `.47` — real in-between and ordering strips replace M4/M6 stand-ins
+
+- M4.06 variant 1 now uses TowerDefense missile exhaust frames 1 and 4 as its
+  extremes and constructs the missing frame 2 by copying the complete first
+  missile, then changing only the copied exhaust endpoint. Variant 2 uses Chick
+  hatch frames 1 and 4 and constructs the missing first-crack frame 2.
+- The egg's semicolon initially used `r;`. Clean Neovim passed, but the real
+  user-config headed route showed the semicolon key being consumed before `r`
+  received its replacement; the subsequent submit `Z` became the glyph. The
+  path is now `R;<Esc>` on the already-addressed cell, making semicolon literal
+  Replace-mode input and bounding it with Escape.
+- Both M4 questions were rewritten around the complete source strips and ask
+  why full-frame copy precedes the one-cell in-between change.
+- M6.06 now reorders real five-row FrogBog lily pads: 2→1 becomes 1→2, and the
+  alternate 3→2 becomes 2→3. Both questions print every contour row and make
+  the numbered centre part of, not a substitute for, whole-frame scope.
+
+**Proof completed:** revision `.47` writes 215 cards / 395 questions; question
+quality, all 215 cards / 174 recipes, and changed-art replay pass. The M4
+missile route and both M6 pad routes pass with the real user config at 80x24.
+
+**Proof pending:** the corrected M4 egg headed route was still running when
+this entry was written and is not claimed. The older M19 alternate process and
+the revision-wide route matrix are also unclaimed. Seventeen other module
+transfers still use tutor-authored primary variants. No new source assets were
+imported and no push occurred.
