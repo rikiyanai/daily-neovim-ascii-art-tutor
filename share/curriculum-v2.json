@@ -20450,119 +20450,112 @@
    "project_id": "coherent-anchors",
    "variant_group": "M17.card-6",
    "start": [
-    "|  /~\\  |",
-    "| [x] |",
-    "| \\_/ |",
-    "|  <^>  |",
-    "| [x] |",
-    "| -_- |",
-    "|  \\~/  |",
-    "| [x] |",
-    "| /_\\ |"
+    "|  /    ___,  __,\\ |",
+    "| |  \\ (_*) ,(_*);- |",
+    "| |   ) _  /!)   ) |"
    ],
    "target": [
-    "|  /~\\  |",
-    "| [o] |",
-    "| \\_/ |",
-    "|  <^>  |",
-    "| [o] |",
-    "| -_- |",
-    "|  \\~/  |",
-    "| [o] |",
-    "| /_\\ |"
+    "|  /    ___,  __,\\ |",
+    "| |  \\ (_^) ,(_^);- |",
+    "| |   ) _  /!)   ) |"
    ],
-   "expected": "/x<CR>ron.n.",
+   "expected": "/\\*<CR>r^n.",
    "recipe": [
     [
-     "/x / ro / n.",
-     "correct the unfamiliar homologous anchors across three frames"
+     "/\\*<CR>",
+     "search for the first Cranius eye material"
+    ],
+    [
+     "r^",
+     "lift the first eye in place"
+    ],
+    [
+     "n.",
+     "find the homologous second eye and repeat only that replacement"
     ]
    ],
    "cursor": "^",
    "method_requirement": {
-    "label": "transfer search repeat plus dot to unfamiliar frame anchors",
+    "label": "use search repeat and dot on both Cranius eye anchors",
     "exact_any_of": [
-     "/x<CR>ron.n."
+     "/\\*<CR>r^n."
     ]
    },
+   "source": "official-Pets/Cranius res01 open face crop + res04 happy overlay",
    "prompt": "Transfer `/`, `n`, and dot to corresponding eye anchors inside three unfamiliar shell vocabularies.",
    "artifact": "transfer",
    "variants": [
     {
      "start": [
-      "|  /~\\  |",
-      "| [x] |",
-      "| \\_/ |",
-      "|  <^>  |",
-      "| [x] |",
-      "| -_- |",
-      "|  \\~/  |",
-      "| [x] |",
-      "| /_\\ |"
+      "|  /    ___,  __,\\ |",
+      "| |  \\ (_*) ,(_*);- |",
+      "| |   ) _  /!)   ) |"
      ],
      "target": [
-      "|  /~\\  |",
-      "| [o] |",
-      "| \\_/ |",
-      "|  <^>  |",
-      "| [o] |",
-      "| -_- |",
-      "|  \\~/  |",
-      "| [o] |",
-      "| /_\\ |"
+      "|  /    ___,  __,\\ |",
+      "| |  \\ (_^) ,(_^);- |",
+      "| |   ) _  /!)   ) |"
      ],
-     "expected": "/x<CR>ron.n.",
+     "expected": "/\\*<CR>r^n.",
      "recipe": [
       [
-       "/x / ro / n.",
-       "correct the unfamiliar homologous anchors across three frames"
+       "/\\*<CR>",
+       "search for the first Cranius eye material"
+      ],
+      [
+       "r^",
+       "lift the first eye in place"
+      ],
+      [
+       "n.",
+       "find the homologous second eye and repeat only that replacement"
       ]
      ],
      "cursor": "^",
      "method_requirement": {
-      "label": "transfer search repeat plus dot to unfamiliar frame anchors",
+      "label": "use search repeat and dot on both Cranius eye anchors",
       "exact_any_of": [
-       "/x<CR>ron.n."
+       "/\\*<CR>r^n."
       ]
-     }
+     },
+     "source": "official-Pets/Cranius res01 open face crop + res04 happy overlay",
+     "prompt": "Lift both Cranius eye stars into carets with search repeat and dot; preserve sockets, nose, jaw, and row width."
     },
     {
      "start": [
-      "|  /+\\  |",
-      "| <x> |",
-      "| \\-_/ |",
-      "|  /^\\  |",
-      "| <x> |",
-      "| /__\\ |",
-      "|  \\+/  |",
-      "| <x> |",
-      "| /-\\ |"
+      "|  /    ___,  __,\\ |",
+      "| |  \\ (==) ,(==);- |",
+      "| |   ) _  /!)   ) |"
      ],
      "target": [
-      "|  /+\\  |",
-      "| <o> |",
-      "| \\-_/ |",
-      "|  /^\\  |",
-      "| <o> |",
-      "| /__\\ |",
-      "|  \\+/  |",
-      "| <o> |",
-      "| /-\\ |"
+      "|  /    ___,  __,\\ |",
+      "| |  \\ (--) ,(--);- |",
+      "| |   ) _  /!)   ) |"
      ],
-     "expected": "/x<CR>ron.n.",
+     "expected": "/==<CR>R--<Esc>n.",
      "recipe": [
       [
-       "/x / ro / n.",
-       "correct the alternate homologous anchors across three frames"
+       "/==<CR>",
+       "search for the first half-blink eye pair"
+      ],
+      [
+       "R--<Esc>",
+       "close that two-cell eye material without shifting its socket"
+      ],
+      [
+       "n.",
+       "find the second eye pair and repeat the bounded overwrite"
       ]
      ],
      "cursor": "^",
      "method_requirement": {
-      "label": "transfer search repeat plus dot to alternate anchors",
+      "label": "use search repeat and dot on both Cranius blink pairs",
       "exact_any_of": [
-       "/x<CR>ron.n."
+       "/==<CR>R--<Esc>n."
       ]
      },
+     "source": "official-Pets/Cranius res06 half-blink crop to res07 shut-eye overlay",
+     "prompt": "Close both Cranius half-blink eye pairs from == to --; preserve sockets, nose, jaw, and row width.",
      "paired_question_ids": [
       "M17.06.V2.P01"
      ]
@@ -20571,9 +20564,9 @@
    "required_before_mastery": true,
    "show_target": true,
    "show_recipe": false,
-   "hint": "Vim toolbox: search can jump between homologous animation anchors. Scope: Treat each 3-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: one frame keeps the old eye, a repeat lands on contour punctuation, :global selects an unrelated line, or a macro wraps beyond the owned landmark count.",
+   "hint": "Vim toolbox: a visible character landmark is safer than repeated unit motions; search can jump between homologous animation anchors; dot repeat can replay the last bounded edit after moving to the matching anchor. Scope: Treat each 3-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: one frame keeps the old eye, a repeat lands on contour punctuation, :global selects an unrelated line, or a macro wraps beyond the owned landmark count.",
    "review_source_card_id": "M17.06",
-   "review_method_family": "required:transfer search repeat plus dot to unfamiliar frame anchors",
+   "review_method_family": "required:use search repeat and dot on both Cranius eye anchors",
    "master_habits": [
     "H2",
     "H5"
@@ -20584,13 +20577,15 @@
    "grammar_families": [
     "normal-replace",
     "repeat",
-    "search-landmark"
+    "search-landmark",
+    "normal-motion"
    ],
    "grammar_stage": "hidden",
    "key_vocabulary": [
     "r + replacement glyph; overwrite one cell without shifting the row",
     ". repeats the last change; n/N and ;/, repeat searches or character finds",
-    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
    ],
    "stage_owner": "A3",
    "artifact_mode": "animation-strip",
@@ -47086,7 +47081,8 @@
    "grammar_breakdown": [
     "r + replacement glyph; overwrite one cell without shifting the row",
     ". repeats the last change; n/N and ;/, repeat searches or character finds",
-    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "unchanged glyphs are temporal anchors: batch-edit only a proven homologous landmark, then inspect every frame for collateral changes before playback",
    "source_ref": "ascii-art-authoring §§7.3,7.4,8.1; Neovim help /, n, ., :global, :normal, q, @",
@@ -47094,59 +47090,47 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The key-hidden transfer comes first; afterward, four explicit choices check the command path and animation scope without free-text grading.",
-   "prompt": "ANIMATION\nThe unfamiliar shells keep their own vocabulary while each [x] eye becomes [o].\n\n  F1 │ /~\\ │ [x] │\n  F2 │ <^> │ [x] │\n  F3 │ \\~/ │ [x] │\n\nNEOVIM\nWhich search-repeat path reaches the target exactly?",
+   "prompt": "ANIMATION\nCranius changes from open star eyes to a raised happy expression. Only the two homologous eye cells become carets; sockets, nose, jaw, and the tutor's registration rails remain fixed.\n\nBEFORE\n|  /    ___,  __,\\ |\n| |  \\ (_*) ,(_*);- |\n| |   ) _  /!)   ) |\n\nAFTER\n|  /    ___,  __,\\ |\n| |  \\ (_^) ,(_^);- |\n| |   ) _  /!)   ) |\n\nNEOVIM\nWhich path separates finding the repeated material from repeating its one-cell edit?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "typed_keys",
    "choices": [
-    "ANIMATION: All three [x] eyes become [o]; shells remain unfamiliar. | NEOVIM: /x<CR>ro then n. twice reaches exactly the three anchors.",
-    "ANIMATION: Paste the earlier shells over the unfamiliar ones. | NEOVIM: Reuse old columns instead of searching.",
-    "ANIMATION: Only the first eye changes. | NEOVIM: Use n without dot so later anchors remain x.",
-    "ANIMATION: Every x in each shell changes. | NEOVIM: Run an unrestricted substitution over the buffer."
+    "ANIMATION: Both eye stars lift while the face stays fixed. | NEOVIM: search finds the first star, r^ changes it, n finds the second, and dot repeats only r^.",
+    "ANIMATION: The complete left socket is copied over the right. | NEOVIM: n duplicates the text surrounding the previous match.",
+    "ANIMATION: Only the first eye lifts. | NEOVIM: n repeats both search and replacement without needing dot.",
+    "ANIMATION: Every star-like contour mark may change. | NEOVIM: use a file-wide replacement without proving homologous scope."
    ],
    "correct_choice": 0,
    "feedback": [
-    "Correct: search locates each semantic eye despite shell vocabulary changes.",
-    "Transfer preserves the unfamiliar shell; replacing it with old art is not the task.",
-    "Dot must repeat at each of the two remaining matches.",
-    "The proven set is one [x] eye per frame, not every x in contour text."
+    "Correct: search owns anchor discovery and dot owns the repeated one-cell edit, so the surrounding face stays literal.",
+    "n moves to the next search match; it does not copy the socket, comma, or surrounding contour.",
+    "n repeats only the search. Dot is what repeats r^ at the second eye.",
+    "The proven match set is the two eye stars shown in this face, not every visually similar glyph in a larger file."
    ],
-   "animation_prompt": "Only the semantic [x] eyes change to [o]; unfamiliar shell rows are preserved.\n\n  [x] → [o] in F1–F3",
-   "animation_answer": "Transfer the proven search-and-dot anchor edit to three unfamiliar shells.",
-   "neovim_prompt": "Decode /x<CR>ron.n. on unfamiliar art.",
-   "neovim_answer": "Search for x, replace the first with o, then use n. at the next two matches; no stored column is needed.",
-   "compact_prompt": "ANIMATION\nThree [x] eyes→[o]; shells fixed.\n\n  1 │ /~\\ │ [x] │\n  2 │ <^> │ [x] │\n  3 │ \\~/ │ [x] │\n\nNEOVIM\nChoose the transfer path.",
+   "animation_prompt": "Cranius's happy overlay changes the two corresponding eye materials while the source face remains registered.",
+   "animation_answer": "Replace both eye stars with carets and preserve every contour and punctuation cell around them.",
+   "neovim_prompt": "Explain the search, first replacement, search repeat, and dot repeat in `/\\*<CR>r^n.`.",
+   "neovim_answer": "/\\* finds a literal star, r^ changes that eye, n finds the next star, and dot repeats only the prior r^ edit there.",
+   "compact_prompt": "ANIMATION\nLift both Cranius eye stars; preserve the face.\n\n  │(_*) ,(_*)│ → │(_^) ,(_^)│\n\nNEOVIM\nDecode `/\\*<CR>r^n.`.",
    "compact_choices": [
-    "A: 3 [x]→[o]; shells fixed · V: /x, ro, n.",
-    "A: paste old shells · V: reuse columns",
-    "A: first eye only · V: n no dot",
-    "A: every x changes · V: unrestricted substitute"
+    "A: both eyes only · V: search, r, n, dot",
+    "A: copy socket · V: n duplicates context",
+    "A: first eye only · V: n repeats edit too",
+    "A: broad star pass · V: unproved file-wide scope"
    ],
    "source_answer_contract": {
     "form": "typed_keys",
     "initial_lines": [
-     "|  /~\\  |",
-     "| [x] |",
-     "| \\_/ |",
-     "|  <^>  |",
-     "| [x] |",
-     "| -_- |",
-     "|  \\~/  |",
-     "| [x] |",
-     "| /_\\ |"
+     "|  /    ___,  __,\\ |",
+     "| |  \\ (_*) ,(_*);- |",
+     "| |   ) _  /!)   ) |"
     ],
     "target_lines": [
-     "|  /~\\  |",
-     "| [o] |",
-     "| \\_/ |",
-     "|  <^>  |",
-     "| [o] |",
-     "| -_- |",
-     "|  \\~/  |",
-     "| [o] |",
-     "| /_\\ |"
+     "|  /    ___,  __,\\ |",
+     "| |  \\ (_^) ,(_^);- |",
+     "| |   ) _  /!)   ) |"
     ],
     "initial_cursor": "^",
     "forbidden_side_effects": [
@@ -47155,7 +47139,7 @@
      "extra_window",
      "extra_tab"
     ],
-    "sample_answer": "/x<CR>ron.n.",
+    "sample_answer": "/\\*<CR>r^n.",
     "effect_version": 1
    },
    "authorship": "manual"
@@ -51672,7 +51656,8 @@
    "grammar_breakdown": [
     "r + replacement glyph; overwrite one cell without shifting the row",
     ". repeats the last change; n/N and ;/, repeat searches or character finds",
-    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "unchanged glyphs are temporal anchors: batch-edit only a proven homologous landmark, then inspect every frame for collateral changes before playback",
    "source_ref": "ascii-art-authoring §§7.3,7.4,8.1; Neovim help /, n, ., :global, :normal, q, @",
@@ -51680,39 +51665,39 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
-   "prompt": "ANIMATION\nThree unfamiliar shells use different roof, bracket, and base vocabularies, but each eye anchor is the same x. Every x becomes o; no shell glyph changes.\n\n  BEFORE         AFTER\n  │|  /+\\  |│     │|  /+\\  |│\n  │| <x> |│     │| <o> |│\n  │| \\-_/ |│     │| \\-_/ |│\n  │|  /^\\  |│     │|  /^\\  |│\n  │| <x> |│  →  │| <o> |│\n  │| /__\\ |│     │| /__\\ |│\n  │|  \\+/  |│     │|  \\+/  |│\n  │| <x> |│     │| <o> |│\n  │| /-\\ |│     │| /-\\ |│\n\nNEOVIM\nHow do search repeat and dot separate repeated anchors from varied shells?",
+   "prompt": "ANIMATION\nCranius advances from a half blink to fully shut eyes. Both `==` materials become `--`; sockets, nose, jaw, and the tutor's registration rails remain fixed.\n\nBEFORE\n|  /    ___,  __,\\ |\n| |  \\ (==) ,(==);- |\n| |   ) _  /!)   ) |\n\nAFTER\n|  /    ___,  __,\\ |\n| |  \\ (--) ,(--);- |\n| |   ) _  /!)   ) |\n\nNEOVIM\nHow does search repeat find the second two-cell eye while dot repeats the bounded Replace-mode edit?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "decode",
    "choices": [
-    "ANIMATION: The first shell is copied over the other two for consistency. | NEOVIM: n repeats the entire previous buffer transformation.",
-    "ANIMATION: Only the first x changes because later shells use different brackets. | NEOVIM: search cannot find a character surrounded by different glyphs.",
-    "ANIMATION: Every x anchor becomes o while each shell keeps its own vocabulary. | NEOVIM: n repeats the x search and dot repeats the one-cell `ro` change at each found anchor.",
-    "ANIMATION: All angle brackets become parentheses. | NEOVIM: dot repeats changes on neighbouring delimiter cells automatically."
+    "ANIMATION: Both eye pairs close while the skull stays registered. | NEOVIM: n repeats the == search and dot repeats the bounded `R--<Esc>` overwrite at the second match.",
+    "ANIMATION: Only the first eye closes. | NEOVIM: n itself repeats the Replace-mode edit, making dot unnecessary.",
+    "ANIMATION: Parentheses also become dashes. | NEOVIM: R always continues through the entire rest of the row after Escape.",
+    "ANIMATION: The second socket is copied from the first. | NEOVIM: dot duplicates all text surrounding the previous edit."
    ],
-   "correct_choice": 2,
+   "correct_choice": 0,
    "feedback": [
-    "n repeats the search destination, not a whole-buffer copy or shell replacement.",
-    "The search pattern is x itself; its surrounding bracket vocabulary does not prevent a match.",
-    "Correct: search owns anchor discovery and dot owns the repeated edit, so varied context is preserved.",
-    "Dot applies the last one-cell replacement at the cursor only; it does not expand to delimiters."
+    "Correct: search identifies homologous two-cell materials, while Escape bounds the edit that dot repeats.",
+    "n repeats only the search. Dot is required to replay the previous Replace-mode change at the next match.",
+    "Escape ends Replace mode after two dashes, so both parentheses and every later face cell remain fixed.",
+    "Dot repeats the edit operation at the current cursor; it does not copy the socket or surrounding face."
    ],
-   "animation_prompt": "ANIMATION\nM17.06 variant 2 keeps three different shell vocabularies coherent by changing only their corresponding eye anchors.",
-   "animation_answer": "All three x anchors become o; every roof, bracket, limb, base, and row width remains unchanged.",
-   "neovim_prompt": "NEOVIM\nExplain `/x<CR>ron.n.` across the nine-row study.",
-   "neovim_answer": "/x finds the first anchor, ro records a one-cell replacement, each n finds the next x despite different surrounding art, and each dot repeats only ro there.",
-   "compact_prompt": "ANIMATION\nIn three different shells, each `<x>` eye becomes `<o>`; shells stay fixed.\n\n  │<x>│  │<x>│  │<x>│\n    ↓      ↓      ↓\n  │<o>│  │<o>│  │<o>│\n\nNEOVIM\nDecode `/x`, `ro`, then `n.` twice.",
+   "animation_prompt": "ANIMATION\nThe shut-eye overlay changes two homologous two-cell materials while the complete source face remains registered.",
+   "animation_answer": "Replace both == eye pairs with -- and preserve every socket, contour, and punctuation cell.",
+   "neovim_prompt": "NEOVIM\nExplain the search, bounded two-cell overwrite, next match, and dot repeat in `/==<CR>R--<Esc>n.`.",
+   "neovim_answer": "/== finds the first eye pair, R--<Esc> overwrites exactly two cells, n finds the second == pair, and dot repeats that bounded change.",
+   "compact_prompt": "ANIMATION\nClose both Cranius eye pairs; preserve the face.\n\n  │(==) ,(==)│ → │(--) ,(--)│\n\nNEOVIM\nDecode `/==<CR>R--<Esc>n.`.",
    "compact_choices": [
-    "A: copy first shell · V: n repeats transformation",
-    "A: first eye only · V: context blocks search",
-    "A: all eyes only · V: n finds anchor, dot repeats ro",
-    "A: brackets change · V: dot edits neighbours"
+    "A: both pairs close · V: n finds, dot repeats bounded R",
+    "A: first only · V: n repeats edit too",
+    "A: sockets change · V: R ignores Escape",
+    "A: copy socket · V: dot duplicates context"
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": "/x<CR>ron.n.",
+    "display": "/==<CR>R--<Esc>n.",
     "required_term_groups": [
      [
       "replace",
@@ -51750,9 +51735,20 @@
      [
       "cursor",
       "cell"
+     ],
+     [
+      "motion",
+      "move",
+      "cursor"
+     ],
+     [
+      "landmark",
+      "row",
+      "column",
+      "cell"
      ]
     ],
-    "sample_answer": "replace cell width repeat change search pattern cursor"
+    "sample_answer": "replace cell width repeat change search pattern cursor motion landmark"
    },
    "authorship": "manual"
   },
@@ -54670,7 +54666,7 @@
   },
   {
    "card_id": "M17.06",
-   "label": "transfer search repeat plus dot to unfamiliar frame anchors",
+   "label": "use search repeat and dot on both Cranius eye anchors",
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
@@ -55215,7 +55211,7 @@
   },
   {
    "source_card_id": "M17.06",
-   "method_family": "required:transfer search repeat plus dot to unfamiliar frame anchors",
+   "method_family": "required:use search repeat and dot on both Cranius eye anchors",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -56368,6 +56364,11 @@
    "prior_guided_card_id": "M0.01"
   },
   {
+   "hidden_card_id": "M17.06",
+   "grammar_family": "normal-motion",
+   "prior_guided_card_id": "M0.01"
+  },
+  {
    "hidden_card_id": "M17.08",
    "grammar_family": "normal-replace",
    "prior_guided_card_id": "M0.01"
@@ -57358,7 +57359,7 @@
   {
    "module_id": "M17",
    "source_card_id": "M17.06",
-   "method_label": "transfer search repeat plus dot to unfamiliar frame anchors",
+   "method_label": "use search repeat and dot on both Cranius eye anchors",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,

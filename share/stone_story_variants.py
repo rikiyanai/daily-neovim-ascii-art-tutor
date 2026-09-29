@@ -149,6 +149,10 @@ SNOWBUNNY_FACE_PALETTE_BLINK = ["   (\\(\\ [n-]", "  ( -.-)", "o(,`_\"_)"]
 SNOWMAN_OPEN_CROP = ["    __", "  _|__|_", ". ( •,•) ,."]
 SNOWMAN_BLINK_CROP = ["    __", "  _|__|_", ". ( -,-) ,."]
 SNOWMAN_CHEER_CROP = ["    __", "  _|__|_", ". ( ^,^) ,."]
+CRANIUS_OPEN_CROP = [" /    ___,  __,\\", "|  \\ (_*) ,(_*);-", "|   ) _  /!)   )"]
+CRANIUS_HAPPY_CROP = [" /    ___,  __,\\", "|  \\ (_^) ,(_^);-", "|   ) _  /!)   )"]
+CRANIUS_HALF_CROP = [" /    ___,  __,\\", "|  \\ (==) ,(==);-", "|   ) _  /!)   )"]
+CRANIUS_SHUT_CROP = [" /    ___,  __,\\", "|  \\ (--) ,(--);-", "|   ) _  /!)   )"]
 
 
 # card id -> {"review_variants": [...]}

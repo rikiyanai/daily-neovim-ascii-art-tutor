@@ -2644,32 +2644,36 @@ MODULES = [
                 ],
             ),
         ],
-        "transfer": step(
-            [" /~\\ ", "[x]", "\\_/",
-             " <^> ", "[x]", "-_-",
-             " \\~/ ", "[x]", "/_\\"],
-            [" /~\\ ", "[o]", "\\_/",
-             " <^> ", "[o]", "-_-",
-             " \\~/ ", "[o]", "/_\\"],
-            "/x<CR>ron.n.",
-            [["/x / ro / n.", "correct the unfamiliar homologous anchors across three frames"]],
+        "transfer": dict(step(
+            stone_story_variants.CRANIUS_OPEN_CROP,
+            stone_story_variants.CRANIUS_HAPPY_CROP,
+            "/\\*<CR>r^n.",
+            [["/\\*<CR>", "search for the first Cranius eye material"],
+             ["r^", "lift the first eye in place"],
+             ["n.", "find the homologous second eye and repeat only that replacement"]],
             method_requirement=require_method(
-                "transfer search repeat plus dot to unfamiliar frame anchors",
-                exact_any_of=["/x<CR>ron.n."]),
-        ),
-        "transfer_alt": step(
-            [" /+\\ ", "<x>", "\\-_/",
-             " /^\\ ", "<x>", "/__\\",
-             " \\+/ ", "<x>", "/-\\"],
-            [" /+\\ ", "<o>", "\\-_/",
-             " /^\\ ", "<o>", "/__\\",
-             " \\+/ ", "<o>", "/-\\"],
-            "/x<CR>ron.n.",
-            [["/x / ro / n.", "correct the alternate homologous anchors across three frames"]],
+                "use search repeat and dot on both Cranius eye anchors",
+                exact_any_of=["/\\*<CR>r^n."]),
+        ), source="official-Pets/Cranius res01 open face crop + res04 happy overlay",
+           prompt=(
+               "Lift both Cranius eye stars into carets with search repeat and dot; "
+               "preserve sockets, nose, jaw, and row width."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.CRANIUS_HALF_CROP,
+            stone_story_variants.CRANIUS_SHUT_CROP,
+            "/==<CR>R--<Esc>n.",
+            [["/==<CR>", "search for the first half-blink eye pair"],
+             ["R--<Esc>", "close that two-cell eye material without shifting its socket"],
+             ["n.", "find the second eye pair and repeat the bounded overwrite"]],
             method_requirement=require_method(
-                "transfer search repeat plus dot to alternate anchors",
-                exact_any_of=["/x<CR>ron.n."]),
-        ),
+                "use search repeat and dot on both Cranius blink pairs",
+                exact_any_of=["/==<CR>R--<Esc>n."]),
+        ), source="official-Pets/Cranius res06 half-blink crop to res07 shut-eye overlay",
+           prompt=(
+               "Close both Cranius half-blink eye pairs from == to --; preserve sockets, "
+               "nose, jaw, and row width."
+           )),
     },
     {
         "id": "M18", "title": "Hand-mirrored return", "node": "A6/V18",

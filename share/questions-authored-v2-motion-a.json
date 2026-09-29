@@ -864,30 +864,30 @@
     ]
   },
   "M17.06.P01": {
-    "prompt": "ANIMATION\nThe unfamiliar shells keep their own vocabulary while each [x] eye becomes [o].\n\n  F1 │ /~\\ │ [x] │\n  F2 │ <^> │ [x] │\n  F3 │ \\~/ │ [x] │\n\nNEOVIM\nWhich search-repeat path reaches the target exactly?",
-    "compact_prompt": "ANIMATION\nThree [x] eyes→[o]; shells fixed.\n\n  1 │ /~\\ │ [x] │\n  2 │ <^> │ [x] │\n  3 │ \\~/ │ [x] │\n\nNEOVIM\nChoose the transfer path.",
-    "animation_prompt": "Only the semantic [x] eyes change to [o]; unfamiliar shell rows are preserved.\n\n  [x] → [o] in F1–F3",
-    "animation_answer": "Transfer the proven search-and-dot anchor edit to three unfamiliar shells.",
-    "neovim_prompt": "Decode /x<CR>ron.n. on unfamiliar art.",
-    "neovim_answer": "Search for x, replace the first with o, then use n. at the next two matches; no stored column is needed.",
+    "prompt": "ANIMATION\nCranius changes from open star eyes to a raised happy expression. Only the two homologous eye cells become carets; sockets, nose, jaw, and the tutor's registration rails remain fixed.\n\nBEFORE\n|  /    ___,  __,\\ |\n| |  \\ (_*) ,(_*);- |\n| |   ) _  /!)   ) |\n\nAFTER\n|  /    ___,  __,\\ |\n| |  \\ (_^) ,(_^);- |\n| |   ) _  /!)   ) |\n\nNEOVIM\nWhich path separates finding the repeated material from repeating its one-cell edit?",
+    "compact_prompt": "ANIMATION\nLift both Cranius eye stars; preserve the face.\n\n  │(_*) ,(_*)│ → │(_^) ,(_^)│\n\nNEOVIM\nDecode `/\\*<CR>r^n.`.",
+    "animation_prompt": "Cranius's happy overlay changes the two corresponding eye materials while the source face remains registered.",
+    "animation_answer": "Replace both eye stars with carets and preserve every contour and punctuation cell around them.",
+    "neovim_prompt": "Explain the search, first replacement, search repeat, and dot repeat in `/\\*<CR>r^n.`.",
+    "neovim_answer": "/\\* finds a literal star, r^ changes that eye, n finds the next star, and dot repeats only the prior r^ edit there.",
     "choices": [
-      "ANIMATION: All three [x] eyes become [o]; shells remain unfamiliar. | NEOVIM: /x<CR>ro then n. twice reaches exactly the three anchors.",
-      "ANIMATION: Paste the earlier shells over the unfamiliar ones. | NEOVIM: Reuse old columns instead of searching.",
-      "ANIMATION: Only the first eye changes. | NEOVIM: Use n without dot so later anchors remain x.",
-      "ANIMATION: Every x in each shell changes. | NEOVIM: Run an unrestricted substitution over the buffer."
+      "ANIMATION: Both eye stars lift while the face stays fixed. | NEOVIM: search finds the first star, r^ changes it, n finds the second, and dot repeats only r^.",
+      "ANIMATION: The complete left socket is copied over the right. | NEOVIM: n duplicates the text surrounding the previous match.",
+      "ANIMATION: Only the first eye lifts. | NEOVIM: n repeats both search and replacement without needing dot.",
+      "ANIMATION: Every star-like contour mark may change. | NEOVIM: use a file-wide replacement without proving homologous scope."
     ],
     "compact_choices": [
-      "A: 3 [x]→[o]; shells fixed · V: /x, ro, n.",
-      "A: paste old shells · V: reuse columns",
-      "A: first eye only · V: n no dot",
-      "A: every x changes · V: unrestricted substitute"
+      "A: both eyes only · V: search, r, n, dot",
+      "A: copy socket · V: n duplicates context",
+      "A: first eye only · V: n repeats edit too",
+      "A: broad star pass · V: unproved file-wide scope"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: search locates each semantic eye despite shell vocabulary changes.",
-      "Transfer preserves the unfamiliar shell; replacing it with old art is not the task.",
-      "Dot must repeat at each of the two remaining matches.",
-      "The proven set is one [x] eye per frame, not every x in contour text."
+      "Correct: search owns anchor discovery and dot owns the repeated one-cell edit, so the surrounding face stays literal.",
+      "n moves to the next search match; it does not copy the socket, comma, or surrounding contour.",
+      "n repeats only the search. Dot is what repeats r^ at the second eye.",
+      "The proven match set is the two eye stars shown in this face, not every visually similar glyph in a larger file."
     ]
   },
   "M17.08.P01": {

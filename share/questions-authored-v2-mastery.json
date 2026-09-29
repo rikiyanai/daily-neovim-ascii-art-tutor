@@ -837,30 +837,30 @@
     ]
   },
   "M17.06.V2.P01": {
-    "prompt": "ANIMATION\nThree unfamiliar shells use different roof, bracket, and base vocabularies, but each eye anchor is the same x. Every x becomes o; no shell glyph changes.\n\n  BEFORE         AFTER\n  │|  /+\\  |│     │|  /+\\  |│\n  │| <x> |│     │| <o> |│\n  │| \\-_/ |│     │| \\-_/ |│\n  │|  /^\\  |│     │|  /^\\  |│\n  │| <x> |│  →  │| <o> |│\n  │| /__\\ |│     │| /__\\ |│\n  │|  \\+/  |│     │|  \\+/  |│\n  │| <x> |│     │| <o> |│\n  │| /-\\ |│     │| /-\\ |│\n\nNEOVIM\nHow do search repeat and dot separate repeated anchors from varied shells?",
-    "compact_prompt": "ANIMATION\nIn three different shells, each `<x>` eye becomes `<o>`; shells stay fixed.\n\n  │<x>│  │<x>│  │<x>│\n    ↓      ↓      ↓\n  │<o>│  │<o>│  │<o>│\n\nNEOVIM\nDecode `/x`, `ro`, then `n.` twice.",
-    "animation_prompt": "ANIMATION\nM17.06 variant 2 keeps three different shell vocabularies coherent by changing only their corresponding eye anchors.",
-    "animation_answer": "All three x anchors become o; every roof, bracket, limb, base, and row width remains unchanged.",
-    "neovim_prompt": "NEOVIM\nExplain `/x<CR>ron.n.` across the nine-row study.",
-    "neovim_answer": "/x finds the first anchor, ro records a one-cell replacement, each n finds the next x despite different surrounding art, and each dot repeats only ro there.",
+    "prompt": "ANIMATION\nCranius advances from a half blink to fully shut eyes. Both `==` materials become `--`; sockets, nose, jaw, and the tutor's registration rails remain fixed.\n\nBEFORE\n|  /    ___,  __,\\ |\n| |  \\ (==) ,(==);- |\n| |   ) _  /!)   ) |\n\nAFTER\n|  /    ___,  __,\\ |\n| |  \\ (--) ,(--);- |\n| |   ) _  /!)   ) |\n\nNEOVIM\nHow does search repeat find the second two-cell eye while dot repeats the bounded Replace-mode edit?",
+    "compact_prompt": "ANIMATION\nClose both Cranius eye pairs; preserve the face.\n\n  │(==) ,(==)│ → │(--) ,(--)│\n\nNEOVIM\nDecode `/==<CR>R--<Esc>n.`.",
+    "animation_prompt": "ANIMATION\nThe shut-eye overlay changes two homologous two-cell materials while the complete source face remains registered.",
+    "animation_answer": "Replace both == eye pairs with -- and preserve every socket, contour, and punctuation cell.",
+    "neovim_prompt": "NEOVIM\nExplain the search, bounded two-cell overwrite, next match, and dot repeat in `/==<CR>R--<Esc>n.`.",
+    "neovim_answer": "/== finds the first eye pair, R--<Esc> overwrites exactly two cells, n finds the second == pair, and dot repeats that bounded change.",
     "choices": [
-      "ANIMATION: The first shell is copied over the other two for consistency. | NEOVIM: n repeats the entire previous buffer transformation.",
-      "ANIMATION: Only the first x changes because later shells use different brackets. | NEOVIM: search cannot find a character surrounded by different glyphs.",
-      "ANIMATION: Every x anchor becomes o while each shell keeps its own vocabulary. | NEOVIM: n repeats the x search and dot repeats the one-cell `ro` change at each found anchor.",
-      "ANIMATION: All angle brackets become parentheses. | NEOVIM: dot repeats changes on neighbouring delimiter cells automatically."
+      "ANIMATION: Both eye pairs close while the skull stays registered. | NEOVIM: n repeats the == search and dot repeats the bounded `R--<Esc>` overwrite at the second match.",
+      "ANIMATION: Only the first eye closes. | NEOVIM: n itself repeats the Replace-mode edit, making dot unnecessary.",
+      "ANIMATION: Parentheses also become dashes. | NEOVIM: R always continues through the entire rest of the row after Escape.",
+      "ANIMATION: The second socket is copied from the first. | NEOVIM: dot duplicates all text surrounding the previous edit."
     ],
     "compact_choices": [
-      "A: copy first shell · V: n repeats transformation",
-      "A: first eye only · V: context blocks search",
-      "A: all eyes only · V: n finds anchor, dot repeats ro",
-      "A: brackets change · V: dot edits neighbours"
+      "A: both pairs close · V: n finds, dot repeats bounded R",
+      "A: first only · V: n repeats edit too",
+      "A: sockets change · V: R ignores Escape",
+      "A: copy socket · V: dot duplicates context"
     ],
-    "correct_choice": 2,
+    "correct_choice": 0,
     "feedback": [
-      "n repeats the search destination, not a whole-buffer copy or shell replacement.",
-      "The search pattern is x itself; its surrounding bracket vocabulary does not prevent a match.",
-      "Correct: search owns anchor discovery and dot owns the repeated edit, so varied context is preserved.",
-      "Dot applies the last one-cell replacement at the cursor only; it does not expand to delimiters."
+      "Correct: search identifies homologous two-cell materials, while Escape bounds the edit that dot repeats.",
+      "n repeats only the search. Dot is required to replay the previous Replace-mode change at the next match.",
+      "Escape ends Replace mode after two dashes, so both parentheses and every later face cell remain fixed.",
+      "Dot repeats the edit operation at the current cursor; it does not copy the socket or surrounding face."
     ]
   },
   "M18.06.V2.P01": {

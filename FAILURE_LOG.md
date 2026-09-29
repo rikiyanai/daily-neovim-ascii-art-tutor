@@ -4949,3 +4949,31 @@ headed routes at 80x24.
 variants. Full same-process route coverage at all three viewport sizes remains
 unclaimed. The Snowman excerpts remain local-tutor use only; no push or
 publication occurred.
+
+### VD-49 follow-through · revision `.57` — M17 search-and-dot now edits real Cranius expression states
+
+- M17.06 variant 1 uses the three-row face crop identified by the animation
+  audit from `official-Pets/Cranius` res01 plus the res04 happy overlay. The
+  two `*` eye materials become carets with `/\*<CR>r^n.`; search finds the
+  homologous landmark and dot repeats only the one-cell edit. Sockets, nose,
+  jaw, and all other source cells remain fixed.
+- Variant 2 is the res06 half-blink crop advancing to the res07 shut-eye
+  overlay. `/==<CR>R--<Esc>n.` overwrites exactly two cells in the first eye,
+  Escape bounds Replace mode, `n` finds the second `==`, and dot repeats that
+  bounded edit.
+- M17's existing registration helper adds `| ` / ` |` tutor rails around each
+  source row. The first question draft showed only the unrailed inner crop and
+  was rejected by the exact-art validator. Both final questions print the
+  actual railed START and TARGET while identifying the official face as the
+  inner crop; the choices distinguish search repetition from edit repetition
+  and explain why neither `n` nor dot copies the surrounding socket.
+
+**Proof:** revision `.57` writes 215 cards / 395 questions; question quality
+passes all 395; clean Neovim passes **215/215 cards and 174/174 primary
+recipes**; and both M17.06 Cranius variants pass their real-user-config headed
+routes at 80x24.
+
+**Still open.** Seven module transfers still use tutor-authored primary
+variants. Full same-process route coverage at all three viewport sizes remains
+unclaimed. The Cranius excerpts remain local-tutor use only; no push or
+publication occurred.
