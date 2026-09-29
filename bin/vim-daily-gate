@@ -658,6 +658,11 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
         task_label = (task or "Edit the art to match TARGET").replace("%", "%%")
         hint_label = (hint or "Use F1 for movement and editing help").replace("%", "%%")
         ui_lua = (
+            # VD-28: the popup turns tmux mouse off so a drag becomes native
+            # terminal selection (Cmd-C). A user config with mouse=a would
+            # take that drag into Visual mode instead, so the lesson editor
+            # leaves the mouse to the terminal.
+            "vim.o.mouse='';"
             "vim.o.laststatus=3;vim.o.showmode=false;"
             "_G.VimDailyMode=function() local m=vim.fn.mode(1);local t={n='NORMAL',no='OPERATOR',i='INSERT',"
             "ic='INSERT',ix='INSERT',v='VISUAL',V='VISUAL LINE',[string.char(22)]='VISUAL BLOCK',"

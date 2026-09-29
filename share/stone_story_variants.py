@@ -55,6 +55,8 @@ FROG_HALF = ["     ,=-", "  (\\/ .-)", "  ´ ·-\\´\\"]         # official-Pets
 FROG_ONE_OPEN = ["     ,O-", "  (\\/ .-)", "  ´ ·-\\´\\"]     # res01 + res05 overlay
 
 
+CHICK_EGG_F1 = ["      ,-.", "     :   :", "     '._.'"]  # official-Pets/Chick res01 frame 1
+CHICK_EGG_F2 = ["      ,-.", "     : ; :", "     '._.'"]  # frame 2
 CHICK_EGG_F3 = ["      ,-.", "     :·; :", "     '._.'"]  # official-Pets/Chick res01 frame 3 (blank row cropped)
 CHICK_EGG_F4 = ["      ,-.", "     :·;,:", "     '._.'"]  # frame 4
 FROG_OPEN = ["     ,Oo", "  (\\/ .-)", "  ´ ·-\\´\\"]    # official-Pets/Frog res01 (blank rows cropped)
@@ -71,6 +73,11 @@ def _rail(rows, column):
 
 def _rail_rows(rows, column, indices):
     return [_rail([row], column)[0] if i in indices else row for i, row in enumerate(rows)]
+
+
+SNAKE_BARE = ["         .-.", "        ((`-'", "         \\\\"]       # official-Pets/Snake res01 rows 1-3
+SNAKE_TONGUE = ["         .-.", "        ((`-'-", "         \\\\"]    # res01 + res04/res06 tongue layer
+SNAKE_FORK = ["         .-.", "        ((`-'-<", "         \\\\"]     # res01 + res05 forked tongue
 
 
 # card id -> {"review_variants": [...]}
@@ -272,6 +279,122 @@ REPLACEMENTS = {
                  "copy the pose through register a, then change the copy",
                  "Stone Story frog: copy the frog through register a, then close only the copy's right eye.",
                  "Yank the three rows into a named register, put it at the end, then edit the copy's eye row."),
+    ]},
+    # M6.MOVE / M16.MOVE teach :{range}m$ to fix playback order without copying.
+    "M6.MOVE": {"review_variants": [
+        _variant(DRACULA_WALK_F3 + DRACULA_WALK_F2, DRACULA_WALK_F2 + DRACULA_WALK_F3, ":1,3m$<CR>",
+                 [[":1,3m$<CR>", "move the first three-row frame after the second"]],
+                 "official-Pets/Dracula res01 walk frames 3,2 -> 2,3",
+                 "reorder two frames with an addressed move",
+                 "Stone Story Dracula walk: the frames play out of order (3 before 2). Move the first frame after the second; copy nothing.",
+                 "An Ex move takes a line range and a destination line."),
+        _variant(CHICK_EGG_F2 + CHICK_EGG_F1, CHICK_EGG_F1 + CHICK_EGG_F2, ":1,3m$<CR>",
+                 [[":1,3m$<CR>", "move the cracked egg after the whole egg"]],
+                 "official-Pets/Chick res01 hatch frames 2,1 -> 1,2",
+                 "reorder two frames with an addressed move",
+                 "Stone Story egg hatch: the cracked egg plays before the whole egg. Move the first frame after the second; copy nothing.",
+                 "An Ex move takes a line range and a destination line."),
+    ]},
+    "M16.MOVE": {"review_variants": [
+        _variant(MISSILE_F2 + MISSILE_F1, MISSILE_F1 + MISSILE_F2, ":1,3m$<CR>",
+                 [[":1,3m$<CR>", "move the first three-row frame after the second"]],
+                 "official-Games/TowerDefense res18 missile frames 2,1 -> 1,2",
+                 "reorder two planned frames with an addressed move",
+                 "Stone Story missile plan: frame 2 is filed before frame 1. Move the first block after the second; copy nothing.",
+                 "An Ex move takes a line range and a destination line."),
+        _variant(SKULLY_BLINK + SKULLY_IDLE, SKULLY_IDLE + SKULLY_BLINK, ":1,3m$<CR>",
+                 [[":1,3m$<CR>", "move the blink after the open-eyed key"]],
+                 "official-Pets/Skully res04,res01 -> res01,res04",
+                 "reorder two planned frames with an addressed move",
+                 "Stone Story Skully plan: the blink is filed before the open-eyed key pose. Move the first block after the second.",
+                 "An Ex move takes a line range and a destination line."),
+    ]},
+    # M7.GLOBAL teaches :g/pattern/normal! to repeat one edit on every matching row.
+    "M7.GLOBAL": {"review_variants": [
+        _variant(SKULLY_IDLE + SKULLY_IDLE, SKULLY_LOOK + SKULLY_LOOK, ":g/o/normal! 0forO<CR>",
+                 [[":g/o/", "select every row that contains an eye"],
+                  ["normal! 0forO<CR>", "on each, widen the first eye"]],
+                 "official-Pets/Skully res01 x2 -> res02 look overlay x2",
+                 "repeat one Normal edit on every matching row with :g",
+                 "Stone Story Skully held for two frames: make both copies look left with one :g command.",
+                 ":g runs the same Normal keys on every row that matches."),
+        _variant(FROG_OPEN + FROG_OPEN, FROG_ONE_OPEN + FROG_ONE_OPEN, ":g/o/normal! 0for-<CR>",
+                 [[":g/o/", "select every row that contains the open eye"],
+                  ["normal! 0for-<CR>", "on each, close that eye"]],
+                 "official-Pets/Frog res01 x2 -> res05 blink overlay x2",
+                 "repeat one Normal edit on every matching row with :g",
+                 "Stone Story frog held for two frames: close the right eye in both copies with one :g command.",
+                 ":g runs the same Normal keys on every row that matches."),
+    ]},
+    # M7.DOT teaches one change followed by dot repeat on homologous rows.
+    "M7.DOT": {"review_variants": [
+        _variant(FROG_OPEN * 3, FROG_ONE_OPEN * 3, "gg0for-3j.3j.",
+                 [["gg0for-", "close the right eye in the first held frame"],
+                  ["3j.3j.", "repeat that change on the same row of the next two frames"]],
+                 "official-Pets/Frog res01 x3 -> res05 blink overlay x3",
+                 "make one change, then dot-repeat it on the matching rows",
+                 "Stone Story frog held for three frames: close the right eye in the first, then repeat the change on the other two with dot.",
+                 "The eye row of each frame is three lines below the last; . repeats the whole r change."),
+        _variant(SKULLY_IDLE * 3, SKULLY_LOOK * 3, "2G0forO3j.3j.",
+                 [["2G0forO", "widen the left eye in the first held frame"],
+                  ["3j.3j.", "repeat that change on the same row of the next two frames"]],
+                 "official-Pets/Skully res01 x3 -> res02 look overlay x3",
+                 "make one change, then dot-repeat it on the matching rows",
+                 "Stone Story Skully held for three frames: make the first look left, then repeat the change on the other two with dot.",
+                 "The eye row of each frame is three lines below the last; . repeats the whole r change."),
+    ]},
+    # M6.D teaches D: delete from the cursor to the end of the row, keeping the anchor.
+    "M6.D": {"review_variants": [
+        _variant(SNAKE_TONGUE, SNAKE_BARE, "2G0f'lD",
+                 [["2G0f'l", "go to the first tongue cell after the mouth"],
+                  ["D", "delete the tongue to the end of the row"]],
+                 "official-Pets/Snake res01 + res06 tongue -> bare head",
+                 "delete to the end of the row after a landmark",
+                 "Stone Story snake: retract the tongue. Delete from the first tongue cell to the end of the row; the head stays.",
+                 "Find the mouth corner, step right once, then delete to the end of the row."),
+        _variant(SNAKE_FORK, SNAKE_TONGUE, "2G0f'2lD",
+                 [["2G0f'2l", "go to the fork tip"],
+                  ["D", "delete the fork to the end of the row"]],
+                 "official-Pets/Snake res01 + res05 fork -> res06 tongue",
+                 "delete to the end of the row after a landmark",
+                 "Stone Story snake: pull the forked tip back in. Delete only the fork; the tongue stays out.",
+                 "Find the mouth corner, step to the fork, then delete to the end of the row."),
+    ]},
+    # M15.GLOBAL teaches :g/pattern/normal! on the rows a pattern selects.
+    "M15.GLOBAL": {"review_variants": [
+        _variant(MISSILE_F1 + MISSILE_F1, MISSILE_F2 + MISSILE_F2, ":g/:/normal! 0f.r'<CR>",
+                 [[":g/:/", "select every exhaust row (the rows that contain :)"],
+                  ["normal! 0f.r'<CR>", "on each, flick the last puff upward"]],
+                 "official-Games/TowerDefense res18 missile frame 1 x2 -> frame 2 x2",
+                 "edit only the rows a global pattern selects",
+                 "Stone Story missile, two held frames: advance the exhaust in both with one :g command; hull rows stay.",
+                 "Only the exhaust rows contain ':' so :g picks exactly those."),
+        _variant(CHICK_EGG_F3 + CHICK_EGG_F3, CHICK_EGG_F4 + CHICK_EGG_F4, ":g/;/normal! 0f;lr,<CR>",
+                 [[":g/;/", "select every cracked row (the rows that contain ;)"],
+                  ["normal! 0f;lr,<CR>", "on each, add the next crack cell"]],
+                 "official-Pets/Chick res01 hatch frame 3 x2 -> frame 4 x2",
+                 "edit only the rows a global pattern selects",
+                 "Stone Story egg, two held frames: grow the crack in both with one :g command; shell top and base stay.",
+                 "Only the cracked rows contain ';' so :g picks exactly those."),
+    ]},
+    # M15.MAC teaches recording one find-and-replace, then replaying it.
+    "M15.MAC": {"review_variants": [
+        _variant(SKULLY_IDLE, SKULLY_BLINK, "2G0qqfor=q0@q",
+                 [["2G0", "go to the start of the eye row"],
+                  ["qqfor=q", "record: find the next eye, narrow it"],
+                  ["0@q", "replay from the row start for the second eye"]],
+                 "official-Pets/Skully res01 -> res04 blink overlay",
+                 "record one find-and-replace, then replay it",
+                 "Stone Story Skully blink: record narrowing one eye as macro q, then replay it for the other eye.",
+                 "After the first eye becomes =, the same f o lands on the second eye."),
+        _variant(SNOWBUNNY_IDLE, SNOWBUNNY_BLINK, "2G0qqfnr-q0@q",
+                 [["2G0", "go to the start of the face row"],
+                  ["qqfnr-q", "record: find the next open eye, close it"],
+                  ["0@q", "replay from the row start for the second eye"]],
+                 "official-Pets/SnowBunny res01 -> res03 blink overlay",
+                 "record one find-and-replace, then replay it",
+                 "Stone Story snow bunny blink: record closing one eye as macro q, then replay it for the other eye.",
+                 "After the first eye becomes -, the same f n lands on the second eye."),
     ]},
 }
 
