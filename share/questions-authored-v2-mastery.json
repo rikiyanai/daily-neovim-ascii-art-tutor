@@ -619,5 +619,113 @@
       "The target preserves both neighbouring layers and the ledge's final column; insertion would break that registration.",
       "A one-cell overwrite would use r. C owns every cell from the cursor through the current row end."
     ]
+  },
+  "M12.AA.P01": {
+    "prompt": "ANIMATION\nBefore any motion is planned, one off-vertical stroke is tested as a four-row still. The hard bars are replaced by glyphs whose ink sits at different heights inside each cell.\n\n  BEFORE      AFTER\n  │|    | |│   │|    ' |│\n  │|   |  |│   │|   .  |│\n  │|  |   |│ → │|  !   |│\n  │| |    |│   │| ¡    |│\n\nNEOVIM\nWhy does the last replacement use `r<C-k>!I`?",
+    "compact_prompt": "ANIMATION\nA four-row still changes from hard bars to an off-vertical glyph run.\n\n  │|    | |│   │|    ' |│\n  │|   |  |│ → │|   .  |│\n  │|  |   |│   │|  !   |│\n  │| |    |│   │| ¡    |│\n\nNEOVIM\nWhat does `r<C-k>!I` enter?",
+    "animation_prompt": "ANIMATION\nM12.AA shapes one pre-animation off-vertical still with the full apostrophe, dot, exclamation, and inverted-exclamation palette.",
+    "animation_answer": "The four hard bars become glyphs whose different in-cell heights soften the slanted stroke.",
+    "neovim_prompt": "NEOVIM\nDecode `r<C-k>!I` on the final bar.",
+    "neovim_answer": "r replaces one cell, and the !I digraph supplies the single inverted-exclamation glyph without inserting a new column.",
+    "choices": [
+      "ANIMATION: The four rows are separate playback frames. | NEOVIM: `<C-k>` copies the row above into the current row.",
+      "ANIMATION: Every bar remains because whitespace alone anti-aliases the stroke. | NEOVIM: `r` only moves the cursor right.",
+      "ANIMATION: The four glyph heights form one softened off-vertical still. | NEOVIM: `r` replaces one cell and `<C-k>!I` enters the inverted-exclamation digraph.",
+      "ANIMATION: The stroke becomes a timing hold. | NEOVIM: `!I` opens Insert mode and adds two cells."
+    ],
+    "compact_choices": [
+      "A: four playback frames · V: Ctrl-k copies row",
+      "A: bars remain · V: r only moves",
+      "A: one softened still · V: r + !I digraph",
+      "A: timing hold · V: !I inserts two cells"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "This is one four-row drawing study. No order, duration, or playback has been assigned.",
+      "The target visibly replaces every bar; r is a one-cell replacement command here.",
+      "Correct: the authoring choice uses vertical ink position, while the digraph enters ¡ as one fixed-width glyph.",
+      "Neither a hold nor a two-cell insertion is requested; the row widths stay four cells."
+    ]
+  },
+  "M12.JH.P01": {
+    "prompt": "ANIMATION\nBefore animating the ornament, three joint samples are evaluated as one non-playing still sheet. A dot sits too low; a colon occupies the middle of the cell.\n\n  BEFORE   AFTER\n  │|/ .\\|│   │|/ :\\|│\n  │|< .>|│ → │|< :>|│\n  │|\\ ./|│   │|\\ :/|│\n\nNEOVIM\nWhich block scope changes only the registered joint column?",
+    "compact_prompt": "ANIMATION\nThree low joints become centred joints in one still sheet.\n\n  │|/ .\\|│   │|/ :\\|│\n  │|< .>|│ → │|< :>|│\n  │|\\ ./|│   │|\\ :/|│\n\nNEOVIM\nWhich cells does Ctrl-v then 2j select?",
+    "animation_prompt": "ANIMATION\nM12.JH centres three pre-animation joint samples without changing their surrounding strokes.",
+    "animation_answer": "Each low dot becomes a centred colon; every slash, bracket, and row width stays fixed.",
+    "neovim_prompt": "NEOVIM\nDecode `gg4|<C-v>2jr:` on the shown sheet.",
+    "neovim_answer": "gg4| reaches display column 4, Ctrl-v then 2j selects that column through three rows, and r: replaces exactly those cells.",
+    "choices": [
+      "ANIMATION: The whole ornament shifts one column. | NEOVIM: Ctrl-v inserts a new column before every row.",
+      "ANIMATION: Only the three low joint cells become centred colons. | NEOVIM: `4|` addresses the column, the block spans three rows, and `r:` overwrites it in place.",
+      "ANIMATION: Every dot in the file becomes a colon. | NEOVIM: a Visual Block selection means global substitution.",
+      "ANIMATION: The slashes are mirrored around the joints. | NEOVIM: `2j` reverses two rows before replacement."
+    ],
+    "compact_choices": [
+      "A: ornament shifts · V: block inserts",
+      "A: three joints only · V: column block + r:",
+      "A: all dots change · V: block is global",
+      "A: slashes mirror · V: 2j reverses"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "The target widths and surrounding strokes are unchanged; no column is inserted.",
+      "Correct: the visible column is the noun-like scope, and r is the one-cell overwrite applied to that scope.",
+      "Visual Block limits the edit to selected display cells; it does not search the file.",
+      "2j extends the selection downward. It does not reorder or mirror text."
+    ]
+  },
+  "M12.GV.P01": {
+    "prompt": "ANIMATION\nA second pre-animation sheet tests apostrophes as high joints, then rejects that take and finishes with centred colons. Only the final take is saved.\n\n  START      TRIAL      FINAL\n  │|< .>|│ → │|< '>|│ → │|< :>|│\n  │|[ .]|│   │|[ ']|│   │|[ :]|│\n  │|{ .}|│   │|{ '}|│   │|{ :}|│\n\nNEOVIM\nAfter `r'` exits Visual mode, what does `gv` restore?",
+    "compact_prompt": "ANIMATION\nThe same three joints go dot → apostrophe trial → colon final.\n\n  │|< .>|│ → │|< '>|│ → │|< :>|│\n  │|[ .]|│   │|[ ']|│   │|[ :]|│\n  │|{ .}|│   │|{ '}|│   │|{ :}|│\n\nNEOVIM\nWhat does gv restore?",
+    "animation_prompt": "ANIMATION\nM12.GV compares a high-joint trial with the centred final choice on one non-playing sample sheet.",
+    "animation_answer": "The apostrophe trial is rejected; the same three cells finish as colons while all delimiters remain fixed.",
+    "neovim_prompt": "NEOVIM\nExplain `...r'gvr:` after the three-cell block has been selected.",
+    "neovim_answer": "r' applies the trial to the selected cells, gv restores that exact previous Visual selection, and r: refines the same cells.",
+    "choices": [
+      "ANIMATION: The apostrophe and colon takes are both appended. | NEOVIM: `gv` duplicates the previous selection below the file.",
+      "ANIMATION: Only the top joint is refined. | NEOVIM: `gv` restores only the old cursor cell.",
+      "ANIMATION: The delimiters are redrawn around a new column. | NEOVIM: `gv` inserts a blank Visual block.",
+      "ANIMATION: The apostrophe trial is replaced by the centred final take on the same three cells. | NEOVIM: `gv` restores the exact previous Visual selection for `r:`."
+    ],
+    "compact_choices": [
+      "A: append both takes · V: gv duplicates",
+      "A: top joint only · V: gv restores cursor",
+      "A: new column · V: gv inserts block",
+      "A: refine same cells · V: gv restores selection"
+    ],
+    "correct_choice": 3,
+    "feedback": [
+      "The trial is an intermediate editing state, not a second saved strip or playback pose.",
+      "The previous selection is a three-row block, not one remembered cursor position.",
+      "No column is added; both replacements keep the four-cell rows registered.",
+      "Correct: gv retrieves the exact selected scope, so the refinement cannot drift onto neighbouring strokes."
+    ]
+  },
+  "M12.JHH.P01": {
+    "prompt": "ANIMATION\nThis unfamiliar ornament is the S4 checkpoint. It is still pre-animation: no timing or pose order exists. The low joints must be tested high, then saved centred, without changing any delimiter.\n\n  BEFORE   AFTER\n  │|( .)|│   │|( :)|│\n  │|[ .]|│ → │|[ :]|│\n  │|{ .}|│   │|{ :}|│\n\nNEOVIM\nWhich hidden path proves both fixed-column selection and selection recall?",
+    "compact_prompt": "ANIMATION\nCheckpoint: centre three unfamiliar joints; keep delimiters fixed.\n\n  │|( .)|│   │|( :)|│\n  │|[ .]|│ → │|[ :]|│\n  │|{ .}|│   │|{ :}|│\n\nNEOVIM\nWhich path uses the taught block and gv?",
+    "animation_prompt": "ANIMATION\nM12.JHH proves the learner can prepare unfamiliar centred joints before those stills become animation poses.",
+    "animation_answer": "All three low dots finish as centred colons; the surrounding ornament remains byte-for-byte registered.",
+    "neovim_prompt": "NEOVIM\nChoose the path that selects column 4, tests apostrophes, then recalls the block for the final replacement.",
+    "neovim_answer": "`gg4|<C-v>2jr'gvr:` selects the registered column once, makes the high trial, restores the same selection with gv, and writes colons.",
+    "choices": [
+      "ANIMATION: Three dots finish as colons and every delimiter stays fixed. | NEOVIM: `gg4|<C-v>2jr'gvr:` tests the high glyph, restores the exact block, and centres it.",
+      "ANIMATION: A fourth playback pose is added. | NEOVIM: `o` opens a new line and gv fills it with the prior selection.",
+      "ANIMATION: The braces and brackets shift right. | NEOVIM: `i:` inserts before each dot and preserves the old glyphs.",
+      "ANIMATION: Only the middle row changes. | NEOVIM: `gg3|r:` is equivalent evidence because the block and gv are optional."
+    ],
+    "compact_choices": [
+      "A: joints centred, delimiters fixed · V: block trial + gv",
+      "A: add playback pose · V: o then gv",
+      "A: delimiters shift · V: insert colons",
+      "A: middle row only · V: no block/gv"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the target and method together prove joint-height judgement, registered scope, and selection recall.",
+      "This stage checkpoint is explicitly a still study; no new row or timing state is part of the task.",
+      "Insertion would increase row width and leave the low dots in place, violating both visible invariants.",
+      "The checkpoint requires the three-row block and gv evidence; a one-cell edit neither reaches the target nor proves recall."
+    ]
   }
 }

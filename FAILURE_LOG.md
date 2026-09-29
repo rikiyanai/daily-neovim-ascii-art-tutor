@@ -4380,3 +4380,63 @@ replacement work are recorded in `share/audits/stage-content-disposition-v35.md`
 `PROGRESS S0 1/21 learning`) plus the S0-A7/P tree. That evidence covers the
 base route only. The full post-M2 route matrix and the full real-config recipe
 suite remain separate pending results and are not claimed by this proof.
+
+## VD-38 · 2026-09-29 — S4 rebuilt as still authoring; temporal cards moved behind A0
+
+**Finding.** The `.35` scheduler enforced an S0-S7 → A0-A7 order, but S4 still
+owned M12 timing work. The manual disposition in
+`share/audits/stage-content-disposition-v35.md` identified `.02`, `.04`, `.07`,
+and `.08`; implementation review found the same defect in `.03` and `.05.
+Calling those cards “S4 joint heights” would have made the tree honest only in
+metadata.
+
+**Implemented in revision `.36`:**
+
+- Temporal ownership moved explicitly: `M12.02/.03/.04/.05/.07/.08` to A4,
+  `M11.08` to A3, `M5.04/.07` to A3, and `M15.08` to A4.
+- S4 now contains four new manually written exercises rather than generated
+  filler. `M12.AA` replaces a hard four-row staircase with the documented
+  off-vertical `¡ ! . '` palette and teaches the `!I` digraph. `M12.JH`
+  centres an aligned joint column with `<C-v> ... r:`. `M12.GV` deliberately
+  tries the too-high apostrophe, restores the exact selection with `gv`, and
+  refines it to `:`. `M12.JHH` repeats that judgement with hidden keys on
+  unfamiliar art and owns two enforced changed-art reviews.
+- Each of those four cards has one manually authored four-choice question with
+  the complete ASCII-art evidence printed in both full and compact forms. The
+  choices pair the art decision with the Neovim scope, and every wrong answer
+  has mistake-specific feedback.
+- Every card now has one `artifact_mode`: `still-study`, `animation-strip`, or
+  `optional-proportional`. Generation rejects an animation-strip assigned to
+  S0-S7. It also rejects S-task prompts containing temporal authoring terms.
+- Every KEEP-STILL/REWORD prompt named by the `.35` audit was rewritten by card
+  id. Candidate stills, paragraph-separated drawings, and working copies are
+  no longer described as frames, loops, or intended animation. No temporal
+  operation was made to pass by renaming it; genuine temporal cards moved.
+
+**Proof completed:**
+
+- `python3 share/gen_curriculum_v2.py` writes 20 modules, 214 cards, and 374
+  questions at revision `.36`.
+- `python3 share/test_question_quality.py` passes all 374 manually authored
+  four-choice questions.
+- `python3 share/test_animation_lesson_pack.py` passes 12 lessons / 24 audited
+  questions and H1-H9, S0-S7, A0-A7 coverage.
+- `python3 share/test_animation_curriculum_integration.py` passes the live
+  guided-before-hidden integration for all 12 animation lessons.
+- `python3 share/test_v2.py` passes **214/214 executable lessons and 173/173
+  primary edit recipes** in clean Neovim, with 69 changed-art review banks.
+- A generated prompt scan finds zero occurrences of `animation`, `playback`,
+  `loop`, `tween`, `frame`, or `motion` in S0-S7 executable task prompts.
+- The base real-config popup passes at 80x24, 100x36, and 188x49. The new
+  `M12.JHH` hidden checkpoint also passes its complete headed popup route at
+  all three sizes.
+- The formerly disappearing `M3.06` transfer now passes a direct real-config
+  headed run at 80x24 after the stage-aware route fixture seeds prior stage
+  reviews. The broad post-M2 matrix remains a separate pending claim.
+
+**Still open; not claimed here.** The broad headed route matrix after M2 is not
+yet claimed by the direct M3.06 pass. The remaining S6 single-composite
+layer-order/material/seam checkpoint, broader
+Stone Story primary-art migration, per-variant `.06` questions, archive
+provenance intake, and full headed post-M2 route matrix remain open. No Stone
+Story third-party art was pushed or otherwise published.

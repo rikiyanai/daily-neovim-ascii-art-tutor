@@ -1535,7 +1535,7 @@ MODULES = [
         "id": "M12", "title": "Joint sweep", "node": "S4/V12", "project": "mirror-sweep",
         "skill": "staggered bilateral accents with till motions and repeated character searches",
         "frame_rows": 3,
-        "source_ref": "ascii-art-authoring §10 stagger and drag; Neovim help f, t, ;, comma",
+        "source_ref": "ascii-art-authoring §4.6 joint height and off-vertical anti-aliasing; §10 stagger and drag; Neovim help f, t, ;, comma, visual-mode, gv",
         "meaning": "a three-row mirrored mechanism passes a joint accent from left to right, then staggers the lower joints before returning on the opposite side",
         "first_reading": "the left upper joint changes from : to ! while the centre axis, mirrored outline, and right joint stay registered",
         "principle": "preserve the already paired shell and centre axis while addressing homologous punctuation by its visible landmark rather than memorised columns",
@@ -2904,6 +2904,58 @@ STAGE_OWNER_OVERRIDES = {
     card_id: "S0" for card_id in (
         "M0.P0", "M0.01", "M0.YP", "M0.O", "M0.SR", "M0.T", "M0.SL",
     )
+}
+STAGE_OWNER_OVERRIDES.update({
+    # These cards author, diagnose, or validate temporal change.  They cannot
+    # supply evidence for the still-only S stages even though their parent
+    # modules also contain still-authoring foundations.
+    "M11.08": "A3",
+    "M5.04": "A3", "M5.07": "A3",
+    "M12.02": "A4", "M12.03": "A4", "M12.04": "A4",
+    "M12.05": "A4", "M12.07": "A4", "M12.08": "A4",
+    "M15.08": "A4",
+})
+
+ARTIFACT_MODE_BY_STAGE = {
+    **{f"S{number}": "still-study" for number in range(8)},
+    **{f"A{number}": "animation-strip" for number in range(8)},
+    "P": "optional-proportional",
+}
+
+# These are individually written dispositions, not a prose template.  Their
+# source cards remain useful still-authoring work, but their old wording falsely
+# described candidates, paragraphs, or working copies as playback artifacts.
+STILL_PROMPT_REWRITES = {
+    "M0.SL": "On one changed still, replace every small core on the current line with one line-scoped substitute; leave the two contour rows alone.",
+    "M11.02": "Copy the complete three-row machine as a second redraw candidate.",
+    "M11.WS": "Inspect the padded missile still with visible whitespace and column guides, then remove only trailing spaces. Every visible missile and exhaust glyph must remain unchanged.",
+    "M11.UT": "Try ! as an exaggerated left-eye take, undo it, author the chosen O look, visit the abandoned ! take with chronological history, then return to and submit the O-eye still.",
+    "M11.WSH": "On the unfamiliar Chick still, turn on the whitespace and column guides, then remove only the three invisible tail spaces from each row. Preserve every visible drawing cell.",
+    "M11.UTH": "On the unfamiliar SnowBunny still, try ! as an exaggerated left-eye take, undo and author the chosen dash, inspect the abandoned take chronologically, then return to the half-closed eye for submission.",
+    "M11.07": "Diagnose the displayed fixed-width redraw, then choose the bounded repair that preserves every registered cell outside the named change.",
+    "M1.02": "Copy the complete anchored contour as a second still candidate.",
+    "M1.DD": "Remove only the second redundant three-row contour candidate; keep the first candidate registered.",
+    "M1.04": "Replace the copied still with a hand-authored descending counterpart instead of software-flipping the glyphs.",
+    "M1.07": "Diagnose the displayed contour run, then choose the bounded repair that preserves its line quality, anchor, and declared material.",
+    "M19.01": "Approve one uncertain eye cell with `gR`, preserving both fixed-width rails of the five-row still.",
+    "M19.02": "Copy the complete five-row still as the working opposite-facing candidate.",
+    "M19.03": "Inspect the complete hand-mirrored still below, then choose the interpretation supported by its visible glyph and spacing evidence.",
+    "M19.06": "Transfer full-row Virtual Replace mirroring to unfamiliar fixed-rail still art with the exact keys hidden.",
+    "M19.07": "Diagnose the displayed hand-mirrored still, then choose the repair that preserves fixed rails and directional glyph roles.",
+    "M19.08": "Answer five checks, then perform this key-hidden artifact task: retain the approved still as a third candidate and vary one eye without treating the plate as an ordered sequence. The target stays visible; the exact command path stays hidden until evaluation.",
+    "M2.07": "Diagnose the displayed face study, then choose the bounded repair that preserves silhouette, focus, and fixed width.",
+    "M2.08": "Answer five checks, then perform this key-hidden artifact task: copy the complete face as a second expression candidate and close only its eye. The target stays visible; the exact command path stays hidden until evaluation.",
+    "M12.AA": "On this single four-row stroke study, replace the hard vertical bars with the shown off-vertical anti-aliasing glyphs: apostrophe, dot, exclamation, then inverted exclamation. The four rows form one drawing.",
+    "M14.01": "Yank a visible glyph from the drawing's palette into register `a`, then retrieve it with `<C-r>a` in Replace mode so the acting eye changes without shifting the wall.",
+    "M14.DAP": "The first Skully candidate is an accidental duplicate before the closed-eye candidate. Delete that complete still and its separator as one paragraph object.",
+    "M14.04": "On the copied candidate, store the second palette glyph and replace only its eye through the named register.",
+    "M14.PARA": "Yank the first blank-line-separated still, cross the paragraph boundary with }, and put the stored still above the next candidate.",
+    "M14.DAPH": "On the unfamiliar SnowBunny plate, remove the complete open-eyed paragraph so the closed-eye still remains registered.",
+    "M14.07": "Diagnose the displayed variant plate, then choose the repair that preserves palette and material consistency.",
+    "M14.08": "Answer five checks, then perform this key-hidden artifact task: store the first eye material, navigate across two paragraph-separated candidates with `}`, and retrieve the register in the third candidate so it reuses the first material. The target stays visible; the exact command path stays hidden until evaluation.",
+    "M15.02": "Copy the complete three-row material stack as the working still for a lighter offset treatment.",
+    "M15.ZPH": "On the unfamiliar Chick still, copy the ragged three-row drawing from its padded palette into the `>` destination rows without carrying invisible right-edge padding.",
+    "M15.07": "Diagnose the displayed texture-and-ground study, then choose the repair that preserves dither density, offset, and shadow rules.",
 }
 
 FIRST_READING_DISTRACTORS = {
@@ -4785,18 +4837,74 @@ def guided_bridge_cards(module):
                 "visual-characterwise", 4.75)),
         ])
     elif mid == "M12":
-        rows.append(("M12.04", bridge(
-            "FIND", "Repeat a character find in both directions",
-            "Use one forward character find, repeat it forward once, then reverse the find and brighten the two selected landmarks.",
-            ["| /---\\ |", "| : : : |", "| \\---/ |"],
-            ["| /---\\ |", "| ! ! : |", "| \\---/ |"],
-            "2G0f:;r!,r!",
-            [["2G0f:", "find the first colon landmark"],
-             [";", "repeat the character find forward"],
-             ["r!", "replace that second landmark in place"],
-             [",", "repeat the find in the reverse direction"],
-             ["r!", "replace the earlier landmark in place"]],
-            "char-find-repeat", 3.5)))
+        aa = bridge(
+            "AA", "Shape one off-vertical stroke with the full glyph palette",
+            "On this single four-row stroke study, replace the hard vertical bars with the shown off-vertical anti-aliasing glyphs: apostrophe, dot, exclamation, then inverted exclamation. This is one still study, not four animation frames.",
+            ["|    | |", "|   |  |", "|  |   |", "| |    |"],
+            ["|    ' |", "|   .  |", "|  !   |", "| ¡    |"],
+            "gg6|r'j5|r.j4|r!j3|r<C-k>!I",
+            [["gg6|r'", "replace the top sample with the high apostrophe"],
+             ["j5|r.", "replace the next sample with the low dot"],
+             ["j4|r!", "replace the next sample with exclamation"],
+             ["j3|r<C-k>!I", "enter inverted exclamation by its !I digraph"]],
+            "digraph", 0.7,
+        )
+        aa.pop("review_variants", None)
+        aa.pop("review_source_card_id", None)
+        aa.pop("review_method_family", None)
+
+        joint_height = bridge(
+            "JH", "Centre three joints without moving their strokes",
+            "In this non-playing three-sample still sheet, each dot sits too low between its two strokes. Replace the aligned joint column with colons, whose marks occupy the middle of the cell; keep every slash, bracket, and row width fixed.",
+            ["|/ .\\|", "|< .>|", "|\\ ./|"],
+            ["|/ :\\|", "|< :>|", "|\\ :/|"],
+            "gg4|<C-v>2jr:",
+            [["gg4|", "address display column 4 on the first sample"],
+             ["<C-v>2j", "select the same registered joint cell on all three rows"],
+             ["r:", "replace the selected low dots with centred colons"]],
+            "visual-scope", 0.8,
+        )
+        joint_height["grammar_families"].append("block-change")
+        joint_height["key_vocabulary"] = _family_breakdown(joint_height["grammar_families"])
+        joint_height.pop("review_variants", None)
+        joint_height.pop("review_source_card_id", None)
+        joint_height.pop("review_method_family", None)
+
+        reselect = bridge(
+            "GV", "Try a high joint, then refine the same selection",
+            "On a second non-playing joint sheet, first try apostrophes in the aligned joint column. Then use gv to restore that exact block and refine all three joints to centred colons without rebuilding the selection.",
+            ["|< .>|", "|[ .]|", "|{ .}|"],
+            ["|< :>|", "|[ :]|", "|{ :}|"],
+            "gg4|<C-v>2jr'gvr:",
+            [["gg4|<C-v>2j", "select the three aligned joint cells"],
+             ["r'", "try the high apostrophe candidate across the block"],
+             ["gv", "restore the exact previous block selection"],
+             ["r:", "refine that same block to the centred joint glyph"]],
+            "visual-reselect", 3.6,
+        )
+        reselect["grammar_families"].extend(["visual-scope", "block-change"])
+        reselect["key_vocabulary"] = _family_breakdown(reselect["grammar_families"])
+        reselect.pop("review_variants", None)
+        reselect.pop("review_source_card_id", None)
+        reselect.pop("review_method_family", None)
+
+        rows.extend([
+            ("M12.01", aa),
+            ("M12.01", joint_height),
+            ("M12.04", bridge(
+                "FIND", "Repeat a character find in both directions",
+                "Use one forward character find, repeat it forward once, then reverse the find and brighten the two selected landmarks.",
+                ["| /---\\ |", "| : : : |", "| \\---/ |"],
+                ["| /---\\ |", "| ! ! : |", "| \\---/ |"],
+                "2G0f:;r!,r!",
+                [["2G0f:", "find the first colon landmark"],
+                 [";", "repeat the character find forward"],
+                 ["r!", "replace that second landmark in place"],
+                 [",", "repeat the find in the reverse direction"],
+                 ["r!", "replace the earlier landmark in place"]],
+                "char-find-repeat", 3.5)),
+            ("M12.06", reselect),
+        ])
     elif mid == "M14":
         para = bridge(
             "PARA", "Cross a frame boundary and put above it",
@@ -4975,6 +5083,52 @@ def mastery_extension_cards(module):
 
     ss = stone_story_variants
     rows = []
+    if module["id"] == "M12":
+        checkpoint_label = "restore the exact joint block with gv before the centred replacement"
+        checkpoint = card(
+            "JHH", "Joint-height still checkpoint",
+            "On this unfamiliar non-playing ornament study, test the high apostrophe in all three aligned joint cells, then restore that exact block with gv and refine it to the centred colon. Preserve every surrounding stroke and the four-cell row width.",
+            ["|( .)|", "|[ .]|", "|{ .}|"],
+            ["|( :)|", "|[ :]|", "|{ :}|"],
+            "gg4|<C-v>2jr'gvr:",
+            [["gg4|<C-v>2j", "select the complete aligned joint column"],
+             ["r'", "test the high joint glyph on the selected cells"],
+             ["gvr:", "restore the same selection and refine it to centred colons"]],
+            "visual-reselect", 5.5,
+            "ascii-art-authoring §4.6.5 joint-height test; non-playing authored sample sheet",
+            guided=False,
+            extra_families=["visual-scope", "block-change"],
+            reviews=[
+                review(
+                    ["|/ .\\|", "|< .>|", "|\\ ./|"],
+                    ["|/ :\\|", "|< :>|", "|\\ :/|"],
+                    "gg4|<C-v>2jr'gvr:",
+                    [["block r'", "test the high glyph on the complete joint column"],
+                     ["gvr:", "restore and centre the same three cells"]],
+                    "ascii-art-authoring §4.6.5 mirrored joint sample",
+                    checkpoint_label,
+                    "Changed-stroke review: refine the three aligned slash joints to centred colons after testing apostrophes.",
+                    "Address the visible joint column once; gv must restore that exact block.",
+                ),
+                review(
+                    ["|< .>|", "|[ .]|", "|{ .}|"],
+                    ["|< :>|", "|[ :]|", "|{ :}|"],
+                    "gg4|<C-v>2jr'gvr:",
+                    [["block r'", "test the high glyph across the bracket joints"],
+                     ["gvr:", "restore and centre the same block"]],
+                    "ascii-art-authoring §4.6.5 bracket joint sample",
+                    checkpoint_label,
+                    "Changed-bracket review: centre the shared joint column while every delimiter stays fixed.",
+                    "The final art alone is insufficient; retrieve the previous block with gv.",
+                ),
+            ],
+        )
+        checkpoint["lesson_benefit"] = (
+            "prove joint-height judgement, fixed-column block replacement, gv retrieval, "
+            "and changed-art recall on one still before animation unlocks"
+        )
+        rows.append(("M12.06", checkpoint))
+
     if module["id"] == "M13":
         w_label = "use lowercase w to count exact glyph-run boundaries"
         rows.extend([
@@ -5915,9 +6069,13 @@ def build():
         # VD-29: real Stone Story frames replace same-subject "changed art".
         stone_story_variants.apply(module_cards)
         for card in module_cards:
+            if card["id"] in STILL_PROMPT_REWRITES:
+                card["prompt"] = STILL_PROMPT_REWRITES[card["id"]]
+                card["roadmap_contract"] = STILL_PROMPT_REWRITES[card["id"]]
             owner = STAGE_OWNER_OVERRIDES.get(
                 card["id"], PRIMARY_STAGE_BY_MODULE[module["id"]])
             card["stage_owner"] = owner
+            card["artifact_mode"] = ARTIFACT_MODE_BY_STAGE[owner]
             # One card supplies evidence to one progression stage.  The old
             # mixed labels made a single pass appear to advance unrelated
             # still and animation stages simultaneously.
@@ -6096,7 +6254,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.35",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.36",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,
@@ -6446,6 +6604,18 @@ def validate(cur):
     for card in cards:
         if not card.get("prompt"): errors.append(f"{card['id']}: missing authored prompt")
         if not card.get("lesson_benefit"): errors.append(f"{card['id']}: missing honest lesson benefit")
+        expected_mode = ARTIFACT_MODE_BY_STAGE.get(card.get("stage_owner"))
+        if card.get("artifact_mode") != expected_mode:
+            errors.append(
+                f"{card['id']}: artifact_mode {card.get('artifact_mode')!r} does not match "
+                f"stage {card.get('stage_owner')} ({expected_mode!r})")
+        if card.get("stage_owner", "").startswith("S") and card.get("artifact_mode") == "animation-strip":
+            errors.append(f"{card['id']}: still stage cannot contain an animation-strip card")
+        if (card.get("stage_owner", "").startswith("S")
+                and re.search(r"\b(animation|playback|loop|tween|frame|motion)\b",
+                              card.get("prompt", ""), re.IGNORECASE)):
+            errors.append(
+                f"{card['id']}: still-stage prompt uses temporal authoring language")
         for field in ("grammar_families", "grammar_stage", "paired_question_ids",
                       "question_placement", "master_habits", "master_stages"):
             if not card.get(field):

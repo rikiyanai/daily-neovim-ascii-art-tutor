@@ -118,3 +118,30 @@ mode is `animation-strip`. `duplicate_frames.playback=false` is supporting
 evidence for a working copy, not a substitute for the card-level declaration.
 Questions move with their card and must be manually rewritten; changing only a
 stage label or prompt is not a valid disposition.
+
+## Revision .36 disposition result
+
+Revision `.36` implements the first migration slice and corrects one omission
+in the table above:
+
+- `M12.02`, `.03`, `.04`, `.05`, `.07`, and `.08` now belong to A4. The
+  original audit missed `.05`; its copied release scaffold and comparison of
+  temporal results make it animation work too.
+- S4 receives four individually authored cards: `M12.AA` for the full
+  `¡ ! . '` off-vertical palette, `M12.JH` for centred joint height with
+  blockwise `r`, `M12.GV` for candidate refinement with `gv`, and hidden
+  checkpoint `M12.JHH` with two changed-art reviews.
+- `M11.08` moves to A3; `M5.04` and `M5.07` move to A3; `M15.08` moves to A4.
+- Every generated card now carries `artifact_mode`. Generation rejects an
+  S-stage animation-strip, and separately rejects temporal authoring language
+  in an S-stage task prompt.
+- The remaining KEEP-STILL/REWORD prompts in S0-S3 and S5-S7 were rewritten
+  one by one as candidate stills, drawing plates, material studies, or
+  paragraph-separated still objects. This is wording cleanup only where the
+  audit classified the operation as still work; no temporal operation was
+  hidden by renaming it.
+
+The generated `.36` S0-S7 task prompts contain zero matches for `animation`,
+`playback`, `loop`, `tween`, `frame`, or `motion`. Questions still make the
+animation relevance explicit, but the executable task does not ask the learner
+to author timing before A0.
