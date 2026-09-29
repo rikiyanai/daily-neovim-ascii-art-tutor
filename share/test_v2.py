@@ -96,16 +96,16 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["paradigm"] == concept["paradigm"]
 
 assert len(cur["modules"]) == 20
-assert len(cur["cards"]) == 187
-assert len(cur["questions"]) == 347
-assert len({card["title"] for card in cur["cards"]}) == 187
-assert len({card["prompt"] for card in cur["cards"]}) == 187
+assert len(cur["cards"]) == 201
+assert len(cur["questions"]) == 361
+assert len({card["title"] for card in cur["cards"]}) == 201
+assert len({card["prompt"] for card in cur["cards"]}) == 201
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
 mc_questions = [question for question in cur["questions"]
                 if question["form"] == "multiple_choice"]
 assert {question["form"] for question in cur["questions"]} == {"multiple_choice"}
-assert len(mc_questions) == len(cur["questions"]) == 347
+assert len(mc_questions) == len(cur["questions"]) == 361
 assert not any(
     phrase in question["prompt"]
     for question in cur["questions"]
@@ -215,7 +215,7 @@ assert all("ANIMATION" in q["compact_prompt"] and "NEOVIM" in q["compact_prompt"
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == len(mc_questions) == 347
+            for q in mc_questions}) == len(mc_questions) == 361
 def contains_ascii_visual(value):
     if "│" in value:
         return True
@@ -356,16 +356,43 @@ assert {row["grammar_family"] for row in command_reviews} >= {
 assert all(card_by_id[row["review_card_id"]].get("show_recipe") is False
            for row in command_reviews)
 required_reviews = cur["required_mastery_review_coverage"]
-assert len(required_reviews) == len(cur["modules"]) == 20
+extension_mastery_ids = {
+    "M13.WH", "M13.GH", "M14.DAPH", "M3.GAH",
+    "M4.BIH", "M4.BCH", "M4.GVH",
+}
+assert len(required_reviews) == len(cur["modules"]) + len(extension_mastery_ids) == 27
 assert {row["source_card_id"] for row in required_reviews} == {
-    "%s.06" % module["id"] for module in cur["modules"]}
+    "%s.06" % module["id"] for module in cur["modules"]} | extension_mastery_ids
 assert all(row["changed_art_variants"] >= 2 and row["keys_hidden"] is True
            and row["required_before_mastery"] is True
            and row["evidence"] ==
            "method-required hidden transfer plus changed-art spaced review"
            for row in required_reviews)
-assert all(module["required_review_card_ids"] == [module["id"] + ".06"]
+assert all(set(module["required_review_card_ids"]) ==
+           ({module["id"] + ".06"} |
+            {card_id for card_id in extension_mastery_ids
+             if card_id.startswith(module["id"] + ".")})
            for module in cur["modules"])
+mastery_extension_contract = {
+    "M13.WH": ("lowercase-word-motion", "2G0wwwr+"),
+    "M13.GH": ("last-nonblank", "ggg_r-"),
+    "M4.BIH": ("block-insert", "gg0<C-v>2jI|<Esc>"),
+    "M4.BCH": ("block-change", "gg3|<C-v>2jc|<Esc>"),
+    "M4.GVH": ("visual-reselect", "gg3|<C-v>2jc|<Esc>gvr:"),
+    "M3.GAH": ("glyph-inspect", "3G0fogarO"),
+    "M14.DAPH": ("paragraph-delete", "ggdap"),
+}
+for card_id, (family, expected) in mastery_extension_contract.items():
+    card = card_by_id[card_id]
+    assert card["show_recipe"] is False and card["required_before_mastery"] is True
+    assert family in card["grammar_families"]
+    assert card["method_requirement"]["exact_any_of"] == [expected]
+    assert len(card["review_variants"]) == 2
+    assert all(variant["method_requirement"]["exact_any_of"] == [variant["expected"]]
+               and variant["source"].startswith("official-")
+               for variant in card["review_variants"])
+    paired = [question for question in mc_questions if question["card_id"] == card_id]
+    assert len(paired) == 1 and paired[0]["authorship"] == "manual"
 key_paths = "\n".join(card.get("expected", "") for card in cur["cards"])
 for padding in ("jwbewbwro", "6GJu04lr.", "13Gma2G'aj", "Go<Esc>I "):
     assert padding not in key_paths
@@ -727,8 +754,8 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "OVERRIDE V2 TITLE" in listed.stdout
 
 basic = set("`~!^*()-_+=;:'\",.\\/|<>[]{}")
-extended = set("´‾¡·")
-alnum = set("oOvVTL7UcCxX")
+extended = set("´‾¯¡·")
+alnum = set("oOvVTL7UcCxXn")
 allowed = basic | extended | alnum | {" "}
 for card in cur["cards"]:
     if card.get("labels") or card.get("medium") == "proportional-sjis":

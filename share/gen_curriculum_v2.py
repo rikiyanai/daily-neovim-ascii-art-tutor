@@ -28,6 +28,7 @@ AUTHORED_QUESTION_FILES = (
     ROOT / "questions-authored-v2-stills-b.json",
     ROOT / "questions-authored-v2-motion-a.json",
     ROOT / "questions-authored-v2-motion-b.json",
+    ROOT / "questions-authored-v2-mastery.json",
 )
 
 # The standalone pack is deliberately attached to existing v2 cards instead
@@ -3714,6 +3715,16 @@ FAMILY_DEFS = {
         "grammar": "motion or landmark command + optional count; movement alone must not change art",
         "terms": [["motion", "move", "cursor"], ["landmark", "row", "column", "cell"]],
     },
+    "lowercase-word-motion": {
+        "class": "standalone_normal",
+        "grammar": "w moves to the next lowercase word/punctuation run; a count repeats that exact boundary motion",
+        "terms": [["lowercase w", "w"], ["next", "boundary"], ["count", "repeat"], ["word", "punctuation", "run"]],
+    },
+    "last-nonblank": {
+        "class": "standalone_normal",
+        "grammar": "g_ lands on the last nonblank glyph while ignoring trailing alignment spaces",
+        "terms": [["g_", "last nonblank"], ["trailing", "spaces"], ["glyph", "cell"]],
+    },
     "normal-replace": {
         "class": "standalone_normal",
         "grammar": "r + replacement glyph; overwrite one cell without shifting the row",
@@ -3773,6 +3784,31 @@ FAMILY_DEFS = {
         "class": "visual",
         "grammar": "Visual mode + bounded selection + operator; selection shape owns the edit scope",
         "terms": [["visual", "selection"], ["line", "block", "column", "scope"]],
+    },
+    "block-insert": {
+        "class": "visual",
+        "grammar": "Ctrl-v selects a column block; I inserts the same prefix at the start of every selected row; <Esc> applies it",
+        "terms": [["ctrl-v", "block"], ["I", "insert"], ["each row", "column"], ["escape", "apply"]],
+    },
+    "block-change": {
+        "class": "visual",
+        "grammar": "Ctrl-v selects registered cells; c replaces that block on every row; <Esc> applies the typed replacement",
+        "terms": [["ctrl-v", "block"], ["c", "change"], ["each row", "registered"], ["escape", "apply"]],
+    },
+    "visual-reselect": {
+        "class": "visual",
+        "grammar": "gv restores the previous Visual selection so the same registered cells can be refined without rebuilding the scope",
+        "terms": [["gv", "reselect"], ["previous", "selection"], ["same", "cells", "scope"]],
+    },
+    "glyph-inspect": {
+        "class": "standalone_normal",
+        "grammar": "ga reports the glyph under the cursor before a deliberate fixed-cell replacement",
+        "terms": [["ga", "inspect"], ["glyph", "codepoint", "value"], ["cursor", "cell"]],
+    },
+    "paragraph-delete": {
+        "class": "operator",
+        "grammar": "d is the delete operator and ap is the complete paragraph object, including its blank-line frame separator",
+        "terms": [["delete", "d"], ["paragraph", "ap"], ["blank", "separator"], ["frame", "object"]],
     },
     "repeat": {
         "class": "standalone_normal",
@@ -4822,6 +4858,339 @@ def guided_bridge_cards(module):
     return rows
 
 
+def mastery_extension_cards(module):
+    """Manually authored guided -> hidden -> changed-art mastery pairs.
+
+    These are not token-coverage cards.  Every hidden card requires the named
+    command path at runtime, carries two source-linked reviews, and is required
+    before its module can master.  The paired questions are authored separately
+    in ``questions-authored-v2-mastery.json``.
+    """
+    habits, stages = MASTER_COVERAGE[module["id"]]
+
+    def review(start, target, expected, recipe, source, label, prompt, hint):
+        return {
+            "start": start, "target": target, "expected": expected,
+            "recipe": recipe, "cursor": "^", "source": source,
+            "prompt": prompt, "hint": hint,
+            "method_requirement": require_method(label, exact_any_of=[expected]),
+        }
+
+    def card(suffix, title, prompt, start, target, expected, recipe, family,
+             ordinal, source, *, guided, reviews=None, extra_families=None):
+        card_id = "%s.%s" % (module["id"], suffix)
+        families = [family, *(extra_families or [])]
+        row = {
+            "id": card_id, "module_id": module["id"], "ordinal": ordinal,
+            "kind": "guided_edit" if guided else "independent_edit",
+            "title": "%s · %s" % (module["title"], title),
+            "project_id": "mastery-" + card_id.lower().replace(".", "-"),
+            "artifact": "transfer", "variant_group": card_id + ".mastery",
+            "skill": module["skill"],
+            "source_ref": "%s; %s" % (module["source_ref"], source),
+            "source": source, "medium": "monospace",
+            "node_ids": [module["node"]], "master_habits": habits,
+            "master_stages": stages,
+            "lesson_benefit": (
+                "perform %s with visible keys" % family if guided else
+                "retrieve %s on unfamiliar animation art with the key path hidden" % family
+            ),
+            "prompt": prompt, "roadmap_contract": prompt,
+            "start": start, "target": target, "expected": expected,
+            "recipe": recipe, "cursor": "^", "show_target": True,
+            "show_recipe": guided,
+            "hint": (
+                "Follow the visible grammar once, then inspect the registered result."
+                if guided else
+                "Name the acting cells first. The exact key sequence remains hidden until evaluation."
+            ),
+            "grammar_families": families,
+            "grammar_stage": "guided" if guided else "hidden",
+            "key_vocabulary": _family_breakdown(families),
+            "frame_rows": module.get("frame_rows"),
+            "frame_slices": ([module["frame_rows"]] *
+                             (len(target) // module["frame_rows"])
+                             if module.get("frame_rows") else [len(target)]),
+            "method_requirement": require_method(
+                "use the taught %s path" % family, exact_any_of=[expected]),
+        }
+        if reviews:
+            row["review_variants"] = reviews
+            row["review_source_card_id"] = card_id
+            row["review_method_family"] = family
+            row["required_before_mastery"] = True
+        return row
+
+    ss = stone_story_variants
+    rows = []
+    if module["id"] == "M13":
+        w_label = "use lowercase w to count exact glyph-run boundaries"
+        rows.extend([
+            ("M13.04", card(
+                "W", "Count lowercase word boundaries in a lava phase",
+                "In the real Cave Party lava row, move by two lowercase-w boundaries and mark only the second crest; the figure rows stay fixed.",
+                ss.CAVE_LAVA_A,
+                [ss.CAVE_LAVA_A[0], ss.CAVE_LAVA_A[1], "    ~ ! ~ ~ ~ ~ ~"],
+                "3G0wwr!",
+                [["3G0", "start at the lava row's left edge"],
+                 ["ww", "cross exactly two lowercase-w boundaries to the second crest"],
+                 ["r!", "mark that one crest without shifting the phase"]],
+                "lowercase-word-motion", 3.1,
+                "official-Cosmetics/CaveParty res06 lava frame 1", guided=True)),
+            ("M13.06", card(
+                "WH", "Retrieve lowercase word motion on a moving tread",
+                "On the unfamiliar Drill tread, mark only the third separated tread cell; keep the hull and lower track registered.",
+                ss.DRILL_TREAD_SCENE,
+                [ss.DRILL_TREAD_SCENE[0], " - - + - - -", ss.DRILL_TREAD_SCENE[2]],
+                "2G0wwwr+",
+                [["2G0", "start at the moving tread row"],
+                 ["www", "count to the third punctuation run with lowercase w"],
+                 ["r+", "replace only that tread cell"]],
+                "lowercase-word-motion", 5.1,
+                "official-Cosmetics/Drill res26 tread shimmer layer", guided=False,
+                reviews=[
+                    review(ss.CAVE_LAVA_B,
+                           [ss.CAVE_LAVA_B[0], ss.CAVE_LAVA_B[1], "   ~ ~ ? ~ ~ ~ ~"],
+                           "3G0wwwr?", [["3G0www", "reach the third shifted lava crest"], ["r?", "mark it"]],
+                           "official-Cosmetics/CaveParty res06 lava frame 2", w_label,
+                           "Cave Party shifted phase: mark only its third separated crest with lowercase w.",
+                           "Count punctuation runs, not display columns."),
+                    review(ss.DRILL_TREAD_SCENE,
+                           [ss.DRILL_TREAD_SCENE[0], " - - - ! - -", ss.DRILL_TREAD_SCENE[2]],
+                           "2G0wwwwr!", [["2G0wwww", "reach the fourth tread cell"], ["r!", "mark it"]],
+                           "official-Cosmetics/Drill res26 tread shimmer layer", w_label,
+                           "Drill tread review: mark only the fourth separated cell; preserve both surrounding rows.",
+                           "Each dash is one punctuation run for lowercase w."),
+                ])),
+        ])
+
+        gu_label = "use g_ to address the last nonblank glyph"
+        missile_3_padded = [row + "   " for row in ss.MISSILE_F3]
+        missile_4_padded = [row + "   " for row in ss.MISSILE_F4]
+        chick_3_padded = [row + "   " for row in ss.CHICK_PEEP_F3]
+        chick_4_padded = [row + "   " for row in ss.CHICK_PEEP_F4]
+        rows.extend([
+            ("M13.04", card(
+                "GU", "Land on the final visible exhaust glyph",
+                "Turn the missile's final exhaust apostrophe into the next frame's dot while ignoring the three alignment spaces after it.",
+                missile_3_padded, missile_4_padded, "2Gg_r.",
+                [["2G", "go to the exhaust row"],
+                 ["g_", "land on its last nonblank glyph, not the padded row end"],
+                 ["r.", "write the next exhaust cell in place"]],
+                "last-nonblank", 3.2,
+                "official-Games/TowerDefense res18 missile frame 3 -> 4", guided=True)),
+            ("M13.06", card(
+                "GH", "Retrieve last-nonblank motion on a peep frame",
+                "Close only the chick's final beak glyph from < to -; trailing registration spaces must remain untouched.",
+                chick_3_padded, chick_4_padded, "ggg_r-",
+                [["gg", "go to the peep frame's first row"],
+                 ["g_", "land on its last visible glyph"],
+                 ["r-", "close the beak without changing row width"]],
+                "last-nonblank", 5.2,
+                "official-Pets/Chick res03 peep frame 3 -> 4", guided=False,
+                reviews=[
+                    review(missile_4_padded,
+                           [missile_4_padded[0], ss.MISSILE_F3[1] + "   ", missile_4_padded[2]],
+                           "2Gg_r'", [["2Gg_", "land on the exhaust row's last nonblank glyph"], ["r'", "restore the apostrophe puff"]],
+                           "official-Games/TowerDefense res18 missile frame 4 -> 3", gu_label,
+                           "Missile review: restore the final exhaust apostrophe without entering the padding.",
+                           "g_ ignores the spaces after the visible puff."),
+                    review(chick_4_padded, chick_3_padded, "ggg_r<",
+                           [["ggg_", "land on the final visible beak glyph"], ["r<", "reopen it"]],
+                           "official-Pets/Chick res03 peep frame 4 -> 3", gu_label,
+                           "Chick review: reopen the last beak cell while preserving the padded row width.",
+                           "Use the last nonblank cell, not the physical end after padding."),
+                ])),
+        ])
+
+    if module["id"] == "M4":
+        def prefixed(art, glyph="|"):
+            return [glyph + row for row in art]
+        def column(art, one_based, glyph):
+            return [row[:one_based - 1] + glyph + row[one_based:] for row in art]
+
+        bi_label = "insert one registration rail with blockwise I"
+        rows.extend([
+            ("M4.04", card(
+                "BI", "Insert one onion-skin rail across a lava frame",
+                "Add one left registration rail to every row of the three-row lava frame in one blockwise insert.",
+                ss.CAVE_LAVA_A, prefixed(ss.CAVE_LAVA_A),
+                "gg0<C-v>2jI|<Esc>",
+                [["gg0<C-v>2j", "select column 1 through all three frame rows"],
+                 ["I|<Esc>", "insert the same rail on every selected row"]],
+                "block-insert", 3.1,
+                "official-Cosmetics/CaveParty res06 lava frame 1", guided=True)),
+            ("M4.06", card(
+                "BIH", "Retrieve block insert on a missile frame",
+                "On the unfamiliar missile frame, add one left onion-skin rail to all three rows; do not type three separate rails.",
+                ss.MISSILE_F1, prefixed(ss.MISSILE_F1),
+                "gg0<C-v>2jI|<Esc>",
+                [["gg0<C-v>2j", "select the shared first column"],
+                 ["I|<Esc>", "apply one rail to every frame row"]],
+                "block-insert", 5.1,
+                "official-Games/TowerDefense res18 missile frame 1", guided=False,
+                reviews=[
+                    review(ss.SNOWBUNNY_IDLE, prefixed(ss.SNOWBUNNY_IDLE, "!"),
+                           "gg0<C-v>2jI!<Esc>", [["gg0<C-v>2j", "select all bunny rows at column 1"], ["I!<Esc>", "add one comparison rail"]],
+                           "official-Pets/SnowBunny res01", bi_label,
+                           "Snow bunny review: add a single left comparison rail to all three pose rows.",
+                           "One block insert owns the complete pose height."),
+                    review(ss.SKULLY_IDLE, prefixed(ss.SKULLY_IDLE, "+"),
+                           "gg0<C-v>2jI+<Esc>", [["gg0<C-v>2j", "select all skull rows at column 1"], ["I+<Esc>", "add the rail"]],
+                           "official-Pets/Skully res01", bi_label,
+                           "Skully review: prefix the complete pose with one blockwise registration rail.",
+                           "Do not repeat a separate Insert-mode edit on each row."),
+                ])),
+        ])
+
+        bc_label = "replace one registered column with blockwise c"
+        rows.extend([
+            ("M4.04", card(
+                "BC", "Change one onion-skin axis as a block",
+                "On the missile, replace display column 3 across all three rows with one temporary onion-skin axis.",
+                ss.MISSILE_F1, column(ss.MISSILE_F1, 3, "|"),
+                "gg3|<C-v>2jc|<Esc>",
+                [["gg3|<C-v>2j", "select display column 3 through the frame"],
+                 ["c|<Esc>", "change the complete selected column to the axis glyph"]],
+                "block-change", 3.2,
+                "official-Games/TowerDefense res18 missile frame 1", guided=True)),
+            ("M4.06", card(
+                "BCH", "Retrieve block change on shifted lava",
+                "On the unfamiliar shifted lava frame, change only column 3 across all three rows into a registration axis.",
+                ss.CAVE_LAVA_B, column(ss.CAVE_LAVA_B, 3, "|"),
+                "gg3|<C-v>2jc|<Esc>",
+                [["gg3|<C-v>2j", "select one registered column"],
+                 ["c|<Esc>", "change that column on every selected row"]],
+                "block-change", 5.2,
+                "official-Cosmetics/CaveParty res06 lava frame 2", guided=False,
+                reviews=[
+                    review(ss.SNOWBUNNY_IDLE, column(ss.SNOWBUNNY_IDLE, 3, "!"),
+                           "gg3|<C-v>2jc!<Esc>", [["gg3|<C-v>2j", "select column 3 of the whole pose"], ["c!<Esc>", "change that block"]],
+                           "official-Pets/SnowBunny res01", bc_label,
+                           "Snow bunny review: replace only the third registered column across the pose with an inspection axis.",
+                           "Blockwise c owns the same column on every selected row."),
+                    review(ss.SKULLY_IDLE, column(ss.SKULLY_IDLE, 3, "+"),
+                           "gg3|<C-v>2jc+<Esc>", [["gg3|<C-v>2j", "select the skull's third display column"], ["c+<Esc>", "change it on all rows"]],
+                           "official-Pets/Skully res01", bc_label,
+                           "Skully review: mark the third registered column through all pose rows with one block change.",
+                           "The selection is vertical; no other columns move."),
+                ])),
+        ])
+
+        gv_label = "restore and refine the same block with gv"
+        rows.extend([
+            ("M4.04", card(
+                "GV", "Reselect an onion-skin axis for refinement",
+                "Try a vertical axis in missile column 3, then reselect that exact block with gv and refine it to ! without rebuilding the selection.",
+                ss.MISSILE_F1, column(ss.MISSILE_F1, 3, "!"),
+                "gg3|<C-v>2jc|<Esc>gvr!",
+                [["gg3|<C-v>2jc|<Esc>", "make the first axis candidate"],
+                 ["gv", "restore the exact previous three-cell block"],
+                 ["r!", "refine every selected axis cell in place"]],
+                "visual-reselect", 3.3,
+                "official-Games/TowerDefense res18 missile frame 1", guided=True,
+                extra_families=["block-change"])),
+            ("M4.06", card(
+                "GVH", "Retrieve gv on a shifted lava axis",
+                "On the unfamiliar lava frame, create a temporary column-3 axis and then refine the same selection to : with gv.",
+                ss.CAVE_LAVA_B, column(ss.CAVE_LAVA_B, 3, ":"),
+                "gg3|<C-v>2jc|<Esc>gvr:",
+                [["gg3|<C-v>2jc|<Esc>", "create the temporary axis"],
+                 ["gvr:", "reselect it and replace every selected cell with the final marker"]],
+                "visual-reselect", 5.3,
+                "official-Cosmetics/CaveParty res06 lava frame 2", guided=False,
+                extra_families=["block-change"],
+                reviews=[
+                    review(ss.SNOWBUNNY_IDLE, column(ss.SNOWBUNNY_IDLE, 3, "+"),
+                           "gg3|<C-v>2jc|<Esc>gvr+", [["block c", "make the first three-row axis"], ["gvr+", "restore and refine it"]],
+                           "official-Pets/SnowBunny res01", gv_label,
+                           "Snow bunny review: refine the just-made three-row axis to + by restoring its previous selection.",
+                           "gv should recover the exact block; do not navigate and rebuild it."),
+                    review(ss.SKULLY_IDLE, column(ss.SKULLY_IDLE, 3, "!"),
+                           "gg3|<C-v>2jc|<Esc>gvr!", [["block c", "make the temporary skull axis"], ["gvr!", "restore and refine it"]],
+                           "official-Pets/Skully res01", gv_label,
+                           "Skully review: use gv to refine the same selected axis, preserving all neighbouring cells.",
+                           "The second replacement must act on the restored selection."),
+                ])),
+        ])
+
+    if module["id"] == "M3":
+        ga_label = "inspect the acting glyph with ga before replacing it"
+        shock_look = list(ss.FACE_SHOCK)
+        shock_look[2] = shock_look[2].replace("(o)", "(O)", 1)
+        neutral_look = list(ss.FACE_NEUTRAL)
+        neutral_look[2] = neutral_look[2].replace("<o)", "<O)", 1)
+        rows.extend([
+            ("M3.04", card(
+                "GA", "Inspect a pupil before widening it",
+                "On the six-row FaceHUD shock pose, use ga on the left pupil before widening only that cell from o to O.",
+                ss.FACE_SHOCK, shock_look, "3G0fogarO",
+                [["3G0fo", "land on the left pupil"],
+                 ["ga", "inspect the exact glyph under the cursor"],
+                 ["rO", "widen that one pupil without shifting the face"]],
+                "glyph-inspect", 3.1,
+                "official-UI/FaceHUD res08 shock pose", guided=True)),
+            ("M3.06", card(
+                "GAH", "Retrieve glyph inspection on a neutral face",
+                "On the unfamiliar FaceHUD neutral pose, inspect the left pupil with ga before changing only it to O.",
+                ss.FACE_NEUTRAL, neutral_look, "3G0fogarO",
+                [["3G0fo", "land on the left pupil"], ["ga", "inspect it"],
+                 ["rO", "replace that pupil only"]],
+                "glyph-inspect", 5.1,
+                "official-UI/FaceHUD res02 neutral pose", guided=False,
+                reviews=[
+                    review(ss.FACE_SHOCK_WOUND,
+                           [ss.FACE_SHOCK_WOUND[0], ss.FACE_SHOCK_WOUND[1], "  (o) (O)", *ss.FACE_SHOCK_WOUND[3:]],
+                           "3G0f(;fogarO", [["3G0f(;fo", "reach the right pupil"], ["ga", "inspect it"], ["rO", "widen it"]],
+                           "official-UI/FaceHUD res08 + res10 wound overlay", ga_label,
+                           "FaceHUD wound review: inspect the right pupil before widening only that eye.",
+                           "Use the second opening parenthesis as the landmark, then inspect the pupil."),
+                    review(ss.FACE_NEUTRAL,
+                           [ss.FACE_NEUTRAL[0], ss.FACE_NEUTRAL[1], "  <o) (O>", *ss.FACE_NEUTRAL[3:]],
+                           "3G0f(;fogarO", [["3G0f(;fo", "reach the right pupil"], ["ga", "inspect it"], ["rO", "widen it"]],
+                           "official-UI/FaceHUD res02 neutral pose", ga_label,
+                           "Neutral FaceHUD review: inspect the other pupil before changing its width.",
+                           "ga reports the glyph you are about to replace; it does not move the cursor."),
+                ])),
+        ])
+
+    if module["id"] == "M14":
+        dap_label = "delete one complete blank-line-separated frame with dap"
+        skully_pair = ss.SKULLY_IDLE + [""] + ss.SKULLY_BLINK + [""]
+        bunny_pair = ss.SNOWBUNNY_IDLE + [""] + ss.SNOWBUNNY_BLINK + [""]
+        rows.extend([
+            ("M14.04", card(
+                "DAP", "Delete one complete paragraph frame",
+                "The first Skully pose is an accidental duplicate before the blink. Delete that complete frame and its separator as one paragraph object.",
+                skully_pair, ss.SKULLY_BLINK + [""], "ggdap",
+                [["gg", "land inside the first frame paragraph"],
+                 ["dap", "delete around the paragraph: all pose rows plus its separator"]],
+                "paragraph-delete", 3.1,
+                "official-Pets/Skully res01 + res04 blink overlay", guided=True)),
+            ("M14.06", card(
+                "DAPH", "Retrieve paragraph deletion on a bunny blink",
+                "On the unfamiliar snow-bunny strip, remove the complete open-eyed paragraph so the blink frame remains registered.",
+                bunny_pair, ss.SNOWBUNNY_BLINK + [""], "ggdap",
+                [["gg", "land in the first frame"],
+                 ["dap", "delete the complete frame object and blank separator"]],
+                "paragraph-delete", 5.1,
+                "official-Pets/SnowBunny res01 + res03 blink overlay", guided=False,
+                reviews=[
+                    review(ss.FROG_OPEN + [""] + ss.FROG_SHUT + [""], ss.FROG_SHUT + [""], "ggdap",
+                           [["ggdap", "delete the complete open-eye frog paragraph"]],
+                           "official-Pets/Frog res01 + res07 blink overlay", dap_label,
+                           "Frog review: remove the complete open-eye frame and its separator; leave the blink intact.",
+                           "ap owns the whole blank-line-separated frame."),
+                    review(ss.SKULLY_LOOK + [""] + ss.SKULLY_BLINK + [""], ss.SKULLY_BLINK + [""], "ggdap",
+                           [["ggdap", "delete the complete look pose paragraph"]],
+                           "official-Pets/Skully res01 + res02/res04 overlays", dap_label,
+                           "Skully review: remove the complete look pose paragraph before the blink.",
+                           "Delete the frame object, not three guessed rows."),
+                ])),
+        ])
+    return rows
+
+
 def command_review_contract(cards):
     """Prove every visibly taught command family returns as hidden changed art."""
     first_guided = {}
@@ -5271,7 +5640,7 @@ def build():
             module_cards = [primer, module_cards[0], yank_put, open_line,
                             addressed_substitute, module_cards[1], module_cards[2],
                             module_cards[3], ex_copy] + module_cards[4:]
-        bridge_rows = guided_bridge_cards(module)
+        bridge_rows = [*guided_bridge_cards(module), *mastery_extension_cards(module)]
         if bridge_rows:
             by_before = {}
             for before, bridge_card in bridge_rows:
@@ -5432,7 +5801,7 @@ def build():
         question_map[question_id].update(authored)
         question_map[question_id]["authorship"] = "manual"
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.29",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.30",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "modules": modules, "cards": cards, "questions": questions,
         "animation_lesson_pack": animation_lessons,

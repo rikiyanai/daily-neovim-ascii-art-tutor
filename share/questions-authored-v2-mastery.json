@@ -1,0 +1,380 @@
+{
+  "M13.W.P01": {
+    "prompt": "ANIMATION\nCave Party lava is a row of separated crest cells. Only crest 2 becomes !; the figure above it does not move.\n\n  BEFORE             AFTER\n  │   o             │ │   o             │\n  │  /|\\            │ │  /|\\            │\n  │    ~ ~ ~ ~ ~ ~ ~│ │    ~ ! ~ ~ ~ ~ ~│\n\nNEOVIM\nWhat does lowercase w count in `3G0wwr!`?",
+    "compact_prompt": "ANIMATION\nLava crest 2 changes; the figure stays fixed.\n\n  │    ~ ~ ~ ~ ~ ~ ~│\n  │    ~ ! ~ ~ ~ ~ ~│\n\nNEOVIM\nWhat do the two lowercase-w motions count?",
+    "animation_prompt": "ANIMATION\nM13.W changes the second separated lava crest and no other cell.\n\n  │    ~ ~ ~ ~ ~ ~ ~│ → │    ~ ! ~ ~ ~ ~ ~│",
+    "animation_answer": "Only the second separated lava crest changes.",
+    "neovim_prompt": "NEOVIM\nDecode `3G0wwr!` on the shown punctuation row.",
+    "neovim_answer": "3G selects the lava row, 0 anchors its left edge, each lowercase w crosses one punctuation-run boundary, and r! overwrites crest 2.",
+    "choices": [
+      "ANIMATION: Crest 2 changes and the figure remains fixed. | NEOVIM: Each lowercase w moves to the next punctuation run; r! overwrites the reached crest.",
+      "ANIMATION: Every crest changes to !. | NEOVIM: Lowercase w selects the whole line as one object.",
+      "ANIMATION: The figure shifts two columns. | NEOVIM: ww inserts two spaces before the lava.",
+      "ANIMATION: Crest 1 is deleted. | NEOVIM: w is a delete operator whose noun is r!."
+    ],
+    "compact_choices": [
+      "A: crest 2 only · V: w crosses punctuation runs",
+      "A: all crests · V: w selects line",
+      "A: figure shifts · V: ww inserts spaces",
+      "A: crest 1 deleted · V: w is operator"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: lowercase w supplies motion between separated punctuation runs; r owns the one changed cell.",
+      "The target contains one exclamation mark, not a line-wide replacement.",
+      "Motions move the cursor; they do not insert padding or translate the figure.",
+      "w is the motion here. The replacement command is r!."
+    ]
+  },
+  "M13.WH.P01": {
+    "prompt": "ANIMATION\nThe Drill tread has six separated dash cells. Only cell 3 becomes +; hull and lower track remain registered.\n\n  BEFORE          AFTER\n  │ - - - - - - │ │ - - + - - - │\n  │\\ _ _ _ _ _ /│ │\\ _ _ _ _ _ /│\n\nNEOVIM\nWhich hidden method proves the third cell was reached by lowercase word boundaries?",
+    "compact_prompt": "ANIMATION\nOnly tread cell 3 changes.\n\n  │ - - - - - -│ → │ - - + - - -│\n\nNEOVIM\nWhich scope is the taught retrieval?",
+    "animation_prompt": "ANIMATION\nM13.WH changes the third separated Drill tread cell while preserving both neighbouring rows.\n\n  │ - - - - - -│ → │ - - + - - -│",
+    "animation_answer": "Only the third tread cell changes.",
+    "neovim_prompt": "NEOVIM\nIdentify the path that counts three lowercase-w boundaries from the row edge.",
+    "neovim_answer": "2G0wwwr+ reaches the third punctuation run with lowercase w and replaces only that dash.",
+    "choices": [
+      "ANIMATION: The lower track moves and the dash row holds. | NEOVIM: `$r+` changes the row's last glyph.",
+      "ANIMATION: Only tread cell 3 becomes +. | NEOVIM: `2G0wwwr+` counts three lowercase-w boundaries and replaces the reached cell.",
+      "ANIMATION: Tread cells 1–3 all become +. | NEOVIM: `3r+` repeats replacement across three cells.",
+      "ANIMATION: The whole tread shifts right. | NEOVIM: `3w` inserts one space at each boundary."
+    ],
+    "compact_choices": [
+      "A: lower track moves · V: last glyph",
+      "A: tread cell 3 · V: 0www then r+",
+      "A: cells 1–3 · V: 3r+",
+      "A: tread shifts · V: w inserts"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "The acting row is the separated dash row, and its third cell is not the row end.",
+      "Correct: three lowercase-w motions count punctuation runs, then r+ changes exactly the reached cell.",
+      "A count on r would overwrite consecutive display cells, including spaces; that is not the shown result.",
+      "w never inserts text. A translated tread would break registration with the hull."
+    ]
+  },
+  "M13.GU.P01": {
+    "prompt": "ANIMATION\nThe missile exhaust row is padded with three alignment spaces. Its last visible puff changes from apostrophe to dot.\n\n  BEFORE          AFTER\n  │< / / |::'   │ │< / / |::.   │\n\nNEOVIM\nWhy is `g_` different from `$` on this padded animation row?",
+    "compact_prompt": "ANIMATION\nFinal visible exhaust glyph changes; padding stays.\n\n  │|::'   │ → │|::.   │\n\nNEOVIM\nWhere does g_ land?",
+    "animation_prompt": "ANIMATION\nM13.GU changes the last visible exhaust puff but preserves trailing registration spaces.\n\n  │|::'   │ → │|::.   │",
+    "animation_answer": "The apostrophe puff becomes a dot; the padding is untouched.",
+    "neovim_prompt": "NEOVIM\nDecode `2Gg_r.` on a row with trailing spaces.",
+    "neovim_answer": "2G selects the exhaust row, g_ lands on its last nonblank glyph, and r. replaces that cell.",
+    "choices": [
+      "ANIMATION: The padding is deleted. | NEOVIM: `g_` trims every trailing space.",
+      "ANIMATION: The first exhaust colon changes. | NEOVIM: `g_` moves to the first nonblank glyph.",
+      "ANIMATION: The final visible puff becomes a dot; padding remains. | NEOVIM: `g_` lands on the last nonblank glyph and `r.` overwrites it.",
+      "ANIMATION: A dot is appended after the padding. | NEOVIM: `g_` means go to the physical end and insert."
+    ],
+    "compact_choices": [
+      "A: padding deleted · V: g_ trims",
+      "A: first colon · V: first nonblank",
+      "A: final puff; padding fixed · V: last nonblank + r",
+      "A: dot appended · V: physical end"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "g_ is a motion; it does not delete the alignment padding.",
+      "The first-nonblank motion is ^. g_ goes in the opposite direction.",
+      "Correct: the motion deliberately ignores trailing blanks, so replacement reaches the visible exhaust endpoint.",
+      "The target keeps the row width and padding; no new cell is appended."
+    ]
+  },
+  "M13.GH.P01": {
+    "prompt": "ANIMATION\nA Chick peep frame has trailing registration spaces. Only the final beak glyph closes from < to -.\n\n  BEFORE       AFTER\n  │  __O<   │  │  __O-   │\n  │`{/ ;    │  │`{/ ;    │\n  │  ^^     │  │  ^^     │\n\nNEOVIM\nWhich hidden path addresses the visible endpoint rather than the padded row end?",
+    "compact_prompt": "ANIMATION\nOnly the beak endpoint closes.\n\n  │__O<   │ → │__O-   │\n\nNEOVIM\nWhich motion ignores the padding?",
+    "animation_prompt": "ANIMATION\nM13.GH closes the final visible beak cell and preserves all other pose cells.\n\n  │  __O<   │ → │  __O-   │",
+    "animation_answer": "The last visible beak glyph changes from < to -.",
+    "neovim_prompt": "NEOVIM\nChoose the method that uses the last-nonblank motion.",
+    "neovim_answer": "ggg_r- reaches the first row, lands on its last nonblank glyph, and replaces that glyph with -.",
+    "choices": [
+      "ANIMATION: All three rows lose their trailing spaces. | NEOVIM: `gg$D` deletes each padded tail.",
+      "ANIMATION: The eye O becomes -. | NEOVIM: `ggfOr-` edits the eye instead of the endpoint.",
+      "ANIMATION: A new dash is inserted after the padding. | NEOVIM: `A-<Esc>` appends at the physical row end.",
+      "ANIMATION: Only the final visible beak glyph becomes -. | NEOVIM: `ggg_r-` uses g_ to ignore padding and replace the endpoint."
+    ],
+    "compact_choices": [
+      "A: padding removed · V: $D",
+      "A: eye changes · V: find O",
+      "A: dash appended · V: A",
+      "A: beak endpoint only · V: g_ then r-"
+    ],
+    "correct_choice": 3,
+    "feedback": [
+      "The alignment spaces remain part of the registered row; deleting them is not the target.",
+      "The eye is unchanged. The acting cell is the last visible glyph.",
+      "Appending would place the dash after invisible padding and would not replace the beak.",
+      "Correct: g_ addresses the visible endpoint independently of the amount of trailing padding."
+    ]
+  },
+  "M4.BI.P01": {
+    "prompt": "ANIMATION\nA temporary onion-skin rail is added to the left of every Cave Party lava row.\n\n  BEFORE          AFTER\n  │   o          │ │|   o          │\n  │  /|\\         │ │|  /|\\         │\n  │    ~ ~ ~ ~  │ │|    ~ ~ ~ ~  │\n\nNEOVIM\nWhat scope does blockwise I own?",
+    "compact_prompt": "ANIMATION\nOne rail prefixes every frame row.\n\n  │   o│ → │|   o│\n  │  /|\\│ → │|  /|\\│\n  │ ~ ~│ → │| ~ ~│\n\nNEOVIM\nWhy use Ctrl-v then I?",
+    "animation_prompt": "ANIMATION\nM4.BI adds one shared comparison rail across the complete three-row lava frame.",
+    "animation_answer": "Every row gets the same one-cell prefix; internal art stays registered.",
+    "neovim_prompt": "NEOVIM\nDecode `gg0<C-v>2jI|<Esc>`.",
+    "neovim_answer": "Ctrl-v selects column 1 through three rows; blockwise I inserts | at each selected row start when Escape applies it.",
+    "choices": [
+      "ANIMATION: One left rail prefixes all three rows. | NEOVIM: Ctrl-v selects the column and blockwise I inserts the same prefix on each row.",
+      "ANIMATION: Only the top row gets a rail. | NEOVIM: I acts only on the cursor row even in Visual Block mode.",
+      "ANIMATION: The lava crests become vertical bars. | NEOVIM: Ctrl-v selects every nonblank glyph in the frame.",
+      "ANIMATION: Three empty rows are inserted. | NEOVIM: I is a line-opening command here."
+    ],
+    "compact_choices": [
+      "A: rail on all rows · V: block I",
+      "A: top row only · V: I ignores block",
+      "A: crests become bars · V: nonblank selection",
+      "A: empty rows · V: line opening"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the selection is one column wide and three rows tall; I applies one prefix per selected row.",
+      "In Visual Block mode, I is specifically repeated across the selected rows.",
+      "The rail sits before the art; it does not replace internal lava cells.",
+      "Blockwise I inserts text at each selected row's block edge; it does not create rows."
+    ]
+  },
+  "M4.BIH.P01": {
+    "prompt": "ANIMATION\nAn unfamiliar missile frame needs one left registration rail on all three rows before comparison.\n\n  BEFORE       AFTER\n  │  ____/   │ │|  ____/   │\n  │< / / |:. │ │|< / / |:. │\n  │  ¯¯¯¯\\   │ │|  ¯¯¯¯\\   │\n\nNEOVIM\nWhich hidden method proves one block operation owned the full frame height?",
+    "compact_prompt": "ANIMATION\nPrefix one rail across all missile rows.\n\n  │  ____/│ → │|  ____/│\n  │< / /  │ → │|< / /  │\n  │  ¯¯¯¯\\│ → │|  ¯¯¯¯\\│\n\nNEOVIM\nWhich method is one block insert?",
+    "animation_prompt": "ANIMATION\nM4.BIH adds a comparison rail to all three missile rows and leaves the missile cells unchanged.",
+    "animation_answer": "One rail spans the entire three-row frame.",
+    "neovim_prompt": "NEOVIM\nSelect the method that uses blockwise I once.",
+    "neovim_answer": "gg0<C-v>2jI|<Esc> selects the first column across three rows and applies one block insertion.",
+    "choices": [
+      "ANIMATION: Rails appear after the missile rows. | NEOVIM: `$a|<Esc>` is repeated three times.",
+      "ANIMATION: One rail prefixes every missile row. | NEOVIM: `gg0<C-v>2jI|<Esc>` selects the three-row column and inserts once.",
+      "ANIMATION: Only exhaust punctuation changes. | NEOVIM: `:s/:/|/g` edits the exhaust row.",
+      "ANIMATION: The middle row shifts twice. | NEOVIM: `2>>` indents it by two cells."
+    ],
+    "compact_choices": [
+      "A: rails after rows · V: repeat append",
+      "A: prefix all rows · V: one block I",
+      "A: exhaust changes · V: substitute",
+      "A: middle row shifts · V: indent"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "Appending three times does not demonstrate one bounded block and risks inconsistent row ends.",
+      "Correct: the vertical selection owns the pose height and one I applies the shared rail.",
+      "No exhaust glyph changes; the rail is outside the missile art.",
+      "Indenting one row would destroy registration with the other two."
+    ]
+  },
+  "M4.BC.P01": {
+    "prompt": "ANIMATION\nA temporary onion-skin axis replaces display column 3 through the missile's three rows.\n\n  BEFORE       AFTER\n  │  ____/   │ │  |___/   │\n  │< / / |:. │ │< | / |:. │\n  │  ¯¯¯¯\\   │ │  |¯¯¯\\   │\n\nNEOVIM\nHow does blockwise c differ from inserting a new column?",
+    "compact_prompt": "ANIMATION\nColumn 3 becomes one axis; width stays fixed.\n\n  │  ____/│ → │  |___/│\n  │< / /  │ → │< | /  │\n  │  ¯¯¯¯\\│ → │  |¯¯¯\\│\n\nNEOVIM\nWhat does block c own?",
+    "animation_prompt": "ANIMATION\nM4.BC replaces one registered column through the full missile frame.",
+    "animation_answer": "Only the three cells at display column 3 become |; row widths stay fixed.",
+    "neovim_prompt": "NEOVIM\nDecode `gg3|<C-v>2jc|<Esc>`.",
+    "neovim_answer": "3| addresses the column, Ctrl-v through 2j selects its three cells, and c| changes the block in place.",
+    "choices": [
+      "ANIMATION: A new column is inserted and the missile widens. | NEOVIM: c in a block always shifts later cells right.",
+      "ANIMATION: The third row is deleted. | NEOVIM: c is linewise after Ctrl-v.",
+      "ANIMATION: Exactly column 3 becomes | on all rows. | NEOVIM: Ctrl-v selects that column and c replaces the selected cells without adding a column.",
+      "ANIMATION: Every underscore becomes |. | NEOVIM: the block selection means all matching glyphs."
+    ],
+    "compact_choices": [
+      "A: insert column · V: c shifts",
+      "A: delete row 3 · V: c linewise",
+      "A: column 3 only · V: block c replaces",
+      "A: all underscores · V: block matches glyphs"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "The target keeps every row's width; the selected cells are replaced rather than preceded.",
+      "Visual Block mode makes the scope rectangular, not linewise.",
+      "Correct: the block is one column wide, so c replaces one registered cell on each row.",
+      "A block is geometric. It does not search for matching glyphs elsewhere."
+    ]
+  },
+  "M4.BCH.P01": {
+    "prompt": "ANIMATION\nOn shifted Cave Party lava, only display column 3 becomes a three-row comparison axis.\n\n  BEFORE        AFTER\n  │   o        │ │  |o        │\n  │  /|\\       │ │  ||\\       │\n  │   ~ ~ ~   │ │  |~ ~ ~   │\n\nNEOVIM\nWhich hidden scope changes one registered column and no neighbour?",
+    "compact_prompt": "ANIMATION\nOnly column 3 becomes |.\n\n  │   o│ → │  |o│\n  │  /|\\│ → │  ||\\│\n  │   ~│ → │  |~│\n\nNEOVIM\nWhich block is one column wide?",
+    "animation_prompt": "ANIMATION\nM4.BCH marks one column through the shifted lava frame while preserving the phase around it.",
+    "animation_answer": "The three cells at column 3 become | and all neighbouring cells remain in place.",
+    "neovim_prompt": "NEOVIM\nChoose the one-column Visual Block change.",
+    "neovim_answer": "gg3|<C-v>2jc|<Esc> selects column 3 through all rows and replaces exactly that block.",
+    "choices": [
+      "ANIMATION: The complete lava row becomes bars. | NEOVIM: `Vjc|<Esc>` changes whole lines.",
+      "ANIMATION: Column 3 is inserted before the art. | NEOVIM: blockwise I is the required method.",
+      "ANIMATION: Only the top cell changes. | NEOVIM: `3|r|` edits the cursor row only.",
+      "ANIMATION: Column 3 changes on all three rows. | NEOVIM: `gg3|<C-v>2jc|<Esc>` changes the one-column block in place."
+    ],
+    "compact_choices": [
+      "A: whole lava row · V: line Visual",
+      "A: inserted column · V: block I",
+      "A: top cell only · V: one r",
+      "A: column 3 all rows · V: block c"
+    ],
+    "correct_choice": 3,
+    "feedback": [
+      "Whole-line Visual scope is wider than the visible three-cell axis.",
+      "The target replaces existing cells; it does not add width.",
+      "One r cannot prove that all three registered rows share the axis.",
+      "Correct: the rectangular scope is one cell wide and three rows tall."
+    ]
+  },
+  "M4.GV.P01": {
+    "prompt": "ANIMATION\nThe missile's temporary column-3 axis is tried as |, then refined to ! on the exact same three cells.\n\n  FIRST TRY     FINAL\n  │  |___/   │ │  !___/   │\n  │< | / |:. │ │< ! / |:. │\n  │  |¯¯¯\\   │ │  !¯¯¯\\   │\n\nNEOVIM\nWhat does gv recover after the first block change?",
+    "compact_prompt": "ANIMATION\nThe same three axis cells are refined |→!.\n\n  │  |___/│ → │  !___/│\n  │< | /  │ → │< ! /  │\n  │  |¯¯¯\\│ → │  !¯¯¯\\│\n\nNEOVIM\nWhat does gv restore?",
+    "animation_prompt": "ANIMATION\nM4.GV refines the same onion-skin axis without reconstructing its geometry.",
+    "animation_answer": "The three previously selected axis cells change together from | to !.",
+    "neovim_prompt": "NEOVIM\nDecode the `gv` in `...c|<Esc>gvr!`.",
+    "neovim_answer": "gv restores the previous Visual Block selection; r! then replaces those same cells.",
+    "choices": [
+      "ANIMATION: The final axis moves to another column. | NEOVIM: gv finds the next matching glyph.",
+      "ANIMATION: The same three axis cells are refined from | to !. | NEOVIM: gv restores the previous Visual selection, then r! acts on it.",
+      "ANIMATION: Only the bottom axis cell changes. | NEOVIM: gv means go to the last visual row.",
+      "ANIMATION: The first edit is undone. | NEOVIM: gv is an alias for u."
+    ],
+    "compact_choices": [
+      "A: axis moves · V: find next",
+      "A: same axis refined · V: restore selection",
+      "A: bottom cell only · V: last row",
+      "A: first edit undone · V: gv=u"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "No search occurs, and the final axis remains in column 3.",
+      "Correct: gv restores the exact geometric scope of the previous selection.",
+      "The restored selection contains all three cells, not only the cursor endpoint.",
+      "gv reselects; it does not reverse the prior change."
+    ]
+  },
+  "M4.GVH.P01": {
+    "prompt": "ANIMATION\nA shifted lava frame first gets a | axis at column 3, then the same selected cells are refined to :.\n\n  FIRST TRY   FINAL\n  │  |o      │ │  :o      │\n  │  ||\\     │ │  :|\\     │\n  │  |~ ~   │ │  :~ ~   │\n\nNEOVIM\nWhich hidden sequence proves the identical selection was reused?",
+    "compact_prompt": "ANIMATION\nRefine the same lava axis |→:.\n\n  │  |o│ → │  :o│\n  │  ||\\│ → │  :|\\│\n  │  |~│ → │  :~│\n\nNEOVIM\nWhich step restores the block?",
+    "animation_prompt": "ANIMATION\nM4.GVH refines one unchanged three-cell comparison axis on unfamiliar lava art.",
+    "animation_answer": "The column-3 axis is refined in place; no cell outside it changes.",
+    "neovim_prompt": "NEOVIM\nChoose the route that uses gv after the first block edit.",
+    "neovim_answer": "gg3|<C-v>2jc|<Esc>gvr: makes the first axis, restores that selection with gv, and refines it.",
+    "choices": [
+      "ANIMATION: The same column-3 axis becomes :. | NEOVIM: make the block, press gv to restore it, then r: on the selection.",
+      "ANIMATION: Every colon in the file changes. | NEOVIM: `:%s/|/:/g` proves the prior block was reused.",
+      "ANIMATION: A second axis is added. | NEOVIM: repeat blockwise I at column 4.",
+      "ANIMATION: The old axis disappears with no replacement. | NEOVIM: gv deletes the previous selection."
+    ],
+    "compact_choices": [
+      "A: same axis becomes : · V: gv then r:",
+      "A: all colons change · V: global substitute",
+      "A: second axis · V: block I",
+      "A: axis deleted · V: gv deletes"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the second operation reuses the prior block geometry instead of rebuilding it.",
+      "A file-wide substitution does not demonstrate selection memory and exceeds the shown scope.",
+      "The final has one axis in the same column, not an added neighbour.",
+      "gv restores a selection; a following operator decides what happens to it."
+    ]
+  },
+  "M3.GA.P01": {
+    "prompt": "ANIMATION\nFaceHUD's left pupil widens from o to O while the eye parentheses, other pupil, mouth, and six-row silhouette stay fixed.\n\n  BEFORE       AFTER\n  │  (o) (o) │ │  (O) (o) │\n  │    ___   │ │    ___   │\n  │\\  /___\\ /│ │\\  /___\\ /│\n\nNEOVIM\nWhy run ga before rO?",
+    "compact_prompt": "ANIMATION\nOnly the left pupil o→O.\n\n  │(o) (o)│ → │(O) (o)│\n  │ /___\\ │   │ /___\\ │\n\nNEOVIM\nWhat does ga inspect?",
+    "animation_prompt": "ANIMATION\nM3.GA widens one pupil and preserves every enclosing contour cell.",
+    "animation_answer": "Only the left pupil changes from o to O.",
+    "neovim_prompt": "NEOVIM\nDecode `3G0fogarO`.",
+    "neovim_answer": "f finds the pupil, ga reports the glyph under the cursor, and rO replaces that same cell.",
+    "choices": [
+      "ANIMATION: Both pupils widen. | NEOVIM: ga applies a glyph change to every matching character.",
+      "ANIMATION: The left eye parentheses are replaced. | NEOVIM: ga selects the whole text object around the cursor.",
+      "ANIMATION: Only the left pupil widens. | NEOVIM: ga reports the glyph under the cursor, then rO overwrites that same cell.",
+      "ANIMATION: The face shifts one cell. | NEOVIM: ga inserts the inspected codepoint before the pupil."
+    ],
+    "compact_choices": [
+      "A: both pupils · V: ga changes matches",
+      "A: parentheses replaced · V: ga selects object",
+      "A: left pupil only · V: ga inspects then r",
+      "A: face shifts · V: ga inserts"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "ga is an inspection command, not a global glyph replacement.",
+      "The enclosing parentheses remain unchanged and ga creates no selection.",
+      "Correct: inspection confirms the acting glyph before one fixed-cell replacement.",
+      "ga prints character information; it does not insert anything into the row."
+    ]
+  },
+  "M3.GAH.P01": {
+    "prompt": "ANIMATION\nOn an unfamiliar neutral FaceHUD pose, only the left pupil widens; the right pupil and mouth remain stable.\n\n  BEFORE       AFTER\n  │  <o) (o> │ │  <O) (o> │\n  │\\   ---  /│ │\\   ---  /│\n  │ `._ _.' │ │ `._ _.' │\n\nNEOVIM\nWhich hidden route includes actual glyph inspection before replacement?",
+    "compact_prompt": "ANIMATION\nNeutral face: left pupil o→O only.\n\n  │<o) (o>│ → │<O) (o>│\n  │  ---  │   │  ---  │\n\nNEOVIM\nWhich route uses ga?",
+    "animation_prompt": "ANIMATION\nM3.GAH transfers inspect-then-replace to a different six-row face.",
+    "animation_answer": "Only the left pupil widens.",
+    "neovim_prompt": "NEOVIM\nChoose the sequence that inspects the reached pupil before rO.",
+    "neovim_answer": "3G0fogarO finds o, runs ga on it, then replaces it with O.",
+    "choices": [
+      "ANIMATION: The mouth widens and pupils hold. | NEOVIM: find the dash band, run ga, then R over it.",
+      "ANIMATION: Both pupils become O. | NEOVIM: substitute every o on the row.",
+      "ANIMATION: The left pupil is deleted. | NEOVIM: ga followed by x removes the inspected glyph.",
+      "ANIMATION: Only the left pupil becomes O. | NEOVIM: `3G0fogarO` finds it, inspects it with ga, then replaces that cell."
+    ],
+    "compact_choices": [
+      "A: mouth changes · V: inspect dash band",
+      "A: both pupils · V: substitute all o",
+      "A: pupil deleted · V: ga then x",
+      "A: left pupil only · V: find, ga, rO"
+    ],
+    "correct_choice": 3,
+    "feedback": [
+      "The mouth is the stable reference; the pupil is the acting cell.",
+      "The right pupil remains lowercase o, so a row-wide substitute is too broad.",
+      "The target contains a widened pupil, not an empty eye.",
+      "Correct: the method evidence contains ga on the exact cell that rO changes."
+    ]
+  },
+  "M14.DAP.P01": {
+    "prompt": "ANIMATION\nThe first blank-line-separated Skully pose is an accidental duplicate. Remove the complete open-eye frame so the blink remains.\n\n  BEFORE         AFTER\n  │     ,--.   │  │     ,--.   │\n  │    (_o,o)  │  │    (_=,=)  │\n  │      `\"´   │  │      `\"´   │\n  │            │  │            │\n  │     ,--.   │\n  │    (_=,=)  │\n  │      `\"´   │\n\nNEOVIM\nHow does dap parse as Vim grammar?",
+    "compact_prompt": "ANIMATION\nDelete the complete open-eye paragraph; keep blink.\n\n  │(_o,o)│\n  │      │ → │(_=,=)│\n  │(_=,=)│\n\nNEOVIM\nWhat are d and ap?",
+    "animation_prompt": "ANIMATION\nM14.DAP removes one complete frame object, including its blank separator.",
+    "animation_answer": "The open-eye Skully paragraph disappears and the blink paragraph remains intact.",
+    "neovim_prompt": "NEOVIM\nDecode `ggdap` as operator plus text object.",
+    "neovim_answer": "d is delete and ap is the around-paragraph object, so the complete frame and separator are removed.",
+    "choices": [
+      "ANIMATION: The open-eye frame and its separator are removed; the blink stays whole. | NEOVIM: d is the operator and ap is the complete around-paragraph object.",
+      "ANIMATION: Only the open-eye row is removed. | NEOVIM: ap means the active line under the cursor.",
+      "ANIMATION: Both frames merge without a separator. | NEOVIM: dap deletes blank lines only.",
+      "ANIMATION: The blink is removed and open eyes remain. | NEOVIM: dap always chooses the next paragraph."
+    ],
+    "compact_choices": [
+      "A: open frame+separator removed · V: d + ap",
+      "A: eye row only · V: ap=current line",
+      "A: frames merge · V: blanks only",
+      "A: blink removed · V: next paragraph"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the operator receives a complete paragraph object, so rows and separator travel together.",
+      "ap is not a line object; it spans the blank-line-delimited paragraph.",
+      "The frame's art rows are inside the object and are deleted with its separator.",
+      "The object is the paragraph containing the cursor, not automatically the next one."
+    ]
+  },
+  "M14.DAPH.P01": {
+    "prompt": "ANIMATION\nIn an unfamiliar snow-bunny strip, delete the complete open-eye paragraph and leave the blink frame registered.\n\n  BEFORE          AFTER\n  │   (\\(\\      │  │   (\\(\\      │\n  │  ( n.n)     │  │  ( -.-)     │\n  │o(,`_\"_)    │  │o(,`_\"_)    │\n  │             │  │             │\n  │   (\\(\\      │\n  │  ( -.-)     │\n  │o(,`_\"_)    │\n\nNEOVIM\nWhich hidden scope removes one complete frame object rather than guessed rows?",
+    "compact_prompt": "ANIMATION\nRemove open bunny paragraph; keep blink.\n\n  │( n.n)│\n  │     │ → │( -.-)│\n  │( -.-)│\n\nNEOVIM\nWhich text object owns the frame?",
+    "animation_prompt": "ANIMATION\nM14.DAPH transfers paragraph deletion to a different complete character pose.",
+    "animation_answer": "The open-eye bunny frame and separator are removed; the blink remains.",
+    "neovim_prompt": "NEOVIM\nChoose the method using the around-paragraph object.",
+    "neovim_answer": "ggdap applies delete to the paragraph containing the first frame and its blank separator.",
+    "choices": [
+      "ANIMATION: Only the ears are removed. | NEOVIM: `dd` deletes the first row.",
+      "ANIMATION: The open-eye frame and separator are removed; the blink remains complete. | NEOVIM: `ggdap` deletes around the first paragraph object.",
+      "ANIMATION: Both frames are deleted. | NEOVIM: `dG` owns everything to file end.",
+      "ANIMATION: A second blink is added. | NEOVIM: `yapP` copies the paragraph instead of deleting it."
+    ],
+    "compact_choices": [
+      "A: ears only · V: dd",
+      "A: open frame+separator · V: dap",
+      "A: both frames · V: dG",
+      "A: add blink · V: yapP"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "One row is not a complete pose; the remaining face and body would be orphaned.",
+      "Correct: the paragraph object follows the frame boundary instead of relying on a row count.",
+      "The blink is the desired surviving frame, so deleting to file end is too broad.",
+      "Copying creates another frame and does not remove the accidental first pose."
+    ]
+  }
+}

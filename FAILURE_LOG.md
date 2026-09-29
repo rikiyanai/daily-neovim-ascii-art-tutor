@@ -4121,3 +4121,66 @@ the VD-26 list (`gR`, `g_`, lowercase `w`, blockwise `I/c`, `gv`, `zp`, `ga`,
 `:diffthis`, `scrollbind`, display-column tools, whitespace cleanup, undo-tree
 travel, and `dap`); and the current mixed modules do not yet enforce the
 requested complete S0–S7 still-authoring sequence before A0–A7 animation.
+
+## VD-36 · 2026-09-29 — seven VD-26 command gaps now have enforced guided → hidden → spaced-review paths
+
+**Failure carried from VD-26/VD-35:** the course could mention a command in an
+answer or metadata and call that coverage even when the learner was never
+required to perform it. The finish line is stricter: visible guided performance,
+then an unfamiliar-art lesson with the recipe hidden and runtime method evidence,
+then changed-art retrieval before module mastery.
+
+**Implemented in revision `2026-09-29.30`:** fourteen individually authored
+cards close seven of the exact command gaps. The hidden card in every pair has
+`show_recipe=false`, an `exact_any_of` method requirement, two source-linked
+review variants with their own method requirements, and
+`required_before_mastery=true`. The module cannot master until that review is
+passed.
+
+| guided card | required hidden card | method that is actually graded | source-linked animation work |
+|---|---|---|---|
+| `M13.W` | `M13.WH` | lowercase `w` over separated punctuation runs | CaveParty lava → Drill tread, then two changed phases |
+| `M13.GU` | `M13.GH` | `g_` to the last nonblank cell despite registered padding | TowerDefense missile exhaust → Chick beak, then reverse-state reviews |
+| `M4.BI` | `M4.BIH` | Visual Block `I` over a three-row registered column | CaveParty lava → missile, then SnowBunny and Skully |
+| `M4.BC` | `M4.BCH` | Visual Block `c` replacing one fixed column | missile → shifted lava, then SnowBunny and Skully |
+| `M4.GV` | `M4.GVH` | `gv` restores and refines the exact previous block | missile → shifted lava, then SnowBunny and Skully |
+| `M3.GA` | `M3.GAH` | `ga` inspection before the one-cell replacement | FaceHUD shock → neutral, then wound/right-eye reviews |
+| `M14.DAP` | `M14.DAPH` | `d` + `ap` deletes one blank-line-separated full-pose frame | Skully open/blink → SnowBunny, then Frog and Skully |
+
+The fourteen paired questions are separately written in
+`share/questions-authored-v2-mastery.json`; none is synthesized from a card
+template. Each shows the acting ASCII-art cells, asks about both animation scope
+and Neovim grammar, has four distinct choices, and gives mistake-specific
+feedback. Guided cards place the question after the visible performance; hidden
+cards ask for recognition without printing the hidden recipe in a before-card
+prompt.
+
+**Executable evidence for this slice:**
+
+- `python3 share/gen_curriculum_v2.py` rebuilt 20 modules, 201 cards, and 361
+  questions.
+- `python3 share/test_question_quality.py` passes all 361 questions.
+- `python3 share/test_v2.py` passes 201/201 executable lessons and 160/160
+  primary recipes. It now asserts the seven hidden ids, exact enforced method,
+  two source-linked reviews per card, required-before-mastery state, and one
+  manually authored paired question per hidden card.
+- `python3 share/test_stone_story_variants.py` still reports zero generic
+  border-swap reviews; the animation-pack and live-integration tests pass.
+- The current real-user-config client-attached popup passes at 188×49. The
+  broader real-config and route runs were still outstanding at this log point,
+  so this entry does not claim their result.
+
+**Corrections to older open entries:** VD-26's `gR` gap had already been closed
+by M19 before this slice. VD-21 items 2–3 are also no longer live: every visible
+question is four-choice multiple choice, the 20 comparison questions have 20
+distinct card-specific source contracts, and `test_v2.py` parses command-looking
+backticks in before-card questions against earlier guided performance instead of
+trusting the `grammar_family` tag.
+
+**Still open; this is not course completion:** `zp`/`zP`; `:diffthis` and
+`scrollbind`; `:set list`, `cursorcolumn`, and `colorcolumn`; intentional
+trailing-whitespace inspection/cleanup; undo-tree travel with `g-`, `g+`, and
+`:earlier`; per-variant questions before replacing each module transfer's first
+art; remaining invented primary art; Stone Story provenance/publication intake;
+and a real stage gate that completes S0–S7 before A0–A7 rather than attaching
+mixed stage labels to modules.
