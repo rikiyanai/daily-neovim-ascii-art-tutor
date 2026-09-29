@@ -4539,3 +4539,28 @@ config at 80x24.
 variant-2 question. First variants still use the existing lesson art, so the
 Stone Story primary-art replacement, provenance intake, full headed route
 matrix, and publication decision remain open. No third-party art was pushed.
+
+### VD-40 follow-through · revision `.40` — M5/M6/M7 alternates own layer, pose, and repeat scope
+
+Three more alternate transfers now have individually authored visual questions:
+
+- `M5.06` variant 2 prints its triangle, dotted midground, wave ground, and
+  false vertical seam. The correct account binds the single negative-space
+  repair to `4G06lr<Space>` and explicitly rejects repainting or shifting a
+  whole layer.
+- `M6.06` variant 2 prints both complete five-row pyramid poses. Its question
+  decodes `:1,5m$` as range + move + destination and distinguishes pose
+  reordering from copying, deletion, or detached apex swapping.
+- `M7.06` variant 2 prints both complete hold frames and asks why the five-row
+  offset plus dot repeats only `rX` on the corresponding eye, not the preceding
+  navigation or a whole-frame put.
+
+**Proof:** generator `.40` writes 215 cards / 383 manually authored questions;
+question quality passes 383; clean Neovim remains **215/215 cards and 174/174
+primary recipes**; and all three new alternate routes pass with the real user
+config at 80x24.
+
+**Still open.** Twelve other `.06` cards still lack manually authored
+variant-2 questions. Stone Story primary-art migration, provenance intake, the
+full headed route matrix, and publication decision also remain open. No
+third-party art was pushed.

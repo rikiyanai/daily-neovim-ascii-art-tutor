@@ -836,6 +836,87 @@
       "Correct: the command grammar names one row, one visible landmark, and one-cell replacement, matching the acting-part boundary."
     ]
   },
+  "M5.06.V2.P01": {
+    "prompt": "ANIMATION\nThis unfamiliar still has three depth bands: a foreground triangular form, dotted midground, and wave-textured ground. The vertical bar under x falsely connects the foreground to the dots; only that seam cell becomes blank.\n\n  BEFORE        AFTER\n  │    /\\    │    │    /\\    │\n  │---/  \\   │    │---/  \\   │\n  │  /___x---│    │  /___x---│\n  │......|...│ →  │...... ...│\n  │..........│    │..........│\n  │~~~~~~~~~~│    │~~~~~~~~~~│\n  │__________│    │__________│\n\nNEOVIM\nWhich scope removes the false connection without shifting or repainting a layer?",
+    "compact_prompt": "ANIMATION\nErase only the false bar joining foreground x to the dotted midground.\n\n  │  /___x---│\n  │......|...│ → │...... ...│\n  │~~~~~~~~~~│\n\nNEOVIM\nWhat does `4G06lr ` change?",
+    "animation_prompt": "ANIMATION\nM5.06 variant 2 repairs a seam in an unfamiliar three-material still while preserving its back-to-front order.",
+    "animation_answer": "Only the bar beneath x becomes negative space; the foreground outline, dots, waves, and baseline remain registered.",
+    "neovim_prompt": "NEOVIM\nDecode `4G06lr ` on the shown seven-row composite.",
+    "neovim_answer": "4G0 selects the seam row at column zero, 6l reaches the bar directly under x, and r-space overwrites that one cell without changing row width.",
+    "choices": [
+      "ANIMATION: The complete dotted band is erased. | NEOVIM: `6l` selects six whole rows before replacement.",
+      "ANIMATION: Only the false connecting bar becomes blank; all material bands stay registered. | NEOVIM: `4G0` names the row start, `6l` reaches the seam cell, and `r ` overwrites it in place.",
+      "ANIMATION: The foreground triangle moves one cell right. | NEOVIM: replacing a bar with a space inserts a new column.",
+      "ANIMATION: Every vertical edge in the scene is removed. | NEOVIM: `r ` repeats across all matching bars in the file."
+    ],
+    "compact_choices": [
+      "A: erase dotted band · V: 6l selects rows",
+      "A: seam cell only · V: row, six right, replace",
+      "A: triangle shifts · V: space inserts column",
+      "A: erase every bar · V: r is global"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "6l is a horizontal cursor motion, not a row selection; the dotted material remains everywhere except the seam.",
+      "Correct: the command addresses one registered display cell, matching the one-cell depth correction.",
+      "r-space overwrites one cell and preserves row length. It does not insert a column or move the foreground.",
+      "r affects the cursor cell only; it does not search for other bars."
+    ]
+  },
+  "M6.06.V2.P01": {
+    "prompt": "ANIMATION\nTwo complete five-row pyramid poses are in reverse playback order. The small-o apex must come first and the capital-O apex second; every base row travels with its apex.\n\n  BEFORE       AFTER\n  │   O   │     │   o   │\n  │  /-\\  │     │  /-\\  │\n  │ /---\\ │     │ /---\\ │\n  │/-----\\│     │/-----\\│\n  │=======│     │=======│\n  │   o   │     │   O   │\n  │  /-\\  │     │  /-\\  │\n  │ /---\\ │  →  │ /---\\ │\n  │/-----\\│     │/-----\\│\n  │=======│     │=======│\n\nNEOVIM\nWhich Ex grammar moves one whole pose instead of copying or detaching its apex?",
+    "compact_prompt": "ANIMATION\nPut the complete o-apex pose before the complete O-apex pose.\n\n  │ O │     │ o │\n  │===│  →  │===│\n  │ o │     │ O │\n  │===│     │===│\n\nNEOVIM\nWhy `:1,5m$`?",
+    "animation_prompt": "ANIMATION\nM6.06 variant 2 corrects playback order while preserving each five-row pyramid as one pose.",
+    "animation_answer": "The lower o-apex pose moves ahead of the O-apex pose; neither pose is duplicated or split.",
+    "neovim_prompt": "NEOVIM\nDecode the range, command, and destination in `:1,5m$`.",
+    "neovim_answer": "1,5 is the complete first-pose range, m moves that range, and $ names the last-line destination, so the former second pose becomes first.",
+    "choices": [
+      "ANIMATION: Only O and o exchange cells while their bodies stay put. | NEOVIM: the range `1,5` addresses only the first and fifth characters.",
+      "ANIMATION: A third hold pose is appended. | NEOVIM: `m` copies the addressed rows and leaves the source intact.",
+      "ANIMATION: The complete o pose precedes the complete O pose with no duplicate. | NEOVIM: `1,5` owns the first full block, `m` moves it, and `$` places it after the former last row.",
+      "ANIMATION: The first pyramid is deleted without reappearing. | NEOVIM: `$` is a discard destination."
+    ],
+    "compact_choices": [
+      "A: apex cells swap · V: 1,5 are columns",
+      "A: append third pose · V: m copies",
+      "A: whole poses reorder · V: range + move + last line",
+      "A: delete first pose · V: $ discards"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "In Ex command position, 1,5 is a line range. It keeps each apex attached to four body rows.",
+      "The move command removes the source range from its old position; `t` would copy it.",
+      "Correct: the line range is the pose boundary, and moving it after the last line reverses the two-block order without duplication.",
+      "The dollar sign names the current last line as a destination; it does not throw rows away."
+    ]
+  },
+  "M7.06.V2.P01": {
+    "prompt": "ANIMATION\nTwo complete five-row build frames already form a hold. Only the x eye brightens to X in each frame; roofs, hatch rows, and baselines must remain unchanged.\n\n  FRAME 1       FRAME 2\n  │  /\\   │     │  /\\   │\n  │ (x)   │     │ (x)   │\n  │ /==\\  │     │ /==\\  │\n  │/====\\ │     │/====\\ │\n  │------ │     │------ │\n\n  TARGET: both `(x)` rows become `(X)`; every other cell stays fixed.\n\nNEOVIM\nAfter the first `rX`, why does `5j.` repeat the right edit on the right part?",
+    "compact_prompt": "ANIMATION\nBoth five-row hold frames keep their shells; x becomes X in each.\n\n  │ (x) │     │ (x) │\n       ↓           ↓\n  │ (X) │     │ (X) │\n\nNEOVIM\nWhat does `5j.` repeat?",
+    "animation_prompt": "ANIMATION\nM7.06 variant 2 transfers a one-cell brightness change across two registered full-pose hold frames.",
+    "animation_answer": "Both eyes become X while the two complete shells and their five-row spacing remain unchanged.",
+    "neovim_prompt": "NEOVIM\nDecode `2GfxrX5j.` across the two frames.",
+    "neovim_answer": "2Gfx reaches the first eye, rX records a one-cell replacement, 5j lands on the corresponding eye row in the next five-row frame, and dot repeats only that replacement.",
+    "choices": [
+      "ANIMATION: The first complete frame is pasted over the second. | NEOVIM: dot repeats every motion and edit from `2GfxrX`.",
+      "ANIMATION: Only frame 2 changes because movement cancels the first replacement. | NEOVIM: `5j` undoes `rX` before moving.",
+      "ANIMATION: Every x anywhere in the project becomes X. | NEOVIM: dot is an unscoped global substitution.",
+      "ANIMATION: The corresponding eye changes in both full frames while their shells stay fixed. | NEOVIM: `5j` preserves the registered row offset and dot repeats the last change, `rX`, at the second eye."
+    ],
+    "compact_choices": [
+      "A: paste frame · V: dot repeats motions too",
+      "A: frame 2 only · V: 5j undoes",
+      "A: every x · V: dot is global",
+      "A: both eyes only · V: five rows then repeat rX"
+    ],
+    "correct_choice": 3,
+    "feedback": [
+      "Dot repeats the last change, not the navigation used to reach it; no full-frame put occurred.",
+      "5j moves the cursor and leaves the first replacement intact.",
+      "Dot acts once at the current cursor. It does not search the project for matching glyphs.",
+      "Correct: the frame height supplies the five-row offset, and dot reuses the one-cell overwrite on the corresponding acting part."
+    ]
+  },
   "M3.06.V2.P01": {
     "prompt": "ANIMATION\nThis transfer uses an unfamiliar six-row figure, not the face from the earlier lesson. The complete figure is copied as one new candidate and only the copied eye changes from x to X.\n\n  BEFORE       AFTER COPY\n  │  /\\   │     │  /\\   │\n  │ (x)   │     │ (x)   │\n  │ \\|/   │     │ \\|/   │\n  │  |    │     │  |    │\n  │ / \\   │     │ / \\   │\n  │/___\\  │     │/___\\  │\n                 │  /\\   │\n                 │ (X)   │\n                 │ \\|/   │\n                 │  |    │\n                 │ / \\   │\n                 │/___\\  │\n\nNEOVIM\nWhich path preserves the complete six-row object while changing only the copied eye?",
     "compact_prompt": "ANIMATION\nCopy the complete figure; only the copied eye becomes X.\n\n  │ (x) │          │ (x) │\n  │ \\|/ │   →      │ \\|/ │\n                   │ (X) │\n                   │ \\|/ │\n\nNEOVIM\nWhich scope copies all six rows before the eye edit?",
