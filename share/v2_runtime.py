@@ -71,14 +71,40 @@ def note_feedback_context(**fields):
             FEEDBACK["context"][key] = value
 
 
+def _drain_pasted_lines(settle=0.25, limit=200):
+    """Return lines that are already waiting on a terminal stdin (a paste)."""
+    import select
+    import sys as _sys
+    lines = []
+    try:
+        if not _sys.stdin.isatty():
+            return lines
+        while len(lines) < limit:
+            ready, _w, _x = select.select([_sys.stdin], [], [], settle)
+            if not ready:
+                break
+            line = _sys.stdin.readline()
+            if not line:
+                break
+            lines.append(line.rstrip("\n"))
+    except (OSError, ValueError):
+        pass
+    return lines
+
+
 def collect_feedback(input_fn=input, screen=None):
     """Ask for one feedback message and append it; never counts as an answer."""
     try:
         message = input_fn("  FEEDBACK · what is wrong or confusing here? "
-                           "(Enter alone cancels)\n  > ")
+                           "(paste or type; Enter alone cancels)\n  > ")
     except (EOFError, KeyboardInterrupt, StopIteration):
         print()
         return False
+    if input_fn is input:
+        # A pasted message arrives as several lines at once. Keep reading
+        # while more pasted text is already waiting, so the rest is not
+        # swallowed by the next prompt as answers or menu choices.
+        message = "\n".join([message or "", *_drain_pasted_lines()]).strip()
     message = (message or "").strip()
     if not message:
         print("  feedback cancelled")

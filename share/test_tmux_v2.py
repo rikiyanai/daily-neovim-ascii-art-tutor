@@ -639,7 +639,10 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         asked = capture_until(outer_socket, outer_pane, ["what is wrong or confusing"])
         if "what is wrong or confusing" not in " ".join(asked.split()):
             raise AssertionError("feedback control did not ask for a message:\n" + asked)
-        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", "headed feedback probe")
+        # A pasted multi-line message must stay one message; before VD-38 only
+        # its first line was saved and the rest leaked into later prompts.
+        tmux(outer_socket, "set-buffer", "headed feedback probe\nsecond pasted line\nthird line")
+        tmux(outer_socket, "paste-buffer", "-t", outer_pane)
         tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
         saved = capture_until(outer_socket, outer_pane, ["feedback saved"])
         if "feedback saved" not in " ".join(saved.split()):
@@ -647,10 +650,15 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         feedback_rows = [
             json.loads(line) for line in
             (state / "vim-daily" / "feedback.jsonl").read_text(encoding="utf-8").splitlines()]
-        if not any(row.get("message") == "headed feedback probe"
+        if not any(row.get("message") == "headed feedback probe\nsecond pasted line\nthird line"
                    and row.get("card_id") == "M0.01" and row.get("screen") == "lesson-end"
                    for row in feedback_rows):
-            raise AssertionError("feedback row lacks lesson context: %r" % feedback_rows)
+            raise AssertionError("pasted feedback was split or lacks lesson context: %r" % feedback_rows)
+        if len(feedback_rows) != 1:
+            raise AssertionError("pasted lines leaked into extra feedback rows: %r" % feedback_rows)
+        held_again = " ".join(capture_until(outer_socket, outer_pane, ["Enter = close"]).split())
+        if "Enter = close" not in held_again:
+            raise AssertionError("pasted lines were consumed by the held controls:\n" + held_again)
 
         # `r` repeats this passed lesson as isolated practice. It must reopen
         # the same card, accept the same edit, and preserve awarded progress.

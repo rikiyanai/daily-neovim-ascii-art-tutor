@@ -5678,3 +5678,37 @@ current words), #9 (brief width sizing at 188 columns) and #11–#17.
 - The hint template, which still names tools a card does not use.
 - 9 missing FAMILY_TEACH and 20 missing EXAMPLES entries.
 - Recipe placeholders (`C...`).
+
+## VD-38 · 2026-09-29 13:40 — pasted feedback was split into several rows and leaked into the next prompts
+
+**Operator:** "so pasting on feedback seems broken". The saved rows show the
+13:37 message cut mid-line at "edit│ │". The 13:35 and 13:37 rows came from a
+13:33 paste whose later lines leaked into the following prompts.
+
+**Cause:** `collect_feedback` read one line with `input()`. A paste arrives
+as several lines, so line 1 was saved and every later line landed in the
+next prompt (result page, held controls), where it was taken as a menu
+choice or as a new feedback row.
+
+**Fix:** `share/v2_runtime.py` `_drain_pasted_lines`. After the first line,
+lines already waiting on the terminal (a paste) are read with a 0.25 s
+`select` and joined into one message; lines typed afterwards are not
+touched. The prompt says "paste or type".
+
+**Evidence:**
+- `share/test_tmux_v2.py` now pastes a three-line message into the real
+  popup through `tmux set-buffer` / `paste-buffer`. It asserts exactly one
+  `feedback.jsonl` row whose message holds all three lines, and that the
+  held controls return. PASS at 80×24, 100×36 and 188×49.
+- `share/test_feedback.py` PASS.
+
+**Operator feedback still to act on:**
+- 13:33: the difference between `/` and `\` (both the substitute separator
+  and the escape) was never taught. Also asked for memory anchors, spaced
+  repetition across sessions, a flashcard deck of every learned key and
+  command, a syntax reminder line, and later an optional "post to GitHub" for
+  feedback.
+- 13:35: "the art was offset" on M11.TR (not yet reproduced).
+- 13:37: the dashboard shows internal validator prose ("REMEDIATION Q-M0.01
+  alternate changed-art edit variant …") instead of a learner's bird's-eye
+  view of what was learned and the journey.
