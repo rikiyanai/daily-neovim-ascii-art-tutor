@@ -640,24 +640,34 @@ MODULES = [
                  ["10GfOr-", "turn only its eye into a blink"]],
             ),
         ],
-        "transfer": step(
-            [" /---\\", "|  o  |", "|  _  |", " \\___/"],
-            [" /---\\", "|  O  |", "|  _  |", " \\___/"],
-            "jforO",
-            [["jfo", "find the unfamiliar face's eye"], ["rO", "change only that feature"]],
+        "transfer": dict(step(
+            stone_story_variants.FROG_HALF + [""],
+            stone_story_variants.FROG_ONE_OPEN + [""],
+            "0f=rO",
+            [["0f=", "find Frog's half-closed left eye on the visible face row"],
+             ["rO", "open only that eye without shifting the paired right eye"]],
             method_requirement=require_method(
                 "reach the eye row, find the eye, and replace it in place",
-                exact_any_of=["jforO", "2GforO"]),
-        ),
-        "transfer_alt": step(
-            [" /===\\", "|  o  |", "| --- |", " \\___/"],
-            [" /===\\", "|  O  |", "| --- |", " \\___/"],
-            "jforO",
-            [["jfo", "find the eye inside the changed silhouette"], ["rO", "replace only it"]],
+                exact_any_of=["0f=rO"]),
+        ), source="official-Pets/Frog res01 half-eye overlay to res05 one-open-eye overlay; blank fourth registration row",
+           prompt=(
+               "Open only Frog's left eye from = to O; preserve the right dash, body, "
+               "legs, and the blank fourth registration row."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.SKULLY_IDLE + [""],
+            stone_story_variants.SKULLY_LOOK + [""],
+            "j0forO",
+            [["j0fo", "find Skully's left eye on the face row"],
+             ["rO", "widen only that eye into the look state"]],
             method_requirement=require_method(
                 "reach the eye row, find the eye, and replace it in place",
-                exact_any_of=["jforO", "2GforO"]),
-        ),
+                exact_any_of=["j0forO"]),
+        ), source="official-Pets/Skully res01 idle to res02 look overlay; blank fourth registration row",
+           prompt=(
+               "Widen only Skully's left eye from o to O; preserve the right eye, "
+               "skull contour, mouth, and blank fourth registration row."
+           )),
     },
     {
         "id": "M3", "title": "Pose copy", "node": "A2/V3", "project": "pose-copy",

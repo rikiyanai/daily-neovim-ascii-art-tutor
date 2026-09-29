@@ -346,12 +346,6 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                         "compare after pass", "comparison appears after verification"
                     )), brief
                 route_keys = key_sequence
-                # M2 explicitly accepts both a relative row motion and an
-                # exact line address. Use the latter in automation because
-                # the user's Hardtime/Flash stack can consume synthetic `j`
-                # even though a human-paced `j` remains a taught path.
-                if route_keys is None and card_id == "M2.06":
-                    route_keys = "2GforOZZ"
                 send_spec(outer, pane, route_keys or card["expected"] + "ZZ")
 
             if route not in ("concept", "review"):

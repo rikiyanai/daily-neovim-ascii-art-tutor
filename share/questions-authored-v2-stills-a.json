@@ -1755,30 +1755,30 @@
     ]
   },
   "M2.06.P01": {
-    "prompt": "ANIMATION\nAn unfamiliar face changes only its eye from o to O.\n\n    │ /---\\ │\n    │|  o  |│  →  │|  O  |│\n    │|  _  |│       │|  _  |│\n    │ \\___/│       │ \\___/│\n\nNEOVIM\nWhich bounded path reaches TARGET?",
-    "compact_prompt": "ANIMATION\nUnfamiliar mouth and contour stay fixed; eye changes.\n\n    │|  o  |│   │|  O  |│\n    │|  _  |│   │|  _  |│\n\nNEOVIM\nWhich landmark edit is transferable?",
-    "animation_prompt": "ANIMATION\nOnly the eye changes in the complete unfamiliar face.\n\n    │|  o  |│  →  │|  O  |│\n    │|  _  |│      │|  _  |│",
-    "animation_answer": "Find and replace the eye while preserving the unfamiliar face's other rows.",
-    "neovim_prompt": "NEOVIM\nWhich command reaches TARGET?\n\n    │ /---\\ │\n    │|  o  |│",
-    "neovim_answer": "jforO finds o on the eye row and overwrites one cell with O.",
+    "prompt": "ANIMATION\nFrog opens only its left eye from `=` to `O`. The right dash, body, legs, and blank fourth registration row remain fixed.\n\nBEFORE\n     ,=-\n  (\\/ .-)\n  ´ ·-\\´\\\n\nAFTER\n     ,O-\n  (\\/ .-)\n  ´ ·-\\´\\\n\nNEOVIM\nWhich path finds the visible half-closed eye and replaces exactly that cell?",
+    "compact_prompt": "ANIMATION\nOpen only Frog's left eye.\n\n  │,=-│ → │,O-│\n\nNEOVIM\nDecode `0f=rO`.",
+    "animation_prompt": "ANIMATION\nThe one-eye-open overlay changes a single facial cell while Frog's complete cropped pose remains registered.",
+    "animation_answer": "Replace only the equals eye with O; preserve the right dash, body, legs, and frame height.",
+    "neovim_prompt": "NEOVIM\nExplain the line-start motion, visible-glyph find, and one-cell replacement in `0f=rO`.",
+    "neovim_answer": "0 reaches the face row's left edge, f= lands on the half-closed eye, and rO overwrites that one cell without shifting the paired eye.",
     "choices": [
-      "ANIMATION: Change only the unfamiliar eye. | NEOVIM: jforO is one bounded path to TARGET.",
-      "ANIMATION: Redraw the mouth and eye. | NEOVIM: jfo searches the mouth and rO changes both cells.",
-      "ANIMATION: Shift the eye to the old lesson column. | NEOVIM: 8l then rO relies on the old width.",
-      "ANIMATION: Change every o in the project. | NEOVIM: :%s/o/O/g is equivalent to one eye."
+      "ANIMATION: Open only the equals eye; preserve the right dash and pose. | NEOVIM: `0f=` addresses the visible eye and `rO` overwrites one cell.",
+      "ANIMATION: Open both eyes into O. | NEOVIM: f= selects the complete comma-to-dash face range.",
+      "ANIMATION: Insert O before the equals eye. | NEOVIM: rO preserves the old equals and widens the face.",
+      "ANIMATION: Redraw the body to match the eye. | NEOVIM: f= searches vertically through all pose rows."
     ],
     "compact_choices": [
-      "A: one unfamiliar eye · V: find o, r O",
-      "A: mouth and eye · V: one find changes both",
-      "A: eye shifts column · V: old-width count",
-      "A: every project o · V: whole-file substitute"
+      "A: equals eye only · V: find =, replace O",
+      "A: both eyes · V: f selects face range",
+      "A: insert O · V: r keeps old =",
+      "A: redraw body · V: f crosses rows"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the landmark search transfers without relying on old columns.",
-      "The mouth remains _, and r changes one cell only.",
-      "The eye's column is not assumed; it is found by glyph.",
-      "Project-wide substitution exceeds the transfer face's scope."
+      "Correct: the eye glyph is the landmark and normal-mode r preserves every neighbouring column.",
+      "f is a cursor motion to one character, not a selection; only the equals cell is addressed.",
+      "Normal-mode r replaces the existing cell and does not retain the old equals sign.",
+      "f searches only the current line. The body and leg rows are outside this edit's scope."
     ]
   },
   "M2.08.P01": {

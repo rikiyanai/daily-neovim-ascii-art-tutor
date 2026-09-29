@@ -4977,3 +4977,30 @@ routes at 80x24.
 variants. Full same-process route coverage at all three viewport sizes remains
 unclaimed. The Cranius excerpts remain local-tutor use only; no push or
 publication occurred.
+
+### VD-50 follow-through · revision `.58` — M2 face focus now uses Frog and Skully overlays
+
+- M2.06 variant 1 uses the exact three-row `official-Pets/Frog` half-eye crop
+  plus a blank fourth registration row. `0f=rO` opens only the left eye from
+  `=` to `O`; the paired dash, body, legs, and frame height remain fixed.
+- Variant 2 uses the exact `official-Pets/Skully` idle-to-look overlay plus the
+  same explicit fourth-row padding. `j0forO` widens only the left eye while the
+  right eye, comma, skull contour, and mouth remain registered.
+- Both questions were rewritten around their complete visible source poses and
+  explain that `f` is a current-line motion and `r` is one-cell overwrite, not
+  a range selection or insertion.
+- The first headed run failed because `test_tmux_v2_routes.py` still replaced
+  M2.06's authored recipe with the old invented face's hard-coded `2GforO`.
+  That exception was obsolete once the Frog eye moved to row 1. It was removed;
+  the route driver now sends the card's current expected path like every other
+  transfer.
+
+**Proof:** revision `.58` writes 215 cards / 395 questions; question quality
+passes all 395; clean Neovim passes **215/215 cards and 174/174 primary
+recipes**; and both M2.06 source-face variants pass their real-user-config
+headed routes at 80x24.
+
+**Still open.** Six module transfers still use tutor-authored primary variants.
+Full same-process route coverage at all three viewport sizes remains
+unclaimed. The Frog and Skully excerpts remain local-tutor use only; no push or
+publication occurred.

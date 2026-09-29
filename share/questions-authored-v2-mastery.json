@@ -810,30 +810,30 @@
     ]
   },
   "M2.06.V2.P01": {
-    "prompt": "ANIMATION\nThis unfamiliar face has a heavy `===` brow and a `---` mouth. Neither feature is the acting part: only the eye changes from o to O.\n\n  BEFORE      AFTER\n  │ /===\\│    │ /===\\│\n  │|  o  |│ →  │|  O  |│\n  │| --- |│    │| --- |│\n  │ \\___/│    │ \\___/│\n\nNEOVIM\nWhich path uses the eye glyph as the landmark and preserves both horizontal materials?",
-    "compact_prompt": "ANIMATION\nOnly the eye changes; the `===` brow and `---` mouth stay intact.\n\n  │|  o  |│ → │|  O  |│\n\nNEOVIM\nWhich bounded path edits the eye?",
-    "animation_prompt": "ANIMATION\nM2.06 variant 2 isolates a one-cell facial change inside a face with two distracting horizontal materials.",
-    "animation_answer": "Only o becomes O; the brow, mouth, outline, and fixed width do not change.",
-    "neovim_prompt": "NEOVIM\nExplain `jforO` on the shown four-row face.",
-    "neovim_answer": "j enters the eye row, fo finds that row's o landmark, and rO overwrites one cell without touching the brow or mouth rows.",
+    "prompt": "ANIMATION\nSkully looks left by widening only its left eye from `o` to `O`. The right eye, skull contour, mouth, and blank fourth registration row remain fixed.\n\nBEFORE\n     ,--.\n    (_o,o)\n      `\"´\n\nAFTER\n     ,--.\n    (_O,o)\n      `\"´\n\nNEOVIM\nWhich path uses the eye itself as the landmark and preserves the rest of the expression?",
+    "compact_prompt": "ANIMATION\nWiden only Skully's left eye.\n\n  │(_o,o)│ → │(_O,o)│\n\nNEOVIM\nDecode `j0forO`.",
+    "animation_prompt": "ANIMATION\nSkully's look overlay changes one homologous eye cell while the source skull remains registered.",
+    "animation_answer": "Only the left o becomes O; the right eye, contour, mouth, and frame height do not change.",
+    "neovim_prompt": "NEOVIM\nExplain `j0forO` on the three visible source rows plus blank registration row.",
+    "neovim_answer": "j reaches the eye row, 0 returns to its left edge, fo lands on the first o, and rO widens only that cell.",
     "choices": [
-      "ANIMATION: The brow is brightened with the eye. | NEOVIM: `j` selects both the first and second rows for replacement.",
-      "ANIMATION: The mouth dashes become equals signs. | NEOVIM: `fo` searches every later row until it reaches the mouth.",
-      "ANIMATION: A second eye is inserted before the old one. | NEOVIM: `rO` inserts O and keeps o to its right.",
-      "ANIMATION: Only the eye brightens; both horizontal materials and the outline stay fixed. | NEOVIM: `j` reaches the eye row, `fo` lands on o, and `rO` overwrites that one cell."
+      "ANIMATION: Both eyes widen together. | NEOVIM: fo selects every o on the current row.",
+      "ANIMATION: Only the left eye widens; the skull stays fixed. | NEOVIM: `j0fo` lands on the first eye and `rO` overwrites one cell.",
+      "ANIMATION: The comma moves with the left eye. | NEOVIM: rO shifts all later cells one column right.",
+      "ANIMATION: The mouth accent becomes O too. | NEOVIM: f searches subsequent lines after the eye row."
     ],
     "compact_choices": [
-      "A: brow + eye · V: j selects two rows",
-      "A: mouth changes · V: f crosses rows",
-      "A: insert second eye · V: r inserts",
-      "A: eye only · V: j, find o, replace"
+      "A: both eyes · V: f selects all o",
+      "A: left eye only · V: j, find first o, replace",
+      "A: comma shifts · V: r inserts",
+      "A: mouth changes · V: f crosses rows"
     ],
-    "correct_choice": 3,
+    "correct_choice": 1,
     "feedback": [
-      "j is a one-row motion here; no Visual selection includes the brow.",
-      "f searches only the current row. It cannot cross into the mouth row.",
-      "r replaces one existing cell and preserves row width; it does not insert a neighbour.",
-      "Correct: the command grammar names one row, one visible landmark, and one-cell replacement, matching the acting-part boundary."
+      "f moves to the first named character only; it does not select or replace the second eye.",
+      "Correct: the command grammar names one row, one visible landmark, and one-cell replacement, matching the look overlay.",
+      "r replaces one existing cell and preserves the comma and every later column.",
+      "f searches only the current line. It cannot cross into Skully's mouth row."
     ]
   },
   "M17.06.V2.P01": {
