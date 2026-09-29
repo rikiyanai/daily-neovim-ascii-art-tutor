@@ -1809,30 +1809,30 @@
     ]
   },
   "M16.06.P01": {
-    "prompt": "ANIMATION\nThe unfamiliar star plate keeps its pose and T12 timing while F03 becomes F04.\n\n  BEFORE       AFTER\n  │   *   │     │   *   │\n  │  /|\\  │     │  /|\\  │\n  │  / \\  │     │  / \\  │\n  │ F03 KEY│     │ F04 KEY│\n  │ T12 FPS│     │ T12 FPS│\n\nNEOVIM\nWhich bounded path transfers the taught label edit?",
-    "compact_prompt": "ANIMATION\nStar/T12 stay fixed; F03→F04.\n\n  │   *   │\n  │  /|\\  │\n  │ F03→F04│\n  │ T12 FPS│\n\nNEOVIM\nChoose the transfer.",
-    "animation_prompt": "Only the numeric identity changes in the unfamiliar plate.\n\n  │   *   │\n  │  /|\\  │\n  │ F03 KEY│ → F04 KEY\n  │ T12 FPS│",
-    "animation_answer": "Advance the F03 label once while keeping the star pose and T12 line fixed.",
-    "neovim_prompt": "Use the earlier CTRL-A method on the new plate.",
-    "neovim_answer": "Find 03 in F03 and press CTRL-A once; this transfers the method without memorizing the old glyph.",
+    "prompt": "ANIMATION\nThese are consecutive FrogBog lily-pad frames. The number drawn inside the pad advances from 1 to 2; the rim, sides, and lower texture remain registered.\n\n  BEFORE         AFTER\n  │    _│         │    _│\n  │ ,'   `.│      │ ,'   `.│\n  │/    1  \\│  →  │/    2  \\│\n  │\\       /│     │\\       /│\n  │ \\/|..-'│      │ \\/|..-'│\n\nNEOVIM\nWhich command addresses the numbered art row, finds the visible 1, and increments only that numeric token?",
+    "compact_prompt": "ANIMATION\nAdvance the number inside this FrogBog pad; preserve its contour.\n\n  │/    1  \\│ → │/    2  \\│\n\nNEOVIM\nChoose the scoped increment.",
+    "animation_prompt": "FrogBog pad frame 1 advances to frame 2 while every nonnumeric art cell stays fixed.",
+    "animation_answer": "Change only the embedded 1 to 2; preserve the complete five-row lily-pad silhouette.",
+    "neovim_prompt": "Decode `3G0f1<C-a>` on the five-row pad.",
+    "neovim_answer": "3G selects the third row, 0 starts at its left edge, f1 lands on the drawn number, and Ctrl-a increments only that numeric token.",
     "choices": [
-      "ANIMATION: Star and T12 stay unchanged while F03 becomes F04. | NEOVIM: CTRL-A on the F03 number performs the same bounded transfer.",
-      "ANIMATION: Change the star to o before advancing the label. | NEOVIM: Reuse the old pose by replacing its glyph.",
-      "ANIMATION: T12 becomes T13 with F03 unchanged. | NEOVIM: Increment the FPS number.",
-      "ANIMATION: Add a second star plate for F04. | NEOVIM: Import a copy instead of editing the visible label."
+      "ANIMATION: The complete pad moves one cell right. | NEOVIM: `3G0f1<C-a>` inserts a cell before the number.",
+      "ANIMATION: Only the drawn 1 becomes 2; the pad contour stays registered. | NEOVIM: `3G0f1<C-a>` addresses row 3, finds 1, and increments that token in place.",
+      "ANIMATION: The bottom texture changes from dots to dashes. | NEOVIM: Ctrl-a advances punctuation to its next glyph.",
+      "ANIMATION: A second pad is appended below the first. | NEOVIM: Ctrl-a duplicates the current five-line object."
     ],
     "compact_choices": [
-      "A: star/T12 fixed; F03→F04 · V: CTRL-A on 03",
-      "A: star→o · V: replace glyph",
-      "A: T12→T13 · V: increment FPS",
-      "A: append star plate · V: import copy"
+      "A: whole pad shifts · V: increment inserts a cell",
+      "A: 1→2 only · V: row 3, find 1, increment token",
+      "A: texture changes · V: increment punctuation",
+      "A: append pad · V: increment duplicates object"
     ],
-    "correct_choice": 0,
+    "correct_choice": 1,
     "feedback": [
-      "Correct: the label operation transfers independently of the pose glyph.",
-      "Changing unfamiliar art defeats transfer; the star is stable content.",
-      "T12 is not the acting number in this target.",
-      "The target is one local label edit, not a new imported block."
+      "Ctrl-a overwrites a numeric token in place; it does not insert a column or translate the pad.",
+      "Correct: the motions establish one visible numeric target, so the frame advances while the source contour remains registered.",
+      "Ctrl-a operates on a number at or after the cursor; it does not transform the pad's texture glyphs.",
+      "This is a one-token in-place edit. Duplicating five rows would create an extra pose instead of advancing this one."
     ]
   },
   "M16.08.P01": {

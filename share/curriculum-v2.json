@@ -15152,31 +15152,35 @@
    "project_id": "key-pose-plan",
    "variant_group": "M16.card-6",
    "start": [
-    "   *   ",
-    "  /|\\  ",
-    "  / \\  ",
-    "F03 KEY",
-    "T12 FPS"
+    "    _",
+    " ,'   `.",
+    "/    1  \\",
+    "\\       /",
+    " \\/|..-'"
    ],
    "target": [
-    "   *   ",
-    "  /|\\  ",
-    "  / \\  ",
-    "F04 KEY",
-    "T12 FPS"
+    "    _",
+    " ,'   `.",
+    "/    2  \\",
+    "\\       /",
+    " \\/|..-'"
    ],
-   "expected": "Gk0f3<C-a>",
+   "expected": "3G0f1<C-a>",
    "recipe": [
     [
-     "CTRL-A",
-     "advance the unfamiliar reference plate's written frame number"
+     "3G0f1",
+     "address the number drawn inside the FrogBog pad"
+    ],
+    [
+     "<C-a>",
+     "advance pad frame 1 to frame 2 without moving its contour"
     ]
    ],
    "cursor": "^",
    "method_requirement": {
-    "label": "transfer numeric frame-label increment to a changed plan",
+    "label": "increment the embedded FrogBog frame number without redrawing the pad",
     "exact_any_of": [
-     "Gk0f3<C-a>"
+     "3G0f1<C-a>"
     ]
    },
    "prompt": "Increment the numeric frame label on an unfamiliar pose and timing plan without altering its art or FPS line.",
@@ -15185,61 +15189,69 @@
    "variants": [
     {
      "start": [
-      "   *   ",
-      "  /|\\  ",
-      "  / \\  ",
-      "F03 KEY",
-      "T12 FPS"
+      "    _",
+      " ,'   `.",
+      "/    1  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
      "target": [
-      "   *   ",
-      "  /|\\  ",
-      "  / \\  ",
-      "F04 KEY",
-      "T12 FPS"
+      "    _",
+      " ,'   `.",
+      "/    2  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
-     "expected": "Gk0f3<C-a>",
+     "expected": "3G0f1<C-a>",
      "recipe": [
       [
-       "CTRL-A",
-       "advance the unfamiliar reference plate's written frame number"
+       "3G0f1",
+       "address the number drawn inside the FrogBog pad"
+      ],
+      [
+       "<C-a>",
+       "advance pad frame 1 to frame 2 without moving its contour"
       ]
      ],
      "cursor": "^",
      "method_requirement": {
-      "label": "transfer numeric frame-label increment to a changed plan",
+      "label": "increment the embedded FrogBog frame number without redrawing the pad",
       "exact_any_of": [
-       "Gk0f3<C-a>"
+       "3G0f1<C-a>"
       ]
      }
     },
     {
      "start": [
-      "   +   ",
-      "  <|>  ",
-      "  / \\  ",
-      "F07 KEY",
-      "T06 FPS"
+      "    _",
+      " ,'   `.",
+      "/    2  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
      "target": [
-      "   +   ",
-      "  <|>  ",
-      "  / \\  ",
-      "F08 KEY",
-      "T06 FPS"
+      "    _",
+      " ,'   `.",
+      "/    3  \\",
+      "\\       /",
+      " \\/|..-'"
      ],
-     "expected": "Gk0f7<C-a>",
+     "expected": "3G0f2<C-a>",
      "recipe": [
       [
-       "CTRL-A",
-       "advance the alternate plan's written frame number"
+       "3G0f2",
+       "address the next number drawn inside the FrogBog pad"
+      ],
+      [
+       "<C-a>",
+       "advance pad frame 2 to frame 3 without moving its contour"
       ]
      ],
      "cursor": "^",
      "method_requirement": {
-      "label": "transfer numeric increment to the alternate plan",
+      "label": "increment the alternate embedded FrogBog frame number",
       "exact_any_of": [
-       "Gk0f7<C-a>"
+       "3G0f2<C-a>"
       ]
      },
      "paired_question_ids": [
@@ -15252,7 +15264,7 @@
    "show_recipe": false,
    "hint": "Vim toolbox: counted number incrementing can update a frame label without retyping it. Scope: Treat each 5-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: a copied plan block loses an art row, two blocks retain the same frame number, a move cuts through a five-line plate, or an imported plate comes from unsaved buffer state instead of the named source.",
    "review_source_card_id": "M16.06",
-   "review_method_family": "required:transfer numeric frame-label increment to a changed plan",
+   "review_method_family": "required:increment the embedded FrogBog frame number without redrawing the pad",
    "master_habits": [
     "H3",
     "H9"
@@ -44878,51 +44890,51 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The key-hidden transfer comes first; afterward, four explicit choices check the command path and animation scope without free-text grading.",
-   "prompt": "ANIMATION\nThe unfamiliar star plate keeps its pose and T12 timing while F03 becomes F04.\n\n  BEFORE       AFTER\n  │   *   │     │   *   │\n  │  /|\\  │     │  /|\\  │\n  │  / \\  │     │  / \\  │\n  │ F03 KEY│     │ F04 KEY│\n  │ T12 FPS│     │ T12 FPS│\n\nNEOVIM\nWhich bounded path transfers the taught label edit?",
+   "prompt": "ANIMATION\nThese are consecutive FrogBog lily-pad frames. The number drawn inside the pad advances from 1 to 2; the rim, sides, and lower texture remain registered.\n\n  BEFORE         AFTER\n  │    _│         │    _│\n  │ ,'   `.│      │ ,'   `.│\n  │/    1  \\│  →  │/    2  \\│\n  │\\       /│     │\\       /│\n  │ \\/|..-'│      │ \\/|..-'│\n\nNEOVIM\nWhich command addresses the numbered art row, finds the visible 1, and increments only that numeric token?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "typed_keys",
    "choices": [
-    "ANIMATION: Star and T12 stay unchanged while F03 becomes F04. | NEOVIM: CTRL-A on the F03 number performs the same bounded transfer.",
-    "ANIMATION: Change the star to o before advancing the label. | NEOVIM: Reuse the old pose by replacing its glyph.",
-    "ANIMATION: T12 becomes T13 with F03 unchanged. | NEOVIM: Increment the FPS number.",
-    "ANIMATION: Add a second star plate for F04. | NEOVIM: Import a copy instead of editing the visible label."
+    "ANIMATION: The complete pad moves one cell right. | NEOVIM: `3G0f1<C-a>` inserts a cell before the number.",
+    "ANIMATION: Only the drawn 1 becomes 2; the pad contour stays registered. | NEOVIM: `3G0f1<C-a>` addresses row 3, finds 1, and increments that token in place.",
+    "ANIMATION: The bottom texture changes from dots to dashes. | NEOVIM: Ctrl-a advances punctuation to its next glyph.",
+    "ANIMATION: A second pad is appended below the first. | NEOVIM: Ctrl-a duplicates the current five-line object."
    ],
-   "correct_choice": 0,
+   "correct_choice": 1,
    "feedback": [
-    "Correct: the label operation transfers independently of the pose glyph.",
-    "Changing unfamiliar art defeats transfer; the star is stable content.",
-    "T12 is not the acting number in this target.",
-    "The target is one local label edit, not a new imported block."
+    "Ctrl-a overwrites a numeric token in place; it does not insert a column or translate the pad.",
+    "Correct: the motions establish one visible numeric target, so the frame advances while the source contour remains registered.",
+    "Ctrl-a operates on a number at or after the cursor; it does not transform the pad's texture glyphs.",
+    "This is a one-token in-place edit. Duplicating five rows would create an extra pose instead of advancing this one."
    ],
-   "animation_prompt": "Only the numeric identity changes in the unfamiliar plate.\n\n  │   *   │\n  │  /|\\  │\n  │ F03 KEY│ → F04 KEY\n  │ T12 FPS│",
-   "animation_answer": "Advance the F03 label once while keeping the star pose and T12 line fixed.",
-   "neovim_prompt": "Use the earlier CTRL-A method on the new plate.",
-   "neovim_answer": "Find 03 in F03 and press CTRL-A once; this transfers the method without memorizing the old glyph.",
-   "compact_prompt": "ANIMATION\nStar/T12 stay fixed; F03→F04.\n\n  │   *   │\n  │  /|\\  │\n  │ F03→F04│\n  │ T12 FPS│\n\nNEOVIM\nChoose the transfer.",
+   "animation_prompt": "FrogBog pad frame 1 advances to frame 2 while every nonnumeric art cell stays fixed.",
+   "animation_answer": "Change only the embedded 1 to 2; preserve the complete five-row lily-pad silhouette.",
+   "neovim_prompt": "Decode `3G0f1<C-a>` on the five-row pad.",
+   "neovim_answer": "3G selects the third row, 0 starts at its left edge, f1 lands on the drawn number, and Ctrl-a increments only that numeric token.",
+   "compact_prompt": "ANIMATION\nAdvance the number inside this FrogBog pad; preserve its contour.\n\n  │/    1  \\│ → │/    2  \\│\n\nNEOVIM\nChoose the scoped increment.",
    "compact_choices": [
-    "A: star/T12 fixed; F03→F04 · V: CTRL-A on 03",
-    "A: star→o · V: replace glyph",
-    "A: T12→T13 · V: increment FPS",
-    "A: append star plate · V: import copy"
+    "A: whole pad shifts · V: increment inserts a cell",
+    "A: 1→2 only · V: row 3, find 1, increment token",
+    "A: texture changes · V: increment punctuation",
+    "A: append pad · V: increment duplicates object"
    ],
    "source_answer_contract": {
     "form": "typed_keys",
     "initial_lines": [
-     "   *   ",
-     "  /|\\  ",
-     "  / \\  ",
-     "F03 KEY",
-     "T12 FPS"
+     "    _",
+     " ,'   `.",
+     "/    1  \\",
+     "\\       /",
+     " \\/|..-'"
     ],
     "target_lines": [
-     "   *   ",
-     "  /|\\  ",
-     "  / \\  ",
-     "F04 KEY",
-     "T12 FPS"
+     "    _",
+     " ,'   `.",
+     "/    2  \\",
+     "\\       /",
+     " \\/|..-'"
     ],
     "initial_cursor": "^",
     "forbidden_side_effects": [
@@ -44931,7 +44943,7 @@
      "extra_window",
      "extra_tab"
     ],
-    "sample_answer": "Gk0f3<C-a>",
+    "sample_answer": "3G0f1<C-a>",
     "effect_version": 1
    },
    "authorship": "manual"
@@ -51347,39 +51359,39 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
-   "prompt": "ANIMATION\nThis unfamiliar key-pose card keeps its plus pose and `T06 FPS` plan. Only the frame label advances from `F07` to `F08`.\n\n  BEFORE       AFTER\n  │   +   │     │   +   │\n  │  <|>  │     │  <|>  │\n  │  / \\  │  →  │  / \\  │\n  │F07 KEY│     │F08 KEY│\n  │T06 FPS│     │T06 FPS│\n\nNEOVIM\nHow does number increment distinguish the frame label from the unchanged timing line?",
+   "prompt": "ANIMATION\nThis later FrogBog frame uses the same five-row lily-pad silhouette. Only the number inside it advances from 2 to 3; the rim, sides, and lower texture remain registered.\n\n  BEFORE         AFTER\n  │    _│         │    _│\n  │ ,'   `.│      │ ,'   `.│\n  │/    2  \\│  →  │/    3  \\│\n  │\\       /│     │\\       /│\n  │ \\/|..-'│      │ \\/|..-'│\n\nNEOVIM\nWhy does `3G0f2<C-a>` change the frame number without redrawing or shifting the pad?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "decode",
    "choices": [
-    "ANIMATION: Both F07 and T06 advance. | NEOVIM: Ctrl-a increments every number in the buffer from one cursor position.",
-    "ANIMATION: The frame label becomes F08 while pose and T06 stay fixed. | NEOVIM: `Gk` selects the label row, `f7` lands in its number, and Ctrl-a increments only that token.",
-    "ANIMATION: A new F08 pose card is appended. | NEOVIM: Ctrl-a duplicates the current paragraph with the next number.",
-    "ANIMATION: The plus pose changes into frame 8 artwork automatically. | NEOVIM: incrementing a label transforms nearby ASCII glyphs."
+    "ANIMATION: Every digit-like mark in the pad advances. | NEOVIM: one Ctrl-a changes all numbers in the buffer.",
+    "ANIMATION: A second pad numbered 3 is appended. | NEOVIM: Ctrl-a duplicates the current paragraph.",
+    "ANIMATION: Only the drawn 2 becomes 3; the contour and texture stay fixed. | NEOVIM: `3G0f2` lands on that token and Ctrl-a increments it in place.",
+    "ANIMATION: The pad outline widens around frame 3. | NEOVIM: incrementing its number automatically generates the next silhouette."
    ],
-   "correct_choice": 1,
+   "correct_choice": 2,
    "feedback": [
-    "Ctrl-a changes the number at or after the cursor, not every numeric token in the file.",
-    "Correct: row and glyph motions establish the numeric scope before the increment, isolating the frame label from FPS.",
-    "Ctrl-a edits one numeric token in place. It does not copy rows or create a new card.",
-    "The label is metadata only; changing it cannot redraw the surrounding pose."
+    "Ctrl-a changes one numeric token at or after the cursor, not every number or number-like mark in the buffer.",
+    "Ctrl-a edits in place. It neither yanks rows nor creates a second five-line pad.",
+    "Correct: the address and motion isolate the embedded 2, then Ctrl-a advances only that token while registration holds.",
+    "A numeric edit cannot invent surrounding animation art; every contour cell must already be authored and remains fixed here."
    ],
-   "animation_prompt": "ANIMATION\nM16.06 variant 2 advances one frame label without changing the pose drawing or its FPS annotation.",
-   "animation_answer": "F07 becomes F08; the plus pose and T06 timing line remain byte-for-byte unchanged.",
-   "neovim_prompt": "NEOVIM\nDecode `Gk0f7<C-a>` on the five-row card.",
-   "neovim_answer": "G reaches the FPS row, k moves to the frame-label row, 0f7 lands inside the 07 number, and Ctrl-a increments that numeric token to 08.",
-   "compact_prompt": "ANIMATION\nAdvance F07 to F08; keep the pose and T06 unchanged.\n\n  │F07 KEY│ → │F08 KEY│\n  │T06 FPS│   │T06 FPS│\n\nNEOVIM\nWhy `Gk0f7<C-a>`?",
+   "animation_prompt": "ANIMATION\nThe later FrogBog pad advances one embedded frame number while all nonnumeric glyphs remain fixed.",
+   "animation_answer": "The drawn 2 becomes 3; the complete five-row lily-pad silhouette remains byte-for-byte unchanged.",
+   "neovim_prompt": "NEOVIM\nExplain the row address, character motion, and numeric operator in `3G0f2<C-a>`.",
+   "neovim_answer": "3G selects the numbered third row, 0 returns to its first column, f2 lands on the visible 2, and Ctrl-a increments that token to 3.",
+   "compact_prompt": "ANIMATION\nAdvance the later FrogBog pad from 2 to 3; preserve its contour.\n\n  │/    2  \\│ → │/    3  \\│\n\nNEOVIM\nDecode `3G0f2<C-a>`.",
    "compact_choices": [
-    "A: label + FPS advance · V: Ctrl-a changes all numbers",
-    "A: F07→F08 only · V: address label token + increment",
-    "A: append F08 card · V: Ctrl-a duplicates",
-    "A: pose auto-transforms · V: number controls art"
+    "A: every number advances · V: Ctrl-a changes whole buffer",
+    "A: append pad 3 · V: Ctrl-a duplicates paragraph",
+    "A: 2→3 only · V: address token, increment in place",
+    "A: outline widens · V: number generates silhouette"
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": "Gk0f7<C-a>",
+    "display": "3G0f2<C-a>",
     "required_term_groups": [
      [
       "search",
@@ -54516,7 +54528,7 @@
   },
   {
    "card_id": "M16.06",
-   "label": "transfer numeric frame-label increment to a changed plan",
+   "label": "increment the embedded FrogBog frame number without redrawing the pad",
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
@@ -55073,7 +55085,7 @@
   },
   {
    "source_card_id": "M16.06",
-   "method_family": "required:transfer numeric frame-label increment to a changed plan",
+   "method_family": "required:increment the embedded FrogBog frame number without redrawing the pad",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -57252,7 +57264,7 @@
   {
    "module_id": "M16",
    "source_card_id": "M16.06",
-   "method_label": "transfer numeric frame-label increment to a changed plan",
+   "method_label": "increment the embedded FrogBog frame number without redrawing the pad",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,

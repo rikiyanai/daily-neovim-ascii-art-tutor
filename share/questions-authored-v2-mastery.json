@@ -972,30 +972,30 @@
     ]
   },
   "M16.06.V2.P01": {
-    "prompt": "ANIMATION\nThis unfamiliar key-pose card keeps its plus pose and `T06 FPS` plan. Only the frame label advances from `F07` to `F08`.\n\n  BEFORE       AFTER\n  │   +   │     │   +   │\n  │  <|>  │     │  <|>  │\n  │  / \\  │  →  │  / \\  │\n  │F07 KEY│     │F08 KEY│\n  │T06 FPS│     │T06 FPS│\n\nNEOVIM\nHow does number increment distinguish the frame label from the unchanged timing line?",
-    "compact_prompt": "ANIMATION\nAdvance F07 to F08; keep the pose and T06 unchanged.\n\n  │F07 KEY│ → │F08 KEY│\n  │T06 FPS│   │T06 FPS│\n\nNEOVIM\nWhy `Gk0f7<C-a>`?",
-    "animation_prompt": "ANIMATION\nM16.06 variant 2 advances one frame label without changing the pose drawing or its FPS annotation.",
-    "animation_answer": "F07 becomes F08; the plus pose and T06 timing line remain byte-for-byte unchanged.",
-    "neovim_prompt": "NEOVIM\nDecode `Gk0f7<C-a>` on the five-row card.",
-    "neovim_answer": "G reaches the FPS row, k moves to the frame-label row, 0f7 lands inside the 07 number, and Ctrl-a increments that numeric token to 08.",
+    "prompt": "ANIMATION\nThis later FrogBog frame uses the same five-row lily-pad silhouette. Only the number inside it advances from 2 to 3; the rim, sides, and lower texture remain registered.\n\n  BEFORE         AFTER\n  │    _│         │    _│\n  │ ,'   `.│      │ ,'   `.│\n  │/    2  \\│  →  │/    3  \\│\n  │\\       /│     │\\       /│\n  │ \\/|..-'│      │ \\/|..-'│\n\nNEOVIM\nWhy does `3G0f2<C-a>` change the frame number without redrawing or shifting the pad?",
+    "compact_prompt": "ANIMATION\nAdvance the later FrogBog pad from 2 to 3; preserve its contour.\n\n  │/    2  \\│ → │/    3  \\│\n\nNEOVIM\nDecode `3G0f2<C-a>`.",
+    "animation_prompt": "ANIMATION\nThe later FrogBog pad advances one embedded frame number while all nonnumeric glyphs remain fixed.",
+    "animation_answer": "The drawn 2 becomes 3; the complete five-row lily-pad silhouette remains byte-for-byte unchanged.",
+    "neovim_prompt": "NEOVIM\nExplain the row address, character motion, and numeric operator in `3G0f2<C-a>`.",
+    "neovim_answer": "3G selects the numbered third row, 0 returns to its first column, f2 lands on the visible 2, and Ctrl-a increments that token to 3.",
     "choices": [
-      "ANIMATION: Both F07 and T06 advance. | NEOVIM: Ctrl-a increments every number in the buffer from one cursor position.",
-      "ANIMATION: The frame label becomes F08 while pose and T06 stay fixed. | NEOVIM: `Gk` selects the label row, `f7` lands in its number, and Ctrl-a increments only that token.",
-      "ANIMATION: A new F08 pose card is appended. | NEOVIM: Ctrl-a duplicates the current paragraph with the next number.",
-      "ANIMATION: The plus pose changes into frame 8 artwork automatically. | NEOVIM: incrementing a label transforms nearby ASCII glyphs."
+      "ANIMATION: Every digit-like mark in the pad advances. | NEOVIM: one Ctrl-a changes all numbers in the buffer.",
+      "ANIMATION: A second pad numbered 3 is appended. | NEOVIM: Ctrl-a duplicates the current paragraph.",
+      "ANIMATION: Only the drawn 2 becomes 3; the contour and texture stay fixed. | NEOVIM: `3G0f2` lands on that token and Ctrl-a increments it in place.",
+      "ANIMATION: The pad outline widens around frame 3. | NEOVIM: incrementing its number automatically generates the next silhouette."
     ],
     "compact_choices": [
-      "A: label + FPS advance · V: Ctrl-a changes all numbers",
-      "A: F07→F08 only · V: address label token + increment",
-      "A: append F08 card · V: Ctrl-a duplicates",
-      "A: pose auto-transforms · V: number controls art"
+      "A: every number advances · V: Ctrl-a changes whole buffer",
+      "A: append pad 3 · V: Ctrl-a duplicates paragraph",
+      "A: 2→3 only · V: address token, increment in place",
+      "A: outline widens · V: number generates silhouette"
     ],
-    "correct_choice": 1,
+    "correct_choice": 2,
     "feedback": [
-      "Ctrl-a changes the number at or after the cursor, not every numeric token in the file.",
-      "Correct: row and glyph motions establish the numeric scope before the increment, isolating the frame label from FPS.",
-      "Ctrl-a edits one numeric token in place. It does not copy rows or create a new card.",
-      "The label is metadata only; changing it cannot redraw the surrounding pose."
+      "Ctrl-a changes one numeric token at or after the cursor, not every number or number-like mark in the buffer.",
+      "Ctrl-a edits in place. It neither yanks rows nor creates a second five-line pad.",
+      "Correct: the address and motion isolate the embedded 2, then Ctrl-a advances only that token while registration holds.",
+      "A numeric edit cannot invent surrounding animation art; every contour cell must already be authored and remains fixed here."
     ]
   },
   "M11.06.V2.P01": {

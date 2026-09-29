@@ -4858,3 +4858,28 @@ M15.06 source-material routes pass with the real user config at 80x24.
 **Still open.** Eleven module transfers still use tutor-authored primary
 variants. These excerpts remain local-tutor use only; no push or publication
 occurred.
+
+### VD-46 follow-through · revision `.54` — M16 increments numbers inside real FrogBog frames
+
+- M16.06 variant 1 now uses the exact five-row `official-Games/FrogBog`
+  res05→res06 lily-pad transition. The number drawn inside the pad advances
+  from 1 to 2; the rim, sides, and `\/|..-'` lower texture remain registered.
+  Its required path is `3G0f1<C-a>`: address the numbered third row, find the
+  visible 1, and increment only that numeric token.
+- Variant 2 uses the adjacent res06→res07 transition. It advances the embedded
+  2 to 3 with `3G0f2<C-a>` while preserving the same complete pad contour.
+- `M16.06.P01` and `M16.06.V2.P01` were rewritten individually around those
+  exact BEFORE/AFTER frames. Both print all five source rows, pair the visible
+  animation invariant with the Neovim address/motion/operator grammar, and
+  explicitly reject the false ideas that Ctrl-a duplicates a pose, changes
+  every number, shifts a column, or generates surrounding animation art.
+
+**Proof:** revision `.54` writes 215 cards / 395 questions; question quality
+passes all 395; clean Neovim passes **215/215 cards and 174/174 primary
+recipes**; every changed-art replay passes; and both M16.06 source-pad variants
+pass their real-user-config headed routes at 80x24.
+
+**Still open.** Ten module transfers still use tutor-authored primary variants.
+Full same-process route coverage at all three viewport sizes remains unclaimed.
+The FrogBog excerpts remain authorized for this local tutor only; no push or
+publication occurred.
