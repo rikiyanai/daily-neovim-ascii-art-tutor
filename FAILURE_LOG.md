@@ -4883,3 +4883,34 @@ pass their real-user-config headed routes at 80x24.
 Full same-process route coverage at all three viewport sizes remains unclaimed.
 The FrogBog excerpts remain authorized for this local tutor only; no push or
 publication occurred.
+
+### VD-47 follow-through · revision `.55` — M13 WORD motions now act on real Fireworks node groups
+
+- M13.06 variant 1 uses three exact rows from `official-Cosmetics/Fireworks`
+  res03 willow frame 5. Its source row contains three visible whitespace-
+  separated lower-canopy nodes. The learner authors a pulse by brightening only
+  the centre and right nodes; the upper spark row, left node, and lower
+  apostrophe row remain registered.
+- The first recipe attempt, `j02Wr!Br!`, failed exact replay. Because `0` leaves
+  the cursor before the row's leading spaces, the first `W` reaches node 1;
+  `2W` therefore reaches node 2, not node 3. The enforced path is now
+  `j03Wr!Br!`, and the question teaches that leading-whitespace count rather
+  than hiding it behind a memorized column.
+- Variant 2 uses an exact three-row crop from res06 radial frame 5. The learner
+  authors an outer-node pulse with `0Er!2Er!`: `0E` reaches the first separated
+  dot and counted `2E` crosses the centre colon to the third dot. The spoke and
+  burst rows remain unchanged.
+- Both paired questions were rewritten individually and print their complete
+  BEFORE/AFTER crops. They distinguish motions from operators, explain why
+  normal-mode `r` preserves width, and state honestly that the source crop is
+  official while the requested pulse is the learner-authored animation edit.
+
+**Proof:** revision `.55` writes 215 cards / 395 questions; question quality
+passes all 395; clean Neovim passes **215/215 cards and 174/174 primary
+recipes**; and both M13.06 Fireworks variants pass their real-user-config
+headed routes at 80x24.
+
+**Still open.** Nine module transfers still use tutor-authored primary
+variants. Full same-process route coverage at all three viewport sizes remains
+unclaimed. The Fireworks excerpts remain local-tutor use only; no push or
+publication occurred.

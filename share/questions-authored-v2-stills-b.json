@@ -1269,30 +1269,30 @@
     ]
   },
   "M13.06.P01": {
-    "prompt": "ANIMATION\nThe transfer texture changes material but keeps three spaced clusters.\n\n    BEFORE             AFTER\n    │--:: --:: --::│   │--:: +-:: +-::│\n    │-:::--|--:::- │   │-:::--|--:::- │\n    │=====-|-===== │   │=====-|-===== │\n\nNEOVIM\nWhich bounded path transfers the WORD-boundary method to the unfamiliar glyphs?",
-    "compact_prompt": "ANIMATION\nDash texture keeps its cluster timing.\n\n    │--:: +-:: +-::│\n    │-:::--|--:::- │\n    │=====-|-===== │\n\nNEOVIM\nUse WORD boundaries, not memorised columns.",
-    "animation_prompt": "The new dash/plus material occupies the same spaced cluster roles; the separator and support rows remain fixed.\n\n    BEFORE             AFTER\n    │--:: --:: --::│   │--:: +-:: +-::│\n    │-:::--|--:::- │   │-:::--|--:::- │\n    │=====-|-===== │   │=====-|-===== │",
-    "animation_answer": "Transfer the pulse by cluster landmarks, preserving the unfamiliar row's spacing and supports.",
-    "neovim_prompt": "Which answer identifies one valid bounded path?",
-    "neovim_answer": "Use counted `W`/`B` or `E` to reach the nominated clusters and overwrite only the acting material cells.",
+    "prompt": "ANIMATION\nThis willow firework crop has three separated nodes on its middle row. Author a pulse that brightens the centre and right nodes from `.`/`·` to `!`; keep the left node and the rows above and below fixed.\n\n  BEFORE        AFTER\n  │ ' .'.'. '│  │ ' .'.'. '│\n  │  ·  .  ·│ → │  ·  !  !│\n  │  '  .  '│   │  '  .  '│\n\nNEOVIM\nWhich path uses the visible whitespace groups instead of memorized columns?",
+    "compact_prompt": "ANIMATION\nPulse only the centre and right willow nodes.\n\n  │  ·  .  ·│ → │  ·  !  !│\n\nNEOVIM\nDecode `j03Wr!Br!`.",
+    "animation_prompt": "The learner-authored pulse brightens two lower-canopy nodes while the source firework remains registered.",
+    "animation_answer": "Change only the centre and right node glyphs to exclamation marks; preserve the left node and both surrounding rows.",
+    "neovim_prompt": "Explain why the count is 3 from column 1, then decode the backward WORD motion and two one-cell replacements in `j03Wr!Br!`.",
+    "neovim_answer": "j0 selects the node row before its leading spaces; 3W enters the first, second, then right node for r!; B returns to the centre node for the second r!.",
     "choices": [
-      "ANIMATION: Dash/plus clusters change in place and supports stay fixed. | NEOVIM: counted `W`/`B` or `E` reaches landmarks before one-cell replacements.",
-      "ANIMATION: New material requires deleting old cluster gaps. | NEOVIM: use `dW` between every cluster.",
-      "ANIMATION: Separator and ground shift with the pulse. | NEOVIM: include support rows in the substitute.",
-      "ANIMATION: Transfer is impossible without original columns. | NEOVIM: use navigation only and skip replacements."
+      "ANIMATION: Delete the left node so attention moves right. | NEOVIM: `2W` is a two-WORD delete operator.",
+      "ANIMATION: Brighten centre and right nodes without moving any group. | NEOVIM: from column 1 before leading spaces, `j03W` reaches the right group, `r!` overwrites it, then `B` returns to the centre group for another `r!`.",
+      "ANIMATION: Brighten every punctuation mark in all three rows. | NEOVIM: `W` searches vertically through the whole frame.",
+      "ANIMATION: Insert `!` beside the two nodes and widen the canopy. | NEOVIM: normal-mode `r!` inserts a new cell before each old glyph."
     ],
     "compact_choices": [
-      "A: clusters recolor in place · V: counted `W`/`B`/`E` + replace",
-      "A: delete gaps · V: `dW`",
-      "A: supports shift · V: substitute support rows",
-      "A: impossible without columns · V: navigation only"
+      "A: delete left node · V: 2W deletes",
+      "A: centre+right pulse · V: from spaces, 3W/r then B/r",
+      "A: brighten all rows · V: W searches vertically",
+      "A: widen canopy · V: r inserts"
     ],
-    "correct_choice": 0,
+    "correct_choice": 1,
     "feedback": [
-      "Correct: the method is landmark-based, so it survives new glyph material.",
-      "Deleting WORDs destroys the spacing the transfer is meant to preserve.",
-      "Supports are explicitly unchanged in the transfer art.",
-      "The lesson tests transfer precisely so memorised columns are unnecessary."
+      "W is a cursor motion, not a delete operator; removing the left node would also change the intended three-beat rhythm.",
+      "Correct: whitespace supplies transferable landmarks, and each r! overwrites one node without changing the canopy's width.",
+      "W and B move within the current line. The upper spark and lower apostrophe rows are never selected.",
+      "Normal-mode r replaces the existing cell. It does not insert a new column or leave the old node behind."
     ]
   },
   "M13.08.P01": {

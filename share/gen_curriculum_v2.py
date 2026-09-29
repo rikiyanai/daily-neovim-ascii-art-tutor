@@ -1855,26 +1855,39 @@ MODULES = [
                     exact_any_of=[":1,3t$<CR>13GWr.Br!"]),
             ),
         ],
-        "transfer": step(
-            ["--:: --:: --::", "-:::--|--:::-", "=====-|-====="],
-            ["--:: +-:: +-::", "-:::--|--:::-", "=====-|-====="],
-            "2Wr+Br+",
-            [["2Wr+", "reach and accent the third unfamiliar texture WORD"],
-             ["Br+", "return to its centre partner and accent it"]],
+        "transfer": dict(step(
+            stone_story_variants.FIREWORK_WILLOW_NODES,
+            [stone_story_variants.FIREWORK_WILLOW_NODES[0],
+             "  ·  !  !",
+             stone_story_variants.FIREWORK_WILLOW_NODES[2]],
+            "j03Wr!Br!",
+            [["j0", "select the willow canopy's three separated lower nodes"],
+             ["3Wr!", "cross leading whitespace and reach the right node in place"],
+             ["Br!", "return one WORD and brighten the centre node"]],
             method_requirement=require_method(
-                "transfer counted W and B across changed texture WORDs",
-                exact_any_of=["2Wr+Br+"]),
-        ),
-        "transfer_alt": step(
-            ["__.. __.. __..", "_...__|__..._", "-----+|+-----"],
-            ["__.! __.. __.!", "_...__|__..._", "-----+|+-----"],
-            "Er!2Er!",
-            [["Er!", "accent the first unfamiliar WORD's far edge"],
-             ["2Er!", "advance by WORD ends and accent the third far edge"]],
+                "use counted W and B on visible Fireworks node groups",
+                exact_any_of=["j03Wr!Br!"]),
+        ), source="official-Cosmetics/Fireworks res03 willow frame 5 lower canopy; authored centre/right node pulse",
+           prompt=(
+               "Brighten the centre and right nodes of the willow canopy in place; "
+               "keep the upper spark row, left node, and lower apostrophe row registered."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.FIREWORK_RADIAL_NODES,
+            ["   ! : !",
+             stone_story_variants.FIREWORK_RADIAL_NODES[1],
+             stone_story_variants.FIREWORK_RADIAL_NODES[2]],
+            "0Er!2Er!",
+            [["0Er!", "reach and brighten the first separated radial node"],
+             ["2Er!", "cross the centre node and brighten the third"]],
             method_requirement=require_method(
-                "transfer counted E across alternate texture WORDs",
-                exact_any_of=["Er!2Er!"]),
-        ),
+                "use WORD-end motions on the first and third radial nodes",
+                exact_any_of=["0Er!2Er!"]),
+        ), source="official-Cosmetics/Fireworks res06 radial frame 5 crop; authored outer-node pulse",
+           prompt=(
+               "Brighten only the two outer nodes of the radial firework; keep the centre "
+               "colon and the two lower structural rows registered."
+           )),
     },
     {
         "id": "M14", "title": "Variant palette", "node": "S5/V14",

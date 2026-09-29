@@ -1053,30 +1053,30 @@
     ]
   },
   "M13.06.V2.P01": {
-    "prompt": "ANIMATION\nThree whitespace-separated texture clusters sit above two support rows. Only the last dot of cluster 1 and cluster 3 becomes `!`; cluster 2 and every support cell stay unchanged.\n\n  BEFORE             AFTER\n  │__.. __.. __..│   │__.! __.. __.!│\n  │_...__|__..._│ → │_...__|__..._│\n  │-----+|+-----│   │-----+|+-----│\n\nNEOVIM\nHow do `E` and counted `2E` use the cluster grammar instead of memorized columns?",
-    "compact_prompt": "ANIMATION\nChange the end of texture clusters 1 and 3; leave cluster 2 and supports fixed.\n\n  │__.. __.. __..│ → │__.! __.. __.!│\n\nNEOVIM\nDecode `Er!2Er!`.",
-    "animation_prompt": "ANIMATION\nM13.06 variant 2 accents alternating texture-cluster ends without moving their whitespace rhythm or supports.",
-    "animation_answer": "The first and third cluster-ending dots become exclamation marks; the middle cluster and lower rows remain unchanged.",
-    "neovim_prompt": "NEOVIM\nExplain the WORD-end motions in `Er!2Er!`.",
-    "neovim_answer": "E reaches the end of the current whitespace-delimited WORD for the first replacement; from there 2E advances through the middle WORD to the third WORD's end for the second replacement.",
+    "prompt": "ANIMATION\nThis radial firework crop has three separated nodes above its fixed spoke and burst rows. Author an outer-node pulse: change the first and third dots to `!`, but keep the centre colon and both structural rows unchanged.\n\n  BEFORE        AFTER\n  │   . : .│     │   ! : !│\n  │   .\\¡/. │  →  │   .\\¡/. │\n  │  •-—*—-•│    │  •-—*—-•│\n\nNEOVIM\nHow does `0Er!2Er!` address the two outer WORD ends without touching the centre node?",
+    "compact_prompt": "ANIMATION\nPulse only the two outer radial nodes.\n\n  │   . : .│ → │   ! : !│\n\nNEOVIM\nDecode `0Er!2Er!`.",
+    "animation_prompt": "ANIMATION\nThe learner-authored radial pulse changes two outer source nodes while the centre and complete lower structure remain fixed.",
+    "animation_answer": "The first and third dots become exclamation marks; the centre colon, spoke row, and burst row do not change.",
+    "neovim_prompt": "NEOVIM\nExplain why the initial 0 matters and how counted 2E skips the centre WORD.",
+    "neovim_answer": "0 starts before the leading spaces, E reaches the first one-cell WORD for r!, and 2E crosses the colon WORD to the third dot for the second r!.",
     "choices": [
-      "ANIMATION: Clusters 1 and 3 gain end accents while spaces and supports stay fixed. | NEOVIM: `E` reaches one WORD end, then `2E` skips through the next cluster to the third end before each `r!`.",
-      "ANIMATION: Every final dot in all rows changes. | NEOVIM: E searches globally for punctuation at line ends.",
-      "ANIMATION: Cluster 2 is deleted to join clusters 1 and 3. | NEOVIM: `2E` is an operator that erases two WORDs.",
-      "ANIMATION: Two exclamation marks are inserted after each chosen cluster. | NEOVIM: `r!` appends a glyph after the WORD end."
+      "ANIMATION: The centre colon becomes the only bright node. | NEOVIM: bare E from the first dot always stays on that same one-cell WORD.",
+      "ANIMATION: The two outer dots brighten while the centre and lower rows stay fixed. | NEOVIM: `0E` reaches the first dot and `2E` crosses the colon to the third dot; each `r!` replaces one cell.",
+      "ANIMATION: All dots in all rows brighten. | NEOVIM: E searches every line for the next period.",
+      "ANIMATION: The centre node is deleted so the outer nodes join. | NEOVIM: `2E` erases two WORDs and their separating spaces."
     ],
     "compact_choices": [
-      "A: cluster ends 1 + 3 · V: E then counted 2E + replace",
-      "A: all row ends · V: E is global search",
-      "A: delete middle cluster · V: 2E erases",
-      "A: insert accents · V: r appends"
+      "A: centre only · V: E stays on one-cell WORD",
+      "A: outer pulse · V: 0E then 2E + replacements",
+      "A: every row dot · V: E searches all lines",
+      "A: delete centre · V: 2E erases WORDs"
     ],
-    "correct_choice": 0,
+    "correct_choice": 1,
     "feedback": [
-      "Correct: whitespace defines transferable cluster boundaries, and the replacements preserve the established rhythm.",
-      "E is a cursor motion to a WORD end on the current line; it neither searches other rows nor identifies punctuation globally.",
-      "E is a motion, not a delete operator. Its count controls how many WORD ends the cursor traverses.",
-      "r overwrites the existing final dot, so cluster width and spacing stay fixed."
+      "From a one-cell WORD, bare E advances to the next WORD end. Starting with 0 lets the first E land on the left dot instead.",
+      "Correct: the line-start motion makes the first endpoint explicit, and counted E reaches the opposite node without selecting the centre or lower art.",
+      "E is a current-line WORD motion, not a file-wide punctuation search; the dots in the spoke row remain untouched.",
+      "E only moves the cursor. No operator deletes the colon or closes the two spaces around it."
     ]
   },
   "M8.06.V2.P01": {
