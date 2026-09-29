@@ -1,8 +1,11 @@
 # Curriculum v2 — animation projects, Vim fluency, and durable mastery
 
 Status: revision `.35` contains 210 cards and 370 manually authored questions.
-The clean-Neovim suite passes all 169 recipe-bearing paths; headed re-verification
-of the new stage-tree rendering remains separate acceptance evidence. The
+The clean-Neovim suite passes all 169 recipe-bearing paths. The base headed
+popup path renders the stage tree at 80x24, 100x36, and 188x49; the full
+post-M2 route matrix and real-config suite remain separate acceptance evidence.
+Stage ownership/order is implemented; manual disposition and migration of
+older temporal content still assigned to S0-S7 is not complete. The
 runtime/data owners are `share/v2_runtime.py`,
 `share/gen_curriculum_v2.py`, and generated `share/curriculum-v2.json`. The old
 46-drill path remains available and its state is not migrated destructively.
@@ -12,6 +15,8 @@ The longer-form proposed hour-by-hour sequence is in
 roadmap retained as `roadmap_contract`, not a claim that each roadmap outcome is
 the implemented card. The generated card's `prompt`, `start`, `target`, question
 IDs, methods, and tests are the normative implemented contract.
+The open still-stage content migration is enumerated card by card in
+[`audits/stage-content-disposition-v35.md`](audits/stage-content-disposition-v35.md).
 
 ## 1. Product contract
 

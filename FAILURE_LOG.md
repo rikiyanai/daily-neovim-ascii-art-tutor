@@ -4359,3 +4359,24 @@ still need variant-specific manually authored questions before their first art
 can be replaced; remaining invented primary art still needs source-backed
 replacement; and Stone Story archive provenance/publication intake remains
 unresolved. No third-party art was pushed or published in this change.
+
+**Content-scope correction after the structural gate:** `.35` proves ordering,
+ownership, review gates, and non-blocking P. It does **not** yet prove that every
+S-stage card is a still-only lesson. A prompt-level audit for explicit temporal
+terms (`frame`, `pose`, `animation`, `loop`, `extreme`, `tween`, `motion`,
+`blink`, `swing`, `playback`) finds S0 8/21, S1 4/9, S2 6/8, S3 2/8,
+S4 4/9, S5 7/11, S6 2/9, and S7 4/13. Examples include M19.02's
+"opposite-facing animation extreme", M12.04's "drag-inbetween", M5.04's
+foreground swing, and M15.08's settle frame. Some are legitimate non-playing
+working copies or still variants, so the word count is a triage signal rather
+than a verdict; each named card still needs manual disposition. The remaining
+requirement is to re-author or move every genuinely temporal S-card, then add a
+validator over explicit card dispositions. Do not describe `.35` as completion
+of the still-content migration. The per-card manual decisions and required S4/S6
+replacement work are recorded in `share/audits/stage-content-disposition-v35.md`.
+
+**Headed proof correction:** the base real-user-config popup path passes at
+80x24, 100x36, and 188x49 and visibly renders stage progress (for example,
+`PROGRESS S0 1/21 learning`) plus the S0-A7/P tree. That evidence covers the
+base route only. The full post-M2 route matrix and the full real-config recipe
+suite remain separate pending results and are not claimed by this proof.

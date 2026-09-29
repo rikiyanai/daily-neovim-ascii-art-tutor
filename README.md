@@ -301,8 +301,12 @@ hint while hiding only the exact keys, and results retain the two-column
 keystroke ledger. Revision `.35` gives every card one stage owner and makes
 stage advancement depend on both card completion and the stage's required
 spaced reviews. P unlocks after S5 but never blocks S6. The clean suite passes
-210/210 cards and 169/169 primary recipes; headed popup re-verification for the
-new stage rendering is tracked separately and is not implied by that result.
+210/210 cards and 169/169 primary recipes. The base headed popup path shows the
+new stage rendering at 80x24, 100x36, and 188x49; the full post-M2 route matrix
+and real-config suite remain separate acceptance evidence.
+The stage mechanism is live, but older S-stage content is still being manually
+separated into true still studies versus temporal cards; the gate must not be
+read as proof that this content migration is finished.
 
 Recipes that need the extended middle-dot glyph teach Neovim's portable
 digraph: type `<C-k>.M` where the recipe shows it. For example,
