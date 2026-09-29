@@ -4564,3 +4564,31 @@ config at 80x24.
 variant-2 questions. Stone Story primary-art migration, provenance intake, the
 full headed route matrix, and publication decision also remain open. No
 third-party art was pushed.
+
+### VD-40 follow-through · revision `.41` — M8/M9/M10 alternates own contact, bound, and SJIS evidence
+
+- `M8.06` variant 2 prints the reversed walker and identifies the exact blank
+  contact cell between its feet. Its question distinguishes three rightward
+  motions from a selection and one-cell `r_` from insertion.
+- `M9.06` variant 2 prints the wider angled shell and `=====` ground. It asks
+  why `fxrX` transfers by a visible landmark while preserving the unfamiliar
+  bounds.
+- `M10.06` variant 2 prints the full-width puff and its `?` shoulder defect.
+  The question binds `0f?r￣` to that one placeholder and rejects widening or
+  retyping the SJIS silhouette.
+
+The first headed M10 attempt exposed a test-fixture error: optional stage P is
+eligible after S5, but the scheduler still prefers unfinished main-path S6, so
+the fixture opened M5.01. Targeted P fixtures now finish the competing main
+path before seeding the requested P card. This changes test setup only; it does
+not bypass runtime progression.
+
+**Proof:** generator `.41` writes 215 cards / 386 manually authored questions;
+question quality passes 386; clean Neovim remains **215/215 cards and 174/174
+primary recipes**; and M8.06, M9.06, and M10.06 alternate routes each open the
+correct card and pass with the real user config at 80x24.
+
+**Still open.** Nine `.06` cards still lack manually authored variant-2
+questions. Stone Story primary-art migration, provenance intake, the full
+headed route matrix, and publication decision remain open. No third-party art
+was pushed.

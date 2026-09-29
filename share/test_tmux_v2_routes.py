@@ -105,8 +105,12 @@ def seed(root, passed, *, artifact_card=None, due_review=False, progress_to=None
             raise AssertionError("unknown progress target %s" % target)
         owner = CARDS[target]["stage_owner"]
         main = CUR["main_stage_sequence"]
+        # P becomes eligible after S5, but the scheduler continues to prefer
+        # unfinished main-path stages.  A targeted P-route fixture therefore
+        # has to finish the competing main path as well; seeding only through
+        # S5 opens M5.01 (S6) instead of the requested optional card.
         stage_ids = ([*main[:main.index(owner)], owner] if owner in main else
-                     [*main[:main.index("S5") + 1], "P"])
+                     [*main, "P"])
         seed_ids = []
         for stage_id in stage_ids:
             stage = next(row for row in CUR["stages"] if row["id"] == stage_id)

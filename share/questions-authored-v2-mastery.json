@@ -836,6 +836,87 @@
       "Correct: the command grammar names one row, one visible landmark, and one-cell replacement, matching the acting-part boundary."
     ]
   },
+  "M8.06.V2.P01": {
+    "prompt": "ANIMATION\nThis unfamiliar walker faces the other direction. The planted-foot contact is the blank between `/` and `\\` on the last row; only that cell becomes `_`. The head, torso, arm, and other foot stay registered.\n\n  BEFORE      AFTER\n  │  \\O   │    │  \\O   │\n  │   |\\  │    │   |\\  │\n  │   |   │    │   |   │\n  │  /|   │    │  /|   │\n  │ /  \\  │ →  │ / _\\  │\n\nNEOVIM\nWhich command grammar changes one contact cell without adding a column?",
+    "compact_prompt": "ANIMATION\nOnly the blank planted-foot contact becomes `_`.\n\n  │ /  \\  │ → │ / _\\  │\n\nNEOVIM\nWhat does `G0lllr_` own?",
+    "animation_prompt": "ANIMATION\nM8.06 variant 2 plants one foot on a reversed unfamiliar walker without moving the rest of the pose.",
+    "animation_answer": "One blank contact cell becomes an underscore; all other pose cells stay in their original columns.",
+    "neovim_prompt": "NEOVIM\nDecode `G0lllr_` on the five-row walker.",
+    "neovim_answer": "G0 selects the first cell of the last row, lll moves three cells to the contact blank, and r_ overwrites that cell without insertion.",
+    "choices": [
+      "ANIMATION: The lower leg shifts right to make room for a contact. | NEOVIM: `r_` inserts an underscore before the backslash.",
+      "ANIMATION: Both feet receive a ground line. | NEOVIM: three l motions select the three cells between the slashes.",
+      "ANIMATION: Only the nominated contact blank becomes `_`; the reversed pose stays registered. | NEOVIM: `G0` chooses the last-row origin, `lll` reaches that cell, and `r_` overwrites it.",
+      "ANIMATION: The whole last row becomes underscores. | NEOVIM: `r_` replaces from the cursor through end of line."
+    ],
+    "compact_choices": [
+      "A: leg shifts · V: r inserts",
+      "A: both feet ground · V: lll selects three cells",
+      "A: one contact cell · V: last row + three right + replace",
+      "A: whole row underscores · V: r owns suffix"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "r overwrites an existing display cell, so the backslash and row width do not move.",
+      "Normal-mode l is a motion repeated three times, not a multi-cell selection.",
+      "Correct: the countable motion locates one acting cell and r preserves every registered neighbour.",
+      "r owns one cursor cell. C or a range operation would be needed for a suffix."
+    ]
+  },
+  "M9.06.V2.P01": {
+    "prompt": "ANIMATION\nThe high-pose marker in this unfamiliar angled shell changes from x to X. The angle brackets, empty middle row, and `=====` ground are fixed bounds, not part of the edit.\n\n  BEFORE      AFTER\n  │<  x  >│    │<  X  >│\n  │<     >│ →  │<     >│\n  │<=====>│    │<=====>│\n\nNEOVIM\nWhich landmark-based edit commits the marker without disturbing its bounds?",
+    "compact_prompt": "ANIMATION\nInside the angled shell, only x becomes X.\n\n  │<  x  >│ → │<  X  >│\n  │<=====>│   │<=====>│\n\nNEOVIM\nWhy `fxrX`?",
+    "animation_prompt": "ANIMATION\nM9.06 variant 2 commits a one-cell high marker inside an unfamiliar angled three-row pose.",
+    "animation_answer": "Only x becomes X; shell width and ground material remain unchanged.",
+    "neovim_prompt": "NEOVIM\nDecode `fxrX` on the shown shell.",
+    "neovim_answer": "fx finds the visible x on the current row and rX overwrites that single marker cell, independent of the shell's wider bounds.",
+    "choices": [
+      "ANIMATION: Only the marker changes to X while the angled shell and ground stay fixed. | NEOVIM: `fx` lands on the marker and `rX` overwrites one cell.",
+      "ANIMATION: Every x-shaped crossing in the project changes. | NEOVIM: f starts a file-wide search and r applies at every match.",
+      "ANIMATION: The shell narrows around the marker. | NEOVIM: `rX` deletes the spaces crossed by f.",
+      "ANIMATION: A second marker is inserted beside x. | NEOVIM: r enters Insert mode and retains the old glyph."
+    ],
+    "compact_choices": [
+      "A: marker only · V: find x + replace",
+      "A: every x · V: f is file-wide",
+      "A: shell narrows · V: f deletes spaces",
+      "A: second marker · V: r inserts"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the visible landmark makes the edit transfer across shell widths, and r keeps the fixed bounds registered.",
+      "f searches only forward on the current line and stops at one occurrence.",
+      "Cursor motion does not delete crossed cells, and r does not change row width.",
+      "r replaces the existing cursor cell and returns to Normal mode after the replacement glyph."
+    ]
+  },
+  "M10.06.V2.P01": {
+    "prompt": "ANIMATION\nThis unseen full-width puff has a broken top shoulder. The placeholder `?` becomes the horizontal stroke `￣`; the side strokes, hollow body, and lower bowl remain registered.\n\n  BEFORE       AFTER\n  │　／?＼│     │　／￣＼│\n  │（　　　）│ →  │（　　　）│\n  │　＼＿／│     │　＼＿／│\n\nNEOVIM\nWhich path uses the visible placeholder and preserves the full-width silhouette?",
+    "compact_prompt": "ANIMATION\nReplace only `?` with `￣` in the puff shoulder.\n\n  │　／?＼│ → │　／￣＼│\n  │　＼＿／│   │　＼＿／│\n\nNEOVIM\nWhat does `0f?r￣` do?",
+    "animation_prompt": "ANIMATION\nM10.06 variant 2 completes the shoulder material on an unfamiliar full-width puff without rebuilding its body.",
+    "animation_answer": "The placeholder becomes one horizontal full-width stroke; both lower rows and the surrounding shoulder strokes stay fixed.",
+    "neovim_prompt": "NEOVIM\nDecode `0f?r￣` on the shown three-row puff.",
+    "neovim_answer": "0 starts at the row's left edge, f? finds the explicit placeholder, and r￣ replaces that one glyph without inserting or widening the row.",
+    "choices": [
+      "ANIMATION: The complete top row is retyped and may drift. | NEOVIM: `f?` selects the entire shoulder for replacement.",
+      "ANIMATION: The body widens with the repaired shoulder. | NEOVIM: `r￣` inserts a new full-width cell before `?`.",
+      "ANIMATION: The placeholder alone becomes `￣`; the puff silhouette stays registered. | NEOVIM: `0f?` addresses the visible defect and `r￣` overwrites exactly that glyph.",
+      "ANIMATION: The lower `＿` is also changed to `￣`. | NEOVIM: f continues into later rows and r repeats automatically."
+    ],
+    "compact_choices": [
+      "A: retype top row · V: f selects shoulder",
+      "A: body widens · V: r inserts",
+      "A: placeholder only · V: find ? + replace",
+      "A: lower bowl changes · V: f crosses rows"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "f is a motion to one character, not a row selection; no retyping of the shoulder is required.",
+      "r overwrites one existing glyph and preserves the row's cell count.",
+      "Correct: the placeholder provides a transferable landmark and the one-cell replacement preserves every registered neighbour.",
+      "f is confined to the current row, and r performs one replacement only."
+    ]
+  },
   "M5.06.V2.P01": {
     "prompt": "ANIMATION\nThis unfamiliar still has three depth bands: a foreground triangular form, dotted midground, and wave-textured ground. The vertical bar under x falsely connects the foreground to the dots; only that seam cell becomes blank.\n\n  BEFORE        AFTER\n  │    /\\    │    │    /\\    │\n  │---/  \\   │    │---/  \\   │\n  │  /___x---│    │  /___x---│\n  │......|...│ →  │...... ...│\n  │..........│    │..........│\n  │~~~~~~~~~~│    │~~~~~~~~~~│\n  │__________│    │__________│\n\nNEOVIM\nWhich scope removes the false connection without shifting or repainting a layer?",
     "compact_prompt": "ANIMATION\nErase only the false bar joining foreground x to the dotted midground.\n\n  │  /___x---│\n  │......|...│ → │...... ...│\n  │~~~~~~~~~~│\n\nNEOVIM\nWhat does `4G06lr ` change?",
