@@ -3556,3 +3556,135 @@ Only rows imported below were executed.
    column.
 4. Publishing: repo is PUBLIC; commit/push of Stone Story frames awaits the
    operator's decision (VD-18 waiver covered logging only).
+
+## VD-30 · 2026-09-28 20:20 — generated question prose, missing compact art, and tmux capture blocked native copy
+
+**Status:** VERIFIED FOR VD-30 — all live question ids now use explicitly
+authored records and the popup copy/select path is proven at all required
+sizes. This closes only VD-30; the overall curriculum goal and the separate
+Stone Story publication boundary remain open.
+
+**Operator evidence:** the live M0.04 question presented four mechanically
+crossed variants of the same two sentences. Its prompt contained no frame art,
+the correct choice repeated the complete hidden recipe
+`4G3yyGp:8s/-/=/g<CR>`, and popup text could not be selected normally. The
+operator required every multiple-choice item to print the relevant ASCII art
+and rejected further generated question prose.
+
+### Root causes
+
+- `_multiple_choice_pair` constructed question prose and a two-by-two
+  animation/Neovim answer matrix. Both generator and runtime then required
+  each animation half and each Neovim half to occur exactly twice. That
+  validator encoded the very repetition the operator rejected.
+- compact question rendering flattened every paragraph with whitespace joins;
+  a multi-line art panel therefore became prose at 80×24.
+- the three popup launchers set global tmux `mouse on`. tmux consumed drag
+  gestures before Terminal/iTerm could create a native selection.
+- the question bank could pass structural checks while its wording was not
+  understandable or useful. Presence/count validation was being treated as
+  content review.
+
+### Implemented in the working tree
+
+- `share/questions-authored-v2.json` now owns all 22 M0 questions as explicit
+  records. Each was written separately with a full and compact art panel, four
+  distinct misconceptions, and answer-specific feedback. M0.04 now asks the
+  learner to distinguish: changing the old frame, appending a one-row fragment,
+  using whole-file scope, and appending one complete registered flare.
+- hidden-before questions no longer expose M0.04's or M0.08's exact key path.
+  They ask about object and scope; the debrief remains responsible for the
+  exact sequence.
+- `questions-authored-v2-stills-a.json`, `questions-authored-v2-stills-b.json`,
+  `questions-authored-v2-motion-a.json`, and
+  `questions-authored-v2-motion-b.json` add the remaining 325 separately
+  authored items. Together with M0, all 347/347 live questions are manually
+  authored.
+- the generator only installs exact authored records from those files; it does
+  not synthesize their wording. Duplicate ids, unknown ids, and any missing
+  authored id fail generation. `share/test_v2.py` independently requires
+  `authorship == "manual"` on all 347 live questions.
+- the two-by-two answer-frequency requirement was removed from generator and
+  runtime validation. Four choices must be distinct; the validator no longer
+  dictates their prose structure.
+- `_compact_question_text` preserves art blocks instead of joining their rows.
+  Every question is required to provide art in both full and compact prompts.
+- `ask_question` prints paired choices as separate `ANIM:` and `VIM:` rows and
+  accepts `c` to copy the complete prompt and choices through `pbcopy` without
+  recording an answer attempt.
+- all popup launchers save the user's tmux mouse preference, turn mouse capture
+  off for the popup so native drag-selection reaches the terminal, advertise
+  `drag selects · Cmd-C copies · Cmd-V pastes`, and restore the original mouse
+  preference on exit.
+
+### Direct evidence
+
+- Generated live artifact: revision `2026-09-28.29`, 20 modules, 187 cards,
+  347 questions, and 347/347 `authorship: manual`.
+- every question has four distinct full choices and four distinct compact
+  choices; all 1,388 answer-feedback slots are question-specific; compact
+  choice collision checks at widths 42, 62, and 72 report zero collisions.
+- no before-question on a key-hidden card contains that card's complete
+  expected key path. All compact question screens fit the reviewed 22-line
+  budget at width 72.
+- headed automatic popup route, real user Neovim config:
+  - 80×24: PASS;
+  - 100×36: PASS;
+  - 188×49: PASS.
+  At each size the test sees `mouse off` during the popup, copies the complete
+  current question with `c`, verifies prompt/art/choices in the macOS
+  clipboard, closes the popup, and sees the learner's original `mouse on`
+  preference restored.
+- the 80×24 capture also shows the user's lualine/Normal mode, DO THIS, TARGET,
+  hint, recipe, legacy teaching, failed replay, two-column keystroke ledger,
+  skill tree, XP, streak, all-time total, repeat, next, and close controls.
+- `python3 share/test_question_quality.py`: PASS on all 347 questions.
+- `python3 share/test_v2.py`: PASS, including 187/187 executable lessons and
+  146/146 primary edit recipes under `config=none`.
+- `python3 share/test_stone_story_variants.py`: PASS on the 32 currently
+  integrated review variants; it still reports 22 border-swap variants under
+  the separate VD-29 work item.
+
+### Still open outside VD-30
+
+1. Keep the Stone Story publication boundary in VD-29 separate; these local
+   question fixes do not authorize publishing third-party source art.
+2. Continue the broader card-by-card curriculum review; passing the VD-30
+   question and popup acceptance checks is not a claim that the entire course
+   goal is complete.
+
+### VD-28/VD-29 follow-up · 2026-09-28 20:45 (Claude session, alongside VD-30)
+
+- **Displayed-text gate:** `share/test_question_quality.py` judges the
+  strings the learner sees, not the question's form. It checks:
+  - banned template phrases;
+  - choices identical after the runtime's own `_compact_choice_text` at
+    72/90/169 popup columns;
+  - a correct answer that restates the prompt;
+  - a before-edit question whose choices contain the hidden `expected` keys;
+  - a wrong half reused in more than 3 questions.
+  On the pre-VD-30 bank it failed 135/135/19/2/41. VD-30 extended it with
+  authorship, visible-art, overflow and feedback-reuse rules. Now:
+  `PASS all question-quality rules on 347 multiple-choice questions`.
+- Fixed five authored items the gate still flagged: the bare "use a global
+  substitute." wrong half in M8.Q03, M8.Q10, M6.MOVE.P01 and M18.EXPR.P01
+  (each now names a concrete wrong command), and "registration contract" in
+  the M4.Q08 feedback.
+- **Neovim mouse:** VD-30 turns tmux mouse off in the popup, but the
+  operator's config sets `mouse=a` (checked: `nvim --headless … set
+  mouse?` → `mouse=a`). A drag inside the lesson editor therefore became a
+  Visual selection, not a native selection, so "drag selects · Cmd-C copies"
+  was still false during the edit. `bin/vim-daily-gate` now sets
+  `vim.o.mouse=''` in the lesson editor. With the full user config it is
+  still `''` 3 s after startup.
+- **VD-29:** 42 review variants on 19 cards now use Stone Story frames. This
+  batch added M6.MOVE, M16.MOVE, M7.GLOBAL, M7.DOT, M6.D (snake tongue
+  retract), M15.GLOBAL and M15.MAC. 18 border-swap variants remain.
+- **Evidence, one run after the last change:**
+  - `test_v2.py` exit 0 (187/187 lessons, 146/146 recipes);
+  - `test_stone_story_variants.py` exit 0;
+  - `test_question_quality.py` exit 0;
+  - `test_tmux_v2.py` PASS at 80×24, 100×36 and 188×49 with the real user
+    config.
+  - **Not observed:** a human mouse drag and Cmd-C inside the popup. The test
+    asserts mouse state, not an actual selection.

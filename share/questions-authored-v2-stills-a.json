@@ -1,0 +1,2270 @@
+{
+  "M11.Q01": {
+    "prompt": "ANIMATION\nThe first roof tightens; every other machine cell stays registered.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich bounded action names the two changed roof cells?",
+    "compact_prompt": "ANIMATION\nRoof cells change; walls do not.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich action overwrites, rather than inserts, the run?",
+    "animation_prompt": "ANIMATION\nCompare the registered frames.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
+    "animation_answer": "Only the first two roof cells change from -- to ==; both walls and the other machine stay fixed.",
+    "neovim_prompt": "NEOVIM\nWhich bounded action writes == over the existing roof cells?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
+    "neovim_answer": "0lR==<Esc> moves to the first roof cell and replaces two cells in place.",
+    "choices": [
+      "ANIMATION: The first roof changes from -- to == while both walls remain in their columns. | NEOVIM: 0lR==<Esc> overwrites those two cells in place.",
+      "ANIMATION: The whole first three-row machine shifts right. | NEOVIM: 0lR==<Esc> inserts two new cells before the roof.",
+      "ANIMATION: Only the second machine's roof changes. | NEOVIM: gg3yyGp copies the first machine below itself.",
+      "ANIMATION: The roof is deleted and the walls are redrawn. | NEOVIM: dd removes the whole first row before typing ==."
+    ],
+    "compact_choices": [
+      "A: first roof only; walls fixed · V: R overwrites two cells",
+      "A: whole machine shifts · V: R inserts cells",
+      "A: second roof changes · V: yank and put",
+      "A: roof deleted/redrawn · V: delete row"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the changed cells are the first roof's two dashes, and Replace mode preserves the endpoints.",
+      "Replace mode does not shift the machine; the visible walls remain aligned.",
+      "The second machine is unchanged, and copying a frame is a different operation.",
+      "The frame is not deleted. A rowwise delete would remove far more than the two roof cells."
+    ]
+  },
+  "M11.Q02": {
+    "prompt": "ANIMATION\nA second tension pose reuses the whole machine shape before its surface changes.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/--\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n                    │/~~\\  /--\\│\n                    │| o|  |o |│\n                    │\\__|  |__/│\n\nNEOVIM\nWhich operation preserves one complete three-row pose?",
+    "compact_prompt": "ANIMATION\nCopy a complete three-row pose before changing tension.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/--\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n                    │/~~\\  /--\\│\n                    │| o|  |o |│\n                    │\\__|  |__/│\n\nNEOVIM\nWhat is counted as one frame?",
+    "animation_prompt": "ANIMATION\nThe copied pose retains roof, indicators, and base before a later redraw.\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│\n    │/~~\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
+    "animation_answer": "The full roof, indicator, and base rows form one coherent three-row frame.",
+    "neovim_prompt": "NEOVIM\nWhich command copies that complete frame?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
+    "neovim_answer": "gg3yyGp yanks three whole lines and puts them below the original.",
+    "choices": [
+      "ANIMATION: Copy only the roof row and let the next pose invent its walls. | NEOVIM: yy copies one line, then p puts it below.",
+      "ANIMATION: Move the original machine down and reuse its old location. | NEOVIM: 3dd deletes the frame before p puts it elsewhere.",
+      "ANIMATION: Add three blank timing rows with no machine cells. | NEOVIM: 3o opens blank lines and stays in Insert mode.",
+      "ANIMATION: Copy roof, indicators, and base as one pose. | NEOVIM: gg3yyGp yanks three lines and puts the complete block below."
+    ],
+    "compact_choices": [
+      "A: roof row only · V: yy then p",
+      "A: move original · V: delete then put",
+      "A: blank timing rows · V: open lines",
+      "A: full three-row pose · V: 3yy then put"
+    ],
+    "correct_choice": 3,
+    "feedback": [
+      "A single roof row is not a readable frame; its walls and base would be detached.",
+      "Deletion makes a move, not a preserved working copy.",
+      "Blank lines carry no authored machine pose.",
+      "Correct: the count belongs to whole lines, so all three material rows stay together."
+    ]
+  },
+  "M11.Q03": {
+    "prompt": "ANIMATION\nThe roof's right wall is two columns farther right after the redraw.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhat explains the registration failure?",
+    "compact_prompt": "ANIMATION\nA roof redraw moved a wall.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich editing family would have kept width fixed?",
+    "animation_prompt": "ANIMATION\nThe acting roof changed, but the right wall drifted.\n\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
+    "animation_answer": "Two inserted cells increased row length and pushed the right wall, breaking frame registration.",
+    "neovim_prompt": "NEOVIM\nWhy prefer Replace mode for an existing roof run?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
+    "neovim_answer": "R overwrites existing cells; i would insert and push the remainder unless old cells were removed.",
+    "choices": [
+      "ANIMATION: The intended roof changed while every wall stayed fixed. | NEOVIM: R overwrites the old cells in place.",
+      "ANIMATION: The frame was copied cleanly and the wall drift is intentional motion. | NEOVIM: gg3yyGp is the bounded redraw command.",
+      "ANIMATION: Two inserted cells pushed the wall and broke registration. | NEOVIM: R replaces existing cells; i would grow the row.",
+      "ANIMATION: The base row alone controls the wall position. | NEOVIM: dd removes only the two roof cells without affecting row width."
+    ],
+    "compact_choices": [
+      "A: roof changes; walls fixed · V: overwrite in place",
+      "A: clean copy; drift intentional · V: copy frame",
+      "A: insertion pushed wall · V: R fixed, i grows",
+      "A: base controls wall · V: delete cells"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "The displayed wall moved, so the fixed-width contract was not met.",
+      "The drift is a defect, not intentional motion, and copying does not redraw the roof.",
+      "Correct: insertion changes row length; Replace mode keeps the roof endpoints registered.",
+      "Deleting a row or cells cannot be described as a safe bounded overwrite."
+    ]
+  },
+  "M11.Q04": {
+    "prompt": "ANIMATION\nA copied roof is changed to ~~, then recovery is inspected.\n\n    BEFORE         AFTER\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich sequence makes both undo and redo observable?",
+    "compact_prompt": "ANIMATION\nThe slack roof returns after a real undo/redo.\n\n    BEFORE         AFTER\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich recovery pair restores the actual redraw?",
+    "animation_prompt": "ANIMATION\nUndo first restores ==; redo reapplies ~~.\n\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
+    "animation_answer": "Undo visibly removes the slack redraw, and redo visibly reapplies it as the final pose.",
+    "neovim_prompt": "NEOVIM\nWhich sequence proves recovery on the real edit?\n\n    │/==\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
+    "neovim_answer": "4G0lR~~<Esc>u<C-r> performs the redraw, undoes it, then redoes it.",
+    "choices": [
+      "ANIMATION: The pose never changes; undo and redo are a no-op demonstration. | NEOVIM: 5G0forO5lrO only brightens indicators.",
+      "ANIMATION: Undo returns == and redo restores ~~. | NEOVIM: 4G0lR~~<Esc>u<C-r> makes both recovery operations causal.",
+      "ANIMATION: Redo removes ~~ and leaves the copied roof empty. | NEOVIM: 4G0lR~~<Esc>u<Esc> repeats the edit without undo.",
+      "ANIMATION: The original frame is deleted before a new one is typed. | NEOVIM: 3dd<C-r> recovers a deleted frame without a prior change."
+    ],
+    "compact_choices": [
+      "A: no visible change · V: indicator edits",
+      "A: == undo, ~~ redo · V: redraw, u, CTRL-R",
+      "A: redo removes roof · V: edit then Escape",
+      "A: delete/retype frame · V: recover without change"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "Recovery cannot be demonstrated by an unchanged buffer; a real redraw must precede u and CTRL-R.",
+      "Correct: the recovery pair is causally attached to the R~~ edit.",
+      "Redo reapplies the change; it does not remove the roof, and a second Escape is not redo.",
+      "A recovery command needs an actual prior edit, not an invented delete."
+    ]
+  },
+  "M11.Q05": {
+    "prompt": "ANIMATION\nOnly the copied indicators brighten; roof, walls, and base remain fixed.\n\n    BEFORE         AFTER\n    │/~~\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| O|  |O |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhen are local replacements equivalent to a current-row substitute?",
+    "compact_prompt": "ANIMATION\nTwo indicators change on one copied row.\n\n    BEFORE         AFTER\n    │/~~\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| O|  |O |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich scope keeps the same result?",
+    "animation_prompt": "ANIMATION\nOnly the copied row's o cells become O.\n\n    │/~~\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│\n    │| O|  |O |│",
+    "animation_answer": "Both indicators on the copied row brighten; the shell and the first frame are untouched.",
+    "neovim_prompt": "NEOVIM\nWhich two bounded paths can produce this result?\n\n    │| o|  |o |│\n    │| O|  |O |│",
+    "neovim_answer": "5G0forO5lrO visits both cells, while 5G:s/o/O/g scopes substitution to the current copied row.",
+    "choices": [
+      "ANIMATION: Both copied indicators brighten and no shell cell moves. | NEOVIM: 5G0forO5lrO or 5G:s/o/O/g<CR> stays on the copied row.",
+      "ANIMATION: Every indicator in both frames brightens. | NEOVIM: :%s/o/O/g is safe because all frames are related.",
+      "ANIMATION: The copied roof changes while indicators stay lowercase. | NEOVIM: 0lR==<Esc> is the matching two-cell method.",
+      "ANIMATION: The entire second frame is replaced by the first. | NEOVIM: 5Gddp copies the first rowwise pose over it."
+    ],
+    "compact_choices": [
+      "A: copied indicators only · V: two local or row-scoped paths",
+      "A: all frames brighten · V: whole-file substitute",
+      "A: roof changes · V: Replace roof",
+      "A: frame overwritten · V: delete and put"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: both accepted paths have the same bounded row scope and preserve registration.",
+      "Whole-file scope would also change the first frame, so it is not equivalent.",
+      "The visible acting change is the two indicators, not the roof.",
+      "Deleting and putting a rowwise block changes frame structure rather than two cells."
+    ]
+  },
+  "M11.Q06": {
+    "prompt": "ANIMATION\nThe transfer shell uses dots instead of dashes, but its roof endpoints still register.\n\n    BEFORE         AFTER\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │| x|  |x |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich reasoning transfers to the unfamiliar shell?",
+    "compact_prompt": "ANIMATION\nUnfamiliar endpoints do not change the roof's width.\n\n    BEFORE         AFTER\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │| x|  |x |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich edit is independent of endpoint glyph identity?",
+    "animation_prompt": "ANIMATION\nThe first two roof cells change while dot-shaped walls stay registered.\n\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │\\__|  |__/│",
+    "animation_answer": "Replace the owned two-cell roof run; do not depend on the particular wall glyphs.",
+    "neovim_prompt": "NEOVIM\nWhich path addresses the roof by position inside the unfamiliar frame?\n\n    │/..\\  /..\\│\n    │| x|  |x |│\n    │\\__|  |__/│",
+    "neovim_answer": "0lR==<Esc> overwrites the two existing roof cells without searching for the endpoints.",
+    "choices": [
+      "ANIMATION: Keep the unfamiliar walls and overwrite only their fixed roof run. | NEOVIM: 0lR==<Esc> uses the owned position, not wall glyph names.",
+      "ANIMATION: Redraw the entire shell so it matches the old machine. | NEOVIM: %s/\\./-/g normalizes every dot in the file.",
+      "ANIMATION: Move the roof until its dots become dashes. | NEOVIM: i== inserts two cells before the first dot.",
+      "ANIMATION: Change every x indicator and every dot together. | NEOVIM: :%s/[.x]/=/g edits all matching cells globally."
+    ],
+    "compact_choices": [
+      "A: roof only; walls retained · V: positional Replace",
+      "A: normalize whole shell · V: global dot substitute",
+      "A: move roof · V: insert two cells",
+      "A: dots and x change · V: global class substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the method is positional and preserves the unfamiliar shell around the owned run.",
+      "Transfer means preserve the new shell, not erase its material identity.",
+      "Insertion would change width and is not needed for an existing two-cell run.",
+      "A global class substitute exceeds the single roof's scope."
+    ]
+  },
+  "M11.Q07": {
+    "prompt": "ANIMATION\nTwo short rows receive the same blur-trail column.\n\n    BEFORE        AFTER\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n\nNEOVIM\nWhy must the trail column match in every row?",
+    "compact_prompt": "ANIMATION\nThe vertical trail is aligned.\n\n    BEFORE        AFTER\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n\nNEOVIM\nWhat does one shared virtual column prevent?",
+    "animation_prompt": "ANIMATION\nThe three new bars form one straight secondary effect.\n\n    │| o|   |│\n    │| o|   |│\n    │| o|   |│",
+    "animation_answer": "Homologous trail glyphs share one display column, so the blur reads as a stable line rather than jitter.",
+    "neovim_prompt": "NEOVIM\nWhich placement principle matters?\n\n    │| o|   |│\n    │| o|   |│\n    │| o|   |│",
+    "neovim_answer": "Address the same virtual column in each row before inserting the bar.",
+    "choices": [
+      "ANIMATION: One aligned column makes a coherent trail. | NEOVIM: Repeat the exact display-column address on each row.",
+      "ANIMATION: Each trail should use a different column for texture. | NEOVIM: Place with arbitrary i commands after moving by one row.",
+      "ANIMATION: The trail belongs only on the longest row. | NEOVIM: Insert at end-of-line and let shorter rows pad themselves.",
+      "ANIMATION: A moving trail requires shifting the original cores. | NEOVIM: Delete the cores before adding bars."
+    ],
+    "compact_choices": [
+      "A: one straight trail · V: same column each row",
+      "A: staggered texture · V: arbitrary insertion",
+      "A: longest row only · V: end-of-line insert",
+      "A: cores shift · V: delete cores first"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: equal display columns preserve temporal and spatial registration.",
+      "Different columns read as jitter, not a deliberate straight trail.",
+      "The effect is homologous across rows; it cannot be inferred from only the longest row.",
+      "The core art is stable; deleting it destroys the intended subject."
+    ]
+  },
+  "M11.Q08": {
+    "prompt": "ANIMATION\nThree short rows gain a right edge without hand-counted padding.\n\n    BEFORE        AFTER\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n\nNEOVIM\nWhich setting lets the cursor visit an empty column beyond the line?",
+    "compact_prompt": "ANIMATION\nPad all three rows at one exact column.\n\n    BEFORE        AFTER\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n\nNEOVIM\nWhich virtual-edit behavior is required?",
+    "animation_prompt": "ANIMATION\nThe new right bars line up while the cores stay fixed.\n\n    │| o |   |│\n    │| o |   |│\n    │| o |   |│",
+    "animation_answer": "Each short row is extended to the same display column; no core or existing edge moves.",
+    "neovim_prompt": "NEOVIM\nWhich command family reaches the empty column?\n\n    │| o |│\n    │| o |│\n    │| o |│",
+    "neovim_answer": ":set virtualedit=all<CR> enables exact-column motion past end-of-line before inserting the edge.",
+    "choices": [
+      "ANIMATION: All three edges land at one column while cores stay fixed. | NEOVIM: :set virtualedit=all<CR> permits exact-column motion beyond EOL.",
+      "ANIMATION: Each edge is padded with a different number of spaces. | NEOVIM: :set paste<CR> aligns columns automatically.",
+      "ANIMATION: The rows are joined into one long line. | NEOVIM: J creates the shared edge without a column address.",
+      "ANIMATION: Existing cores shift to the right edge. | NEOVIM: ggVG>s inserts a visual-width block before the cores."
+    ],
+    "compact_choices": [
+      "A: aligned new edges · V: virtualedit=all",
+      "A: unequal spaces · V: paste mode",
+      "A: joined line · V: J",
+      "A: cores shift · V: visual block insert"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: virtualedit exposes the empty display column without changing earlier cells.",
+      "Unequal padding defeats alignment, and paste mode is unrelated.",
+      "Joining lines destroys the three-row frame.",
+      "The cores are landmarks that must remain fixed."
+    ]
+  },
+  "M11.Q09": {
+    "prompt": "ANIMATION\nA roof run becomes == while both endpoint columns remain fixed.\n\n    BEFORE        AFTER\n    │/--\\│        │/==\\│\n    │| o |│        │| o |│\n    │\\__ /│       │\\__ /│\n\nNEOVIM\nWhat distinguishes Replace mode from insertion here?",
+    "compact_prompt": "ANIMATION\nThe roof material changes, not its width.\n\n    BEFORE        AFTER\n    │/--\\│        │/==\\│\n    │| o |│        │| o |│\n    │\\__ /│       │\\__ /│\n\nNEOVIM\nWhich operation preserves the endpoint?",
+    "animation_prompt": "ANIMATION\nThe old roof cells are consumed by the new cells.\n\n    │/--\\│        │/==\\│\n    │| o |│        │| o |│\n    │\\__ /│       │\\__ /│",
+    "animation_answer": "The two old roof cells are replaced; they are not joined by extra cells.",
+    "neovim_prompt": "NEOVIM\nWhich mode consumes existing cells?\n\n    │/--\\│\n    │| o |│\n    │\\__ /│",
+    "neovim_answer": "R writes over the current cells; Insert mode pushes following cells to the right.",
+    "choices": [
+      "ANIMATION: Existing roof cells are consumed and width stays fixed. | NEOVIM: R overwrites; Insert would push the remainder.",
+      "ANIMATION: New roof cells are inserted before the old roof. | NEOVIM: R always increases the row length.",
+      "ANIMATION: The roof is removed and the endpoint is re-created later. | NEOVIM: dd followed by p is Replace mode.",
+      "ANIMATION: The whole frame is duplicated to show a hold. | NEOVIM: yy and p are the only way to change a roof."
+    ],
+    "compact_choices": [
+      "A: consume old cells; width fixed · V: R overwrites",
+      "A: insert before roof · V: R grows row",
+      "A: delete/recreate endpoint · V: dd/p is Replace",
+      "A: duplicate frame · V: yank/put only"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: Replace consumes existing cells and keeps the endpoint registered.",
+      "Insertion would shift the endpoint, contradicting the visible fixed width.",
+      "Delete and put is not Replace mode and would alter more structure.",
+      "The frame is edited in place; no duplicate frame appears."
+    ]
+  },
+  "M11.Q10": {
+    "prompt": "ANIMATION\nTwo homologous rows need a blur bar at the same display column.\n\n    BEFORE        AFTER\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n\nNEOVIM\nWhich workflow explicitly revisits that column?",
+    "compact_prompt": "ANIMATION\nThe blur bars align across rows.\n\n    BEFORE        AFTER\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n    │| o|│        │| o|   |│\n\nNEOVIM\nWhich workflow names the shared column?",
+    "animation_prompt": "ANIMATION\nThe bars occupy one shared display column.\n\n    │| o|   |│\n    │| o|   |│\n    │| o|   |│",
+    "animation_answer": "The repeated bars share one exact column, so the secondary motion does not jitter.",
+    "neovim_prompt": "NEOVIM\nWhich motion-plus-insert workflow targets that column twice?\n\n    │| o|   |│\n    │| o|   |│",
+    "neovim_answer": "2G13|i|<Esc>3j13|i|<Esc> addresses column 14 explicitly in both rows.",
+    "choices": [
+      "ANIMATION: Both bars align in the same column. | NEOVIM: 2G13|i|<Esc>3j13|i|<Esc> revisits the exact address.",
+      "ANIMATION: The bars intentionally alternate columns. | NEOVIM: j then i is sufficient without an address.",
+      "ANIMATION: Only the first row receives a bar. | NEOVIM: 2G13|i|<Esc>3j13|i|<Esc> inserts only once because 3j skips the row.",
+      "ANIMATION: The cores move to meet the bars. | NEOVIM: 2dd3p aligns the rows by duplicating them."
+    ],
+    "compact_choices": [
+      "A: bars share column · V: address 13| twice",
+      "A: bars alternate · V: vague j/i",
+      "A: first row only · V: second address skipped",
+      "A: cores move · V: delete and put"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: explicit column motion and a row jump place homologous bars together.",
+      "Alternating columns read as jitter, not the authored blur.",
+      "The second row must be edited too; 3j reaches it from row 2 in the shown strip.",
+      "Row duplication does not place a single bar at a shared column."
+    ]
+  },
+  "M11.01.P01": {
+    "prompt": "ANIMATION\nAfter the guided redraw, which cells changed?\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nChoose the explanation of the completed bounded edit.",
+    "compact_prompt": "ANIMATION\nThe first roof tightens and the walls stay fixed.\n\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhat did the guided Replace edit do?",
+    "animation_prompt": "ANIMATION\nThe first roof's two dashes become ==; all other cells retain their columns.\n\n    │/--\\  /--\\│   │/==\\  /--\\│\n    │| o|  |o |│   │\\__|  |__/│",
+    "animation_answer": "The guided edit overwrote two roof cells without changing row width.",
+    "neovim_prompt": "NEOVIM\nWhich summary matches the completed command?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
+    "neovim_answer": "0lR==<Esc> moved to the roof and replaced exactly two cells.",
+    "choices": [
+      "ANIMATION: Two roof cells changed and both walls stayed registered. | NEOVIM: 0lR==<Esc> overwrote the existing cells.",
+      "ANIMATION: The whole first machine was inserted again. | NEOVIM: yy then p duplicated all three rows.",
+      "ANIMATION: The right machine shifted left. | NEOVIM: i== inserted before its wall.",
+      "ANIMATION: The first roof row was deleted. | NEOVIM: dd removed the row and Escape restored it."
+    ],
+    "compact_choices": [
+      "A: two roof cells; walls fixed · V: bounded R overwrite",
+      "A: duplicate machine · V: yy/p",
+      "A: right machine shifts · V: insert",
+      "A: row deleted · V: dd/Escape"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the action is a two-cell fixed-width overwrite.",
+      "No second machine was added; copying is a different lesson.",
+      "The right machine is unchanged and insertion would alter width.",
+      "The row remains present, so a line delete did not occur."
+    ]
+  },
+  "M11.02.P01": {
+    "prompt": "ANIMATION\nA working copy contains the complete machine pose.\n\n    BEFORE         AFTER\n    │/--\\  /--\\│   │/--\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n                    │/--\\  /--\\│\n                    │| o|  |o |│\n                    │\\__|  |__/│\n\nNEOVIM\nHow did the command preserve the frame as one unit?",
+    "compact_prompt": "ANIMATION\nThe full three-row machine appears below itself.\n\n    │/--\\  /--\\│   │/--\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n                    │/--\\  /--\\│\n                    │| o|  |o |│\n                    │\\__|  |__/│\n\nNEOVIM\nWhat object was copied?",
+    "animation_prompt": "ANIMATION\nThe second block is a complete three-row frame, not a detached row.\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
+    "animation_answer": "The whole three-row machine was duplicated as the next working frame.",
+    "neovim_prompt": "NEOVIM\nWhich grammar describes the command?\n\n    │/--\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
+    "neovim_answer": "gg3yyGp means go to the top, yank three whole lines, and put them below.",
+    "choices": [
+      "ANIMATION: Copy the complete three-row block. | NEOVIM: gg3yyGp yanks three lines and puts them below.",
+      "ANIMATION: Copy only the roof. | NEOVIM: yy copies one character because the count is omitted.",
+      "ANIMATION: Move the original block down. | NEOVIM: 3dd then p transfers the source.",
+      "ANIMATION: Add blank rows for timing. | NEOVIM: 3o opens lines but copies no art."
+    ],
+    "compact_choices": [
+      "A: full block · V: top, 3 lines, put",
+      "A: roof only · V: one character",
+      "A: move original · V: delete then put",
+      "A: blank timing rows · V: open lines"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the count belongs to complete lines, preserving the machine frame.",
+      "The visible duplicate has all three rows, not only the roof.",
+      "The original remains, so this is copy rather than move.",
+      "Blank rows contain no machine cells and cannot be the shown result."
+    ]
+  },
+  "M11.UR.P01": {
+    "prompt": "ANIMATION\nThe middle cell is replaced, undone, then restored by redo.\n\n    BEFORE         AFTER\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│       │|  !  |│\n    │ \\---/ │      │ \\---/ │\n\nNEOVIM\nWhich explanation accounts for the visible recovery?",
+    "compact_prompt": "ANIMATION\nOne core cell returns after redo.\n\n    │ /---\\ │\n    │|  .  |│       │|  !  |│\n    │ \\---/ │\n\nNEOVIM\nWhat does the recovery pair do?",
+    "animation_prompt": "ANIMATION\nOnly the middle core changes from . to ! in the final frame.\n\n    │ /---\\ │\n    │|  .  |│  →  │|  !  |│\n    │ \\---/ │",
+    "animation_answer": "The actual core replacement is undone and then redone, leaving ! as the saved result.",
+    "neovim_prompt": "NEOVIM\nWhich command sequence makes that history real?\n\n    │|  .  |│  →  │|  !  |│",
+    "neovim_answer": "2G0f.r!u<C-r> replaces the core, undoes it, and redoes it.",
+    "choices": [
+      "ANIMATION: The core replacement remains after a real undo and redo. | NEOVIM: 2G0f.r!u<C-r> gives both recovery keys a real change to inspect.",
+      "ANIMATION: The frame never leaves its original state. | NEOVIM: u<C-r> alone demonstrates recovery without a prior edit.",
+      "ANIMATION: The whole middle row is copied. | NEOVIM: 3yyGp is the undo/redo pair.",
+      "ANIMATION: The contour is deleted and reconstructed. | NEOVIM: dd<C-r> redoes an unrecorded deletion."
+    ],
+    "compact_choices": [
+      "A: core changed via real recovery · V: replace, undo, redo",
+      "A: no state change · V: recovery alone",
+      "A: row copied · V: yank/put",
+      "A: contour rebuilt · V: redo without history"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the final ! is causally produced by the replacement and restored by redo.",
+      "Undo/redo alone cannot change a buffer that has not been edited.",
+      "The visible change is one core cell, not a copied row.",
+      "The contour remains intact; there is no deletion history here."
+    ]
+  },
+  "M11.04.P01": {
+    "prompt": "ANIMATION\nThe copied roof must become slack, then the real edit is undone and redone.\n\n    BEFORE         AFTER\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich result should remain saved?",
+    "compact_prompt": "ANIMATION\nThe copied roof ends at ~~ after real recovery.\n\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhat scope is required?",
+    "animation_prompt": "ANIMATION\nOnly the copied frame's roof changes to ~~; the first frame and walls stay fixed.\n\n    │/==\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| o|  |o |│\n    │\\__|  |__/│   │\\__|  |__/│",
+    "animation_answer": "Redraw the copied roof, undo that real redraw, then redo it so ~~ is final.",
+    "neovim_prompt": "NEOVIM\nWhich path names the actual bounded recovery?\n\n    │/==\\  /--\\│\n    │| o|  |o |│\n    │\\__|  |__/│",
+    "neovim_answer": "4G0lR~~<Esc>u<C-r> changes the copied roof and makes both recovery operations meaningful.",
+    "choices": [
+      "ANIMATION: The first roof changes and the copied roof remains ==. | NEOVIM: Apply Replace mode to the wrong frame.",
+      "ANIMATION: Both roofs change to ~~. | NEOVIM: Use a whole-file substitute even though only the copy owns the edit.",
+      "ANIMATION: The copied roof becomes ~~ while the first frame and walls remain fixed. | NEOVIM: Redraw only the copied roof, undo it once to compare, then redo the real change.",
+      "ANIMATION: The copied frame disappears after undo. | NEOVIM: Delete the complete copied frame instead of testing the roof edit."
+    ],
+    "compact_choices": [
+      "A: wrong roof changes · V: edit first frame",
+      "A: both roofs change · V: whole-file substitute",
+      "A: copied roof slack; shell fixed · V: redraw, undo, redo",
+      "A: copied frame deleted · V: delete then redo"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "The copied frame is the acting frame; the first roof must remain ==.",
+      "Whole-file scope damages the earlier frame and violates registration.",
+      "Correct: the copied roof is the only acting region and the recovery history is real.",
+      "Undo does not delete the copied frame, and redo reapplies the redraw rather than a deletion."
+    ]
+  },
+  "M11.05.P01": {
+    "prompt": "ANIMATION\nOne accepted method brightens both copied indicators, with no other rows changing.\n\n    BEFORE         AFTER\n    │/~~\\  /--\\│   │/~~\\  /--\\│\n    │| o|  |o |│   │| O|  |O |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich comparison is accurate when one method is chosen?",
+    "compact_prompt": "ANIMATION\nOnly two o cells on the copied row become O.\n\n    │| o|  |o |│   │| O|  |O |│\n\nNEOVIM\nCompare local r edits with a current-row substitute.",
+    "animation_prompt": "ANIMATION\nThe copied row's two indicators brighten; frame bounds remain unchanged.\n\n    │/~~\\  /--\\│\n    │| o|  |o |│  →  │| O|  |O |│\n    │\\__|  |__/│",
+    "animation_answer": "Either accepted bounded method changes exactly the two copied-row indicators.",
+    "neovim_prompt": "NEOVIM\nWhat is the scope difference?\n\n    │| o|  |o |│\n    │| O|  |O |│",
+    "neovim_answer": "Local r edits visit each cell; a current-line substitute changes matching o cells only on that copied row.",
+    "choices": [
+      "ANIMATION: Both copied indicators brighten and no frame edge moves. | NEOVIM: local r edits or a current-row :s have the same bounded result.",
+      "ANIMATION: Every o in every frame brightens. | NEOVIM: %s/o/O/g is the safer scope because it is shorter.",
+      "ANIMATION: Only the roof changes. | NEOVIM: R== is the equivalent indicator method.",
+      "ANIMATION: The copied frame is replaced with a third frame. | NEOVIM: 3yyGp is required after either method."
+    ],
+    "compact_choices": [
+      "A: two copied indicators · V: local or row-scoped substitute",
+      "A: all frames' o cells · V: whole-file substitute",
+      "A: roof only · V: Replace roof",
+      "A: third frame added · V: copy again"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: both paths reach the same two-cell result when their scope is the copied row.",
+      "Whole-file substitution exceeds the intended acting frame.",
+      "The roof is unchanged; R== is a different material edit.",
+      "No third frame is needed after the copied row already exists."
+    ]
+  },
+  "M11.06.P01": {
+    "prompt": "ANIMATION\nThe unfamiliar transfer shell must keep its walls while its first roof becomes ==.\n\n    BEFORE         AFTER\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │| x|  |x |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich bounded path reaches TARGET?",
+    "compact_prompt": "ANIMATION\nTransfer the same fixed-width roof edit to dots-and-x art.\n\n    │/..\\  /..\\│   │/==\\  /..\\│\n    │| x|  |x |│   │| x|  |x |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich path preserves the unfamiliar shell?",
+    "animation_prompt": "ANIMATION\nOnly the first two roof cells change; the dot walls and x indicators remain.\n\n    │/..\\  /..\\│  →  │/==\\  /..\\│\n    │| x|  |x |│      │| x|  |x |│\n    │\\__|  |__/│      │\\__|  |__/│",
+    "animation_answer": "The transfer applies the same two-cell Replace edit while preserving the changed shell.",
+    "neovim_prompt": "NEOVIM\nWhich command reaches the exact target?\n\n    │/..\\  /..\\│\n    │| x|  |x |│\n    │\\__|  |__/│",
+    "neovim_answer": "0lR==<Esc> is a bounded path that overwrites the first roof run.",
+    "choices": [
+      "ANIMATION: Preserve dots and x cells; change the first roof only. | NEOVIM: 0lR==<Esc> reaches TARGET exactly.",
+      "ANIMATION: Normalize all dots and x cells to the old machine. | NEOVIM: :%s/[.x]/-/g rewrites the whole file.",
+      "ANIMATION: Insert == before the dots, shifting the shell. | NEOVIM: 0l i==<Esc> is required.",
+      "ANIMATION: Change both roofs and both indicators. | NEOVIM: :%s/../==/g changes every two-character run."
+    ],
+    "compact_choices": [
+      "A: unfamiliar shell retained · V: 0lR==",
+      "A: normalize shell · V: global class substitute",
+      "A: insert before dots · V: insert mode",
+      "A: all roofs/indicators · V: global two-char substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: transfer preserves the unfamiliar art and reuses only the bounded roof operation.",
+      "Changing the transfer shell defeats the purpose of unseen art.",
+      "Insertion shifts the walls and cannot reach the fixed-width target.",
+      "The target contains only one changed roof, not a whole-file rewrite."
+    ]
+  },
+  "M11.VE.P01": {
+    "prompt": "ANIMATION\nA right edge is added at one shared column to three short rows.\n\n    BEFORE        AFTER\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n\nNEOVIM\nWhich command explanation matches the exact-column edit?",
+    "compact_prompt": "ANIMATION\nAll three rows receive one aligned edge.\n\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n    │| o |│       │| o |   |│\n\nNEOVIM\nWhat enables the empty column?",
+    "animation_prompt": "ANIMATION\nThe right bars share a display column and the cores stay still.\n\n    │| o |   |│\n    │| o |   |│\n    │| o |   |│",
+    "animation_answer": "Padding is placed at one exact column on all three rows without moving the cores.",
+    "neovim_prompt": "NEOVIM\nWhich grammar decomposes the completed path?\n\n    │| o |│\n    │| o |│\n    │| o |│",
+    "neovim_answer": ":set virtualedit=all<CR> enables N| to reach the empty column; each i| writes the edge.",
+    "choices": [
+      "ANIMATION: Three bars align at one column while cores remain registered. | NEOVIM: virtualedit=all plus exact-column motion permits each i|.",
+      "ANIMATION: Every row receives a different amount of padding. | NEOVIM: paste mode computes the edge automatically.",
+      "ANIMATION: The rows are joined before the edge is drawn. | NEOVIM: J followed by i| creates one shared line.",
+      "ANIMATION: The cores are moved right until the edge fits. | NEOVIM: x then p shifts each core and copies a bar."
+    ],
+    "compact_choices": [
+      "A: aligned bars; cores fixed · V: virtualedit + exact columns",
+      "A: unequal padding · V: paste mode",
+      "A: joined rows · V: J/i",
+      "A: cores move · V: delete/put"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: virtualedit allows exact-column access past short line ends, preserving registration.",
+      "Unequal padding would make the edge slant or jitter.",
+      "The rows remain separate frame rows; joining them destroys the art.",
+      "Cores are not padding; moving them changes the subject."
+    ]
+  },
+  "M11.08.P01": {
+    "prompt": "ANIMATION\nThe mastery task adds a blur bar at the same column on both complete frames.\n\n    BEFORE        AFTER\n    │/==\\  /--\\│  │/==\\  /--\\│\n    │| o|  |o |│    │| o|  |o |  |│\n    │\\__|  |__/│   │\\__|  |__/│\n\nNEOVIM\nWhich reusable grammar completes the task?",
+    "compact_prompt": "ANIMATION\nAligned blur bars are added without changing either frame's core art.\n\n    │| o|  |o |│    │| o|  |o |  |│\n    │| O|  |O |│    │| O|  |O |  |│\n\nNEOVIM\nWhat grammar must be completed?",
+    "animation_prompt": "ANIMATION\nBoth homologous frame rows receive the same-column bar; roof and indicators remain as shown.\n\n    │/==\\  /--\\│\n    │| o|  |o |  |│\n    │\\__|  |__/│",
+    "animation_answer": "Use the same virtual-column placement on each corresponding row so the blur aligns across frames.",
+    "neovim_prompt": "NEOVIM\nWhich missing grammar piece makes an Ex setting execute?\n\n    │| o|  |o |  |│\n    │| O|  |O |  |│",
+    "neovim_answer": "The setting command needs <CR>; then exact-column motion and dot repeat can perform the aligned inserts.",
+    "choices": [
+      "ANIMATION: Bars align across both frames and existing cells stay fixed. | NEOVIM: finish the setting with <CR>, then use exact-column motion and dot repeat.",
+      "ANIMATION: Bars alternate columns so the frames visibly diverge. | NEOVIM: omit <CR>; the setting runs when the cursor moves.",
+      "ANIMATION: Both frames are rebuilt from scratch. | NEOVIM: replace virtualedit with dd and p.",
+      "ANIMATION: The blur is added by changing all indicator cells. | NEOVIM: use %s/o/|/g without a column address."
+    ],
+    "compact_choices": [
+      "A: aligned bars; art stable · V: execute setting with CR",
+      "A: alternating bars · V: omit CR",
+      "A: rebuild frames · V: delete/put",
+      "A: indicators become bars · V: whole-file substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: execution of the setting and exact-column repetition are both part of the reusable grammar.",
+      "Without <CR> the Ex setting is not executed, and alternating columns are not the target.",
+      "The task preserves authored frames; deleting and putting them loses that evidence.",
+      "A blur bar is a new aligned column, not an indicator replacement."
+    ]
+  },
+  "M1.Q01": {
+    "prompt": "ANIMATION\nThe contour keeps its anchor while one uncertain joint is chosen.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _., │   │    _.: │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich search reaches the joint without counting punctuation columns?",
+    "compact_prompt": "ANIMATION\nOnly the comma joint becomes a colon.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _., │   │    _.: │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich bounded search-and-replace matches that read?",
+    "animation_prompt": "ANIMATION\nThe anchor and slope stay fixed; the uncertain comma becomes a colon.\n\n    │       ´│\n    │    _., │  →  │    _.: │\n    │o_.-    │      │o_.-    │",
+    "animation_answer": "Only the joint glyph changes from comma to colon; the endpoint and material run remain registered.",
+    "neovim_prompt": "NEOVIM\nHow can the visible comma joint be found and replaced?\n\n    │       ´│\n    │    _., │\n    │o_.-    │",
+    "neovim_answer": "/,<CR> searches for the comma and r: replaces that one match.",
+    "choices": [
+      "ANIMATION: The comma joint becomes a colon while anchor and endpoint stay fixed. | NEOVIM: /,<CR> then r: changes only that match.",
+      "ANIMATION: The anchor moves right to meet a new joint. | NEOVIM: 0w inserts a colon before the contour.",
+      "ANIMATION: Every punctuation mark in the strip becomes a colon. | NEOVIM: :%s/./:/g rewrites the whole file.",
+      "ANIMATION: The complete contour frame is replaced by a blank row. | NEOVIM: dd deletes the joint's line."
+    ],
+    "compact_choices": [
+      "A: joint only; anchor fixed · V: search comma, replace one",
+      "A: anchor moves · V: insert colon",
+      "A: all punctuation changes · V: global substitute",
+      "A: frame blanked · V: delete line"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the visible change is one landmark, and the search avoids guessing its column.",
+      "The anchor is unchanged, and insertion would shift later contour cells.",
+      "A whole-file substitute changes unrelated material and exceeds the frame scope.",
+      "The frame remains present; only its joint glyph is replaced."
+    ]
+  },
+  "M1.Q02": {
+    "prompt": "ANIMATION\nA three-row contour frame is copied as one working pose.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.: │\n    │o_.-    │   │o_.-    │\n                  │       ´│\n                  │    _.: │\n                  │o_.-    │\n\nNEOVIM\nWhy does a count on a linewise copy matter?",
+    "compact_prompt": "ANIMATION\nThe complete contour appears below itself.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n                  │       ´│\n                  │    _.: │\n                  │o_.-    │\n\nNEOVIM\nWhat does the count own?",
+    "animation_prompt": "ANIMATION\nThe copied object has its top joint, middle slope, and anchored base.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n    │       ´│\n    │    _.: │\n    │o_.-    │",
+    "animation_answer": "The entire three-row contour is one frame and must stay together during the copy.",
+    "neovim_prompt": "NEOVIM\nWhich counted operation owns all three rows?\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
+    "neovim_answer": "A count of 3 makes yy or dd operate on three complete lines rather than one row.",
+    "choices": [
+      "ANIMATION: Copy the complete three-row contour as one frame. | NEOVIM: 3yy followed by p yanks and puts three whole lines.",
+      "ANIMATION: Copy only the anchor row; other rows are regenerated. | NEOVIM: yy copies the current character.",
+      "ANIMATION: Move the original contour to the lower position. | NEOVIM: 3dd then p transfers the three rows.",
+      "ANIMATION: Add three empty timing rows. | NEOVIM: 3o creates the rows without copying the art."
+    ],
+    "compact_choices": [
+      "A: full three-row frame · V: count 3 linewise yank",
+      "A: anchor row only · V: one character",
+      "A: move original · V: delete then put",
+      "A: blank timing rows · V: open lines"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the count makes the full contour frame the copied object.",
+      "A single row would detach the contour's slope or anchor.",
+      "The original remains for comparison, so this is not a move.",
+      "Blank lines do not preserve any authored contour glyphs."
+    ]
+  },
+  "M1.Q03": {
+    "prompt": "ANIMATION\nA punctuation word must be removed without consuming the anchored row.\n\n    BEFORE       AFTER\n    │ /---\\ │   │ /---\\ │\n    │|  o  |│    │|     |│\n    │ \\---/ │   │ \\---/ │\n\nNEOVIM\nWhich motion matches one punctuation WORD?",
+    "compact_prompt": "ANIMATION\nThe annotation-sized punctuation run disappears; the contour remains.\n\n    │ /---\\ │   │ /---\\ │\n    │|  o  |│    │|     |│\n    │ \\---/ │   │ \\---/ │\n\nNEOVIM\nWhich operator scope avoids deleting the frame?",
+    "animation_prompt": "ANIMATION\nOnly the selected punctuation run is removed; the anchor and rails remain.\n\n    │ /---\\ │  →  │ /---\\ │\n    │|  o  |│      │|     |│\n    │ \\---/ │      │ \\---/ │",
+    "animation_answer": "Delete one punctuation WORD while preserving the row's anchor and contour bounds.",
+    "neovim_prompt": "NEOVIM\nWhich operator-plus-motion deletes one whitespace-delimited punctuation word?\n\n    │|  o  |│",
+    "neovim_answer": "dW deletes one WORD-sized punctuation run; dw may stop inside punctuation art.",
+    "choices": [
+      "ANIMATION: Remove only the punctuation run and keep the anchor row registered. | NEOVIM: dW owns one punctuation WORD.",
+      "ANIMATION: Delete the complete middle row, including the contour anchor. | NEOVIM: dd is the precise punctuation-word edit.",
+      "ANIMATION: Remove the whole three-row frame. | NEOVIM: 3dd deletes only the punctuation word.",
+      "ANIMATION: Replace every punctuation mark with spaces. | NEOVIM: :%s/[^a-z]/ /g is bounded to the row."
+    ],
+    "compact_choices": [
+      "A: punctuation run only · V: dW",
+      "A: middle row deleted · V: dd",
+      "A: whole frame deleted · V: 3dd as one word",
+      "A: all punctuation spaces · V: global class substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: dW matches the intended larger punctuation-word boundary.",
+      "dd removes the entire row, including art that should remain.",
+      "3dd is a three-line delete, not a one-word operation.",
+      "A global class substitution has an uncontrolled blast radius."
+    ]
+  },
+  "M1.Q04": {
+    "prompt": "ANIMATION\nA complete three-line candidate must be removed before a replacement contour is authored.\n\n    BEFORE       AFTER\n    │ /---\\ │   │ /---\\ │\n    │|  o  |│    │|  o  |│\n    │ \\---/ │   │ \\---/ │\n    │ /---\\ │   │       │\n    │|  O  |│    │       │\n    │ \\---/ │   │       │\n\nNEOVIM\nWhen does a three-line delete make sense?",
+    "compact_prompt": "ANIMATION\nOnly the second three-row candidate is removed.\n\n    │ /---\\ │\n    │|  o  |│\n    │ \\---/ │\n    │ /---\\ │\n    │|  O  |│\n    │ \\---/ │\n\nNEOVIM\nWhich count owns the candidate?",
+    "animation_prompt": "ANIMATION\nThe first frame remains; the second three-row candidate is the deleted object.\n\n    │ /---\\ │\n    │|  o  |│\n    │ \\---/ │",
+    "animation_answer": "Use a three-line deletion only when the whole second frame is the intended discarded candidate.",
+    "neovim_prompt": "NEOVIM\nWhich command removes the second complete frame?\n\n    │ /---\\ │\n    │|  O  |│\n    │ \\---/ │",
+    "neovim_answer": "4G3dd addresses the second frame and deletes its three whole rows.",
+    "choices": [
+      "ANIMATION: Discard the second complete three-row candidate and keep the first. | NEOVIM: 4G3dd deletes exactly those three lines.",
+      "ANIMATION: Delete one joint inside the second frame. | NEOVIM: dd is always a three-row delete.",
+      "ANIMATION: Delete both frames so a new one can be typed. | NEOVIM: 4Gdd removes every frame below the cursor.",
+      "ANIMATION: Copy the second frame below the first. | NEOVIM: 4G3yyGp deletes and copies its rows."
+    ],
+    "compact_choices": [
+      "A: discard second frame · V: address + 3dd",
+      "A: delete one joint · V: dd means three rows",
+      "A: delete both frames · V: 4Gdd all below",
+      "A: copy second frame · V: 3yy/p after delete"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: 3dd matches the complete frame boundary at the addressed line.",
+      "A one-joint edit needs a character replacement, not a linewise delete.",
+      "The first frame must remain for comparison; 4Gdd is not all-below deletion.",
+      "Copying would preserve the frame rather than discard it."
+    ]
+  },
+  "M1.Q05": {
+    "prompt": "ANIMATION\nTwo homologous joints need the same semicolon material.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.;   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich bounded method repeats one verified local edit?",
+    "compact_prompt": "ANIMATION\nBoth joint colons become semicolons; anchors stay fixed.\n\n    │    _.: │   │    _.; │\n    │ `-.;   │   │ `-.;   │\n\nNEOVIM\nWhich method reaches the second homologous joint?",
+    "animation_prompt": "ANIMATION\nThe slope vocabulary changes at the two joints only.\n\n    │    _.: │  →  │    _.; │\n    │ `-.;   │      │ `-.;   │",
+    "animation_answer": "The same local joint change is applied to both frames without moving their anchors.",
+    "neovim_prompt": "NEOVIM\nWhich path demonstrates local replacement plus repeat?\n\n    │    _.: │\n    │ `-.;   │",
+    "neovim_answer": "2G0f:r;3j0f:. finds the first joint, replaces it, then repeats the last change at the second.",
+    "choices": [
+      "ANIMATION: Both joints become semicolons and anchors remain fixed. | NEOVIM: 2G0f:r;3j0f:. verifies one local change before repeating it.",
+      "ANIMATION: Every colon in the file becomes a semicolon. | NEOVIM: :%s/:/;/g is always safer than a local edit.",
+      "ANIMATION: The second contour is flipped byte-for-byte. | NEOVIM: 3ddGp reverses the frame before replacement.",
+      "ANIMATION: Only the first joint changes. | NEOVIM: 2G0f:r<Esc> has no navigation to the second joint."
+    ],
+    "compact_choices": [
+      "A: both homologous joints · V: local replace then dot",
+      "A: every colon · V: whole-file substitute",
+      "A: frame flipped · V: delete/put reverse",
+      "A: first joint only · V: no repeat"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: a verified local change is repeated at the homologous landmark.",
+      "Whole-file substitution may touch unrelated colons outside the contour frames.",
+      "Mirroring and copying are not the target; the two joints need the same material change.",
+      "The path explicitly moves to the second joint before repeating."
+    ]
+  },
+  "M1.Q06": {
+    "prompt": "ANIMATION\nA mirrored contour places its uncertain joint at a different column.\n\n    BEFORE       AFTER\n    │      _.´│   │      _.´│\n    │   _.-  │    │   _.-  │\n    │o_.,    │    │o_.:    │\n\nNEOVIM\nWhich action transfers the material rule without a coordinate guess?",
+    "compact_prompt": "ANIMATION\nOnly the unfamiliar comma joint becomes colon.\n\n    │      _.´│\n    │   _.-  │\n    │o_.,    │  →  │o_.:    │\n\nNEOVIM\nWhich search is column-independent?",
+    "animation_prompt": "ANIMATION\nThe endpoint and anchor stay fixed in the unfamiliar contour.\n\n    │      _.´│\n    │   _.-  │\n    │o_.,    │  →  │o_.:    │",
+    "animation_answer": "Search for the visible joint glyph, then replace it in place; do not rely on its old column.",
+    "neovim_prompt": "NEOVIM\nWhich path searches for the comma itself?\n\n    │      _.´│\n    │   _.-  │\n    │o_.,    │",
+    "neovim_answer": "/,<CR>r: finds and replaces the comma without assuming its position.",
+    "choices": [
+      "ANIMATION: Change only the unfamiliar joint and retain the anchor and endpoint. | NEOVIM: /,<CR>r: is independent of the old column.",
+      "ANIMATION: Rebuild the mirrored contour from reversed bytes. | NEOVIM: :%s/,/:/g reverses and replaces all rows.",
+      "ANIMATION: Shift the endpoint until it lines up with the old frame. | NEOVIM: 7l then r: counts from the previous pose.",
+      "ANIMATION: Replace every dot and comma with colon. | NEOVIM: :%s/[.,]/:/g changes the material vocabulary globally."
+    ],
+    "compact_choices": [
+      "A: unfamiliar joint only · V: search comma, replace",
+      "A: reverse/rebuild · V: global reverse substitute",
+      "A: shift endpoint · V: old-column count",
+      "A: all dot/comma cells · V: global class substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the glyph landmark, not its prior column, identifies the acting cell.",
+      "A byte reversal is not a hand-authored contour decision and changes more than the joint.",
+      "The endpoint is stable; counting from another pose is brittle.",
+      "The material rule applies to one nominated joint, not every dot or comma."
+    ]
+  },
+  "M1.Q07": {
+    "prompt": "ANIMATION\nA repeated joint glyph appears in the next contour frame while the endpoint stays fixed.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.: │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.;   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich repeat belongs to an f/t landmark search?",
+    "compact_prompt": "ANIMATION\nThe contour is unchanged; the same kind of joint is revisited.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n\nNEOVIM\nWhich key repeats a character find?",
+    "animation_prompt": "ANIMATION\nThe anchor, endpoint, and slope remain stable while the homologous joint is reached.\n\n    │    _.: │\n    │ `-.;   │",
+    "animation_answer": "Revisit the next homologous landmark without changing the registered contour structure.",
+    "neovim_prompt": "NEOVIM\nWhich key repeats the same-direction character find?\n\n    │    _.: │\n    │ `-.;   │",
+    "neovim_answer": "; repeats the last f/F/t/T character search; n repeats a slash search.",
+    "choices": [
+      "ANIMATION: Revisit the next homologous joint while preserving the contour. | NEOVIM: ; repeats the last character find in the same direction.",
+      "ANIMATION: Reverse the entire contour. | NEOVIM: n repeats an f search and flips every slash.",
+      "ANIMATION: Move the endpoint to the next row. | NEOVIM: G jumps to the matching character automatically.",
+      "ANIMATION: Replace every joint at once. | NEOVIM: dd repeats a character find across the file."
+    ],
+    "compact_choices": [
+      "A: next joint; contour stable · V: semicolon repeats find",
+      "A: reverse contour · V: n repeats f",
+      "A: endpoint moves · V: G finds match",
+      "A: all joints change · V: dd repeats find"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: semicolon is the same-direction repeat for a character find.",
+      "n is for the last search command, not an f/t character find, and it does not mirror art.",
+      "G changes rows, not the next matching landmark.",
+      "dd is linewise deletion and has no character-find repeat behavior."
+    ]
+  },
+  "M1.Q08": {
+    "prompt": "ANIMATION\nOne complete three-row contour candidate must be selected for a bounded operation.\n\n    │       ´│\n    │    _.; │\n    │o_.-    │\n\nNEOVIM\nWhich Visual-line selection covers exactly this frame?",
+    "compact_prompt": "ANIMATION\nSelect one full contour candidate, not one glyph.\n\n    │       ´│\n    │    _.; │\n    │o_.-    │\n\nNEOVIM\nWhich selection spans three complete lines?",
+    "animation_prompt": "ANIMATION\nThe selected unit is the complete three-row contour, including anchor, joint, and base.\n\n    │       ´│\n    │    _.; │\n    │o_.-    │",
+    "animation_answer": "The frame boundary is three whole lines; selection must include all three rows.",
+    "neovim_prompt": "NEOVIM\nWhich Visual-line range owns the frame?\n\n    │       ´│\n    │    _.; │\n    │o_.-    │",
+    "neovim_answer": "V2j selects the current line and the next two complete lines.",
+    "choices": [
+      "ANIMATION: Select the entire three-row contour candidate. | NEOVIM: V2j selects three complete lines.",
+      "ANIMATION: Select only the joint cell. | NEOVIM: v2j selects two characters and the whole frame.",
+      "ANIMATION: Select the first row and the row after the frame. | NEOVIM: Vj skips the middle line.",
+      "ANIMATION: Select every frame in the file. | NEOVIM: ggVG selects only this candidate because V is linewise."
+    ],
+    "compact_choices": [
+      "A: one three-row frame · V: Visual line + 2j",
+      "A: joint only · V: characterwise 2j",
+      "A: rows 1 and 3 only · V: Vj skips middle",
+      "A: all frames · V: ggVG only this candidate"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: V2j owns exactly three complete lines from the current row.",
+      "Characterwise selection is too narrow for a frame-level operation.",
+      "Visual-line movement does not skip the middle row.",
+      "ggVG selects the whole buffer, not one candidate."
+    ]
+  },
+  "M1.Q09": {
+    "prompt": "ANIMATION\nA substitution is considered over two authored contour frames.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.:   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhat does % add to a substitute range?",
+    "compact_prompt": "ANIMATION\nAll nominated frame joints change; unrelated text should not.\n\n    │    _.: │   │    _.; │\n    │ `-.:   │   │ `-.;   │\n\nNEOVIM\nWhat is the blast radius of %?",
+    "animation_prompt": "ANIMATION\nThe two contour frames receive the same joint-material change.\n\n    │    _.: │  →  │    _.; │\n    │ `-.:   │      │ `-.;   │",
+    "animation_answer": "The intended scope is the authored contour frames, not unrelated lesson prose or other modules.",
+    "neovim_prompt": "NEOVIM\nHow does % differ from a current-row substitute?\n\n    │    _.: │\n    │ `-.:   │",
+    "neovim_answer": "% supplies the whole-file range; an explicit smaller range is safer when only contour frames are owned.",
+    "choices": [
+      "ANIMATION: Change the nominated contour joints and leave unrelated text alone. | NEOVIM: % addresses the whole file, so a smaller range is safer here.",
+      "ANIMATION: Change only the current row. | NEOVIM: % means current line and cannot touch other frames.",
+      "ANIMATION: Change every glyph in the contour. | NEOVIM: % limits :s to punctuation cells only.",
+      "ANIMATION: Duplicate both frames. | NEOVIM: % is the Ex copy command for a complete frame."
+    ],
+    "compact_choices": [
+      "A: nominated frames only · V: % is whole-file; narrow range safer",
+      "A: current row only · V: % means current line",
+      "A: every contour glyph · V: % limits punctuation",
+      "A: duplicate frames · V: % copies frame"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: % is broad; use it only when the whole file is genuinely owned by the edit.",
+      "% is not the current-line address; a bare :s is current-line scope.",
+      "The substitution pattern, not %, determines matching glyphs, and the range is still broad.",
+      "% is a range marker, not an Ex copy command."
+    ]
+  },
+  "M1.Q10": {
+    "prompt": "ANIMATION\nOnly the six owned contour rows may receive the joint-material substitution.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.:   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich range communicates that boundary?",
+    "compact_prompt": "ANIMATION\nThe substitution stays inside two three-row frames.\n\n    │    _.: │   │    _.; │\n    │ `-.:   │   │ `-.;   │\n\nNEOVIM\nWhich Ex range is bounded?",
+    "animation_prompt": "ANIMATION\nBoth complete contour frames change only at their nominated joints.\n\n    │    _.: │  →  │    _.; │\n    │ `-.:   │      │ `-.;   │",
+    "animation_answer": "The range contains exactly the six authored frame rows and excludes surrounding prose.",
+    "neovim_prompt": "NEOVIM\nWhich substitute is explicitly limited to those six lines?\n\n    │    _.: │\n    │ `-.:   │",
+    "neovim_answer": ":1,6s/:/;/g confines the material change to lines 1 through 6.",
+    "choices": [
+      "ANIMATION: Change nominated joints in both six-row frames only. | NEOVIM: :1,6s/:/;/g scopes the replacement to owned lines.",
+      "ANIMATION: Change every colon in the lesson file. | NEOVIM: :%s/:/;/g is equivalent because the frames are first.",
+      "ANIMATION: Change the current joint and every later row. | NEOVIM: :s/:/;/g automatically follows the contour.",
+      "ANIMATION: Remove the six rows and append a new frame. | NEOVIM: :1,6d then p is a substitution."
+    ],
+    "compact_choices": [
+      "A: six owned rows · V: 1,6 substitute",
+      "A: every file colon · V: whole-file substitute",
+      "A: current/later rows · V: current-line substitute follows",
+      "A: delete/append frame · V: delete/put is substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the explicit range mirrors the two three-row frame boundaries.",
+      "Whole-file scope can alter lesson prose and unrelated art.",
+      "A current-line substitution does not automatically follow later rows.",
+      "Deletion and put are not substitution and would destroy the authored rows."
+    ]
+  },
+  "M1.01.P01": {
+    "prompt": "ANIMATION\nThe guided contour edit changes one uncertain joint.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _., │   │    _.: │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich summary describes the completed change?",
+    "compact_prompt": "ANIMATION\nComma becomes colon; anchor and endpoint stay fixed.\n\n    │       ´│   │       ´│\n    │    _., │   │    _.: │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhat did the guided search and replace do?",
+    "animation_prompt": "ANIMATION\nThe joint is the only changed cell.\n\n    │    _., │  →  │    _.: │\n    │o_.-    │      │o_.-    │",
+    "animation_answer": "The uncertain comma joint was replaced by the chosen colon without shifting the contour.",
+    "neovim_prompt": "NEOVIM\nWhich summary matches the guided path?\n\n    │       ´│\n    │    _., │\n    │o_.-    │",
+    "neovim_answer": "/,<CR>r: searches the comma and overwrites one cell.",
+    "choices": [
+      "ANIMATION: One joint changes; the anchor remains fixed. | NEOVIM: search for comma, then r: overwrites it.",
+      "ANIMATION: The whole contour shifts. | NEOVIM: i: inserts a colon and moves the endpoint.",
+      "ANIMATION: Every punctuation glyph changes. | NEOVIM: :%s/./:/g is the guided path.",
+      "ANIMATION: The middle row is removed. | NEOVIM: dd deletes the row containing the joint."
+    ],
+    "compact_choices": [
+      "A: one joint; anchor fixed · V: search then r:",
+      "A: contour shifts · V: insert",
+      "A: all punctuation · V: global substitute",
+      "A: row removed · V: dd"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: search finds the visible landmark and r preserves fixed width.",
+      "Insertion would shift the endpoint and is not the guided result.",
+      "The guided action is one-cell, not a global rewrite.",
+      "The row remains intact; only its joint glyph changed."
+    ]
+  },
+  "M1.02.P01": {
+    "prompt": "ANIMATION\nA complete anchored contour is copied as a working frame.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.: │\n    │o_.-    │   │o_.-    │\n                  │       ´│\n                  │    _.: │\n                  │o_.-    │\n\nNEOVIM\nWhich explanation decomposes the copy?",
+    "compact_prompt": "ANIMATION\nThe full three-row contour appears below.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n                  │       ´│\n                  │    _.: │\n                  │o_.-    │\n\nNEOVIM\nWhat did the count own?",
+    "animation_prompt": "ANIMATION\nTwo complete three-row contours are visible, preserving each anchor and endpoint.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │\n    │       ´│\n    │    _.: │\n    │o_.-    │",
+    "animation_answer": "The copy preserves all three rows as one frame.",
+    "neovim_prompt": "NEOVIM\nWhich grammar describes the operation?\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
+    "neovim_answer": "gg3yyGp goes to the top, yanks three whole lines, and puts them below.",
+    "choices": [
+      "ANIMATION: Duplicate the complete anchored contour. | NEOVIM: gg3yyGp copies three whole lines and puts them below.",
+      "ANIMATION: Duplicate only the base row. | NEOVIM: yy copies the visible punctuation word.",
+      "ANIMATION: Move the original contour. | NEOVIM: 3dd then p transfers it.",
+      "ANIMATION: Add blank rows. | NEOVIM: 3o opens timing lines with no contour."
+    ],
+    "compact_choices": [
+      "A: complete contour · V: 3 linewise yank/put",
+      "A: base row only · V: word yank",
+      "A: move original · V: delete/put",
+      "A: blank rows · V: open lines"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the count protects the contour's three-row frame boundary.",
+      "A one-row copy cannot preserve the complete shape.",
+      "The original remains above, so it was copied rather than moved.",
+      "The new frame contains contour glyphs, not blank timing rows."
+    ]
+  },
+  "M1.DD.P01": {
+    "prompt": "ANIMATION\nOnly the second contour candidate disappears.\n\n    BEFORE       AFTER\n    │ /---\\ │   │ /---\\ │\n    │|  o  |│    │|  o  |│\n    │ \\---/ │   │ \\---/ │\n    │ /---\\ │   │       │\n    │|  O  |│    │       │\n    │ \\---/ │   │       │\n\nNEOVIM\nWhich explanation matches the deletion scope?",
+    "compact_prompt": "ANIMATION\nThe first three-row contour stays; the second is removed.\n\n    │ /---\\ │\n    │|  o  |│\n    │ \\---/ │\n    │ /---\\ │\n    │|  O  |│\n    │ \\---/ │\n\nNEOVIM\nWhat does a counted dd own?",
+    "animation_prompt": "ANIMATION\nThe first frame remains registered and the second three-row candidate is gone.\n\n    │ /---\\ │\n    │|  o  |│\n    │ \\---/ │",
+    "animation_answer": "Only the second complete three-line frame is deleted.",
+    "neovim_prompt": "NEOVIM\nWhich command deletes that frame?\n\n    │ /---\\ │\n    │|  O  |│\n    │ \\---/ │",
+    "neovim_answer": "4G3dd moves to the second frame and deletes three whole lines.",
+    "choices": [
+      "ANIMATION: Remove only the second complete contour. | NEOVIM: 4G3dd deletes the three rows at that frame.",
+      "ANIMATION: Remove one comma joint. | NEOVIM: dd deletes one punctuation cell.",
+      "ANIMATION: Remove both frames. | NEOVIM: 4Gdd deletes every row in the buffer.",
+      "ANIMATION: Copy the second frame below. | NEOVIM: 4G3ddGp both deletes and copies it."
+    ],
+    "compact_choices": [
+      "A: second frame only · V: 3dd at line 4",
+      "A: one joint · V: dd one cell",
+      "A: both frames · V: all-buffer delete",
+      "A: copy frame · V: delete plus put"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: a count of 3 matches the second frame's three-line boundary.",
+      "Linewise dd does not target a single punctuation cell.",
+      "The first frame remains, so the deletion is not buffer-wide.",
+      "No copied frame appears in the result."
+    ]
+  },
+  "M1.04.P01": {
+    "prompt": "ANIMATION\nThe copied rising contour is replaced with a hand-authored descending one.\n\n    BEFORE       AFTER\n    │       ´│   │´       │\n    │    _.: │   │ `-.:   │\n    │o_.-    │   │o_.-    │\n    │       ´│   │       │\n    │    _.: │   │       │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich result preserves the anchor while exchanging direction?",
+    "compact_prompt": "ANIMATION\nA new descending frame is authored by hand.\n\n    │       ´│   │´       │\n    │    _.: │   │ `-.:   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhat remains registered?",
+    "animation_prompt": "ANIMATION\nThe copied frame changes direction but keeps the o anchor and row width.\n\n    │       ´│  →  │´       │\n    │    _.: │      │ `-.:   │\n    │o_.-    │      │o_.-    │",
+    "animation_answer": "Author the descending glyph sequence by hand while retaining the anchor and fixed row width.",
+    "neovim_prompt": "NEOVIM\nWhich scope describes the hidden edit?\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
+    "neovim_answer": "Delete only the copied three-row frame, open its replacement, and type each descending row deliberately.",
+    "choices": [
+      "ANIMATION: Hand-author a descending contour while keeping o and row width fixed. | NEOVIM: remove only the copied frame, then type its replacement rows.",
+      "ANIMATION: Byte-reverse the stored frame and accept every glyph position. | NEOVIM: ! flips the buffer automatically.",
+      "ANIMATION: Move the anchor to the opposite endpoint. | NEOVIM: i inserts reversed rows before the o.",
+      "ANIMATION: Delete both frames before drawing a new one. | NEOVIM: gg6dd removes all six contour rows."
+    ],
+    "compact_choices": [
+      "A: hand-authored descent; anchor fixed · V: replace copied frame",
+      "A: byte reversal · V: automatic flip",
+      "A: anchor moves · V: insert reversed rows",
+      "A: both frames deleted · V: six-line delete"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: mirroring is a new still authored row by row, not a byte reversal.",
+      "Reversing bytes does not exchange each directional glyph correctly.",
+      "The o anchor stays fixed; moving it changes the contour's landmark.",
+      "The first frame is needed for comparison and must remain."
+    ]
+  },
+  "M1.05.P01": {
+    "prompt": "ANIMATION\nBoth frames' joint material changes from colon to semicolon.\n\n    BEFORE       AFTER\n    │       ´│   │       ´│\n    │    _.: │   │    _.; │\n    │o_.-    │   │o_.-    │\n    │´       │   │´       │\n    │ `-.:   │   │ `-.;   │\n    │o_.-    │   │o_.-    │\n\nNEOVIM\nWhich comparison respects the one-method rule?",
+    "compact_prompt": "ANIMATION\nTwo joints change; all anchors stay.\n\n    │    _.: │   │    _.; │\n    │ `-.:   │   │ `-.;   │\n\nNEOVIM\nCompare local repeat with bounded substitute.",
+    "animation_prompt": "ANIMATION\nOnly the two homologous joints change to semicolons.\n\n    │    _.: │  →  │    _.; │\n    │ `-.:   │      │ `-.;   │",
+    "animation_answer": "Either one accepted method changes the two nominated joints and preserves the contour frames.",
+    "neovim_prompt": "NEOVIM\nWhat is the real tradeoff?\n\n    │    _.: │\n    │ `-.:   │",
+    "neovim_answer": "Local-plus-dot repeats one verified change; a bounded substitute matches the known joint pattern across the owned strip.",
+    "choices": [
+      "ANIMATION: Both joints change while contour endpoints stay fixed. | NEOVIM: local-plus-dot or a bounded substitute can reach the same result; choose one.",
+      "ANIMATION: Every punctuation glyph changes. | NEOVIM: a whole-file substitute is always safest.",
+      "ANIMATION: The second frame is deleted. | NEOVIM: 3dd is the substitute path.",
+      "ANIMATION: Only the first joint changes. | NEOVIM: dot cannot repeat after moving to the second frame."
+    ],
+    "compact_choices": [
+      "A: two joints; frame fixed · V: local-dot or bounded substitute",
+      "A: all punctuation · V: whole-file substitute",
+      "A: second frame deleted · V: 3dd substitute",
+      "A: first joint only · V: dot cannot repeat"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: both taught paths are bounded, but the learner should execute only one.",
+      "Changing every punctuation glyph exceeds the named joint scope.",
+      "Deletion is not a substitute and would remove the frame.",
+      "Dot repetition is precisely what carries the verified change to the second joint."
+    ]
+  },
+  "M1.06.P01": {
+    "prompt": "ANIMATION\nAn unfamiliar anchored contour needs the same joint material.\n\n    BEFORE       AFTER\n    │      _.´│   │      _.´│\n    │   _.-  │    │   _.-  │\n    │o_.,    │    │o_.:    │\n\nNEOVIM\nWhich bounded path reaches TARGET?",
+    "compact_prompt": "ANIMATION\nThe unfamiliar comma joint becomes colon; endpoint remains.\n\n    │      _.´│\n    │   _.-  │\n    │o_.,    │  →  │o_.:    │\n\nNEOVIM\nWhich search transfers the material rule?",
+    "animation_prompt": "ANIMATION\nOnly the unfamiliar joint changes; the anchor and slope stay registered.\n\n    │o_.,    │  →  │o_.:    │",
+    "animation_answer": "Apply the same joint-material choice to the visible landmark without moving the endpoint.",
+    "neovim_prompt": "NEOVIM\nWhich path reaches the changed joint without a column count?\n\n    │      _.´│\n    │   _.-  │\n    │o_.,    │",
+    "neovim_answer": "G0f,r: finds the comma from the row start, then replaces it with colon.",
+    "choices": [
+      "ANIMATION: Change only the unfamiliar joint and preserve its anchor. | NEOVIM: G0f,r: reaches the comma by landmark.",
+      "ANIMATION: Reverse the contour's bytes. | NEOVIM: 3ddGp mirrors it automatically.",
+      "ANIMATION: Shift the endpoint one column left. | NEOVIM: 5l counts to the old joint position.",
+      "ANIMATION: Change every dot and comma. | NEOVIM: :%s/[.,]/:/g has the same bounded effect."
+    ],
+    "compact_choices": [
+      "A: one unfamiliar joint · V: find comma, replace",
+      "A: byte-reverse contour · V: delete/put mirror",
+      "A: endpoint shifts · V: old-column count",
+      "A: all punctuation · V: global class substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the visible comma is the landmark, and the anchor remains untouched.",
+      "The transfer requires a deliberate local edit, not an automatic mirror.",
+      "The endpoint is part of the invariant and must not shift.",
+      "The target names one joint, not all punctuation in the art."
+    ]
+  },
+  "M1.08.P01": {
+    "prompt": "ANIMATION\nThe checkpoint returns to the rising contour and changes one joint material.\n\n    │       ´│\n    │    _.; │\n    │o_.-    │\n    │´       │\n    │ `-.;   │\n    │o_.-    │\n    │         │\n    │    _.: │\n    │o_.-    │\n\nNEOVIM\nWhich choice preserves the registered frames and completes the grammar?",
+    "compact_prompt": "ANIMATION\nA three-row rising contour is appended with one colon joint.\n\n    │    _.; │\n    │o_.-    │\n    │         │\n    │    _.: │\n    │o_.-    │\n\nNEOVIM\nWhat final grammar piece executes the Ex copy?",
+    "animation_prompt": "ANIMATION\nThe return pose is a complete three-row contour; only its nominated joint differs.\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
+    "animation_answer": "Keep each contour frame complete and return with the intended joint material, without shifting its anchor.",
+    "neovim_prompt": "NEOVIM\nWhich command grammar is completed by the missing piece?\n\n    │       ´│\n    │    _.: │\n    │o_.-    │",
+    "neovim_answer": "The Ex copy command is executed with <CR>; the remaining motions and replacement stay bounded.",
+    "choices": [
+      "ANIMATION: Append a complete rising contour and keep its anchor fixed. | NEOVIM: finish the Ex command with <CR> before the landmark edit.",
+      "ANIMATION: Append only the changed joint. | NEOVIM: omit <CR>; Vim executes the copy on its own.",
+      "ANIMATION: Reverse every stored contour row. | NEOVIM: use dd and p instead of an addressed copy.",
+      "ANIMATION: Replace all frames with the final rising pose. | NEOVIM: :%s/;/:/g is the frame-copy grammar."
+    ],
+    "compact_choices": [
+      "A: full return frame; anchor fixed · V: execute Ex with CR",
+      "A: joint only · V: omit CR",
+      "A: reverse rows · V: delete/put",
+      "A: all frames replaced · V: global substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the checkpoint still operates on a complete frame and requires Ex execution.",
+      "A one-cell fragment is not a registered contour frame, and Ex waits for <CR>.",
+      "The return is authored from the visible contour; deletion and put do not perform the intended copy grammar.",
+      "The substitution changes material, not frame structure."
+    ]
+  },
+  "M19.Q01": {
+    "prompt": "ANIMATION\nOne uncertain eye is approved; the five-row rails remain unchanged.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ ? \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich mode overwrites the placeholder without growing the row?",
+    "compact_prompt": "ANIMATION\nOnly ? becomes o; both rails stay registered.\n\n    │   /^\\   │   │   /^\\   │\n    │ _/ ? \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich overwrite mode fits one nominated cell?",
+    "animation_prompt": "ANIMATION\nThe eye placeholder changes and neither fixed rail moves.\n\n    │ _/ ? \\  │  →  │ _/ o \\  │\n    │<--/|\\   │      │<--/|\\   │",
+    "animation_answer": "Approve one eye cell; keep the five-row still's rails and widths fixed.",
+    "neovim_prompt": "NEOVIM\nWhich operation overwrites the existing eye cell?\n\n    │ _/ ? \\  │\n    │<--/|\\   │",
+    "neovim_answer": "gR virtual-replaces the nominated cell; insertion would push the right rail.",
+    "choices": [
+      "ANIMATION: ? becomes o and both rails retain their columns. | NEOVIM: gR overwrites the existing display cell.",
+      "ANIMATION: The eye is inserted and the right rail shifts right. | NEOVIM: i adds o before ?.",
+      "ANIMATION: The whole five-row still moves down. | NEOVIM: 5ddp recreates the pose below.",
+      "ANIMATION: The arrowhead reverses while the eye stays ?. | NEOVIM: ! flips the stored bytes automatically."
+    ],
+    "compact_choices": [
+      "A: eye only; rails fixed · V: Virtual Replace",
+      "A: eye inserted; rail shifts · V: insert before",
+      "A: still moves down · V: delete/put five rows",
+      "A: arrow reverses · V: automatic byte flip"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: virtual replacement consumes the placeholder and preserves fixed width.",
+      "Insertion changes row width and shifts the right rail.",
+      "The still remains in place; a five-line move is unrelated.",
+      "The arrow and eye are separate decisions; no automatic flip is used."
+    ]
+  },
+  "M19.Q02": {
+    "prompt": "ANIMATION\nA complete five-row key pose is copied as one candidate still.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n                    │   /^\\   │\n                    │ _/ o \\  │\n                    │<--/|\\   │\n                    │   / \\   │\n                    │  /___\\  │\n\nNEOVIM\nWhich count owns the still?",
+    "compact_prompt": "ANIMATION\nDuplicate this complete five-row still below itself.\n\n  SOURCE\n  │   /^\\   │\n  │ _/ o \\  │\n  │<--/|\\   │\n  │   / \\   │\n  │  /___\\  │\n  ↓ identical five-row copy\n\nNEOVIM\nWhat does yy count here?",
+    "animation_prompt": "ANIMATION\nThe body, eye, arrow, limbs, and base remain one five-row object in both candidates.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
+    "animation_answer": "Copy all five rows so the still's silhouette and directional details remain coherent.",
+    "neovim_prompt": "NEOVIM\nWhich linewise copy preserves the full pose?\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
+    "neovim_answer": "5yy yanks five whole lines; yy alone would copy only the current row.",
+    "choices": [
+      "ANIMATION: Copy the complete five-row key pose. | NEOVIM: 5yy owns all five lines.",
+      "ANIMATION: Copy only the head and eye. | NEOVIM: yy copies the five cells under the cursor.",
+      "ANIMATION: Move the pose to the lower candidate. | NEOVIM: 5ddp transfers it and removes the original.",
+      "ANIMATION: Add five blank rows for a hold. | NEOVIM: 5o creates the candidate without art."
+    ],
+    "compact_choices": [
+      "A: full five-row still · V: 5yy",
+      "A: head/eye only · V: five cells",
+      "A: move pose · V: delete then put",
+      "A: blank hold rows · V: open five lines"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the count matches the five-row frame boundary.",
+      "yy is linewise and does not copy a five-cell object; the pose needs all rows.",
+      "The original candidate remains visible, so the operation is a copy.",
+      "Blank rows cannot preserve the directional still."
+    ]
+  },
+  "M19.Q03": {
+    "prompt": "ANIMATION\nA directional row must be redrawn deliberately, with no rail drift.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich mode makes each directional glyph an in-place choice?",
+    "compact_prompt": "ANIMATION\nThe directional row is authored in place.\n\n    │<--/|\\   │   │<--/|\\   │\n\nNEOVIM\nWhich mode avoids shifting the rails?",
+    "animation_prompt": "ANIMATION\nThe row's arrows and slashes may change, but its fixed rails and width do not.\n\n    │<--/|\\   │  →  │   /|\\-->|",
+    "animation_answer": "Hand-author the directional row while preserving the fixed frame rails.",
+    "neovim_prompt": "NEOVIM\nWhich mode forces explicit in-place glyph choices?\n\n    │<--/|\\   │",
+    "neovim_answer": "gR virtual-replaces each chosen display cell without inserting a new column.",
+    "choices": [
+      "ANIMATION: Directional glyphs are chosen in place while rails stay fixed. | NEOVIM: gR makes each replacement explicit.",
+      "ANIMATION: The row is byte-reversed and accepted unchanged. | NEOVIM: ! mirrors every slash and arrow automatically.",
+      "ANIMATION: New glyphs are inserted before the rail. | NEOVIM: i is safer because it preserves the existing cells.",
+      "ANIMATION: Delete the whole row and let the engine infer a mirror. | NEOVIM: dd is the hand-mirroring mode."
+    ],
+    "compact_choices": [
+      "A: choose each glyph; rails fixed · V: Virtual Replace",
+      "A: byte reversal · V: automatic mirror",
+      "A: insert glyphs before rail · V: Insert preserves cells",
+      "A: delete row; infer mirror · V: dd is mirror mode"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: gR supports a deliberate row-by-row mirror with fixed width.",
+      "Byte order does not choose the correct directional glyph semantics.",
+      "Insert mode shifts the rail; it does not preserve the row.",
+      "Deleting a row loses the authored evidence rather than mirroring it."
+    ]
+  },
+  "M19.Q04": {
+    "prompt": "ANIMATION\nA five-row mirror remains the same width after each row is authored.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhy is width an invariant?",
+    "compact_prompt": "ANIMATION\nDirectional spacing changes but rail columns do not.\n\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n\nNEOVIM\nWhat must every gR pass preserve?",
+    "animation_prompt": "ANIMATION\nThe actor's direction changes while the left and right rails retain their columns.\n\n    │ _/ o \\  │  →  │  / o \\_ │\n    │<--/|\\   │      │   /|\\-->|",
+    "animation_answer": "Each mirrored row may exchange spacing and directional glyphs, but its fixed rails remain aligned.",
+    "neovim_prompt": "NEOVIM\nWhat is checked after each row?\n\n    │ _/ o \\  │\n    │<--/|\\   │",
+    "neovim_answer": "Every gR pass must end at the unchanged right rail with equal display width.",
+    "choices": [
+      "ANIMATION: Direction changes inside a fixed-width frame. | NEOVIM: after each gR row, verify equal width and both rail columns.",
+      "ANIMATION: Direction changes by adding cells to the right. | NEOVIM: gR is allowed to extend the row until the arrow fits.",
+      "ANIMATION: Rails move with the arrowhead. | NEOVIM: gR must end one cell beyond the old rail.",
+      "ANIMATION: Width is irrelevant because playback centres every frame. | NEOVIM: dd/p repairs any width after mirroring."
+    ],
+    "compact_choices": [
+      "A: direction changes; rails fixed · V: verify equal width",
+      "A: add cells right · V: gR extends row",
+      "A: rails move · V: end beyond rail",
+      "A: width irrelevant · V: delete/put repairs"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: width and rail positions are the registration invariant for the mirrored still.",
+      "Virtual Replace does not authorize extending the frame's row boundary.",
+      "Moving rails changes the frame placement and breaks comparison.",
+      "Playback cannot repair authored width; the rows must be right before playback."
+    ]
+  },
+  "M19.Q05": {
+    "prompt": "ANIMATION\nThe arrow row changes -- to == while the arrowhead remains outside the run.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │  / o \\_ │   │  / o \\_ │\n    │   /|\\-->|   │   /|\\==>|\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich explicit stop protects the arrowhead?",
+    "compact_prompt": "ANIMATION\nOnly the two cells before > change.\n\n    │   /|\\-->|   │   /|\\==>|\n\nNEOVIM\nWhere should Replace mode stop?",
+    "animation_prompt": "ANIMATION\nThe arrowhead > remains; only the two preceding dashes become ==.\n\n    │   /|\\-->|  →  │   /|\\==>|",
+    "animation_answer": "The two-cell material run changes, then the author exits before the arrowhead.",
+    "neovim_prompt": "NEOVIM\nWhich stop is part of the method?\n\n    │   /|\\-->|",
+    "neovim_answer": "Escape immediately after the second replacement cell so > is not consumed or shifted.",
+    "choices": [
+      "ANIMATION: Replace the two dashes and preserve >. | NEOVIM: press Escape immediately after the second replacement cell.",
+      "ANIMATION: Replace dashes and arrowhead together. | NEOVIM: remain in Replace mode through >.",
+      "ANIMATION: Insert == before the dashes, leaving old dashes behind. | NEOVIM: i is the safe explicit stop.",
+      "ANIMATION: Delete the complete arrow row before retyping. | NEOVIM: dd and p protect > automatically."
+    ],
+    "compact_choices": [
+      "A: two dashes; > preserved · V: Escape after cell two",
+      "A: dashes plus > · V: Replace through arrow",
+      "A: insert before old dashes · V: Insert stop",
+      "A: row deleted/retyped · V: dd/p protects"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the explicit stop defines the intended run boundary.",
+      "The arrowhead is outside the acting run and must remain unchanged.",
+      "Insertion leaves old material and changes width, so it is not the target.",
+      "Row deletion is broader than the two-cell redraw."
+    ]
+  },
+  "M19.Q06": {
+    "prompt": "ANIMATION\nUnfamiliar art keeps fixed rails while its eye, slashes, and arrowhead exchange direction.\n\n    BEFORE         AFTER\n    │   /+\\   │   │   /+\\   │\n    │ __/x\\   │   │   /x\\__ │\n    │<==/|\\   │   │   /|\\==>|\n    │   / \\   │   │   / \\   │\n    │__/___\\__|   │__/___\\__|\n\nNEOVIM\nWhich transfer proves hand-authored direction?",
+    "compact_prompt": "ANIMATION\nThe unfamiliar mirror changes directional rows, not rails.\n\n    │ __/x\\   │   │   /x\\__ │\n    │<==/|\\   │   │   /|\\==>|\n\nNEOVIM\nWhich family makes each row explicit?",
+    "animation_prompt": "ANIMATION\nThe unfamiliar body remains five rows wide while directional rows are deliberately redrawn.\n\n    │ __/x\\   │  →  │   /x\\__ │\n    │<==/|\\   │      │   /|\\==>|",
+    "animation_answer": "Hand-author each directional row with fixed rails; do not reverse stored bytes.",
+    "neovim_prompt": "NEOVIM\nWhich path demonstrates the transfer?\n\n    │   /+\\   │\n    │ __/x\\   │\n    │<==/|\\   │",
+    "neovim_answer": "Use gR on each directional row, ending each pass at the unchanged right rail.",
+    "choices": [
+      "ANIMATION: Redraw directional rows deliberately while preserving five-row rails. | NEOVIM: a gR pass on each changed row proves the mirror was authored.",
+      "ANIMATION: Flip the stored bytes and keep every glyph in reverse order. | NEOVIM: ! performs the full semantic mirror.",
+      "ANIMATION: Rebuild the shell with a different width. | NEOVIM: 3ddGp copies and stretches the rows.",
+      "ANIMATION: Change only the eye; slashes and arrow remain unchanged. | NEOVIM: r is sufficient for every directional row."
+    ],
+    "compact_choices": [
+      "A: hand-authored directional rows · V: repeated gR",
+      "A: byte flip · V: automatic semantic mirror",
+      "A: different-width shell · V: delete/stretch",
+      "A: eye only · V: one r for all rows"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: repeated gR passes let the author choose each directional glyph in place.",
+      "Byte reversal does not swap glyph roles or spacing by visual judgment.",
+      "The transfer preserves the fixed rails and width.",
+      "The unfamiliar target changes more than the eye; a one-cell r cannot author all rows."
+    ]
+  },
+  "M19.Q07": {
+    "prompt": "ANIMATION\nSeveral complete still candidates remain available for comparison.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n\nNEOVIM\nWhich operation keeps a full candidate instead of erasing it?",
+    "compact_prompt": "ANIMATION\nKeep the entire five-row candidate visible.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n\nNEOVIM\nWhich copy is frame-sized?",
+    "animation_prompt": "ANIMATION\nEach candidate remains a complete still for visual comparison, not a fragment.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
+    "animation_answer": "Preserve complete five-row stills so directional details can be compared before animation.",
+    "neovim_prompt": "NEOVIM\nWhich operation preserves the candidate?\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
+    "neovim_answer": "A five-row yank or addressed copy keeps the complete candidate available.",
+    "choices": [
+      "ANIMATION: Keep each complete five-row still for comparison. | NEOVIM: 5yy or an addressed five-line copy preserves the candidate.",
+      "ANIMATION: Delete each candidate after inspecting its eye. | NEOVIM: 5dd is the comparison operation.",
+      "ANIMATION: Keep only the arrow row because it defines direction. | NEOVIM: yy copies the complete still by meaning.",
+      "ANIMATION: Convert candidates directly into playback frames. | NEOVIM: :m moves each row into the animation register."
+    ],
+    "compact_choices": [
+      "A: full stills retained · V: five-line yank/copy",
+      "A: candidates deleted · V: five-line delete",
+      "A: arrow row only · V: yy means full still",
+      "A: immediate playback · V: move rows to register"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: comparison requires a preserved complete candidate.",
+      "Deletion prevents side-by-side visual comparison.",
+      "A single arrow row loses body, eye, and rail context.",
+      "A candidate still is not playback until timing and in-betweens are deliberately authored."
+    ]
+  },
+  "M19.Q08": {
+    "prompt": "ANIMATION\nA copied five-row still gets a distinct eye while all rails remain fixed.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │ _/ O \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich local replacement preserves the frame?",
+    "compact_prompt": "ANIMATION\nOnly the copied eye becomes O.\n\n    │ _/ o \\  │   │ _/ O \\  │\n\nNEOVIM\nWhich one-cell operation is appropriate?",
+    "animation_prompt": "ANIMATION\nThe eye is distinct; the rails, arrow, and base remain registered.\n\n    │ _/ o \\  │  →  │ _/ O \\  │",
+    "animation_answer": "Change one eye cell so the candidate differs without altering its five-row bounds.",
+    "neovim_prompt": "NEOVIM\nWhich local replacement changes one visible eye?\n\n    │ _/ o \\  │",
+    "neovim_answer": "An addressed rO replacement overwrites the eye cell in place.",
+    "choices": [
+      "ANIMATION: Only the copied eye changes; rails and directional rows remain. | NEOVIM: a local rO replacement changes one cell.",
+      "ANIMATION: The copied still is replaced by a new width. | NEOVIM: iO inserts an eye before the old one.",
+      "ANIMATION: The whole head row is deleted and redrawn. | NEOVIM: dd then O is the one-cell replacement.",
+      "ANIMATION: Every eye in every candidate changes. | NEOVIM: :%s/o/O/g has the same local scope."
+    ],
+    "compact_choices": [
+      "A: one copied eye · V: rO",
+      "A: width grows · V: insert O",
+      "A: head row deleted · V: dd/O",
+      "A: every eye changes · V: global substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: rO is a one-cell overwrite, so fixed-row registration survives.",
+      "Insertion creates a second cell and shifts the rail.",
+      "Deleting the row is broader than the nominated eye edit.",
+      "A whole-file substitute changes more candidates than the visible target."
+    ]
+  },
+  "M19.Q09": {
+    "prompt": "ANIMATION\nThe mirror must exchange arrow and slash direction while preserving the stored row widths.\n\n    BEFORE         AFTER\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n\nNEOVIM\nWhich family writes chosen display cells without reversing bytes?",
+    "compact_prompt": "ANIMATION\nDirectional glyphs change semantically; rails remain.\n\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n\nNEOVIM\nWhich command family supports hand mirroring?",
+    "animation_prompt": "ANIMATION\nHand mirroring exchanges directional glyph roles and spacing by eye.\n\n    │ _/ o \\  │  →  │  / o \\_ │\n    │<--/|\\   │      │   /|\\-->|",
+    "animation_answer": "The mirror is a newly authored still, not a byte-order reversal.",
+    "neovim_prompt": "NEOVIM\nWhich operation writes the chosen glyphs in existing cells?\n\n    │ _/ o \\  │\n    │<--/|\\   │",
+    "neovim_answer": "gR or R overwrites the author-selected display cells without transforming stored bytes.",
+    "choices": [
+      "ANIMATION: Exchange directional glyphs and spacing by judgment; keep rails fixed. | NEOVIM: gR/R overwrites selected display cells in place.",
+      "ANIMATION: Reverse the bytes and trust every slash to mirror. | NEOVIM: ! is the hand-authored replacement mode.",
+      "ANIMATION: Insert mirrored glyphs before the old ones. | NEOVIM: i preserves the row because it adds only intended cells.",
+      "ANIMATION: Copy the original still unchanged. | NEOVIM: yy/p performs semantic mirroring automatically."
+    ],
+    "compact_choices": [
+      "A: semantic glyph exchange; rails fixed · V: gR/R overwrite",
+      "A: byte reversal · V: ! mirror mode",
+      "A: insert mirrored glyphs · V: Insert preserves",
+      "A: unchanged copy · V: yank/put mirrors"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: gR/R lets the author choose the actual directional glyphs cell by cell.",
+      "Byte reversal is explicitly not the hand-mirroring method.",
+      "Insertion changes width and cannot preserve the rails.",
+      "Copying preserves the original; it does not make an opposite-facing still."
+    ]
+  },
+  "M19.Q10": {
+    "prompt": "ANIMATION\nThe mirror must stay registered when several rows have different directional widths.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\==>|\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich invariant catches a bad full-row replacement?",
+    "compact_prompt": "ANIMATION\nThe mirror's rails remain in matching columns.\n\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\==>|\n\nNEOVIM\nWhat must be checked after each row?",
+    "animation_prompt": "ANIMATION\nThe mirrored directional details change, but frame height and rail columns match.\n\n    │ _/ o \\  │  →  │  / o \\_ │\n    │<--/|\\   │      │   /|\\==>|",
+    "animation_answer": "Check equal row widths and matching rail columns after each authored mirrored row.",
+    "neovim_prompt": "NEOVIM\nWhich check protects registration?\n\n    │ _/ o \\  │\n    │<--/|\\   │",
+    "neovim_answer": "After each gR pass, verify the row ends at the unchanged right rail and retains the intended width.",
+    "choices": [
+      "ANIMATION: Directional rows differ but frame width and rail columns match. | NEOVIM: verify equal display width after every gR row.",
+      "ANIMATION: Let each row choose its own width for a stronger mirror. | NEOVIM: width does not matter until playback.",
+      "ANIMATION: Move the rails to follow the arrowhead. | NEOVIM: gR should finish one cell past the old rail.",
+      "ANIMATION: Check only the eye because it is the focal glyph. | NEOVIM: rO confirms the whole row's width."
+    ],
+    "compact_choices": [
+      "A: directional rows; width/rails match · V: verify every row",
+      "A: independent widths · V: width checked only at playback",
+      "A: rails follow arrow · V: finish past rail",
+      "A: eye only · V: rO checks whole row"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: equal width and fixed rails are the observable registration checks.",
+      "Independent widths cause jitter or drift when candidates are compared or animated.",
+      "Rails define the frame; moving them changes composition.",
+      "The eye alone cannot prove row registration."
+    ]
+  },
+  "M19.01.P01": {
+    "prompt": "ANIMATION\nThe guided still approves one uncertain eye.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ ? \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich summary matches the bounded edit?",
+    "compact_prompt": "ANIMATION\nOnly the eye placeholder changes.\n\n    │ _/ ? \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n\nNEOVIM\nWhat did Virtual Replace do?",
+    "animation_prompt": "ANIMATION\nThe approved eye is the only new glyph; rails and body remain.\n\n    │ _/ ? \\  │  →  │ _/ o \\  │",
+    "animation_answer": "One eye cell is approved without changing any row width or rail.",
+    "neovim_prompt": "NEOVIM\nWhich command summary matches?\n\n    │ _/ ? \\  │\n    │<--/|\\   │",
+    "neovim_answer": "Find the placeholder and use gR to overwrite one cell, then return to Normal mode.",
+    "choices": [
+      "ANIMATION: Approve one eye while five-row rails stay fixed. | NEOVIM: gR overwrites the nominated display cell.",
+      "ANIMATION: Insert a second eye and shift the rail. | NEOVIM: i adds o before ?.",
+      "ANIMATION: Replace the complete head row. | NEOVIM: dd then O redraws it.",
+      "ANIMATION: Copy the still below itself. | NEOVIM: 5yyGp is the eye approval."
+    ],
+    "compact_choices": [
+      "A: one eye; rails fixed · V: gR cell overwrite",
+      "A: second eye; rail shifts · V: insert",
+      "A: head row replaced · V: delete/open",
+      "A: still copied · V: five-line yank/put"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: gR performs the nominated one-cell overwrite.",
+      "Insertion would create an extra display cell.",
+      "The guided target does not alter a full row.",
+      "No second still appears; copying is unrelated to eye approval."
+    ]
+  },
+  "M19.02.P01": {
+    "prompt": "ANIMATION\nThe complete five-row still is copied as a working opposite-facing candidate.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n                    │   /^\\   │\n                    │ _/ o \\  │\n                    │<--/|\\   │\n                    │   / \\   │\n                    │  /___\\  │\n\nNEOVIM\nWhich explanation decomposes the copy?",
+    "compact_prompt": "ANIMATION\nThe five-row key pose appears again below.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n\nNEOVIM\nWhat does the line count own?",
+    "animation_prompt": "ANIMATION\nThe second candidate contains all five rows, including its arrow and base.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
+    "animation_answer": "Copy the complete five-row still before authoring its mirror.",
+    "neovim_prompt": "NEOVIM\nWhich command copies the complete still?\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
+    "neovim_answer": "gg5yyGp yanks five whole lines and puts them below.",
+    "choices": [
+      "ANIMATION: Copy the complete five-row pose. | NEOVIM: gg5yyGp yanks and puts five whole lines.",
+      "ANIMATION: Copy only the arrow row. | NEOVIM: yy copies the whole still because the cursor is on its arrow.",
+      "ANIMATION: Move the original to make room. | NEOVIM: 5ddp transfers and removes it.",
+      "ANIMATION: Add five blank lines. | NEOVIM: 5o opens a working candidate with no glyphs."
+    ],
+    "compact_choices": [
+      "A: complete five-row pose · V: 5 linewise yank/put",
+      "A: arrow row only · V: yy means full still",
+      "A: move original · V: delete/put",
+      "A: blank candidate · V: open lines"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the count protects the five-row still as one working object.",
+      "A single row cannot carry the complete key pose.",
+      "The original remains for visual comparison.",
+      "The working candidate contains copied art, not blanks."
+    ]
+  },
+  "M19.04.P01": {
+    "prompt": "ANIMATION\nThe copied still must be hand-authored as a right-facing extreme.\n\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich result preserves rails while changing directional rows?",
+    "compact_prompt": "ANIMATION\nThe opposite-facing still is authored row by row.\n\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n\nNEOVIM\nWhat is the bounded scope?",
+    "animation_prompt": "ANIMATION\nThe eye, slash spacing, arrowhead, and rails are judged row by row.\n\n    │ _/ o \\  │  →  │  / o \\_ │\n    │<--/|\\   │      │   /|\\-->|",
+    "animation_answer": "Hand-author all five copied rows, changing direction while preserving row width and rails.",
+    "neovim_prompt": "NEOVIM\nWhich workflow represents that scope?\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
+    "neovim_answer": "Use a gR pass on each copied row, exiting each row after its intended fixed-width content.",
+    "choices": [
+      "ANIMATION: Author all five rows as a right-facing extreme with rails fixed. | NEOVIM: run bounded gR passes row by row.",
+      "ANIMATION: Reverse the stored five-row bytes. | NEOVIM: ! mirrors every directional glyph without inspection.",
+      "ANIMATION: Add a second arrowhead after the old one. | NEOVIM: i inserts the new direction before >.",
+      "ANIMATION: Delete the copied still and let playback infer its mirror. | NEOVIM: 5dd is the complete mirroring workflow."
+    ],
+    "compact_choices": [
+      "A: five authored rows; rails fixed · V: gR each row",
+      "A: byte reversal · V: automatic mirror",
+      "A: extra arrowhead · V: insert before >",
+      "A: delete and infer · V: five-line delete"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: each row is deliberately overwritten while the frame boundary stays fixed.",
+      "The method rejects automatic byte reversal because glyph roles and spaces differ.",
+      "A second arrowhead is not the mirror target and changes row width.",
+      "Playback cannot infer an authored still that was deleted."
+    ]
+  },
+  "M19.05.P01": {
+    "prompt": "ANIMATION\nThe copied arrow row changes -- to ==, stopping before >.\n\n    │   /|\\-->|   │   │   /|\\==>|\n\nNEOVIM\nWhich comparison describes the one-method choice?",
+    "compact_prompt": "ANIMATION\nThe two material cells before > change only.\n\n    │   /|\\-->|   │   │   /|\\==>|\n\nNEOVIM\nCompare Virtual Replace and Replace mode.",
+    "animation_prompt": "ANIMATION\nThe arrowhead remains fixed while the two-cell run changes.\n\n    │   /|\\-->|  →  │   /|\\==>|",
+    "animation_answer": "Either accepted overwrite mode can replace the two existing cells if it stops before >.",
+    "neovim_prompt": "NEOVIM\nWhat is the tradeoff between the accepted paths?\n\n    │   /|\\-->|\n    │   /|\\==>|",
+    "neovim_answer": "gR and R both overwrite the same two cells; the explicit stop protects the following arrowhead.",
+    "choices": [
+      "ANIMATION: Two cells change and > stays fixed. | NEOVIM: choose either a bounded gR run or R run, but do not perform both.",
+      "ANIMATION: The whole arrow row changes width. | NEOVIM: Insert mode is the only accepted path.",
+      "ANIMATION: The arrowhead is replaced too. | NEOVIM: stay in Replace mode through > for semantic mirroring.",
+      "ANIMATION: The complete frame is copied again. | NEOVIM: 5yyGp is equivalent to the two-cell overwrite."
+    ],
+    "compact_choices": [
+      "A: two cells; > fixed · V: choose one bounded overwrite",
+      "A: row width changes · V: Insert only",
+      "A: > replaced too · V: Replace through arrow",
+      "A: frame copied · V: five-line yank/put"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: both overwrite paths can reach the same registered target, but only one should be used.",
+      "Insertion is not a fixed-width method.",
+      "The arrowhead is outside the run and must be protected.",
+      "Copying a frame does not replace the two arrow-row cells."
+    ]
+  },
+  "M19.06.P01": {
+    "prompt": "ANIMATION\nUnfamiliar fixed-rail art needs a hand-authored mirrored direction.\n\n    │   /+\\   │\n    │ __/x\\   │\n    │<==/|\\   │\n    │   / \\   │\n    │__/___\\__|\n\nNEOVIM\nWhich bounded method reaches the unseen target?",
+    "compact_prompt": "ANIMATION\nThe unfamiliar eye, slashes, and arrow are mirrored; rails stay.\n\n    │ __/x\\   │   │   /x\\__ │\n    │<==/|\\   │   │   /|\\==>|\n\nNEOVIM\nWhich method proves deliberate row authoring?",
+    "animation_prompt": "ANIMATION\nOnly directional rows are changed; the fixed rails, height, and base remain.\n\n    │ __/x\\   │  →  │   /x\\__ │\n    │<==/|\\   │      │   /|\\==>|",
+    "animation_answer": "Transfer hand mirroring with fixed-width Virtual Replace on each directional row.",
+    "neovim_prompt": "NEOVIM\nWhich path family matches the target?\n\n    │   /+\\   │\n    │ __/x\\   │\n    │<==/|\\   │",
+    "neovim_answer": "Use gR on the three directional rows and exit each row with its fixed rails intact.",
+    "choices": [
+      "ANIMATION: Hand-author the unfamiliar mirror while preserving both rails. | NEOVIM: bounded gR passes on the three directional rows reach TARGET.",
+      "ANIMATION: Reverse all stored bytes and accept the result. | NEOVIM: ! is sufficient because the shell is symmetric.",
+      "ANIMATION: Insert a second set of slashes beside the old set. | NEOVIM: i writes the target without changing width.",
+      "ANIMATION: Change only x and leave the arrow direction. | NEOVIM: one r replaces every directional row."
+    ],
+    "compact_choices": [
+      "A: hand-authored mirror; rails fixed · V: repeated gR",
+      "A: byte reversal · V: automatic flip",
+      "A: duplicate slashes · V: insert preserves width",
+      "A: x only · V: one r for rows"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the unseen transfer uses deliberate fixed-width row replacements.",
+      "Byte reversal does not establish correct spacing or directional glyph roles.",
+      "Insertion would duplicate strokes and shift rails.",
+      "The target changes several directional rows, not just x."
+    ]
+  },
+  "M19.08.P01": {
+    "prompt": "ANIMATION\nA third complete still is retained, with only its eye varied.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n\nNEOVIM\nWhich choice keeps this a still candidate and completes the grammar?",
+    "compact_prompt": "ANIMATION\nKeep a full third still; change one eye only.\n\n    │   /^\\   │\n    │ _/ O \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n\nNEOVIM\nWhat does the copy grammar require?",
+    "animation_prompt": "ANIMATION\nThe third candidate is complete and differs at one eye; no playback timing is inferred.\n\n    │ _/ O \\  │\n    │<--/|\\   │\n    │   /___\\  │",
+    "animation_answer": "Retain the complete approved still and vary only the nominated eye for comparison.",
+    "neovim_prompt": "NEOVIM\nWhich missing execution piece belongs in the addressed copy grammar?\n\n    │   /^\\   │\n    │ _/ O \\  │",
+    "neovim_answer": "The Ex copy needs <CR> to execute before the local eye replacement.",
+    "choices": [
+      "ANIMATION: Keep a complete third still and vary one eye only. | NEOVIM: execute the addressed copy with <CR>, then make the local replacement.",
+      "ANIMATION: Turn the three stills into playback immediately. | NEOVIM: omit <CR>; the copy executes when playback starts.",
+      "ANIMATION: Delete the approved still after copying. | NEOVIM: 5dd is the complete candidate grammar.",
+      "ANIMATION: Change every eye in every candidate. | NEOVIM: :%s/o/O/g is the local variation command."
+    ],
+    "compact_choices": [
+      "A: full third still; one eye · V: execute copy with CR",
+      "A: immediate playback · V: omit CR",
+      "A: approved still deleted · V: five-line delete",
+      "A: all eyes change · V: global substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the plate remains a set of authored stills, and Ex execution must be explicit.",
+      "No timing is inferred from still candidates, and an Ex command waits for <CR>.",
+      "The approved candidate is retained for comparison.",
+      "The variation is one nominated eye, not every eye in the plate."
+    ]
+  },
+  "M2.Q01": {
+    "prompt": "ANIMATION\nRemove the annotation while the face remains intact.\n\n    BEFORE          AFTER\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│ note  │|  .  |│\n    │ \\_/ |│      │| \\_/ |│\n    │ \\___/│      │ \\___/│\n\nNEOVIM\nWhich text-object action removes note and its separating space?",
+    "compact_prompt": "ANIMATION\nThe word note disappears; eye and mouth remain.\n\n    BEFORE          AFTER\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│ note  │|  .  |│\n    │ \\_/ |│      │| \\_/ |│\n    │ \\___/│      │ \\___/│\n\nNEOVIM\nWhich object is bounded to the annotation?",
+    "animation_prompt": "ANIMATION\nOnly the annotation is removed; all four face rows stay registered.\n\n    │|  .  |│ note  │  →  │|  .  |│\n    │ \\_/ |│       │      │ \\_/ |│",
+    "animation_answer": "Delete the annotation and its adjacent separator, not any face feature.",
+    "neovim_prompt": "NEOVIM\nWhich search and object delete the annotation?\n\n    │|  .  |│ note\n    │ \\_/ |│",
+    "neovim_answer": "/note<CR>daw lands on note and deletes the word with its adjacent space.",
+    "choices": [
+      "ANIMATION: Remove note while eye, mouth, and silhouette stay. | NEOVIM: /note<CR>daw deletes the annotation object.",
+      "ANIMATION: Close the eye and keep note. | NEOVIM: f.daw deletes the face's dot object.",
+      "ANIMATION: Delete the complete face row containing note. | NEOVIM: dd is the annotation text object.",
+      "ANIMATION: Remove every word in the file. | NEOVIM: :%daw repeats the object over the whole buffer."
+    ],
+    "compact_choices": [
+      "A: annotation only; face fixed · V: search note, daw",
+      "A: eye closes; note stays · V: dot object",
+      "A: row deleted · V: dd is object",
+      "A: every word deleted · V: whole-buffer daw"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: search establishes the annotation and daw removes only that word-sized object.",
+      "The eye is not the acting feature in this edit.",
+      "dd removes the entire row, consuming face art beyond the annotation.",
+      "The task is one annotation; there is no whole-buffer text-object delete."
+    ]
+  },
+  "M2.Q02": {
+    "prompt": "ANIMATION\nA four-row face is copied before its expression changes.\n\n    BEFORE          AFTER\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│       │|  .  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n                     │ /---\\ │\n                     │|  .  |│\n                     │ \\_/ |│\n                     │ \\___/│\n\nNEOVIM\nWhich count preserves the complete face?",
+    "compact_prompt": "ANIMATION\nThe complete four-row face appears below.\n\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│       │|  .  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n                     │ /---\\ │\n                     │|  .  |│\n                     │ \\_/ |│\n                     │ \\___/│\n\nNEOVIM\nWhat does the count own?",
+    "animation_prompt": "ANIMATION\nThe duplicate contains roof, eye, mouth, and chin as one four-row face.\n\n    │ /---\\ │\n    │|  .  |│\n    │ \\_/ |│\n    │ \\___/│",
+    "animation_answer": "Copy all four rows so the face silhouette and features remain one frame.",
+    "neovim_prompt": "NEOVIM\nWhich linewise copy creates the complete face?\n\n    │ /---\\ │\n    │|  .  |│\n    │ \\_/ |│\n    │ \\___/│",
+    "neovim_answer": "gg4yyGp yanks four whole lines and puts them below.",
+    "choices": [
+      "ANIMATION: Duplicate the complete four-row face. | NEOVIM: gg4yyGp copies four whole lines and puts them below.",
+      "ANIMATION: Duplicate only the eye row. | NEOVIM: yy copies the face because the cursor is on its eye.",
+      "ANIMATION: Move the original face down. | NEOVIM: 4ddp transfers and removes the original.",
+      "ANIMATION: Add four blank timing rows. | NEOVIM: 4o opens rows but carries no face art."
+    ],
+    "compact_choices": [
+      "A: full four-row face · V: 4 linewise yank/put",
+      "A: eye row only · V: yy means face",
+      "A: move original · V: delete/put",
+      "A: blank timing rows · V: open lines"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the line count matches the face's four-row boundary.",
+      "A single eye row cannot preserve the silhouette.",
+      "The first face remains visible, so the operation is a copy.",
+      "The lower face contains glyphs, not blank rows."
+    ]
+  },
+  "M2.Q03": {
+    "prompt": "ANIMATION\nThe annotation is removed without consuming mouth or contour.\n\n    BEFORE          AFTER\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│ note  │|  .  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n\nNEOVIM\nWhat must be found before a word delete?",
+    "compact_prompt": "ANIMATION\nSearch lands on note, not the face.\n\n    │|  .  |│ note  │  →  │|  .  |│\n\nNEOVIM\nWhich search target precedes daw?",
+    "animation_prompt": "ANIMATION\nThe annotation alone disappears; the four face rows remain.\n\n    │|  .  |│ note\n    │ \\_/ |│",
+    "animation_answer": "Establish the annotation as the acting object before deleting it.",
+    "neovim_prompt": "NEOVIM\nWhich search precedes daw?\n\n    │|  .  |│ note\n    │ \\_/ |│",
+    "neovim_answer": "/note<CR> lands on the annotation so daw has the correct object boundary.",
+    "choices": [
+      "ANIMATION: Remove note only. | NEOVIM: /note<CR> must establish the object before daw.",
+      "ANIMATION: Remove the mouth as well. | NEOVIM: daw can start on any face row.",
+      "ANIMATION: Close the eye and delete note together. | NEOVIM: f. finds note regardless of cursor position.",
+      "ANIMATION: Delete all four face rows. | NEOVIM: gg4dd is the word-scoped annotation search."
+    ],
+    "compact_choices": [
+      "A: note only · V: search note before daw",
+      "A: mouth too · V: any row works",
+      "A: eye plus note · V: f. finds word",
+      "A: all rows · V: four-line word search"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the search places the cursor on the annotation rather than a face cell.",
+      "Starting daw on the mouth would consume the wrong feature.",
+      "f. searches for a dot, not the word note.",
+      "A four-line delete is far broader than the annotation object."
+    ]
+  },
+  "M2.Q04": {
+    "prompt": "ANIMATION\nOnly the copied eye changes focus.\n\n    BEFORE          AFTER\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│       │|  .  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│       │|  o  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n\nNEOVIM\nWhich find and replace preserves the copied face?",
+    "compact_prompt": "ANIMATION\nOne copied eye changes from . to o.\n\n    │|  .  |│   │|  .  |│\n    │|  .  |│   │|  o  |│\n\nNEOVIM\nWhich local command reaches that eye?",
+    "animation_prompt": "ANIMATION\nThe first face and copied contour stay unchanged; only the copied eye becomes o.\n\n    │|  .  |│\n    │|  .  |│  →  │|  o  |│",
+    "animation_answer": "Find the copied eye and replace that one glyph without touching the mouth or outline.",
+    "neovim_prompt": "NEOVIM\nWhich path changes only the copied eye?\n\n    │|  .  |│\n    │|  .  |│",
+    "neovim_answer": "6Gf.ro moves to the copied frame, finds its dot, and replaces one cell with o.",
+    "choices": [
+      "ANIMATION: Only the copied eye changes; both face contours remain. | NEOVIM: 6Gf.ro finds and replaces that eye.",
+      "ANIMATION: Both eyes change and the mouth moves. | NEOVIM: 6Gdd removes the copied face before o is typed.",
+      "ANIMATION: The copied face grows a second eye. | NEOVIM: 6Gi.o inserts o before the dot.",
+      "ANIMATION: The first face changes while the copy stays. | NEOVIM: gg0f.r changes the original eye."
+    ],
+    "compact_choices": [
+      "A: copied eye only · V: find dot, r o",
+      "A: both eyes/mouth · V: delete copied face",
+      "A: second eye added · V: insert before dot",
+      "A: first eye changes · V: top-frame find"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: f. identifies the copied eye and r changes one cell in place.",
+      "The target preserves both contours and changes one eye only.",
+      "Insertion would create an extra eye cell and shift the row.",
+      "The copied frame starts at row 5; editing the first face is wrong scope."
+    ]
+  },
+  "M2.Q05": {
+    "prompt": "ANIMATION\nBoth faces' eyes become O; mouth and contour glyphs remain.\n\n    BEFORE          AFTER\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│       │|  O  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n    │ /---\\ │      │ /---\\ │\n    │|  o  |│       │|  O  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n\nNEOVIM\nWhich pattern names only the two eye spellings?",
+    "compact_prompt": "ANIMATION\nDots and o eyes become O; contour stays.\n\n    │|  .  |│   │|  O  |│\n    │|  o  |│   │|  O  |│\n\nNEOVIM\nWhich character class is bounded to the eye glyphs?",
+    "animation_prompt": "ANIMATION\nOnly the known eye spellings change across the two faces.\n\n    │|  .  |│  →  │|  O  |│\n    │|  o  |│  →  │|  O  |│",
+    "animation_answer": "Match . or o as the eye candidates; do not match contour punctuation.",
+    "neovim_prompt": "NEOVIM\nWhich substitute pattern matches either eye spelling?\n\n    │|  .  |│\n    │|  o  |│",
+    "neovim_answer": ":%s/[.o]/O/g matches dot or lowercase o, though its range must still be checked.",
+    "choices": [
+      "ANIMATION: Change the two eye spellings and preserve contour glyphs. | NEOVIM: :%s/[.o]/O/g targets . or o.",
+      "ANIMATION: Change every punctuation mark to O. | NEOVIM: :%s/./O/g is eye-specific because dots are sparse.",
+      "ANIMATION: Change only lowercase o and leave dot eyes closed. | NEOVIM: :%s/o/O/g handles both eyes.",
+      "ANIMATION: Replace every character in both faces. | NEOVIM: :%s/.*/O/g keeps row widths fixed."
+    ],
+    "compact_choices": [
+      "A: . and o eyes only · V: character class [.o]",
+      "A: all punctuation · V: any-character dot",
+      "A: lowercase o only · V: simple o pattern",
+      "A: every character · V: whole-line wildcard"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the class explicitly names the two eye spellings.",
+      "A bare . pattern in a substitute is a wildcard, not a literal eye dot.",
+      "The first eye is a dot, so matching only o misses it.",
+      "A whole-line wildcard would consume contour content."
+    ]
+  },
+  "M2.Q06": {
+    "prompt": "ANIMATION\nAn unfamiliar face changes only its eye from o to O.\n\n    BEFORE       AFTER\n    │ /---\\ │   │ /---\\ │\n    │|  o  |│    │|  O  |│\n    │|  _  |│    │|  _  |│\n    │ \\___/│    │ \\___/│\n\nNEOVIM\nWhich find avoids assuming the old column?",
+    "compact_prompt": "ANIMATION\nUnfamiliar mouth and outline stay fixed.\n\n    │|  o  |│   │|  O  |│\n    │|  _  |│   │|  _  |│\n\nNEOVIM\nWhich landmark search finds the eye?",
+    "animation_prompt": "ANIMATION\nThe changed eye is the sole acting feature in the unfamiliar complete face.\n\n    │|  o  |│  →  │|  O  |│\n    │|  _  |│      │|  _  |│",
+    "animation_answer": "Find the eye glyph by landmark and replace it; the changed silhouette does not alter the feature boundary.",
+    "neovim_prompt": "NEOVIM\nWhich path reaches the eye by character?\n\n    │ /---\\ │\n    │|  o  |│",
+    "neovim_answer": "jforO moves to the eye row, finds o, and replaces it with O.",
+    "choices": [
+      "ANIMATION: Only the unfamiliar eye changes. | NEOVIM: jforO finds o without a memorized column.",
+      "ANIMATION: The mouth and eye both change. | NEOVIM: jfo moves to the mouth because it is a lower glyph.",
+      "ANIMATION: The outer contour is redrawn. | NEOVIM: 0rO replaces the first character of the row.",
+      "ANIMATION: Every o in the file changes. | NEOVIM: :%s/o/O/g is the same single-eye operation."
+    ],
+    "compact_choices": [
+      "A: unfamiliar eye only · V: find o, replace O",
+      "A: mouth and eye · V: find mouth",
+      "A: contour redraw · V: first-column replace",
+      "A: every o · V: whole-file substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the glyph landmark transfers even when the surrounding silhouette changes.",
+      "The mouth is a separate row and is not the acting feature.",
+      "0rO assumes a column and may replace the wrong cell.",
+      "A whole-file substitute exceeds the unseen face's one-eye scope."
+    ]
+  },
+  "M2.Q07": {
+    "prompt": "ANIMATION\nA complete four-row face must be copied before a blink is authored.\n\n    │ /---\\ │\n    │|  .  |│\n    │ \\_/ |│\n    │ \\___/│\n\nNEOVIM\nWhich line range owns the complete face?",
+    "compact_prompt": "ANIMATION\nCopy one complete face before the eye closes.\n\n    │ /---\\ │\n    │|  .  |│\n    │ \\_/ |│\n    │ \\___/│\n\nNEOVIM\nWhich range is frame-sized?",
+    "animation_prompt": "ANIMATION\nThe face's four rows stay coherent before the eye changes.\n\n    │ /---\\ │\n    │|  .  |│\n    │ \\_/ |│\n    │ \\___/│",
+    "animation_answer": "Copy all four lines; the eye change belongs to a complete face frame.",
+    "neovim_prompt": "NEOVIM\nWhich addressed copy owns one four-row face?\n\n    │ /---\\ │\n    │|  .  |│\n    │ \\_/ |│\n    │ \\___/│",
+    "neovim_answer": ":1,4t$ copies the first four lines after the final line.",
+    "choices": [
+      "ANIMATION: Copy the complete four-row face before blinking. | NEOVIM: :1,4t$ names exactly the four source lines.",
+      "ANIMATION: Copy only the eye row. | NEOVIM: :2t$ is frame-sized because row 2 contains the feature.",
+      "ANIMATION: Copy the first eight rows including unrelated text. | NEOVIM: :1,8t$ is always safer.",
+      "ANIMATION: Delete the face then type a blink. | NEOVIM: :1,4d is the addressed copy command."
+    ],
+    "compact_choices": [
+      "A: four-row face · V: 1,4 copy to end",
+      "A: eye row · V: row 2 copy",
+      "A: eight rows · V: broad range safer",
+      "A: delete/retype · V: 1,4d copies"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the four-line range matches the face frame boundary.",
+      "Copying only row 2 detaches the eye from its silhouette.",
+      "The range should not include unrelated rows.",
+      "d deletes; t copies the addressed range."
+    ]
+  },
+  "M2.Q08": {
+    "prompt": "ANIMATION\nA word-sized facial feature may need a replacement, while a single punctuation eye should stay one cell.\n\n    │ /---\\ │\n    │|  O  |│\n    │ \\_/ |│\n    │ \\___/│\n\nNEOVIM\nWhich operator matches the feature boundary?",
+    "compact_prompt": "ANIMATION\nChoose an operator no larger than the feature.\n\n    │|  O  |│\n    │ \\_/ |│\n\nNEOVIM\nWhich operator can change a word-sized feature?",
+    "animation_prompt": "ANIMATION\nThe silhouette and mouth remain while the nominated facial feature is edited at its own boundary.\n\n    │ /---\\ │\n    │|  O  |│\n    │ \\_/ |│",
+    "animation_answer": "Use a word-sized object only for a word-sized feature; use a one-cell replacement for a punctuation eye.",
+    "neovim_prompt": "NEOVIM\nWhich operator can change a word-sized facial feature without consuming its row?\n\n    │|  O  |│",
+    "neovim_answer": "ciw changes a word-sized feature; r is safer when the feature is one punctuation cell.",
+    "choices": [
+      "ANIMATION: Match the operator to the feature boundary and preserve the contour. | NEOVIM: ciw fits a word-sized feature; r fits one cell.",
+      "ANIMATION: Use a whole-line edit for every facial feature. | NEOVIM: dd is safer because faces have four rows.",
+      "ANIMATION: Use a file-wide edit for a one-cell eye. | NEOVIM: %s is always smaller than r.",
+      "ANIMATION: Delete the silhouette whenever the eye changes. | NEOVIM: D is the narrowest facial operator."
+    ],
+    "compact_choices": [
+      "A: boundary-matched edit · V: ciw for word, r for cell",
+      "A: whole line · V: dd",
+      "A: file-wide eye · V: %s smaller than r",
+      "A: silhouette deleted · V: D narrowest"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: operator scope should match the size of the nominated feature.",
+      "dd consumes an entire row and is broader than a facial feature.",
+      "A file-wide substitute is broader, not narrower, than r.",
+      "D deletes to end of line and can consume the contour."
+    ]
+  },
+  "M2.Q09": {
+    "prompt": "ANIMATION\nTwo four-row faces are reviewed; only their eye spellings change to O.\n\n    BEFORE          AFTER\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│       │|  O  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n    │ /---\\ │      │ /---\\ │\n    │|  o  |│       │|  O  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n\nNEOVIM\nWhat does an explicit 1,8 range change compared with %?",
+    "compact_prompt": "ANIMATION\nThe two face frames receive bounded eye changes.\n\n    │|  .  |│   │|  O  |│\n    │|  o  |│   │|  O  |│\n\nNEOVIM\nWhy use an explicit 1,8 range?",
+    "animation_prompt": "ANIMATION\nOnly eye candidates in the two four-row faces are changed; surrounding text is excluded.\n\n    │|  .  |│  →  │|  O  |│\n    │|  o  |│  →  │|  O  |│",
+    "animation_answer": "The explicit eight-line range contains both faces and no surrounding lesson prose.",
+    "neovim_prompt": "NEOVIM\nHow does :1,8s/[.o]/O/g differ from :%s/[.o]/O/g?\n\n    │|  .  |│\n    │|  o  |│",
+    "neovim_answer": "1,8 limits the substitute to the two faces; % scans the entire file.",
+    "choices": [
+      "ANIMATION: Change eye spellings in both eight owned lines of face art only. | NEOVIM: :1,8s/[.o]/O/g is narrower than %s.",
+      "ANIMATION: Change every matching eye in the file. | NEOVIM: :1,8 is broader than % because it names lines.",
+      "ANIMATION: Change only the current eye. | NEOVIM: %s is current-line scope, while 1,8 means one cell.",
+      "ANIMATION: Replace both faces with one line. | NEOVIM: :1,8d then s reconstructs the frames."
+    ],
+    "compact_choices": [
+      "A: two face frames only · V: explicit 1,8 range",
+      "A: every file eye · V: 1,8 broader than %",
+      "A: current eye only · V: % current line",
+      "A: frames collapsed · V: delete then substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the explicit range mirrors the two complete four-row faces.",
+      "The whole-file % range is broader than 1,8, not narrower.",
+      "A range addresses lines, not one cell, and % is the whole file.",
+      "Substitution does not collapse or delete the face frames."
+    ]
+  },
+  "M2.Q10": {
+    "prompt": "ANIMATION\nThe target names one eye cell, one word-sized feature, or the full contour depending on the requested edit.\n\n    │ /---\\ │\n    │|  O  |│\n    │ \\_/ |│\n    │ \\___/│\n\nNEOVIM\nWhich scope matches the actual feature boundary?",
+    "compact_prompt": "ANIMATION\nOperator scope must match one eye versus one word.\n\n    │|  O  |│\n    │ \\_/ |│\n\nNEOVIM\nWhich choice avoids consuming contour?",
+    "animation_prompt": "ANIMATION\nThe face silhouette stays registered while the nominated feature changes at its own boundary.\n\n    │ /---\\ │\n    │|  O  |│\n    │ \\_/ |│",
+    "animation_answer": "Choose the smallest operator that covers the intended facial feature and no neighboring contour.",
+    "neovim_prompt": "NEOVIM\nWhich rule picks r versus ciw or ci(?\n\n    │|  O  |│\n    │ \\_/ |│",
+    "neovim_answer": "Use r for one glyph; use ciw or ci( only when the feature truly occupies that text object.",
+    "choices": [
+      "ANIMATION: Keep the contour and change only the nominated feature. | NEOVIM: r for one glyph; ciw or ci( only for a real object-sized feature.",
+      "ANIMATION: Delete the full face for every feature edit. | NEOVIM: dd is always the smallest boundary.",
+      "ANIMATION: Replace all punctuation in the face. | NEOVIM: %s is narrower than a one-cell r.",
+      "ANIMATION: Let the operator consume adjacent contour as needed. | NEOVIM: daw is safe for any eye or mouth."
+    ],
+    "compact_choices": [
+      "A: feature-sized change; contour fixed · V: r vs ciw/ci(",
+      "A: full face deleted · V: dd smallest",
+      "A: all punctuation · V: %s narrower",
+      "A: contour consumed · V: daw universal"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the operator should be no larger than the facial feature it edits.",
+      "dd is a whole-line deletion, not a feature-sized edit.",
+      "A substitute is broader than a single-cell replacement.",
+      "daw can consume surrounding separators or words; it is not universal."
+    ]
+  },
+  "M2.01.P01": {
+    "prompt": "ANIMATION\nThe annotation disappears, but every face row remains.\n\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│ note  │|  .  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n\nNEOVIM\nWhich summary matches the guided delete?",
+    "compact_prompt": "ANIMATION\nOnly note is removed.\n\n    │|  .  |│ note  │  │|  .  |│\n    │ \\_/ |│       │  │ \\_/ |│\n\nNEOVIM\nWhat object was deleted?",
+    "animation_prompt": "ANIMATION\nThe annotation is removed while eye, mouth, and silhouette remain.\n\n    │|  .  |│ note  →  │|  .  |│",
+    "animation_answer": "Delete the annotation object and keep all four face rows intact.",
+    "neovim_prompt": "NEOVIM\nWhich summary matches?\n\n    │|  .  |│ note\n    │ \\_/ |│",
+    "neovim_answer": "/note<CR>daw searches for note and deletes its word object with separator.",
+    "choices": [
+      "ANIMATION: Note disappears and the face remains. | NEOVIM: search note, then daw deletes its object.",
+      "ANIMATION: Eye closes and note stays. | NEOVIM: r- replaces the eye and deletes the note.",
+      "ANIMATION: The annotation row is removed. | NEOVIM: dd is the narrow word deletion.",
+      "ANIMATION: The whole face is copied without note. | NEOVIM: 4yyGp removes a word from the copy."
+    ],
+    "compact_choices": [
+      "A: note only; face fixed · V: search + daw",
+      "A: eye closes · V: replace eye and note",
+      "A: row removed · V: dd word delete",
+      "A: copy face sans note · V: four-line copy removes word"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the word object is the only acting region.",
+      "The eye remains a dot and no replacement is required.",
+      "dd is rowwise and would remove face art.",
+      "Copying does not delete an annotation from the existing face."
+    ]
+  },
+  "M2.02.P01": {
+    "prompt": "ANIMATION\nA complete four-row face appears as a second frame.\n\n    │ /---\\ │\n    │|  .  |│\n    │ \\_/ |│\n    │ \\___/│\n                    │ /---\\ │\n                    │|  .  |│\n                    │ \\_/ |│\n                    │ \\___/│\n\nNEOVIM\nWhich command explanation preserves the frame?",
+    "compact_prompt": "ANIMATION\nThe full face, not only its eye, is copied.\n\n    │ /---\\ │\n    │|  .  |│\n    │ \\_/ |│\n    │ \\___/│\n\nNEOVIM\nWhat did the count own?",
+    "animation_prompt": "ANIMATION\nTwo complete four-row face frames are visible.\n\n    │ /---\\ │\n    │|  .  |│\n    │ \\_/ |│\n    │ \\___/│",
+    "animation_answer": "The complete four-row face was duplicated before an acting eye change.",
+    "neovim_prompt": "NEOVIM\nWhich grammar decomposes the copy?\n\n    │ /---\\ │\n    │|  .  |│\n    │ \\_/ |│\n    │ \\___/│",
+    "neovim_answer": "gg4yyGp goes to the top, yanks four whole lines, and puts them below.",
+    "choices": [
+      "ANIMATION: Copy the full four-row face. | NEOVIM: gg4yyGp yanks and puts four whole lines.",
+      "ANIMATION: Copy only the eye row. | NEOVIM: yy means all four face rows when on the eye.",
+      "ANIMATION: Move the original face. | NEOVIM: 4ddp transfers it and removes the source.",
+      "ANIMATION: Open blank rows. | NEOVIM: 4o makes a copied face without text."
+    ],
+    "compact_choices": [
+      "A: full face · V: four-line yank/put",
+      "A: eye row · V: yy means face",
+      "A: move original · V: delete/put",
+      "A: blank rows · V: open lines"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the four-line count protects the full face frame.",
+      "A single row would lose the face's silhouette or mouth.",
+      "The source remains, so this is a copy.",
+      "The second face contains copied glyphs, not blank lines."
+    ]
+  },
+  "M2.04.P01": {
+    "prompt": "ANIMATION\nThe copied eye changes focus; both silhouettes remain.\n\n    │ /---\\ │\n    │|  .  |│\n    │ \\_/ |│\n    │ \\___/│\n    │ /---\\ │\n    │|  .  |│  →  │|  o  |│\n    │ \\_/ |│       │ \\_/ |│\n    │ \\___/│       │ \\___/│\n\nNEOVIM\nWhich bounded result is correct?",
+    "compact_prompt": "ANIMATION\nOnly the copied eye becomes o.\n\n    │|  .  |│\n    │|  .  |│  →  │|  o  |│\n\nNEOVIM\nWhich scope preserves both faces?",
+    "animation_prompt": "ANIMATION\nThe first face is untouched; the copied eye is the only changed cell.\n\n    │|  .  |│\n    │|  .  |│  →  │|  o  |│",
+    "animation_answer": "Find the copied eye and replace one glyph, leaving mouth and contour unchanged.",
+    "neovim_prompt": "NEOVIM\nWhich command reaches the copied eye?\n\n    │|  .  |│\n    │|  .  |│",
+    "neovim_answer": "6Gf.ro moves to the copied frame, finds its dot, and replaces it with o.",
+    "choices": [
+      "ANIMATION: Change only the copied eye. | NEOVIM: Move to the copied face, find its eye placeholder, and replace that one cell.",
+      "ANIMATION: Change both eyes. | NEOVIM: Start in the original frame and repeat the replacement across frames.",
+      "ANIMATION: Change copied mouth and eye. | NEOVIM: Use a text object broader than the one-cell feature.",
+      "ANIMATION: Change the first contour. | NEOVIM: Address the original face instead of the copy."
+    ],
+    "compact_choices": [
+      "A: copied eye only · V: go to copy, find eye, replace one cell",
+      "A: both eyes · V: top-frame find",
+      "A: mouth and eye · V: word-sized row edit",
+      "A: first contour · V: original-frame replace"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the copied eye is row 6's visible dot and r changes one cell.",
+      "The first eye remains a dot in the target.",
+      "The mouth and contour are not acting features.",
+      "Editing the first frame violates the copied-frame scope."
+    ]
+  },
+  "M2.05.P01": {
+    "prompt": "ANIMATION\nBoth faces' eyes become O while contours stay intact.\n\n    │ /---\\ │      │ /---\\ │\n    │|  .  |│  →   │|  O  |│\n    │ \\_/ |│      │ \\_/ |│\n    │ \\___/│      │ \\___/│\n    │ /---\\ │      │ /---\\ │\n    │|  o  |│  →   │|  O  |│\n    │ \\_/ |│      │ \\_/ |│\n    │ \\___/│      │ \\___/│\n\nNEOVIM\nWhich comparison uses one accepted method?",
+    "compact_prompt": "ANIMATION\nOnly . and o eyes become O.\n\n    │|  .  |│   │|  O  |│\n    │|  o  |│   │|  O  |│\n\nNEOVIM\nCompare local replacements with a scoped substitute.",
+    "animation_prompt": "ANIMATION\nTwo eye cells change; face boundaries and mouths remain fixed.\n\n    │|  .  |│  →  │|  O  |│\n    │|  o  |│  →  │|  O  |│",
+    "animation_answer": "Either accepted bounded path changes the two eye cells and no contour glyphs.",
+    "neovim_prompt": "NEOVIM\nWhat is the method tradeoff?\n\n    │|  .  |│\n    │|  o  |│",
+    "neovim_answer": "Local replacements visit each eye; a scoped substitute matches only . or o in the owned strip.",
+    "choices": [
+      "ANIMATION: Both eye cells change and contours stay. | NEOVIM: choose local replacements or the scoped [.o] substitute, not both.",
+      "ANIMATION: Every punctuation cell becomes O. | NEOVIM: a whole-file wildcard is safer because faces are short.",
+      "ANIMATION: Only lowercase o changes. | NEOVIM: the dot eye is already O by context.",
+      "ANIMATION: The two faces are merged. | NEOVIM: :1,8d then p is the equivalent comparison method."
+    ],
+    "compact_choices": [
+      "A: two eyes; contours fixed · V: choose local or scoped method",
+      "A: all punctuation · V: whole-file wildcard",
+      "A: o only · V: dot needs no edit",
+      "A: faces merged · V: delete/put"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: both taught paths have the same two-eye result when bounded to the strip.",
+      "A wildcard or whole-file scope can consume contour material.",
+      "The dot eye also needs changing, so a lowercase-o-only pattern misses it.",
+      "The faces remain separate frames; deletion is not the comparison."
+    ]
+  },
+  "M2.06.P01": {
+    "prompt": "ANIMATION\nAn unfamiliar face changes only its eye from o to O.\n\n    │ /---\\ │\n    │|  o  |│  →  │|  O  |│\n    │|  _  |│       │|  _  |│\n    │ \\___/│       │ \\___/│\n\nNEOVIM\nWhich bounded path reaches TARGET?",
+    "compact_prompt": "ANIMATION\nUnfamiliar mouth and contour stay fixed; eye changes.\n\n    │|  o  |│   │|  O  |│\n    │|  _  |│   │|  _  |│\n\nNEOVIM\nWhich landmark edit is transferable?",
+    "animation_prompt": "ANIMATION\nOnly the eye changes in the complete unfamiliar face.\n\n    │|  o  |│  →  │|  O  |│\n    │|  _  |│      │|  _  |│",
+    "animation_answer": "Find and replace the eye while preserving the unfamiliar face's other rows.",
+    "neovim_prompt": "NEOVIM\nWhich command reaches TARGET?\n\n    │ /---\\ │\n    │|  o  |│",
+    "neovim_answer": "jforO finds o on the eye row and overwrites one cell with O.",
+    "choices": [
+      "ANIMATION: Change only the unfamiliar eye. | NEOVIM: jforO is one bounded path to TARGET.",
+      "ANIMATION: Redraw the mouth and eye. | NEOVIM: jfo searches the mouth and rO changes both cells.",
+      "ANIMATION: Shift the eye to the old lesson column. | NEOVIM: 8l then rO relies on the old width.",
+      "ANIMATION: Change every o in the project. | NEOVIM: :%s/o/O/g is equivalent to one eye."
+    ],
+    "compact_choices": [
+      "A: one unfamiliar eye · V: find o, r O",
+      "A: mouth and eye · V: one find changes both",
+      "A: eye shifts column · V: old-width count",
+      "A: every project o · V: whole-file substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the landmark search transfers without relying on old columns.",
+      "The mouth remains _, and r changes one cell only.",
+      "The eye's column is not assumed; it is found by glyph.",
+      "Project-wide substitution exceeds the transfer face's scope."
+    ]
+  },
+  "M2.08.P01": {
+    "prompt": "ANIMATION\nA third four-row face closes only its eye after two open-eye frames.\n\n    │ /---\\ │\n    │|  O  |│\n    │ \\_/ |│\n    │ \\___/│\n    │ /---\\ │\n    │|  O  |│\n    │ \\_/ |│\n    │ \\___/│\n    │ /---\\ │\n    │|  -  |│\n    │ \\_/ |│\n    │ \\___/│\n\nNEOVIM\nWhich choice completes the reusable grammar?",
+    "compact_prompt": "ANIMATION\nOnly the third face eye closes; all three faces stay complete.\n\n    │|  O  |│\n    │|  O  |│\n    │|  -  |│\n\nNEOVIM\nWhat executes the addressed copy before the blink?",
+    "animation_prompt": "ANIMATION\nThe third complete face differs only at its eye, making a deliberate blink candidate.\n\n    │ /---\\ │\n    │|  -  |│\n    │ \\_/ |│\n    │ \\___/│",
+    "animation_answer": "Copy a complete face, then close only the copied eye; do not infer timing from the stills.",
+    "neovim_prompt": "NEOVIM\nWhich grammar piece executes the range copy?\n\n    │ /---\\ │\n    │|  O  |│\n    │ \\_/ |│",
+    "neovim_answer": "The addressed Ex copy is completed with <CR> before the local eye replacement.",
+    "choices": [
+      "ANIMATION: Retain three complete faces and close only the third eye. | NEOVIM: execute the addressed copy with <CR>, then replace the eye.",
+      "ANIMATION: Delete the first two faces after copying. | NEOVIM: omit <CR>; the copy executes automatically.",
+      "ANIMATION: Close every eye for a sustained blink. | NEOVIM: :%s/O/-/g is the single copied-eye edit.",
+      "ANIMATION: Merge the three faces into one long row. | NEOVIM: J makes the blink frame without a range."
+    ],
+    "compact_choices": [
+      "A: full faces; third eye closes · V: execute copy with CR",
+      "A: first faces deleted · V: omit CR",
+      "A: every eye closes · V: global O substitute",
+      "A: faces merged · V: J no range"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the blink is one feature change on a complete copied face, and Ex execution is explicit.",
+      "The earlier faces remain as timing/reference candidates, and Ex waits for <CR>.",
+      "A single blink frame does not close every eye.",
+      "Merging rows destroys the four-row frame boundary."
+    ]
+  },
+  "M12.Q01": {
+    "prompt": "ANIMATION\nOnly the left upper joint brightens; centre axis and right joint stay registered.\n\n    BEFORE            AFTER\n    │\\..:..|..:../│   │\\..!..|..:../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n\nNEOVIM\nHow does a till motion approach that joint?",
+    "compact_prompt": "ANIMATION\nThe left : becomes !; shell and axis stay.\n\n    │\\..:..|..:../│   │\\..!..|..:../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n\nNEOVIM\nWhat does t: leave under the cursor?",
+    "animation_prompt": "ANIMATION\nThe first visible upper joint changes from : to !; the mirrored joint and axis do not.\n\n    │\\..:..|..:../│  →  │\\..!..|..:../│",
+    "animation_answer": "Accent one left joint as the first staggered extreme; preserve the mirrored shell and centre axis.",
+    "neovim_prompt": "NEOVIM\nHow does t: approach the changed joint?\n\n    │\\..:..|..:../│\n    │ \\.:..|..:./ │",
+    "neovim_answer": "t: stops immediately before the colon; l steps onto it before r! replaces it.",
+    "choices": [
+      "ANIMATION: Only the left upper joint changes. | NEOVIM: t: stops before :, then l and r! replace that cell.",
+      "ANIMATION: Both mirrored joints brighten at once. | NEOVIM: t: lands on the colon and r! edits both matches.",
+      "ANIMATION: The centre axis is reversed. | NEOVIM: T: moves to the left joint from the wrong side.",
+      "ANIMATION: The entire three-row shell shifts right. | NEOVIM: i! inserts before the delimiter."
+    ],
+    "compact_choices": [
+      "A: left joint only · V: till before, step, replace",
+      "A: both joints · V: t: lands/edits both",
+      "A: axis reverses · V: backward till wrong side",
+      "A: shell shifts · V: insert before delimiter"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: till stops before the landmark, so l reaches one joint for an in-place r!.",
+      "The first stagger intentionally leaves the right joint unchanged.",
+      "The shell and axis are stable; T: is the opposite-direction tool for a later return.",
+      "Insertion changes width; the target is a one-cell replacement."
+    ]
+  },
+  "M12.Q02": {
+    "prompt": "ANIMATION\nA copied pose receives a backward approach to its right upper joint.\n\n    BEFORE            AFTER\n    │\\..!..|..:../│   │\\..!..|..:../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n                         │\\..!..|..!../│\n                         │ \\.:..|..:./ │\n                         │  \\_o_|_o_/  │\n\nNEOVIM\nWhich backward till motion approaches the right colon?",
+    "compact_prompt": "ANIMATION\nThe copied frame accents the right joint as a delayed pose.\n\n    │\\..!..|..:../│   │\\..!..|..:../│\n                         │\\..!..|..!../│\n\nNEOVIM\nWhat does T: do from row end?",
+    "animation_prompt": "ANIMATION\nThe second pose changes only its right upper joint; the left accent remains from the prior pose.\n\n    │\\..!..|..:../│  →  │\\..!..|..!../│",
+    "animation_answer": "Add the right-side accent as a later stagger while preserving the left accent and shell.",
+    "neovim_prompt": "NEOVIM\nWhich backward approach reaches the right joint?\n\n    │\\..!..|..:../│",
+    "neovim_answer": "From the row end, T: stops just after the right colon; h steps onto it before r!.",
+    "choices": [
+      "ANIMATION: Add the delayed right accent without changing the left or axis. | NEOVIM: $T: then h and r! approach from the right.",
+      "ANIMATION: Brighten both joints simultaneously. | NEOVIM: f: searches forward from the row end and r! edits the left joint.",
+      "ANIMATION: Reverse the shell's slash directions. | NEOVIM: T: is a byte-reversal command.",
+      "ANIMATION: Insert a new right joint beyond the row. | NEOVIM: i! at end-of-line preserves fixed width."
+    ],
+    "compact_choices": [
+      "A: delayed right accent · V: backward till, step, replace",
+      "A: both joints at once · V: forward find from row end",
+      "A: shell reverses · V: T is byte reversal",
+      "A: new joint beyond row · V: end insert fixed width"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: T: approaches from the right, and h reaches the landmark for one replacement.",
+      "The stagger is deliberately sequential; the left joint is not edited again here.",
+      "T is a backward till motion, not a mirror or byte-reversal command.",
+      "Insertion past the row would not preserve the registered shell."
+    ]
+  },
+  "M12.Q03": {
+    "prompt": "ANIMATION\nThe first upper joint is accented while its partner waits for the next pose.\n\n    BEFORE            AFTER\n    │\\..:..|..:../│   │\\..!..|..:../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n\nNEOVIM\nWhich t-based edit limits the change to the left joint?",
+    "compact_prompt": "ANIMATION\nOne joint changes; its mirror stays colon.\n\n    │\\..:..|..:../│   │\\..!..|..:../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n\nNEOVIM\nWhich scope is one cell?",
+    "animation_prompt": "ANIMATION\nThe left upper : becomes ! and the right upper : stays unchanged.\n\n    │\\..:..|..:../│  →  │\\..!..|..:../│",
+    "animation_answer": "Make one left-joint edit and leave its mirrored partner for the planned stagger.",
+    "neovim_prompt": "NEOVIM\nWhich t-based path makes one replacement?\n\n    │\\..:..|..:../│",
+    "neovim_answer": "0t:lr! stops before the first colon, steps onto it, and replaces only that cell.",
+    "choices": [
+      "ANIMATION: Change only the first visible joint. | NEOVIM: 0t:lr! approaches and replaces one left cell.",
+      "ANIMATION: Change both upper joints. | NEOVIM: 0t:;r! repeats through every colon in the shell.",
+      "ANIMATION: Change the centre axis. | NEOVIM: 0t|lr! targets the delimiter rather than a joint.",
+      "ANIMATION: Shift the shell while accenting it. | NEOVIM: i! inserts a new column before the joint."
+    ],
+    "compact_choices": [
+      "A: left joint only · V: till, step, replace",
+      "A: both joints · V: repeat every colon",
+      "A: centre axis · V: target delimiter",
+      "A: shell shifts · V: insert column"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: t: plus l lands on the first joint, and r! changes exactly one cell.",
+      "The second joint must remain unchanged for the stagger.",
+      "The centre axis is a stable landmark, not the acting punctuation.",
+      "Insertion would change the shell width and break registration."
+    ]
+  },
+  "M12.Q04": {
+    "prompt": "ANIMATION\nThe second lower joint changes one frame after the first lower joint.\n\n    BEFORE            AFTER\n    │\\..!..|..!../│   │\\..!..|..!../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n    │\\..!..|..!../│   │\\..!..|..!../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n                         │\\..!..|..!../│\n                         │ \\.!..|..!./ │\n                         │  \\_o_|_o_/  │\n\nNEOVIM\nHow do repeated and reverse finds reach the two lower joints?",
+    "compact_prompt": "ANIMATION\nThe lower response is staggered, not simultaneous.\n\n    │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │  →  │ \\.!..|..!./ │\n\nNEOVIM\nWhich repeat pair visits second then first?",
+    "animation_prompt": "ANIMATION\nThe lower joints brighten in sequence while shell and axis stay fixed.\n\n    │ \\.:..|..:./ │  →  │ \\.!..|..!./ │",
+    "animation_answer": "Use the one-frame delay between homologous lower joints to create drag rather than simultaneous change.",
+    "neovim_prompt": "NEOVIM\nWhich repeat pair visits the second joint then returns to the first?\n\n    │ \\.:..|..:./ │",
+    "neovim_answer": "After one f: search, ; repeats forward to the second match; , reverses to the prior match.",
+    "choices": [
+      "ANIMATION: Brighten lower joints one after another while preserving shell. | NEOVIM: f: then ; reaches the second; , returns to the first.",
+      "ANIMATION: Brighten both lower joints simultaneously. | NEOVIM: ; and , edit every match without another replacement.",
+      "ANIMATION: Reverse the lower shell. | NEOVIM: ; reverses bytes and , writes punctuation.",
+      "ANIMATION: Add a new lower row with two joints. | NEOVIM: o creates the delayed frame automatically."
+    ],
+    "compact_choices": [
+      "A: lower joints stagger · V: find, ; forward, , back",
+      "A: simultaneous · V: repeats edit all matches",
+      "A: shell reverses · V: ; byte-reverses",
+      "A: new lower row · V: o makes frame"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: ; and , revisit the homologous landmarks in opposite directions after one find.",
+      "The animation explicitly uses a one-frame stagger, not simultaneous edits.",
+      "; and , repeat character-find direction; they do not reverse stored bytes.",
+      "The lower frame must be copied and edited, not opened as a blank row."
+    ]
+  },
+  "M12.Q05": {
+    "prompt": "ANIMATION\nBoth base o cells brighten on the copied release row; shell and axis stay fixed.\n\n    BEFORE            AFTER\n    │  \\_o_|_o_/  │   │  \\_O_|_O_/  │\n\nNEOVIM\nWhich two methods can reach the same bounded result?",
+    "compact_prompt": "ANIMATION\nTwo base cells become O in one copied row.\n\n    │  \\_o_|_o_/  │   │  \\_O_|_O_/  │\n\nNEOVIM\nWhat scope do the accepted methods share?",
+    "animation_prompt": "ANIMATION\nOnly the two copied-row base cells change.\n\n    │  \\_o_|_o_/  │  →  │  \\_O_|_O_/  │",
+    "animation_answer": "Repeated search and row-scoped substitution both change those two homologous base cells only.",
+    "neovim_prompt": "NEOVIM\nWhich comparison is accurate?\n\n    │  \\_o_|_o_/  │\n    │  \\_O_|_O_/  │",
+    "neovim_answer": "Repeated search visits each base; a current-row substitute changes the same o cells without expanding scope.",
+    "choices": [
+      "ANIMATION: The two base cells brighten and no shell cell moves. | NEOVIM: choose repeated search or row-scoped substitution, not both.",
+      "ANIMATION: Every o in every frame brightens. | NEOVIM: a whole-file substitute is equivalent to the copied-row path.",
+      "ANIMATION: Only one base cell brightens. | NEOVIM: repeated search and substitute cannot reach two cells.",
+      "ANIMATION: The centre axis is replaced by O. | NEOVIM: :s/o/O/g starts at the axis and changes the shell."
+    ],
+    "compact_choices": [
+      "A: two copied bases · V: choose one bounded method",
+      "A: every frame's o · V: whole-file equivalent",
+      "A: one base · V: cannot reach two",
+      "A: axis replaced · V: substitute axis"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: both accepted paths have the same copied-row scope when used alone.",
+      "A whole-file substitute would brighten unrelated frames.",
+      "Both methods can reach both base cells; one method must be chosen.",
+      "The axis is |, not o, and remains fixed."
+    ]
+  },
+  "M12.Q06": {
+    "prompt": "ANIMATION\nUnfamiliar mirrored shells change their paired + joints to * without column counting.\n\n    BEFORE            AFTER\n    │/..+..|..+..\\│   │/..*..|..*..\\│\n    │ /.+..|..+.\\ │   │ /.+..|..+.\\ │\n    │  /_x_|_x_\\  │   │  /_x_|_x_\\  │\n\nNEOVIM\nWhich forward/backward approach transfers?",
+    "compact_prompt": "ANIMATION\nBoth unfamiliar joints change; shell and axis remain.\n\n    │/..+..|..+..\\│   │/..*..|..*..\\│\n    │ /.+..|..+.\\ │   │ /.+..|..+.\\ │\n\nNEOVIM\nWhich till directions reach both landmarks?",
+    "animation_prompt": "ANIMATION\nThe left and right + joints become *; all other shell cells remain.\n\n    │/..+..|..+..\\│  →  │/..*..|..*..\\│",
+    "animation_answer": "Approach the paired landmarks from opposite directions and replace each one in place.",
+    "neovim_prompt": "NEOVIM\nWhich bounded path reaches both changed joints?\n\n    │/..+..|..+..\\│\n    │ /.+..|..+.\\ │",
+    "neovim_answer": "0t+lr*$T+hr* approaches the left + forward and the right + backward, replacing each with *.",
+    "choices": [
+      "ANIMATION: Both + joints become * while mirrored shell remains. | NEOVIM: 0t+lr*$T+hr* uses forward and backward till motions.",
+      "ANIMATION: The axis and lower x cells change too. | NEOVIM: navigation alone reaches the target without r*.",
+      "ANIMATION: The shell is byte-reversed. | NEOVIM: T+ reverses every + in the row.",
+      "ANIMATION: One joint changes; the other waits. | NEOVIM: 0t+lr* stops before the second joint permanently."
+    ],
+    "compact_choices": [
+      "A: both paired joints · V: forward till + backward till",
+      "A: axis/x too · V: navigation edits without replace",
+      "A: shell reversed · V: backward till reverses bytes",
+      "A: one joint only · V: forward path cannot reach second"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: opposite-direction till motions avoid memorized columns and preserve the shell.",
+      "Navigation alone does not replace the landmarks, and the lower row is unchanged.",
+      "T is a search motion, not a byte-reversal operation.",
+      "The second T path deliberately reaches and replaces the right partner."
+    ]
+  },
+  "M12.Q07": {
+    "prompt": "ANIMATION\nA return scaffold is copied before its accent moves to the mirrored side.\n\n    BEFORE            AFTER\n    │\\..!..|..:../│   │\\..!..|..:../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n\nNEOVIM\nWhich addressed copy supplies one complete pose?",
+    "compact_prompt": "ANIMATION\nThe first three-row pose becomes a return scaffold.\n\n    │\\..!..|..:../│\n    │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │\n\nNEOVIM\nWhich range copies all rows to the end?",
+    "animation_prompt": "ANIMATION\nThe copied return scaffold preserves all three rows and their centre axis.\n\n    │\\..!..|..:../│\n    │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │",
+    "animation_answer": "Copy the complete first pose before authoring the opposite-side accent exchange.",
+    "neovim_prompt": "NEOVIM\nWhich addressed copy supplies the scaffold?\n\n    │\\..!..|..:../│\n    │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │",
+    "neovim_answer": ":1,3t$ copies the three source lines after the last line.",
+    "choices": [
+      "ANIMATION: Copy the complete first pose before moving its accent. | NEOVIM: :1,3t$ copies all three rows to the end.",
+      "ANIMATION: Copy only the accent row. | NEOVIM: :1t$ is enough because the other rows are static.",
+      "ANIMATION: Move the first pose and lose its comparison state. | NEOVIM: :1,3m$ is the non-destructive copy.",
+      "ANIMATION: Copy every row in the file. | NEOVIM: :%t$ is narrower than the explicit three-line range."
+    ],
+    "compact_choices": [
+      "A: complete three-row pose · V: 1,3 copy to end",
+      "A: accent row only · V: one-line copy",
+      "A: move first pose · V: move is copy",
+      "A: whole file · V: % narrower"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the range matches the complete pose and t copies without removing the source.",
+      "The shell and axis must travel with the accent scaffold.",
+      "m moves the source; the first pose would not remain for comparison.",
+      "A whole-file copy exceeds the three-row pose scope."
+    ]
+  },
+  "M12.Q08": {
+    "prompt": "ANIMATION\nThe left ! becomes : and the right : becomes ! in a mirrored return.\n\n    BEFORE            AFTER\n    │\\..!..|..:../│   │\\..:..|..!../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n\nNEOVIM\nWhat must happen to slash directions and the axis?",
+    "compact_prompt": "ANIMATION\nAccent exchanges sides; shell and axis stay registered.\n\n    │\\..!..|..:../│   │\\..:..|..!../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n\nNEOVIM\nWhich cells are acting?",
+    "animation_prompt": "ANIMATION\nOnly the two nominated upper joints exchange punctuation; slash endpoints and centre axis remain.\n\n    │\\..!..|..:../│  →  │\\..:..|..!../│",
+    "animation_answer": "Exchange the two accent cells while preserving the already paired shell and centre axis.",
+    "neovim_prompt": "NEOVIM\nWhich repair preserves the shell?\n\n    │\\..!..|..:../│",
+    "neovim_answer": "Replace left ! with : and right : with !; do not reverse the stored slashes or axis.",
+    "choices": [
+      "ANIMATION: Exchange only the two accents; shell and axis stay. | NEOVIM: replace left ! with : and right : with ! in place.",
+      "ANIMATION: Reverse every slash and axis glyph. | NEOVIM: ! reverses the row before the punctuation edits.",
+      "ANIMATION: Duplicate the left accent on the right. | NEOVIM: r! writes the right mark without clearing the left.",
+      "ANIMATION: Shift the complete shell one column. | NEOVIM: i: inserts the return accent before the axis."
+    ],
+    "compact_choices": [
+      "A: two accent cells only · V: replace left and right in place",
+      "A: shell reversed · V: byte reverse",
+      "A: left accent duplicated · V: write right without clearing",
+      "A: shell shifts · V: insert before axis"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the paired shell is stable; only the acting punctuation exchanges sides.",
+      "The mirror is not a byte reversal and the axis must remain registered.",
+      "Leaving the left ! would duplicate the acting accent rather than exchange it.",
+      "Insertion changes the shell width and is not a one-cell return edit."
+    ]
+  },
+  "M12.Q09": {
+    "prompt": "ANIMATION\nA visible joint changes from : to ! without shifting its neighbours.\n\n    │\\..:..|..:../│   │\\..!..|..:../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n\nNEOVIM\nWhich step-plus-replace sequence preserves row width?",
+    "compact_prompt": "ANIMATION\nOne joint changes; adjacent dots remain.\n\n    │\\..:..|..:../│   │\\..!..|..:../│\n\nNEOVIM\nWhat does l then r! do?",
+    "animation_prompt": "ANIMATION\nThe chosen joint becomes !; all surrounding dots, axis, and shell remain.\n\n    │\\..:..|..:../│  →  │\\..!..|..:../│",
+    "animation_answer": "Step onto the visible joint and overwrite one punctuation cell.",
+    "neovim_prompt": "NEOVIM\nWhich local operation changes one joint?\n\n    │\\..:..|..:../│",
+    "neovim_answer": "l advances onto the joint and r! overwrites that one cell.",
+    "choices": [
+      "ANIMATION: One joint changes and neighbours stay registered. | NEOVIM: l then r! advances one cell and overwrites it.",
+      "ANIMATION: The row grows by one !. | NEOVIM: i! inserts beside the joint.",
+      "ANIMATION: Every ! in the strip is replaced. | NEOVIM: :s/:/!/g edits all rows from one cell.",
+      "ANIMATION: The centre axis moves onto the joint. | NEOVIM: dd deletes the row before r!."
+    ],
+    "compact_choices": [
+      "A: one joint; neighbours fixed · V: step then r!",
+      "A: row grows · V: insert !",
+      "A: all joints · V: substitute all rows",
+      "A: axis moves · V: delete row then replace"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: r overwrites a single cell after l reaches the landmark.",
+      "Insertion would leave the old colon and shift later glyphs.",
+      "The target is one joint, not a row-scoped or whole-file substitution.",
+      "The axis is stable and the row is never deleted."
+    ]
+  },
+  "M12.Q10": {
+    "prompt": "ANIMATION\nThe acting accent moves from the left upper joint to its right mirrored partner.\n\n    BEFORE            AFTER\n    │\\..!..|..:../│   │\\..:..|..!../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n\nNEOVIM\nWhich pair clears the old accent before making the mirror?",
+    "compact_prompt": "ANIMATION\nLeft ! is cleared; right : becomes !.\n\n    │\\..!..|..:../│   │\\..:..|..!../│\n\nNEOVIM\nWhich t/T paths exchange the accents?",
+    "animation_prompt": "ANIMATION\nThe acting punctuation transfers sides; the shell and axis do not.\n\n    │\\..!..|..:../│  →  │\\..:..|..!../│",
+    "animation_answer": "Clear the left accent and create only its mirrored right partner, preserving the stable shell.",
+    "neovim_prompt": "NEOVIM\nWhich forward/backward till workflow performs the exchange?\n\n    │\\..!..|..:../│",
+    "neovim_answer": "13G0t!lr:$T:hr! reaches and clears the left !, then reaches the right : and accents it.",
+    "choices": [
+      "ANIMATION: Move the accent from left to right with no duplicate. | NEOVIM: 13G0t!lr:$T:hr! clears left ! and replaces right :.",
+      "ANIMATION: Keep left ! and add right !. | NEOVIM: 13G0t!lr! duplicates the accent without clearing.",
+      "ANIMATION: Change both accents to colons. | NEOVIM: 13G0t!lr:$T:hr: removes both acting marks.",
+      "ANIMATION: Reverse shell and move accent. | NEOVIM: gg3yyGp copies a row and reverses all punctuation."
+    ],
+    "compact_choices": [
+      "A: accent exchanges sides · V: clear left, set right",
+      "A: left retained plus right · V: duplicate without clear",
+      "A: both become colon · V: replace both with colon",
+      "A: shell reverses · V: copy/reverse row"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the first replacement clears the acting left mark before the mirrored right mark is set.",
+      "Leaving left ! creates two simultaneous accents and breaks the intended transfer.",
+      "The return pose needs one right !, not two colons.",
+      "The shell and axis are reused; the exchange is not a row reversal."
+    ]
+  },
+  "M12.01.P01": {
+    "prompt": "ANIMATION\nThe guided joint edit brightens the left upper landmark only.\n\n    │\\..:..|..:../│   │\\..!..|..:../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n\nNEOVIM\nWhich summary describes the bounded change?",
+    "compact_prompt": "ANIMATION\nLeft : becomes !; right : and axis stay.\n\n    │\\..:..|..:../│   │\\..!..|..:../│\n    │ \\.:..|..:./ │   │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │   │  \\_o_|_o_/  │\n\nNEOVIM\nWhat did till-and-replace do?",
+    "animation_prompt": "ANIMATION\nOnly the left upper joint changes.\n\n    │\\..:..|..:../│  →  │\\..!..|..:../│",
+    "animation_answer": "Accent the left landmark in place and preserve the shell, axis, and mirrored joint.",
+    "neovim_prompt": "NEOVIM\nWhich summary matches the guided path?\n\n    │\\..:..|..:../│",
+    "neovim_answer": "0t:lr! stops before the first colon, steps onto it, and replaces it.",
+    "choices": [
+      "ANIMATION: One left joint changes; shell and right joint stay. | NEOVIM: till before, step, and r! replace one cell.",
+      "ANIMATION: Both joints change. | NEOVIM: f: replaces every colon after one find.",
+      "ANIMATION: Axis is replaced. | NEOVIM: 0t|lr! targets the centre delimiter.",
+      "ANIMATION: Shell shifts right. | NEOVIM: i! inserts before the landmark."
+    ],
+    "compact_choices": [
+      "A: left joint only · V: till/step/r replace",
+      "A: both joints · V: one find edits all",
+      "A: axis changes · V: delimiter target",
+      "A: shell shifts · V: insert"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the guided path is a one-cell accent with no shell drift.",
+      "The right partner waits for a later stagger.",
+      "The centre axis is not the nominated joint.",
+      "Insertion would change width rather than replace the joint."
+    ]
+  },
+  "M12.02.P01": {
+    "prompt": "ANIMATION\nA complete three-row pose is copied and its right joint receives a delayed accent.\n\n    │\\..!..|..:../│\n    │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │\n                    │\\..!..|..!../│\n                    │ \\.:..|..:./ │\n                    │  \\_o_|_o_/  │\n\nNEOVIM\nWhich command explanation preserves the stagger?",
+    "compact_prompt": "ANIMATION\nThe copied pose keeps left ! and adds right ! later.\n\n    │\\..!..|..:../│   │\\..!..|..!../│\n\nNEOVIM\nWhat does the backward till do?",
+    "animation_prompt": "ANIMATION\nThe new pose contains the complete copied shell and a right-side accent.\n\n    │\\..!..|..:../│  →  │\\..!..|..!../│",
+    "animation_answer": "Copy the whole pose, then edit its right joint from the row end so the accent arrives later.",
+    "neovim_prompt": "NEOVIM\nWhich grammar combines copy and backward till?\n\n    │\\..!..|..:../│",
+    "neovim_answer": "gg3yyGp copies three lines; 4G$T:hr! approaches the right colon backward and replaces it.",
+    "choices": [
+      "ANIMATION: Copy the complete pose, then add the delayed right accent. | NEOVIM: linewise copy followed by $T:hr! preserves scope.",
+      "ANIMATION: Copy only the left accent. | NEOVIM: yy then f: changes the right joint without a frame copy.",
+      "ANIMATION: Move the original pose and reverse its shell. | NEOVIM: 3ddp plus ! mirrors the row.",
+      "ANIMATION: Change both upper joints at once. | NEOVIM: T: edits every colon on the row."
+    ],
+    "compact_choices": [
+      "A: full pose then right accent · V: copy + backward till",
+      "A: accent only · V: yy/find no copy",
+      "A: move/reverse pose · V: delete/put mirror",
+      "A: simultaneous joints · V: T edits all colons"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the copied three-row pose remains coherent and T: provides the delayed right approach.",
+      "The complete shell and axis must be copied, not only the accent.",
+      "The original remains and the shell is not reversed.",
+      "The task deliberately stages the right accent after the left."
+    ]
+  },
+  "M12.FIND.P01": {
+    "prompt": "ANIMATION\nTwo selected colon landmarks brighten; the third remains.\n\n    │ /---\\ │\n    │| : : : |│  →  │| ! ! : |│\n    │ \\---/ │\n\nNEOVIM\nWhich explanation matches one forward find, repeat, and reverse?",
+    "compact_prompt": "ANIMATION\nThe first two colon landmarks become !.\n\n    │| : : : |│  →  │| ! ! : |│\n\nNEOVIM\nWhat do ; and , repeat?",
+    "animation_prompt": "ANIMATION\nOnly the first two visible landmarks change; the third colon remains.\n\n    │| : : : |│  →  │| ! ! : |│",
+    "animation_answer": "Select two homologous landmarks while leaving the third unchanged.",
+    "neovim_prompt": "NEOVIM\nWhich repeat grammar visits the two selected colons?\n\n    │| : : : |│",
+    "neovim_answer": "f: finds the first; ; repeats forward to the second; , reverses to the prior find.",
+    "choices": [
+      "ANIMATION: First two colons brighten; third remains. | NEOVIM: one f: plus ; and , revisits the intended landmarks.",
+      "ANIMATION: All three colons brighten. | NEOVIM: ; repeats the replacement automatically for every match.",
+      "ANIMATION: Only the middle colon changes. | NEOVIM: , reverses the whole row before r!.",
+      "ANIMATION: The delimiters shift right. | NEOVIM: i! inserts beside each find."
+    ],
+    "compact_choices": [
+      "A: first two only · V: f find, ; forward, , back",
+      "A: all three · V: repeat edits all",
+      "A: middle only · V: comma reverses row",
+      "A: delimiters shift · V: insert beside"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: find-repeat navigation revisits landmarks; r! still performs each one-cell edit.",
+      "; does not edit by itself, and the third colon is intentionally untouched.",
+      "The first and second matches are selected; comma reverses search direction, not the row.",
+      "The target preserves row width, so insertion is not used."
+    ]
+  },
+  "M12.04.P01": {
+    "prompt": "ANIMATION\nThe lower response is added as a third complete frame, with its two lower accents staggered.\n\n    │\\..!..|..:../│\n    │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │\n    │\\..!..|..!../│\n    │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │\n                    │\\..!..|..!../│\n                    │ \\.!..|..!./ │\n                    │  \\_o_|_o_/  │\n\nNEOVIM\nWhich result and scope are correct?",
+    "compact_prompt": "ANIMATION\nA complete third three-row frame is appended; lower joints respond in sequence.\n\n    │ \\.:..|..:./ │  →  │ \\.!..|..!./ │\n\nNEOVIM\nWhich operation preserves the shell?",
+    "animation_prompt": "ANIMATION\nThe third frame contains the complete shell and a one-frame lower-joint delay.\n\n    │ \\.!..|..!./ │\n    │  \\_o_|_o_/  │",
+    "animation_answer": "Append a complete frame and change the lower homologous joints in a staggered sequence.",
+    "neovim_prompt": "NEOVIM\nWhich path copies and revisits the two lower joints?\n\n    │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │",
+    "neovim_answer": "4G3yyGp copies the two-upper-joint extreme; 8G0f:;r!,r! uses ; forward and , backward.",
+    "choices": [
+      "ANIMATION: Append a complete third frame and stagger its lower joints. | NEOVIM: copy three lines, then use ; to reach second and , to return.",
+      "ANIMATION: Shift the existing shell and edit both joints simultaneously. | NEOVIM: insert/delete is acceptable despite width drift.",
+      "ANIMATION: Append only the lower row. | NEOVIM: o opens one row and the shell is inferred.",
+      "ANIMATION: Reverse the stable shell. | NEOVIM: 4G3ddGp copies and reverses the source."
+    ],
+    "compact_choices": [
+      "A: full third frame; lower stagger · V: copy + ; then ,",
+      "A: shell shifts; simultaneous · V: drift accepted",
+      "A: lower row only · V: open row/infer shell",
+      "A: shell reversed · V: delete/put reverse"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the whole three-row frame is copied and the lower response is deliberately staggered.",
+      "Shifting or insertion breaks the stable shell and axis.",
+      "A one-row fragment is not a registered mechanism frame.",
+      "The shell is preserved; mirroring is not a byte-reversal operation."
+    ]
+  },
+  "M12.05.P01": {
+    "prompt": "ANIMATION\nThe release row's two base o cells become O; all earlier frames remain unchanged.\n\n    │  \\_o_|_o_/  │  →  │  \\_O_|_O_/  │\n\nNEOVIM\nWhich comparison uses one accepted method and stays registered?",
+    "compact_prompt": "ANIMATION\nOnly the copied release row's two bases brighten.\n\n    │  \\_o_|_o_/  │  →  │  \\_O_|_O_/  │\n\nNEOVIM\nCompare repeated search with row-scoped substitute.",
+    "animation_prompt": "ANIMATION\nTwo base cells change on the appended row; its axis and shell remain.\n\n    │  \\_o_|_o_/  │  →  │  \\_O_|_O_/  │",
+    "animation_answer": "Use exactly one accepted bounded method to brighten both base cells without affecting prior frames.",
+    "neovim_prompt": "NEOVIM\nWhat tradeoff is real?\n\n    │  \\_o_|_o_/  │",
+    "neovim_answer": "Repeated search is cursor-landmark driven; row-scoped substitution is range-driven but reaches the same two cells.",
+    "choices": [
+      "ANIMATION: Only the two copied-row bases change. | NEOVIM: choose repeated search or row-scoped substitution; both stay within that row.",
+      "ANIMATION: All frames' bases change. | NEOVIM: whole-file substitution is equivalent because every base is homologous.",
+      "ANIMATION: The axis changes with the bases. | NEOVIM: navigation alone edits the row without replacement.",
+      "ANIMATION: Both methods must be performed to prove mastery. | NEOVIM: running both is required by the compare card."
+    ],
+    "compact_choices": [
+      "A: two copied bases only · V: choose one bounded method",
+      "A: all frames · V: whole-file equivalent",
+      "A: axis changes · V: navigation edits",
+      "A: both methods required · V: execute both"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: both methods can be bounded to the copied row, but only one should be executed.",
+      "Whole-file scope changes earlier frames and risks registration.",
+      "Navigation does not replace o with O; an edit is still required.",
+      "The compare card explicitly asks the learner to choose one method."
+    ]
+  },
+  "M12.06.P01": {
+    "prompt": "ANIMATION\nUnfamiliar mirrored shells need both + joints changed to *.\n\n    │/..+..|..+..\\│   │/..*..|..*..\\│\n    │ /.+..|..+.\\ │   │ /.+..|..+.\\ │\n    │  /_x_|_x_\\  │   │  /_x_|_x_\\  │\n\nNEOVIM\nWhich bounded path reaches TARGET exactly?",
+    "compact_prompt": "ANIMATION\nBoth paired + landmarks become *; shell stays.\n\n    │/..+..|..+..\\│   │/..*..|..*..\\│\n\nNEOVIM\nWhich path transfers till directions?",
+    "animation_prompt": "ANIMATION\nOnly the paired + landmarks change in unfamiliar art.\n\n    │/..+..|..+..\\│  →  │/..*..|..*..\\│",
+    "animation_answer": "Transfer forward and backward till motions to the two visible joints; preserve all other art.",
+    "neovim_prompt": "NEOVIM\nWhich path matches TARGET?\n\n    │/..+..|..+..\\│\n    │ /.+..|..+.\\ │",
+    "neovim_answer": "0t+lr*$T+hr* replaces the left + from before it and the right + from after it.",
+    "choices": [
+      "ANIMATION: Change both paired joints and retain the unfamiliar shell. | NEOVIM: 0t+lr*$T+hr* reaches TARGET exactly.",
+      "ANIMATION: Change only the left joint. | NEOVIM: navigation alone is equivalent because final art is not graded.",
+      "ANIMATION: Reverse the shell's bytes. | NEOVIM: T+ mirrors the whole row before r*.",
+      "ANIMATION: Shift both joints toward the axis. | NEOVIM: i* inserts new landmarks beside +."
+    ],
+    "compact_choices": [
+      "A: both unfamiliar joints · V: forward/backward till path",
+      "A: left only · V: navigation without edit",
+      "A: shell reversed · V: T mirrors row",
+      "A: joints shift · V: insert beside"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the exact path edits both landmarks from opposite directions.",
+      "TARGET visibly contains two changed joints; navigation alone cannot make that art.",
+      "Backward till is navigation, not a mirror operation.",
+      "Insertion would leave the + cells and shift the shell."
+    ]
+  },
+  "M12.08.P01": {
+    "prompt": "ANIMATION\nThe mastery return copies a complete pose, then exchanges its left accent for the right mirror.\n\n    │\\..!..|..:../│\n    │ \\.:..|..:./ │\n    │  \\_o_|_o_/  │\n    │             │  →  │\\..:..|..!../│\n\nNEOVIM\nWhich choice preserves the complete return and finishes the grammar?",
+    "compact_prompt": "ANIMATION\nA complete copied pose exits with the accent on the opposite side.\n\n    │\\..!..|..:../│  →  │\\..:..|..!../│\n\nNEOVIM\nWhat executes the addressed copy?",
+    "animation_prompt": "ANIMATION\nThe return frame keeps its three-row shell and moves the acting accent from left to right.\n\n    │\\..!..|..:../│  →  │\\..:..|..!../│",
+    "animation_answer": "Copy the complete first pose, clear its left accent, and place one mirrored right accent.",
+    "neovim_prompt": "NEOVIM\nWhich grammar completes the return?\n\n    │\\..!..|..:../│\n    │ \\.:..|..:./ │",
+    "neovim_answer": "The addressed Ex copy requires <CR>; then t/T landmark edits exchange the accents in place.",
+    "choices": [
+      "ANIMATION: Preserve the full copied pose and exchange one accent to the opposite side. | NEOVIM: execute the copy with <CR>, then clear left and set right.",
+      "ANIMATION: Keep left ! and add a second right !. | NEOVIM: omit <CR> and insert the new mark beside the old one.",
+      "ANIMATION: Reverse the centre axis and shell. | NEOVIM: :1,3t$ is a byte-reversal command.",
+      "ANIMATION: Copy only the accent row. | NEOVIM: 1t$ copies one cell and completes the return."
+    ],
+    "compact_choices": [
+      "A: full pose; one accent exchange · V: CR then clear/set",
+      "A: duplicate accent · V: omit CR and insert",
+      "A: shell/axis reverse · V: copy means reversal",
+      "A: accent row only · V: one-cell copy"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the return remains a complete frame and contains one mirrored acting accent.",
+      "Leaving left ! creates simultaneous accents rather than an exchange.",
+      "The shell and axis are stable; t$ is copy range syntax, not reversal.",
+      "The complete three-row pose must be copied before its accent is edited."
+    ]
+  }
+}

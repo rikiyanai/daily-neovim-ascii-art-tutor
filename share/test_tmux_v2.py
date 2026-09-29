@@ -160,6 +160,10 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         run("tmux", "-L", inner_socket, "-f", "/dev/null", "new-session", "-d",
             "-s", inner_session, "-x", str(COLUMNS), "-y", str(ROWS),
             "/bin/zsh", "-f")
+        # Start from the user's common `mouse on` preference. The popup must
+        # temporarily release drag gestures to native terminal selection, then
+        # restore this exact preference when it closes.
+        tmux(inner_socket, "set-option", "-g", "mouse", "on")
         for key, value in lesson_env.items():
             tmux(inner_socket, "set-environment", "-g", key, value)
         tmux(inner_socket, "set-hook", "-g", "client-attached",
@@ -195,8 +199,8 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
                  capture_output=True).stdout.strip()
             for option in ("mouse", "set-clipboard")
         ])
-        if "mouse on" not in tmux_options or "set-clipboard on" not in tmux_options:
-            raise AssertionError("popup did not enable mouse/clipboard integration: " + tmux_options)
+        if "mouse off" not in tmux_options or "set-clipboard on" not in tmux_options:
+            raise AssertionError("popup did not release drag selection to the terminal: " + tmux_options)
         copy_bindings = tmux(
             inner_socket, "list-keys", "-T", "copy-mode-vi",
             capture_output=True).stdout
@@ -204,7 +208,7 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             if binding not in copy_bindings or "copy-pipe-and-cancel pbcopy" not in copy_bindings:
                 raise AssertionError("popup copy mode is not wired to macOS clipboard:\n" + copy_bindings)
         required = [
-            "vim drill · drag copies · Cmd-V pastes · :wq submits",
+            "vim drill · drag selects · Cmd-C copies · Cmd-V pastes",
             "NEOVIM × ASCII ANIMATION",
             "M0.01",
             "DO THIS",
@@ -464,8 +468,28 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         question_screen = capture_outer(outer_socket, outer_pane)
         question_flat = " ".join(question_screen.split())
         if not all(text in question_flat for text in (
-                "ANIMATION", "NEOVIM", "a)", "b)", "c)", "d)")):
+                "ANIMATION", "NEOVIM", "BEFORE", "AFTER",
+                "│", "a)", "b)", "c)", "d)")):
             raise AssertionError("guided after-question is incomplete:\n" + question_screen)
+        # Keyboard copy is a second route when drag-selection is inconvenient.
+        # It must copy the displayed art question without submitting an answer.
+        clipboard_before = subprocess.run(
+            ["pbpaste"], text=True, capture_output=True, check=True).stdout
+        try:
+            tmux(outer_socket, "send-keys", "-t", outer_pane, "c", "Enter")
+            copied_screen = capture_until(
+                outer_socket, outer_pane,
+                ["copied the complete question and choices"])
+            if "copied the complete question and choices" not in " ".join(copied_screen.split()):
+                raise AssertionError("question copy control did not remain on the question:\n" + copied_screen)
+            copied_page = subprocess.run(
+                ["pbpaste"], text=True, capture_output=True, check=True).stdout
+            for copied_text in ("ANIMATION", "NEOVIM", "BEFORE", "AFTER", "a)", "d)"):
+                if copied_text not in copied_page:
+                    raise AssertionError(
+                        "question clipboard omitted %r:\n%s" % (copied_text, copied_page))
+        finally:
+            subprocess.run(["pbcopy"], input=clipboard_before, text=True, check=True)
         tmux(outer_socket, "send-keys", "-t", outer_pane,
              "abcd"[M0_FIRST_QUESTION["correct_choice"]], "Enter")
         if not (state / "vim-daily" / "last-prompt").exists():
@@ -598,6 +622,12 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         closed_screen = capture_outer(outer_socket, outer_pane)
         if "PROGRESS AWARDED" in closed_screen:
             raise AssertionError("explicit close left the popup visible:\n" + closed_screen)
+        restored_mouse = tmux(
+            inner_socket, "show-options", "-gv", "mouse",
+            capture_output=True).stdout.strip()
+        if restored_mouse != "on":
+            raise AssertionError(
+                "popup did not restore the user's tmux mouse preference: " + restored_mouse)
 
         events = [
             json.loads(line)

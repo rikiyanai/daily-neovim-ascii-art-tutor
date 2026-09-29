@@ -258,6 +258,22 @@ def validate_curriculum(cur):
                     and card.get("required_before_mastery")]
         if module.get("required_review_card_ids") != expected:
             raise ValueError("module %s has stale required review ids" % module["id"])
+
+    def contains_ascii_visual(value):
+        if "│" in value:
+            return True
+        for block in value.split("\n\n"):
+            rows = []
+            for line in block.splitlines():
+                punctuation = sum(not char.isalnum() and not char.isspace()
+                                  for char in line)
+                non_ascii = sum(ord(char) > 127 for char in line)
+                if punctuation >= 2 or non_ascii >= 2:
+                    rows.append(line)
+            if len(rows) >= 2:
+                return True
+        return False
+
     for q in cur["questions"]:
         form = q.get("form")
         if form != "multiple_choice":
@@ -278,6 +294,9 @@ def validate_curriculum(cur):
             raise ValueError("question %s has no source reference" % q["id"])
         if "ANIMATION\n" not in q.get("prompt", "") or "NEOVIM\n" not in q.get("prompt", ""):
             raise ValueError("question %s does not display both paired prompts" % q["id"])
+        if (not contains_ascii_visual(q.get("prompt", ""))
+                or not contains_ascii_visual(q.get("compact_prompt", ""))):
+            raise ValueError("question %s does not print art in both layouts" % q["id"])
         if form == "multiple_choice":
             paired_fields = ("animation_prompt", "animation_answer", "neovim_prompt", "neovim_answer")
             if any(not q.get(field) for field in paired_fields):
@@ -289,17 +308,14 @@ def validate_curriculum(cur):
                     or any("A:" not in choice or "V:" not in choice
                            for choice in q.get("compact_choices", []))):
                 raise ValueError("question %s has an invalid compact paired choice" % q["id"])
-            if "ANIMATION:" not in q.get("compact_prompt", "") or "NEOVIM:" not in q.get("compact_prompt", ""):
+            if ("ANIMATION" not in q.get("compact_prompt", "")
+                    or "NEOVIM" not in q.get("compact_prompt", "")):
                 raise ValueError("question %s has an invalid compact paired prompt" % q["id"])
             if any("Not yet" in message or "one or both halves" in message.lower()
                    for message in q["feedback"]):
                 raise ValueError("question %s has generic wrong-answer feedback" % q["id"])
-            animation_halves = [choice.split(" | NEOVIM: ", 1)[0] for choice in q["choices"]]
-            neovim_halves = [choice.split(" | NEOVIM: ", 1)[1] for choice in q["choices"]]
-            if sorted(animation_halves.count(value) for value in set(animation_halves)) != [2, 2]:
-                raise ValueError("question %s leaks its answer by animation-half frequency" % q["id"])
-            if sorted(neovim_halves.count(value) for value in set(neovim_halves)) != [2, 2]:
-                raise ValueError("question %s leaks its answer by Neovim-half frequency" % q["id"])
+            if len(set(q["choices"])) != 4:
+                raise ValueError("question %s repeats an answer choice" % q["id"])
     question_signatures = [
         (" ".join(q["prompt"].split()).casefold(),
          tuple(" ".join(choice.split()).casefold() for choice in q.get("choices", [])))
@@ -587,6 +603,12 @@ def _compact_question_text(value, width=64):
     """Wrap compact prompts deliberately instead of letting the terminal do it."""
     paragraphs = []
     for paragraph in str(value).split("\n\n"):
+        # ASCII evidence is layout, not prose. Joining these rows destroys the
+        # before/after comparison precisely on the small popup that needs the
+        # compact prompt.
+        if "│" in paragraph:
+            paragraphs.append(paragraph.rstrip())
+            continue
         line = " ".join(part.strip() for part in paragraph.splitlines() if part.strip())
         if line:
             paragraphs.append(textwrap.fill(line, width=width))
@@ -594,16 +616,31 @@ def _compact_question_text(value, width=64):
 
 
 def _compact_choice_text(value, width=62):
-    """Keep both animation and Vim halves visible on one compact row."""
+    """Keep both halves readable as two labeled compact rows."""
     value = " ".join(str(value).split())
     for marker in (" · V: ", " | NEOVIM: "):
         if marker in value:
             animation, neovim = value.split(marker, 1)
-            left = textwrap.shorten(animation, width=28, placeholder="…")
-            right = textwrap.shorten(neovim, width=width - len(left) - 5,
-                                     placeholder="…")
-            return "%s · V: %s" % (left, right)
+            animation = animation.removeprefix("ANIMATION: ").removeprefix("A: ")
+            neovim = neovim.removeprefix("NEOVIM: ").removeprefix("V: ")
+            return "ANIM: %s\n     VIM: %s" % (
+                textwrap.shorten(animation, width=width - 6, placeholder="…"),
+                textwrap.shorten(neovim, width=width - 5, placeholder="…"),
+            )
     return textwrap.shorten(value, width=width, placeholder="…")
+
+
+def _copy_text_to_clipboard(value):
+    """Copy a question page without relying on tmux mouse-selection state."""
+    if not shutil.which("pbcopy"):
+        return False
+    try:
+        return subprocess.run(
+            ["pbcopy"], input=value, text=True, check=False,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        ).returncode == 0
+    except OSError:
+        return False
 
 
 def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=None):
@@ -620,11 +657,21 @@ def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=Non
         random.shuffle(order)
     compact = (__import__("sys").stdout.isatty()
                and shutil.get_terminal_size((80, 24)).lines < 38)
+    if __import__("sys").stdout.isatty():
+        # Neovim has just exited on paired after-questions. Without a fresh
+        # page its final grid remains behind the short question text and makes
+        # choices appear interleaved with unrelated terminal content.
+        print("\033[2J\033[H", end="")
     prompt = q.get("compact_prompt", q["prompt"]) if compact else q["prompt"]
-    displayed_choices = q.get("compact_choices", q["choices"]) if compact else q["choices"]
+    displayed_choices = q["choices"]
     if compact:
         prompt = _compact_question_text(prompt)
-        displayed_choices = [_compact_choice_text(choice) for choice in displayed_choices]
+    if __import__("sys").stdout.isatty():
+        columns = shutil.get_terminal_size((80, 24)).columns
+        displayed_choices = [
+            _compact_choice_text(choice, width=max(42, min(78, columns - 8)))
+            for choice in displayed_choices
+        ]
     if evidence is not None:
         evidence.update({
             "question_prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
@@ -634,17 +681,31 @@ def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=Non
     print("\n%s" % prompt)
     for shown, original in enumerate(order):
         print("  %s) %s" % (letters[shown], displayed_choices[original]))
+    clipboard_page = "%s\n%s" % (
+        prompt,
+        "\n".join("%s) %s" % (letters[shown], displayed_choices[original])
+                  for shown, original in enumerate(order)),
+    )
     if rendered:
         rendered(q, order)
     while True:
         try:
-            answer = input_fn("  answer (a-%s): " % letters[-1]).strip().lower()
+            answer = input_fn(
+                "  answer (a-%s) · c copies this question: " % letters[-1]
+            ).strip().lower()
         except (EOFError, KeyboardInterrupt):
             print()
             return None, None
+        if answer == "c":
+            if _copy_text_to_clipboard(clipboard_page):
+                print("  copied the complete question and choices to the macOS clipboard")
+            else:
+                print("  clipboard copy is unavailable; this did not count as an attempt")
+            continue
         if answer in letters and len(answer) == 1:
             break
-        print("  answer with %s; this did not count as an attempt" % ", ".join(letters))
+        print("  answer with %s, or c to copy; this did not count as an attempt" %
+              ", ".join(letters))
     chosen = order[letters.index(answer)]
     if evidence is not None:
         evidence.update({"raw_answer": answer, "semantic_choice": chosen})
@@ -1273,7 +1334,7 @@ def _write_session_lesson(cfg, cur, progress, card):
             header.extend("  " + _clip(line, 64) for line in paradigm.splitlines() if line.strip())
         header.extend([
             "BASIC HELP  o new line below · O above · Space waits for WhichKey · clean mode F1",
-            "COPY / PASTE  mouse-drag copies popup text · Cmd-V pastes",
+            "COPY / PASTE  drag selects · Cmd-C copies · Cmd-V pastes",
             "READING THE RECIPE  <C-k>.M middle-dot digraph · <Esc> Escape",
             "SUBMIT / STUCK  :wq submits · :q! exits without submission",
         ])
@@ -1345,7 +1406,7 @@ def _write_session_lesson(cfg, cur, progress, card):
         "  :wq submits. :q! exits without submission. Retry restores this card's checkpoint.",
         "  The task brief is read-only. <C-w>w switches between the brief and art.",
         "  o opens a new line below; O opens one above.",
-        "  Mouse-drag copies popup text to the macOS clipboard; Cmd-V pastes.",
+        "  Drag selects popup text; Cmd-C copies it and Cmd-V pastes.",
         "  Personal config keeps Hardtime and WhichKey (press Space and wait); clean mode uses F1.",
     ])
     _write_lines_atomic(lesson, header)

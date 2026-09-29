@@ -1,9 +1,11 @@
 # practice your neovim and ascii art skills 
 
-Short vim drills that interrupt you once an hour, in a tmux popup, and make you
-actually type the keys. The drills are across three tiers, each one opening with
-a paradigm-level explanation of *why* the mechanic exists rather than a list of
-keystrokes to memorise.
+Short Neovim and ASCII-animation lessons that interrupt you every 15 minutes, in a
+tmux popup, and make you actually use the keys. The default curriculum is an
+nineteen-module skill tree: each module advances one persistent text-art strip,
+mixes performed edits with conceptual retrieval, and ends in an unfamiliar
+transfer plus a module check. The original 46 exact-recipe drills remain
+available as the legacy practice set.
 
 The ascii art itself is inspired by Standard combo's lecture on ascii art authoring. 
 Note: this is for begginers, once I am good enough and feel like it, I'll probably add harder exercises, 
@@ -25,6 +27,21 @@ And it keeps a streak.
 ```
 1/12 today  ·  streak 4 days 🔥  ·  best 4  ·  7 drills all time
 ```
+
+The streak is now secondary to evidence-backed progress:
+
+```
+○ M0  Spark loop                 0/8  available  [A0/V0]
+· M1  Line run                   0/8  locked     [A1/V1]
+· M2  Shape edit                0/8  locked     [A1/V2]
+next: M0.01 Read and make the first intentional change
+```
+
+Each module follows the Stone Story authoring order where it applies: establish
+the primary pose and extremes, make the middle in-between, test playback, then
+polish timing and holds. Later cards teach a second Neovim method for the same
+editing intention—such as counted yank/put versus `:t`, or repeated `r` versus a
+visual block—and ask when the scaled method is actually safer.
 
 ## Why the drills are ASCII art
 
@@ -79,20 +96,58 @@ copy the previous frame, then change only the cells that move.
 
 ## What is in it
 
-- **42 drills**, median **6 keystrokes**, longest 14. 36 of them estimate under
-  45 seconds. They fire hourly, so a drill you dread is a drill you skip.
-- **24 vimtutor lesson nodes** covered, from `1.1 MOVING THE CURSOR` through
-  registers, marks and ranges.
-- **44 art excerpts** in `share/art.json`, extracted byte-exact from the tutorial
-  plates: ten walk-cycle frames, seven pyramid frames, the four style renderings,
-  the line-run and anti-aliasing plates, the dithered sphere, and the particle
-  and hand layers from the Sacrificial Pit scene.
+- **152 project cards** across nineteen prerequisite-gated modules: 114 executable
+  Neovim edits and 38 conceptual retrieval cards/checks.
+- **38 executable compare paths** across nineteen method-contrast cards and **38
+  changed-art transfer variants** across nineteen transfer cards; every path is
+  replayed through Neovim by the v2 suite.
+- **190 module-specific paired conceptual items** spanning visual reading,
+  command/output prediction, diagnosis, method comparison, transfer reasoning,
+  and coherence checks. Every item requires both an animation/authoring reading
+  and a Neovim edit-scope or command decision. Choices are shuffled and carry
+  answer-specific feedback. Module checks prefer unseen stems, and a wrong
+  response does not unlock the next node.
+- Persistent `strip.txt`, changed-art `transfer-*.txt` variants with a separate
+  transfer manifest, post-attempt `compare.txt`, versioned project manifests,
+  before/after/failed checkpoints, an
+  append-only event ledger, and spaced review intervals at 4h, 1d, 3d, 7d,
+  and 14d. Each due review pairs a conceptual question with a key-hidden Neovim
+  edit on changed art; both must pass.
+- A legacy-parity teaching brief for every v2 edit: current module/XP/level/
+  streak, explicit `DO THIS`, motion intent, authoring principle, observable failure, honest
+  lesson benefit, source, notation, and recovery help. Every edit reveals its
+  target. Guided cards also reveal the recipe; independent, transfer,
+  comparison, review, and module-check cards show an action hint while keeping
+  the exact command sequence hidden until evaluation.
+- A held debrief followed by a separate progress page. The debrief replays the
+  artifact and actual keys, conceptual choice, five module-check outcomes, or
+  both halves of a spaced review as appropriate. Successful module checks play
+  the verified strip automatically and retain a playback receipt. Failed
+  question/transfer/check routes name the next changed remediation. The progress page owns the complete
+  nineteen-node dependency tree, current eight-card map, level/XP, badges,
+  daily/streak totals, new unlocks, and next lesson.
+- A visible skill tree, bounded XP (once per unique card/review stage), and
+  evidence-backed badges for first progress, transfer, tween, playable strip,
+  and capstone completion. Replaying a solved card cannot farm XP.
+- **46 legacy drills**, median **6 keystrokes**, longest 14, retained as a
+  regression-tested command practice set.
+- The original **46-drill legacy track** still exposes the broader vimtutor
+  checklist. V2 reports only runtime-enforced method evidence as verified
+  coverage; commands that occur only in a displayed recipe are not counted.
+- **49 art excerpts** in `share/art.json`: 44 extracted byte-exact from the
+  tutorial plates (ten walk-cycle frames, seven pyramid frames, the four style
+  renderings, the line-run and anti-aliasing plates, the dithered sphere, and
+  the particle and hand layers from the Sacrificial Pit scene), plus 5 from
+  user downloads via `share/intake_art.py` (ant, centipede, cheer, candle,
+  cicada). Those five legacy downloads now carry explicit author/license/
+  permission/status fields; their redistribution status remains `unverified`,
+  so they are not represented as rights-cleared assets.
 
 ## Install
 
 ```sh
-git clone https://github.com/rikiyanai/vim-daily ~/Projects/vim-daily
-~/Projects/vim-daily/install.sh
+git clone https://github.com/rikiyanai/daily-neovim-ascii-art-tutor ~/Projects/daily-neovim-ascii-art-tutor
+~/Projects/daily-neovim-ascii-art-tutor/install.sh
 ```
 
 Then append `shell/zshrc-snippet.zsh` to `~/.zshrc` and `tmux/tmux-snippet.conf`
@@ -101,23 +156,48 @@ to `~/.tmux.conf`. Requires nvim (or vim) and python3; no third-party packages.
 Everything is symlinked, so editing a drill in the repo changes the installed
 system immediately.
 
+The installer also runs `vim-daily-setup-check`, a read-only inspection of
+`${XDG_CONFIG_HOME:-~/.config}/nvim`. It reports whether Hardtime, WhichKey,
+lualine, a color theme, and relative line numbers are detectable. Missing
+items produce a copyable Lazy.nvim example and official links; the installer
+never edits the Neovim config or installs plugins on the learner's behalf.
+
 ## Use
 
 ```
 vim-drill                    run a drill now
-vim-drill --drill hold-frames  run a specific one
-vim-drill --list             all 16 drills, tier, and how many times you passed
-vim-drill --status           streak, cadence, per-skill mastery, last 14 days
+vim-drill --card M0.01       run a module's first unfinished card (choose an open branch)
+vim-drill --list             all 152 project cards and completion marks
+vim-drill --tree             module/node progress and the next action
+vim-drill --status           the tree plus reviews, streak, and totals
+vim-drill --project M0       print M0's persistent strip
+vim-drill --preview M0 0.2   preview at 0.2 seconds per frame
+vim-drill --drill hold-frame run a specific legacy drill
+vim-drill --legacy-list      all 46 legacy drills
+vim-drill --legacy-status    legacy coverage and per-concept counts
 vim-drill --concepts         the seven paradigm chapters, standalone
+vim-drill --quiz grammar     multiple-choice + key-order questions (also: modes)
 vim-drill --streak           one line
-vim-drill --export-progress  JSON
+vim-drill --export-progress  rebuildable v2 tree/review progress as JSON
 ```
+
+V2 state lives under `~/.local/state/vim-daily/`: `events-v2.jsonl` is the
+append-only authority, `progress-v2.json` is a rebuildable projection, and each
+project has its own directory under `projects/`. The old `progress.json` and
+dated completion logs are preserved. V2 passes also write the dated ledger so
+the existing streak and daily cap continue to work.
+
+Edit cards save a brief under `sessions/<project>/<card>.txt` and open it in a
+read-only split above the project in Neovim. Guided targets and recipes stay
+visible; evidence-bearing cards explicitly hide them until the attempt is
+graded. The active lower buffer and every motion/write address only the
+art-only `strip.txt`.
 
 ## The three triggers
 
 1. `.zshrc` — a new interactive shell or tmux pane.
 2. tmux `client-attached` hook — a popup when you attach.
-3. launchd `StartInterval 3600` — the actual clock.
+3. launchd `StartInterval 900` — the actual clock (every 15 minutes).
 
 1 and 2 are event-driven and can both stay silent all day on one long-lived
 session, which is why 3 exists. All three defer to the gate, which owns the
@@ -127,16 +207,110 @@ cooldown and the daily cap, so they are cheap to fire.
 
 ```sh
 VIM_DAILY_TARGET=12       drills per day
-VIM_DAILY_COOLDOWN=3600   seconds between prompts
+VIM_DAILY_COOLDOWN=900    seconds between prompts
 VIM_DAILY_MAX_TRIES=3     attempts before it lets you through
 VIM_DAILY_SKIP=1          bypass for one shell
-VIM_DAILY_CURRICULUM      path to an alternate curriculum.json
+VIM_DAILY_CURRICULUM      path to an alternate legacy curriculum.json
+VIM_DAILY_CURRICULUM_V2   path to an alternate curriculum-v2.json
+VIM_DAILY_CLEAN=1           opt into isolated Neovim with fallback tutor UI
+VIM_DAILY_USE_USER_CONFIG=0 same isolated fallback route
 ```
+
+Lesson buffers use your own Neovim configuration by default. That preserves
+your theme, lualine, relative numbers, Hardtime, WhichKey, mappings, and other
+normal editor behavior. The tutor disables visible whitespace/indent guides in
+its two windows, suppresses automatic indentation only in the art buffer, and
+restores line 1 after split-preserving UI changes. It does not replace your
+statusline, close plugin windows, or install an alternate key coach. Automated
+popup readiness is signaled only after lazy.nvim's `User VeryLazy` event and a
+short redraw delay.
+
+`VIM_DAILY_CLEAN=1` (or `VIM_DAILY_USE_USER_CONFIG=0`) is the explicit isolated
+fallback. Only that route supplies the tutor-owned statusline, F1 cheat sheet,
+and repeated-h/j/k/l coach.
 
 Twice a day instead of hourly: `VIM_DAILY_TARGET=2 VIM_DAILY_COOLDOWN=10800`,
 and `launchctl unload ~/Library/LaunchAgents/com.vim-daily.hourly.plist`.
 
-## Writing your own drills
+## Curriculum sources and writing lessons
+
+`share/gen_curriculum_v2.py` owns stable module, card, question, project, and
+review metadata; it generates `share/curriculum-v2.json`. The course follows
+Neovim tutor command coverage but uses original ASCII-animation exercises. It
+does not copy VimHero lesson prose or reconstruct complete third-party Stone
+Story plates. The detailed evidence, rights boundary, progression contract, and
+card catalog are in `share/CURRICULUM_V2_SPEC.md` and
+`share/CURRICULUM_V2_CARD_CATALOG.md`.
+
+The [legacy curriculum disposition](share/LEGACY_CURRICULUM_DISPOSITION.md)
+maps all 46 stable v1 drill IDs to an explicit `adapted`, `partial`, or
+`retained-only` status. It is intentionally separate from the broader v2
+module map so a nearby card cannot be mistaken for command parity.
+
+The optional M10 branch turns the aggregate evidence in
+`share/sjis_corpus_findings.v1.json`: 435 proportional Shift_JIS combinations,
+mirrors, stacks, outline/tone strata, and whitespace exceptions measured by
+the glyph viewer into a five-pose puff tween: lobe, arch, hatched impact,
+impact hold, and settle. Neovim checks exact transcription; it does **not** claim that
+a terminal cell view proves proportional alignment. Shape judgment remains a
+Saitamaar 16 px true-advance operation.
+
+Run the complete v2 gate after changes:
+
+```sh
+share/gen_curriculum_v2.py
+share/test_v2.py
+share/test_v2.py --real
+share/test_tmux_v2.py --show-capture
+VIM_DAILY_TEST_COLUMNS=100 VIM_DAILY_TEST_ROWS=36 share/test_tmux_v2.py
+VIM_DAILY_TEST_COLUMNS=80 VIM_DAILY_TEST_ROWS=24 share/test_tmux_v2.py
+share/test_tmux_v2_routes.py
+VIM_DAILY_TEST_COLUMNS=100 VIM_DAILY_TEST_ROWS=36 share/test_tmux_v2_routes.py
+VIM_DAILY_TEST_COLUMNS=80 VIM_DAILY_TEST_ROWS=24 share/test_tmux_v2_routes.py
+```
+
+The v2 suite validates the 19-module prerequisite graph, 152 stable cards, 190
+complete questions, the complete 46-ID disposition table, one representative
+legacy-to-v2 surface-job comparison, persistent start→target continuity,
+review state, every one of the 114 primary edit
+recipes, and both executable paths on all nineteen comparison cards in clean and real-config
+Neovim, plus both changed-art variants on all nineteen transfer cards. It also
+checks all 114 edit briefs for required teaching sections and answer
+leakage. Unequal frame heights block
+`--preview` with a repair message instead of rendering a misleading animation.
+The tmux test attaches a real client so the installed `client-attached` hook
+runs its normal `--due-quiet` → `display-popup` → `--if-due` route at 188×49.
+It captures the popup itself, scrolls the read-only brief to prove its lower
+legacy-parity sections are visible, verifies the held failed artifact/key
+replay, advances to the unchanged skill tree, retries, verifies the held
+successful replay, then advances to the updated tree, module count, XP/badges,
+daily/streak totals, next lesson, and explicit Enter-to-close hold. A direct
+`--force` launch or recipe replay is not accepted as automatic-popup proof.
+`test_tmux_v2_routes.py` repeats the installed client-attached popup boundary
+for conceptual, independent, compare-method, five-question module-check,
+spaced-review, and every module-transfer route. It also drives a deterministic
+non-identity answer shuffle. Both headed suites prove the page remains visible
+before Enter and disappears afterward. They run at 188×49, 100×36, and 80×24;
+the smallest viewport uses a reflowed brief, evidence replay, and two-line tree.
+Revision `.21` keeps the learner's own Neovim chrome by default: lualine owns
+the live mode, WhichKey and Hardtime remain active, and only clean fallback mode
+adds the tutor statusline/F1 UI. Retrieval cards show TARGET plus an action
+hint while hiding only the exact keys, and results retain the two-column
+keystroke ledger. Revision
+`.18` added M14-M18 for S5 palette
+variants, S7 texture construction, A0 planning, A3 coherent anchors, and A6
+hand-mirrored reverse reuse. At revision `.21`, all 114 primary recipes pass in
+clean and real-config Neovim, and the automatic
+failure/retry/debrief/progress popup passes at 188×49, 100×36, and 80×24. The
+full conceptual/remediation/edit/check/review/M0-M18 transfer route matrix has
+not been rerun at `.21`; it remains an open verification item.
+
+Recipes that need the extended middle-dot glyph teach Neovim's portable
+digraph: type `<C-k>.M` where the recipe shows it. For example,
+`r<C-k>.M` replaces the current cell with `·`; directly entering `·` is also a
+valid path when it produces the exact target.
+
+## Writing legacy drills
 
 Three data files, none of which the runner is hard-coded against:
 
@@ -151,7 +325,9 @@ text is copied; only the sequence is followed, and coverage is measurable.
 
 Three rules, all enforced by `test_drills.py`:
 
-- **SOURCED** — every drill names its art provenance and its vimtutor node. The
+- **SOURCED** — every drill names its art provenance and its vimtutor node, and
+  every art-library entry records origin, author, license, permission, and an
+  explicit redistribution status. The
   first version of this curriculum invented all sixteen shapes (`x_x_x_`,
   `+---+`, `.:*:.`, `[###]`), and two used glyphs outside the alphabet, one of
   them `#`, which is the transparency character, used as ink.
@@ -160,8 +336,33 @@ Three rules, all enforced by `test_drills.py`:
   target. Targets are *derived* from the art by the operation being taught,
   never retyped, because a retyped target is one no recipe can reach.
 
-Re-derive the art library with `share/extract_art.py /path/to/ascii-tutorial-page`.
-The plates themselves are not redistributed here.
+Downloaded art goes through `share/intake_art.py`, which splits a text file
+into blank-line-delimited blocks, reports glyph violations and signature rows,
+and appends a chosen block to `share/art.json`:
+
+```sh
+share/intake_art.py ~/Downloads/ant.txt
+VIM_DAILY_ART_JSON=/path/to/private-art.json \
+share/intake_art.py ~/Downloads/ant.txt --key cheer --block 5 --drop-last 1 \
+  --source "user download ~/Downloads/ant.txt (2026-09-21)" \
+  --author "unknown; source carried a tre signature" --license unknown \
+  --permission "not documented" --redistribution private-only
+```
+
+Rights metadata is mandatory. `--redistribution` must be `cleared`,
+`private-only`, or `unverified`; the tool records the status and never converts
+an unknown download into an implied permission. Seed a private library by
+copying `share/art.json` to the path supplied in `VIM_DAILY_ART_JSON`.
+Non-cleared art is refused when the destination is the repository library.
+`--strip-prefix TAG` removes a signature tag sitting after the art's indent;
+`--drop-last N` drops trailing signature rows. Blocks that fail the glyph
+alphabet (digits, `*`, stray prose) are refused — excerpt or skip them. Then
+add drills in `gen_curriculum.py` and run the gate suite below.
+
+Re-derive the plate library with `share/extract_art.py /path/to/ascii-tutorial-page`.
+Re-extraction replaces only derived plate keys and preserves separately ingested
+entries. The source page files themselves are not redistributed here; the short
+practice excerpts in `art.json` retain explicit, currently unverified rights metadata.
 
 Edit `share/gen_curriculum.py`, not the JSON — the art is full of backslashes,
 quotes and non-ASCII glyphs, and hand-escaping that into JSON is the bug class
@@ -173,7 +374,7 @@ share/gen_curriculum.py && share/test_drills.py --real
 
 `test_drills.py` drives every drill through a real nvim, types exactly the
 documented recipe, asserts the buffer reaches the target, and then checks the
-glyph alphabet, the provenance fields and the length gates. 42/42 pass under
+glyph alphabet, the provenance fields and the length gates. 46/46 pass under
 both a clean config and a full one.
 
 It earns its keep. On the run that expanded the set to 42 it caught nine
@@ -198,9 +399,9 @@ public repository. Back it up somewhere private if you care about the streak.
 
 The drill material is drawn from the ASCII-art tutorial page for **Stone Story
 RPG** by Gabriel Santos, Martian Rex, Inc. — `stonestoryrpg.com/ascii_tutorial.html`.
-Excerpts are at most six rows and are used here as practice material; the art is
-the author's, not mine. The tutorial plates themselves are not redistributed in
-this repo. The authoring method those excerpts illustrate is summarised, with
+Short excerpts are used here as practice material; the art is the author's, not
+mine, and its redistribution permission remains explicitly unverified. The full
+source page/plate files are not redistributed in this repo. The authoring method those excerpts illustrate is summarised, with
 per-rule citations, in the `ascii-art-authoring` skill.
 
 ## Licence

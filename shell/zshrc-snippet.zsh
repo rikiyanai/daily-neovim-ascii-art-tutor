@@ -10,10 +10,10 @@
 #
 # Frequency is the script's job, not this block's:
 #   VIM_DAILY_TARGET=12       drills per day (default 12, was 2 until 2026-09-18)
-#   VIM_DAILY_COOLDOWN=3600   seconds between prompts (default hourly, was 3h)
+#   VIM_DAILY_COOLDOWN=900    seconds between prompts (default 15 min since 2026-09-28; was hourly)
 #   VIM_DAILY_SKIP=1          bypass for one shell
 # Trigger 2 is a tmux popup on client-attached; see ~/.tmux/scripts/vim-drill-popup.sh.
-# Trigger 3 is launchd every 3600s; see ~/.tmux/scripts/vim-drill-hourly.sh and
+# Trigger 3 is launchd every 900s; see ~/.tmux/scripts/vim-drill-hourly.sh and
 # ~/Library/LaunchAgents/com.vim-daily.hourly.plist. Triggers 1 and 2 are
 # event-driven and can stay silent all day on a long-lived session; 3 is the clock.
 # On demand: `vim-drill`, `vim-drill --list`, `vim-daily-gate --drill 4`, or Prefix+V.

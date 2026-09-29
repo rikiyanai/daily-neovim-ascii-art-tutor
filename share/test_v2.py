@@ -95,17 +95,17 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["buys"] == drill["buys"]
     assert payload["paradigm"] == concept["paradigm"]
 
-assert len(cur["modules"]) == 19
-assert len(cur["cards"]) == 176
-assert len(cur["questions"]) == 328
-assert len({card["title"] for card in cur["cards"]}) == 176
-assert len({card["prompt"] for card in cur["cards"]}) == 176
+assert len(cur["modules"]) == 20
+assert len(cur["cards"]) == 187
+assert len(cur["questions"]) == 347
+assert len({card["title"] for card in cur["cards"]}) == 187
+assert len({card["prompt"] for card in cur["cards"]}) == 187
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
 mc_questions = [question for question in cur["questions"]
                 if question["form"] == "multiple_choice"]
 assert {question["form"] for question in cur["questions"]} == {"multiple_choice"}
-assert len(mc_questions) == len(cur["questions"]) == 328
+assert len(mc_questions) == len(cur["questions"]) == 347
 assert not any(
     phrase in question["prompt"]
     for question in cur["questions"]
@@ -123,10 +123,10 @@ assert all(qid in question_by_id
 # animation scope on that exact card.
 why_questions = [question for question in cur["questions"]
                  if question.get("learning_form") == "why"]
-assert len(why_questions) == 19
-assert len({question["prompt"] for question in why_questions}) == 19
+assert len(why_questions) == 20
+assert len({question["prompt"] for question in why_questions}) == 20
 assert len({json.dumps(question["source_answer_contract"], sort_keys=True)
-            for question in why_questions}) == 19
+            for question in why_questions}) == 20
 for question in why_questions:
     right, missing = v2._term_group_result(
         question["source_answer_contract"]["sample_answer"],
@@ -208,28 +208,46 @@ assert all("ANIMATION\n" in q["prompt"] and "NEOVIM\n" in q["prompt"]
            and all("ANIMATION:" in choice and "NEOVIM:" in choice
                    for choice in q["choices"])
            for q in mc_questions)
-assert all("ANIMATION:" in q["compact_prompt"] and "NEOVIM:" in q["compact_prompt"]
+assert all("ANIMATION" in q["compact_prompt"] and "NEOVIM" in q["compact_prompt"]
            and len(q["compact_choices"]) == len(q["choices"])
            and all("A:" in choice and "V:" in choice for choice in q["compact_choices"])
            for q in mc_questions)
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == len(mc_questions) == 328
-assert sum("│" in q["animation_prompt"] for q in mc_questions) >= 55
+            for q in mc_questions}) == len(mc_questions) == 347
+def contains_ascii_visual(value):
+    if "│" in value:
+        return True
+    for block in value.split("\n\n"):
+        art_rows = []
+        for line in block.splitlines():
+            punctuation = sum(not char.isalnum() and not char.isspace()
+                              for char in line)
+            non_ascii = sum(ord(char) > 127 for char in line)
+            if punctuation >= 2 or non_ascii >= 2:
+                art_rows.append(line)
+        if len(art_rows) >= 2:
+            return True
+    return False
+
+
+assert all(contains_ascii_visual(q["prompt"])
+           and contains_ascii_visual(q["compact_prompt"])
+           for q in mc_questions), [
+               q["id"] for q in mc_questions
+               if not contains_ascii_visual(q["prompt"])
+               or not contains_ascii_visual(q["compact_prompt"])
+           ]
+compact_m004 = v2._compact_question_text(question_by_id["M0.04.P01"]["compact_prompt"])
+assert "BEFORE" in compact_m004 and compact_m004.count("\n") >= 6
+assert "│       │   │  \\|/  │" in compact_m004
 assert all("Not yet" not in feedback and "one or both halves" not in feedback.lower()
            for q in mc_questions for feedback in q["feedback"])
-for question in [q for q in mc_questions if q.get("learning_form")]:
-    card = card_by_id[question["card_id"]]
-    module = next(module for module in cur["modules"]
-                  if module["id"] == question["module_id"])
-    assert any(card["title"] in choice for choice in question["choices"])
-    assert any(module["defect"] in choice for choice in question["choices"])
-for q in mc_questions:
-    animation_halves = [choice.split(" | NEOVIM: ", 1)[0] for choice in q["choices"]]
-    neovim_halves = [choice.split(" | NEOVIM: ", 1)[1] for choice in q["choices"]]
-    assert sorted(animation_halves.count(value) for value in set(animation_halves)) == [2, 2]
-    assert sorted(neovim_halves.count(value) for value in set(neovim_halves)) == [2, 2]
+assert all(q.get("authorship") == "manual" for q in mc_questions), [
+    q["id"] for q in mc_questions if q.get("authorship") != "manual"
+]
+assert all(len(set(q["choices"])) == 4 for q in mc_questions)
 nodes = [module["node"] for module in cur["modules"]]
 assert len(nodes) == len(set(nodes)) and "A3/V4" in nodes
 assert all(card.get("animation", {}).get("pivot") == "column 4"
@@ -257,6 +275,8 @@ assert card_by_id["M0.P0"]["question_ids"] == ["M0.P0.P01"]
 primer_question = question_by_id["M0.P0.P01"]
 assert primer_question["form"] == "multiple_choice"
 assert "5j" in primer_question["prompt"]
+assert "START" in primer_question["prompt"] and "RESULT" in primer_question["prompt"]
+assert "│" in primer_question["prompt"]
 assert not any(token in primer_question["prompt"] for token in ("3daw", "rO", ":8s/"))
 assert any("4j" in line and "down four" in line
            for line in card_by_id["M0.P0"]["teaching_lines"])
@@ -336,7 +356,7 @@ assert {row["grammar_family"] for row in command_reviews} >= {
 assert all(card_by_id[row["review_card_id"]].get("show_recipe") is False
            for row in command_reviews)
 required_reviews = cur["required_mastery_review_coverage"]
-assert len(required_reviews) == len(cur["modules"]) == 19
+assert len(required_reviews) == len(cur["modules"]) == 20
 assert {row["source_card_id"] for row in required_reviews} == {
     "%s.06" % module["id"] for module in cur["modules"]}
 assert all(row["changed_art_variants"] >= 2 and row["keys_hidden"] is True
@@ -475,7 +495,26 @@ with contextlib.redirect_stdout(decode_output):
     right, answer = v2.ask_authored_question(
         decode_question, input_fn=lambda _prompt: next(decode_answers), shuffle=False)
 assert right and answer == decode_question["correct_choice"]
-assert "answer with a, b, c, d; this did not count as an attempt" in decode_output.getvalue()
+assert "answer with a, b, c, d, or c to copy; this did not count as an attempt" in decode_output.getvalue()
+
+# `c` copies the complete rendered question and all four choices, then keeps
+# the same question active without recording an attempt.
+copied_pages = []
+original_copy = v2._copy_text_to_clipboard
+v2._copy_text_to_clipboard = lambda value: copied_pages.append(value) or True
+try:
+    copy_answers = iter(["c", "abcd"[decode_question["correct_choice"]]])
+    copy_output = io.StringIO()
+    with contextlib.redirect_stdout(copy_output):
+        right, answer = v2.ask_authored_question(
+            decode_question, input_fn=lambda _prompt: next(copy_answers), shuffle=False)
+finally:
+    v2._copy_text_to_clipboard = original_copy
+assert right and answer == decode_question["correct_choice"]
+assert len(copied_pages) == 1
+assert decode_question["compact_prompt"] not in copied_pages[0]
+assert all(choice in copied_pages[0] for choice in decode_question["choices"])
+assert "copied the complete question" in copy_output.getvalue()
 
 # Held correction pages identify the selected and correct choices; they do not
 # revert to a free-text "one working answer" contract.
@@ -685,8 +724,8 @@ for card in cur["cards"]:
     for line in card.get("start", []) + card.get("target", []):
         assert not (set(line) - allowed), (card["id"], set(line) - allowed)
 
-# A fresh projection exposes only M0. Mastering it opens both foundation
-# branches instead of pretending the curriculum is one long linear list.
+# A fresh projection exposes only M0. The authored prerequisite chain then
+# opens the next still-authoring module, not a later animation branch.
 p = v2.project(cur, [])
 assert p["modules"]["M0"]["state"] == "available"
 assert p["modules"]["M1"]["state"] == "locked"
@@ -715,10 +754,11 @@ events.append({
 p = v2.project(cur, events)
 assert p["modules"]["M0"]["state"] == "mastered"
 assert p["modules"]["M0"]["reviews_done"] == 1
-assert p["modules"]["M1"]["state"] == "available"
-assert p["modules"]["M2"]["state"] == "available"
+assert p["modules"]["M11"]["state"] == "available"
+assert p["modules"]["M1"]["state"] == "locked"
+assert p["modules"]["M2"]["state"] == "locked"
 assert p["modules"]["M3"]["state"] == "locked"
-assert v2.next_card(cur, p)["id"] == "M1.01"
+assert v2.next_card(cur, p)["id"] == "M11.01"
 assert p["xp"] == (len(events) - 1) * 10 + 3 and "first-module" in p["badges"]
 almost = v2.project(cur, events[:-2])
 assert almost["modules"]["M0"]["state"] == "check_ready"
@@ -746,13 +786,12 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "already complete" in output.getvalue()
     for event in events:
         v2.append_event(cfg, event)
-    # M0 mastery opens two real choices. M2.01 is valid even though iteration
-    # order would otherwise select M1.01 as the automatic next card.
-    assert v2.run(cfg, ["--card", "M2.01"]) == 0
+    # M0 mastery opens the next still-authoring module in the explicit chain.
+    assert v2.run(cfg, ["--card", "M11.01"]) == 0
     output = io.StringIO()
     with contextlib.redirect_stdout(output):
-        assert v2.run(cfg, ["--card", "M2.03"]) == 1
-    assert "complete M2.01 first" in output.getvalue()
+        assert v2.run(cfg, ["--card", "M11.03"]) == 1
+    assert "complete M11.01 first" in output.getvalue()
 
 # Duplicate passes and duplicate review stages do not farm XP.
 assert v2.project(cur, events + [dict(events[0])])["xp"] == p["xp"]

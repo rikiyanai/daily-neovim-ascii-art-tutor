@@ -15,8 +15,20 @@ retyped by hand. Retyping is how you get a target that no recipe can reach.
 import json, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ART = json.load(open(os.path.join(HERE, "art.json"), encoding="utf-8"))["art"]
+ART_PATH = os.environ.get("VIM_DAILY_ART_JSON", os.path.join(HERE, "art.json"))
+ART_DOCUMENT = json.load(open(ART_PATH, encoding="utf-8"))
+ART = ART_DOCUMENT["art"]
 CONCEPTS = json.load(open(os.path.join(HERE, "concepts.json"), encoding="utf-8"))
+
+if ART_DOCUMENT.get("schema") not in ("vim-daily/art@1", "vim-daily/art@2"):
+    raise SystemExit("unsupported art.json schema")
+for _key, _entry in ART.items():
+    if not _entry.get("rows") or not _entry.get("source"):
+        raise SystemExit("art %s needs rows and source provenance" % _key)
+    missing = [field for field in ("origin", "author", "license", "permission", "redistribution")
+               if not _entry.get(field)]
+    if missing:
+        raise SystemExit("art %s missing rights metadata: %s" % (_key, ", ".join(missing)))
 
 def a(key):
     return list(ART[key]["rows"])
@@ -555,6 +567,43 @@ d("macro-frames", "cap every frame", "replay a macro over a frame set", "repeat"
    "If a macro goes wrong, u undoes the whole replay one step at a time."],
   "One recorded edit, applied to every frame in the set.")
 
+# ===================== user downloads (intake_art.py, 2026-09-21) ==========
+
+d("ant-drop", "drop the leg row", "delete whole lines", "lines-and-blocks", 1, "vim-01 2.6",
+  a("ant"), drop(a("ant"), 2),
+  [("2j", "move down to the leg row"), ("dd", "delete that line"),
+   (":wq", "save and quit")],
+  "2jdd" + SAVE, src("ant"),
+  ["dd   delete a line      3dd  delete three lines      D  delete to end of line"],
+  "Frames are lines. Dropping one is one command.")
+
+d("centipede-hold", "hold the segments", "yank and put a line", "lines-and-blocks", 1, "vim-01 6.4",
+  a("centipede"), dup(a("centipede"), 0),
+  [("yy", "yank this line"), ("p", "put a copy of it below"),
+   (":wq", "save and quit")],
+  "yyp" + SAVE, src("centipede"),
+  ["yy p   the cheapest duplicate there is",
+   "3yy    yank three lines      \"ayy   yank into register a"],
+  "A hold in animation is a repeated frame, and two keystrokes here.")
+
+d("cheer-eyes", "wake the cheer", "the replace command", "motion-precision", 1, "vim-01 3.2",
+  a("cheer"), sub(a("cheer"), 1, " -(o)-"),
+  [("j", "move down to the body row"), ("2l", "move onto the hollow"),
+   ("ro", "replace it with an eye"), (":wq", "save and quit")],
+  "j2lro" + SAVE, src("cheer"),
+  ["r<char>  replace one character, staying in normal mode"],
+  "One glyph, one key, no mode change.")
+
+d("candle-join", "one wax row", "join two lines", "lines-and-blocks", 1, "vim-01 extras",
+  a("candle"), [a("candle")[0] + " " + a("candle")[1].lstrip()] + a("candle")[2:],
+  [("J", "join the next line onto this one, with a space between"),
+   (":wq", "save and quit")],
+  "J" + SAVE, src("candle"),
+  ["J   join the line below, inserting a space",
+   "gJ  join without inserting anything",
+   "3J  join three lines"],
+  "Two rows become one row without retyping either.")
+
 # -------------------------------------------------------------------------
 doc = {
   "schema": "vim-daily/curriculum@3",
@@ -568,14 +617,16 @@ doc = {
     "drill_shape": "concept -> skill -> source -> recipe -> challenge -> mastery counter, "
                    "the structure used by Vim Hero and vim-adventures lesson trees.",
     "art": "share/art.json, extracted byte-exact from the Stone Story RPG ASCII tutorial "
-           "plates by share/extract_art.py. Every drill's `source` field names the plate "
+           "plates by share/extract_art.py, plus user downloads via share/intake_art.py. "
+           "Every drill's `source` field names the plate, the download file, "
            "or the numbered rule in the ascii-art-authoring skill that it comes from.",
   },
   "tiers": {"1": {"unlock_at": 0}, "2": {"unlock_at": 8}, "3": {"unlock_at": 16}},
   "concepts": CONCEPTS,
   "drills": D,
 }
-out = os.path.join(HERE, "curriculum.json")
-json.dump(doc, open(out, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
-open(out, "a", encoding="utf-8").write("\n")
+out = os.environ.get("VIM_DAILY_CURRICULUM_OUT", os.path.join(HERE, "curriculum.json"))
+with open(out, "w", encoding="utf-8") as handle:
+    json.dump(doc, handle, indent=1, ensure_ascii=False)
+    handle.write("\n")
 print("wrote %s: %d drills" % (out, len(D)))

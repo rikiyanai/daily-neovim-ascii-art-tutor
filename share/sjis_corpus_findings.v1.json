@@ -1,0 +1,63 @@
+{
+ "schema": "vim-daily/sjis-corpus-findings@1",
+ "source_repository": "unicode-glyph-morphology-explorer",
+ "source_commit": "661b220",
+ "source_dataset": "assets/glyphs/corpus/aahub_aa003_train.sjis_combos.v1.json",
+ "source_dataset_schema": "sjis_corpus_combos.v1",
+ "source_dataset_sha256": "61b0537df3a37cd08904f9be09bd0d48a5e78e6a7a57ff2fbd412590289f8258",
+ "archive_commit": "3687cc564d3f542a3aaaea98b351713b360599f4",
+ "partition": "train",
+ "held_out_slugs_excluded": 57,
+ "input_set_sha256": "ac65fe3f2f583778dbb70ab1dfb6b480997f63b2c9fd13188bfccfdf20e46f7d",
+ "manifest_sha256": "15bb0213f9e69f2df716dcc9787d702792532d2ab1929d1296cbb8d0c1f7bd58",
+ "font": {
+  "name": "Saitamaar-Regular.ttf",
+  "px": 16,
+  "line_pitch_px": 17,
+  "sha256": "8f8c9b6ebe65f12456c3fa42ccddc4ec4795aad8b7f0a12f00d9f09f31a35890"
+ },
+ "coverage": {
+  "slugs": 114,
+  "pages": 23363,
+  "lines": 457065,
+  "viewable_combinations": 435,
+  "page_tags": {
+   "outline": 6542,
+   "tone": 5728,
+   "mixed": 11093
+  }
+ },
+ "idioms": {
+  "⌒ヽ": {"count": 6788, "pages": 3904, "slugs": 112, "mirror": "ノ⌒"},
+  "／￣": {"count": 7222, "pages": 3967, "slugs": 112, "mirror": "￣＼"},
+  "＼＿": {"count": 7165, "pages": 3787, "slugs": 112, "mirror": "＿／"},
+  "_ノ": {"count": 6474, "pages": 4216, "slugs": 113, "mirror": "ヽ_"},
+  "｀ヽ": {"count": 14348, "pages": 6578, "slugs": 113, "mirror": "ノ´"},
+  "ゝ__ノ": {"count": 39, "pages": 27, "slugs": 10, "mirror": "ヽ__ゝ", "mirror_exact": false},
+  "／￣＼": {"count": 676, "pages": 498, "slugs": 95, "mirror": "／￣＼"},
+  "＼＿／": {"count": 540, "pages": 406, "slugs": 87, "mirror": "＼＿／"},
+  "彡": {"count": 14752, "pages": 5095, "slugs": 112, "mirror": "彡"},
+  "从": {"count": 5619, "pages": 2350, "slugs": 108, "mirror": "从"}
+ },
+ "whitespace_exceptions": {
+  "adjacent_half_space_pairs": 147,
+  "lines_starting_with_half_space": 78,
+  "interpretation": "The no-double/no-leading-half-space rule is a strong convention, not a zero-exception law."
+ },
+ "vertical_stacks": {
+  "l_over_bar_0px": 9476,
+  "i_over_bar_0px": 7847,
+  "overscore_over_underscore_0px": 5949
+ },
+ "hatching_glyphs": {
+  "ﾆ": 140161,
+  "二": 103110,
+  "ニ": 91715
+ },
+ "interpretation": [
+  "Judge proportional combinations in their Saitamaar raster metrics, not by terminal cell alignment.",
+  "Separate outline combinations and tone bands before ranking visual vocabulary; raw pair counts are dominated by tone.",
+  "Treat ﾆ, 二, and ニ as possible hatching shapes in context rather than assuming they are prose.",
+  "Treat ゝ__ノ as a rare idiom, not a general corpus-wide default."
+ ]
+}

@@ -1,0 +1,596 @@
+{
+  "M0.P0.P01": {
+    "prompt": "ANIMATION\nThe cursor begins on the figure's head. You only want to inspect the ground row; no glyph should change.\n\n    START       RESULT\n  1 │  @  │     │  @  │\n  2 │ /|\\ │     │ /|\\ │\n  3 │ / \\ │     │ / \\ │\n  4 │.....│     │.....│\n\nNEOVIM\nYou already used 4j to move down four rows. What does 5j mean?",
+    "compact_prompt": "ANIMATION\nMove the cursor; do not edit the figure.\n\n    START       RESULT\n  1 │  @  │     │  @  │\n  2 │ /|\\ │     │ /|\\ │\n  3 │ / \\ │     │ / \\ │\n  4 │.....│     │.....│\n\nNEOVIM\nWhat does 5j mean?",
+    "animation_prompt": "The art is identical before and after because this is cursor movement only.\n\n    START       RESULT\n  1 │  @  │     │  @  │\n  2 │ /|\\ │     │ /|\\ │\n  3 │ / \\ │     │ / \\ │\n  4 │.....│     │.....│",
+    "animation_answer": "Move through the art without changing any cell.",
+    "neovim_prompt": "Read 5j as count plus motion.",
+    "neovim_answer": "5 is the count; j is move down one row; together they move down five rows.",
+    "choices": [
+      "ANIMATION: Five crossed cells are erased. | NEOVIM: 5 is a line address and j deletes that line.",
+      "ANIMATION: The art stays unchanged while the cursor moves. | NEOVIM: 5 is a count and j is the down-one-row motion, so 5j moves down five rows.",
+      "ANIMATION: The whole figure moves down five rows. | NEOVIM: 5j inserts five blank lines below the cursor.",
+      "ANIMATION: Only the fifth row is replaced. | NEOVIM: j is an editing operator that uses 5 as its target row."
+    ],
+    "compact_choices": [
+      "A: erase five cells · V: address and delete",
+      "A: art unchanged · V: count 5 + down motion j",
+      "A: move figure · V: insert five lines",
+      "A: replace row 5 · V: j is an operator"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "j is movement, not deletion; no buffer cell changes.",
+      "Correct. Vim reads this left to right as count 5 plus motion j.",
+      "The cursor moves; the figure and its rows do not move.",
+      "j is a motion, and 5 repeats that motion rather than naming row 5."
+    ]
+  },
+  "M0.01.P01": {
+    "prompt": "ANIMATION\nCompare the registered three-row spark. Only the centre cell should change.\n\n    BEFORE      AFTER\n  1 │  \\|/  │   │  \\|/  │\n  2 │-- . --│   │-- o --│\n  3 │  /|\\  │   │  /|\\  │\n\nNEOVIM\nWhich reading explains the edit you just made?",
+    "compact_prompt": "ANIMATION\nOnly the centre cell changes.\n\n    BEFORE      AFTER\n  1 │  \\|/  │   │  \\|/  │\n  2 │-- . --│   │-- o --│\n  3 │  /|\\  │   │  /|\\  │\n\nNEOVIM\nWhich command changed one cell without shifting the rays?",
+    "animation_prompt": "The core changes from . to o while all ray columns remain fixed.\n\n    BEFORE      AFTER\n  1 │  \\|/  │   │  \\|/  │\n  2 │-- . --│   │-- o --│\n  3 │  /|\\  │   │  /|\\  │",
+    "animation_answer": "Replace only the core; preserve all surrounding cells.",
+    "neovim_prompt": "Identify the one-cell overwrite operation.",
+    "neovim_answer": "f. finds the core and ro replaces that one character without changing row width.",
+    "choices": [
+      "ANIMATION: The core changes and every ray remains registered. | NEOVIM: f. finds the dot and ro overwrites that one cell with o.",
+      "ANIMATION: The right rays move one column right. | NEOVIM: f. only moves to the dot; stopping there cannot change or shift any cell.",
+      "ANIMATION: The entire acting row disappears. | NEOVIM: j only moves down one row; it cannot delete the acting row.",
+      "ANIMATION: A second spark is added below. | NEOVIM: ro overwrites one cursor cell; it cannot create three new rows."
+    ],
+    "compact_choices": [
+      "A: core only; rays fixed · V: find dot, replace one cell",
+      "A: right rays shift · V: find motion only",
+      "A: acting row deleted · V: down motion only",
+      "A: second spark added · V: one-cell replace"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. r overwrites one cell, so fixed-width registration survives.",
+      "f. is only the landmark motion; without r and its replacement character, the buffer is unchanged.",
+      "j is movement only; it cannot remove the acting row.",
+      "ro owns one existing cell and cannot add a second multi-row frame."
+    ]
+  },
+  "M0.YP.P01": {
+    "prompt": "ANIMATION\nA frame is the complete three-row spark, not just its centre row.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │-- o --│\n  6 │       │     │  /|\\│\n\nNEOVIM\nWhat object does 3yy copy, and where does p put it?",
+    "compact_prompt": "ANIMATION\nCopy one complete three-row frame.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │-- o --│\n  6 │       │     │  /|\\│\n\nNEOVIM\nDecode 3yy then p.",
+    "animation_prompt": "AFTER contains two complete registered sparks.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │-- o --│\n  6 │       │     │  /|\\│",
+    "animation_answer": "Duplicate all three rows as one frame.",
+    "neovim_prompt": "Decode count plus linewise yank, followed by put.",
+    "neovim_answer": "3yy yanks three whole lines; p puts those lines below the cursor line.",
+    "choices": [
+      "ANIMATION: Duplicate only the middle ray row. | NEOVIM: 3yy copies three characters and p inserts them inside the line.",
+      "ANIMATION: Duplicate the complete three-row frame below the original. | NEOVIM: 3yy yanks three whole lines and p puts the linewise block below.",
+      "ANIMATION: Move the original frame instead of copying it. | NEOVIM: 3yy followed by p removes the source while placing it below.",
+      "ANIMATION: Add three empty timing rows. | NEOVIM: p ignores the yanked text and creates blank lines."
+    ],
+    "compact_choices": [
+      "A: middle row only · V: copy three characters",
+      "A: full frame below · V: yank three lines, put below",
+      "A: move original · V: yank/put removes source",
+      "A: three blank rows · V: put ignores yank"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "yy is linewise: its count is lines, not characters.",
+      "Correct. The count owns all three frame rows, and p creates the new lines.",
+      "Yank is non-destructive, so the original remains when p places the copy.",
+      "p uses the yanked linewise object; it does not invent blank rows."
+    ]
+  },
+  "M0.O.P01": {
+    "prompt": "ANIMATION\nThe second pose is missing only its lower-ray row.\n\n    BEFORE      AFTER\n  4 │  \\|/│     │  \\|/│\n  5 │-- O --│   │-- O --│\n  6 │       │     │  /|\\│\n\nNEOVIM\nWhich operation adds one row below row 5 and enters Insert mode there?",
+    "compact_prompt": "ANIMATION\nFinish only the missing lower-ray row.\n\n    BEFORE      AFTER\n  4 │  \\|/│     │  \\|/│\n  5 │-- O --│   │-- O --│\n  6 │       │     │  /|\\│\n\nNEOVIM\nWhich key opens a new line below?",
+    "animation_prompt": "Only row 6 is added; the first five rows stay untouched.\n\n    BEFORE      AFTER\n  4 │  \\|/│     │  \\|/│\n  5 │-- O --│   │-- O --│\n  6 │       │     │  /|\\│",
+    "animation_answer": "Add the one missing lower-ray row beneath the bright core.",
+    "neovim_prompt": "Choose the below-current-line open command.",
+    "neovim_answer": "o opens a new line below and enters Insert mode; Escape returns to Normal mode.",
+    "choices": [
+      "ANIMATION: Add the missing lower rays beneath the bright core. | NEOVIM: o opens a line below; type the row, then press Escape.",
+      "ANIMATION: Put the lower rays above the bright core. | NEOVIM: O opens a line above the current line.",
+      "ANIMATION: Replace the bright core with lower rays. | NEOVIM: r changes one existing cell and cannot create the missing row.",
+      "ANIMATION: Copy the entire first frame again. | NEOVIM: 3yy followed by p duplicates three existing rows."
+    ],
+    "compact_choices": [
+      "A: add lower row · V: o below, type, Escape",
+      "A: add above core · V: O above",
+      "A: overwrite core cell · V: one-cell replace",
+      "A: duplicate full frame · V: yank/put three rows"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. Lowercase o opens below; Escape ends the insertion.",
+      "Uppercase O opens above, which puts the contour on the wrong side of the core.",
+      "r edits an existing cell; it does not create the missing row.",
+      "The task needs one missing row, not another complete frame."
+    ]
+  },
+  "M0.SR.P01": {
+    "prompt": "ANIMATION\nOnly the core on row 2 changes; both contour rows remain identical.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- O --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nRead :2s/o/O/g from left to right.",
+    "compact_prompt": "ANIMATION\nChange every o on row 2 only.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- O --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nDecode :2s/o/O/g.",
+    "animation_prompt": "The addressed acting row changes while the upper and lower rays stay registered.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- O --│\n  3 │  /|\\│     │  /|\\│",
+    "animation_answer": "Brighten every matching core on only row 2.",
+    "neovim_prompt": "Decode address, substitute, pattern, replacement, and flag.",
+    "neovim_answer": "2 addresses row 2; s substitutes; o is the pattern; O is the replacement; g means every match on that row.",
+    "choices": [
+      "ANIMATION: Brighten every o anywhere in the file. | NEOVIM: 2 is a repeat count, so the substitution runs twice on every row.",
+      "ANIMATION: Brighten only the first o on row 2. | NEOVIM: g moves the cursor to the first match and stops.",
+      "ANIMATION: Brighten every o on row 2 and leave other rows alone. | NEOVIM: 2 is the row address, s substitutes o with O, and g means every match on that row.",
+      "ANIMATION: Delete row 2 and insert a new bright row. | NEOVIM: s removes the addressed line before O opens a replacement line."
+    ],
+    "compact_choices": [
+      "A: whole file · V: repeat twice",
+      "A: first match only · V: g stops",
+      "A: every o on row 2 · V: address + substitute + all matches",
+      "A: replace whole line · V: delete then open"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "A leading 2 after the colon is a line address, not a repeat count or whole-file scope.",
+      "Without g only the first match changes; g means all matches on the addressed line.",
+      "Correct. The command has an address, command, pattern, replacement, and flag.",
+      "s is substitution within the addressed line; it does not delete the line."
+    ]
+  },
+  "M0.02.P01": {
+    "prompt": "ANIMATION\nThe strip grows from one dim frame to a dim frame followed by a bright frame.\n\n    BEFORE      AFTER\n  1 │  \\|/  │   │  \\|/  │\n  2 │-- o --│   │-- o --│\n  3 │  /|\\  │   │  /|\\  │\n  4 │       │   │  \\|/  │\n  5 │       │   │-- O --│\n  6 │       │   │  /|\\  │\n\nNEOVIM\nWhich explanation matches gg3yyGp:4,6s/o/O/g?",
+    "compact_prompt": "ANIMATION\nCopy the dim frame; brighten only the copy.\n\n    BEFORE      AFTER\n  3 │  /|\\  │   │  /|\\  │\n  4 │       │   │  \\|/  │\n  5 │       │   │-- O --│\n  6 │       │   │  /|\\  │\n\nNEOVIM\nDecode the copy, then the addressed substitute.",
+    "animation_prompt": "The new pose retains the complete contour and changes only its core.\n\n    BEFORE      AFTER\n  1 │  \\|/  │   │  \\|/  │\n  2 │-- o --│   │-- o --│\n  3 │  /|\\  │   │  /|\\  │\n  4 │       │   │  \\|/  │\n  5 │       │   │-- O --│\n  6 │       │   │  /|\\  │",
+    "animation_answer": "Append a full copy, then brighten the copied core only.",
+    "neovim_prompt": "Separate the Normal-mode frame copy from the Ex range edit.",
+    "neovim_answer": "gg3yyGp copies the first three rows below; :4,6s/o/O/g limits substitution to copied rows 4–6.",
+    "choices": [
+      "ANIMATION: Append a full copy and brighten only its core. | NEOVIM: gg3yyGp copies three lines below; :4,6s/o/O/g substitutes only inside copied rows 4–6.",
+      "ANIMATION: Brighten the original and leave no second frame. | NEOVIM: gg moves to the top, but yy/p is ignored once the colon command begins.",
+      "ANIMATION: Append only the acting row. | NEOVIM: 3yy copies three characters from one line rather than three complete lines.",
+      "ANIMATION: Brighten both old and new frames. | NEOVIM: 4,6 means every line from 1 through 6."
+    ],
+    "compact_choices": [
+      "A: full copy; copied core bright · V: copy 3 lines, edit rows 4–6",
+      "A: original only · V: copy is ignored",
+      "A: acting row only · V: copy 3 characters",
+      "A: both frames bright · V: range means rows 1–6"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. The Normal command makes the frame; the Ex range confines the brightness edit to the copy.",
+      "Commands before : are executed; the copy is not discarded.",
+      "3yy is linewise and copies three complete rows.",
+      "4,6 is the inclusive range from row 4 through row 6, not rows 1 through 6."
+    ]
+  },
+  "M0.04.P01": {
+    "prompt": "ANIMATION\nThe AFTER strip must add one complete flare frame without changing either existing frame.\n\n    BEFORE      AFTER\n  6 │  /|\\  │   │  /|\\  │\n  7 │       │   │  \\|/  │\n  8 │       │   │== O ==│\n  9 │       │   │  /|\\  │\n\nNEOVIM\nWhich option copies the complete bright frame, appends it, and widens only the new middle row?",
+    "compact_prompt": "ANIMATION\nAdd one complete flare frame. Keep both earlier frames unchanged.\n\n    BEFORE      AFTER\n  6 │  /|\\  │   │  /|\\  │\n  7 │       │   │  \\|/  │\n  8 │       │   │== O ==│\n  9 │       │   │  /|\\  │\n\nNEOVIM\nWhich edit copies rows 4–6, appends them, then changes every - on new row 8 to =?",
+    "animation_prompt": "The AFTER strip appends rows 7–9 as one registered flare frame; rows 1–6 remain unchanged.\n\n    BEFORE      AFTER\n  6 │  /|\\  │   │  /|\\  │\n  7 │       │   │  \\|/  │\n  8 │       │   │== O ==│\n  9 │       │   │  /|\\  │",
+    "animation_answer": "Append the complete three-row flare while preserving rows 1–6.",
+    "neovim_prompt": "Copy rows 4–6 below the strip; then replace every - on row 8 with =.",
+    "neovim_answer": "Use a complete three-line frame copy, then an all-matches substitute scoped only to the appended middle row.",
+    "choices": [
+      "ANIMATION: Redraw the existing bright frame in place, so the strip still has only two frames. | NEOVIM: Edit the old bright row without making a frame copy.",
+      "ANIMATION: Append the complete three-row flare and leave rows 1–6 registered exactly where they were. | NEOVIM: Copy the complete bright frame, then substitute every dash only on the appended middle row.",
+      "ANIMATION: Append only the widened middle row, leaving the new pose without upper or lower rays. | NEOVIM: Open and type one row instead of copying the complete frame object.",
+      "ANIMATION: Append the complete frame, then widen the rays in every frame, including the old dim frame. | NEOVIM: Use whole-file substitution instead of limiting the edit to the appended row."
+    ],
+    "compact_choices": [
+      "A: alter old frame; no third frame · V: edit row 5 only",
+      "A: append full flare; preserve rows 1–6 · V: copy 4–6, edit row 8 only",
+      "A: append only one row; incomplete frame · V: insert one row",
+      "A: append flare but alter old frames · V: substitute through whole file"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "That edits the old bright frame. The motion needs a new three-row extreme after it.",
+      "Correct. The frame copy preserves the complete pose, and the row-scoped substitute changes only the appended frame's horizontal rays.",
+      "That creates a one-row fragment, not a registered three-row animation frame.",
+      "That copy is complete, but % scopes the substitute to the whole file and damages earlier frames."
+    ]
+  },
+  "M0.T.P01": {
+    "prompt": "ANIMATION\nThe flare is a complete three-row object and the AFTER strip contains two identical flare frames.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │== O ==│   │== O ==│\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │== O ==│\n  6 │       │     │  /|\\│\n\nNEOVIM\nWhat does :1,3t$ do?",
+    "compact_prompt": "ANIMATION\nCopy the complete flare as a hold frame.\n\n    BEFORE      AFTER\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │== O ==│\n  6 │       │     │  /|\\│\n\nNEOVIM\nDecode :1,3t$.",
+    "animation_prompt": "The complete flare is duplicated below as a deliberate hold.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │== O ==│   │== O ==│\n  3 │  /|\\│     │  /|\\│\n  4 │       │     │  \\|/│\n  5 │       │     │== O ==│\n  6 │       │     │  /|\\│",
+    "animation_answer": "Duplicate rows 1–3 after the final row.",
+    "neovim_prompt": "Decode the Ex source range, copy command, and destination.",
+    "neovim_answer": "1,3 is the source range; t copies it; $ is the destination after the last line.",
+    "choices": [
+      "ANIMATION: Copy only row 3 to the top. | NEOVIM: 1,3 is a count and $ means the first line.",
+      "ANIMATION: Move the flare so the original disappears. | NEOVIM: t removes the source range after transferring it.",
+      "ANIMATION: Duplicate rows 1–3 after the last line as a complete hold frame. | NEOVIM: 1,3 is the source range, t copies it, and $ names the last-line destination.",
+      "ANIMATION: Reverse the three flare rows. | NEOVIM: t transposes the addressed range before placing it."
+    ],
+    "compact_choices": [
+      "A: row 3 to top · V: count, first line",
+      "A: move flare · V: transfer removes source",
+      "A: copy rows 1–3 after end · V: range + copy + last-line destination",
+      "A: reverse rows · V: transpose range"
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "1,3 is an inclusive line range, and $ means the last line.",
+      "The Ex t command copies; :move is the command that relocates lines.",
+      "Correct. Source range, copy command, and destination describe one whole-frame append.",
+      "t is short for :copy; it does not reverse the source rows."
+    ]
+  },
+  "M0.05.P01": {
+    "prompt": "ANIMATION\nA second identical flare is intentional here: two consecutive flare frames create a brief hold before the settle.\n\n    BEFORE      AFTER\n  7 │  \\|/  │   │  \\|/  │\n  8 │== O ==│   │== O ==│\n  9 │  /|\\  │   │  /|\\  │\n 10 │       │   │  \\|/  │\n 11 │       │   │== O ==│\n 12 │       │   │  /|\\  │\n\nNEOVIM\nYou were asked to use ONE method. Which statement correctly compares the accepted methods?",
+    "compact_prompt": "ANIMATION\nThe duplicate flare is a timed hold, not an accidental dead frame.\n\n    BEFORE      AFTER\n  9 │  /|\\  │   │  /|\\  │\n 10 │       │   │  \\|/  │\n 11 │       │   │== O ==│\n 12 │       │   │  /|\\  │\n\nNEOVIM\nCompare counted yank/put with addressed :t. Use one, not both.",
+    "animation_prompt": "The added complete flare intentionally extends its screen time by one frame.\n\n    BEFORE      AFTER\n  7 │  \\|/  │   │  \\|/  │\n  8 │== O ==│   │== O ==│\n  9 │  /|\\  │   │  /|\\  │\n 10 │       │   │  \\|/  │\n 11 │       │   │== O ==│\n 12 │       │   │  /|\\  │",
+    "animation_answer": "Add exactly one complete duplicate flare as an intentional hold.",
+    "neovim_prompt": "Compare 7G3yyGp with :7,9t$ without performing both.",
+    "neovim_answer": "Both copy rows 7–9 after the file; yank/put is cursor-oriented, while :7,9t$ states source and destination directly.",
+    "choices": [
+      "ANIMATION: Two identical flares always indicate an error. | NEOVIM: both methods must be run so one verifies the other in the same buffer.",
+      "ANIMATION: One added flare creates a deliberate two-frame hold. | NEOVIM: either 7G3yyGp or :7,9t$ copies rows 7–9 after the file; use one method only.",
+      "ANIMATION: The hold requires three added flare copies. | NEOVIM: the count 3 means repeat the complete method three times.",
+      "ANIMATION: The original flare must be moved to the end. | NEOVIM: :7,9t$ deletes rows 7–9 after copying them."
+    ],
+    "compact_choices": [
+      "A: duplicate is always error · V: run both methods",
+      "A: one-copy hold · V: either yank/put or :t, not both",
+      "A: add three copies · V: repeat whole method three times",
+      "A: move original · V: :t deletes source"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "A duplicate is valid when it has an explicit timing role; running both methods would add two copies.",
+      "Correct. Both paths make the same one-frame hold, but the exercise asks for one path.",
+      "The count belongs to the three-row frame object, not three repetitions of the whole edit.",
+      ":t copies its source range; it does not remove the original flare."
+    ]
+  },
+  "M0.SL.P01": {
+    "prompt": "ANIMATION\nOnly the two eyes on the current middle row brighten. The shell outline must not change.\n\n    BEFORE       AFTER\n  1 │| /---\\ |│   │| /---\\ |│\n  2 │| o o   |│   │| O O   |│\n  3 │| \\---/ |│   │| \\---/ |│\n\nNEOVIM\nWhat scope does :s/o/O/g use when no line number or range appears before s?",
+    "compact_prompt": "ANIMATION\nBrighten both eyes; preserve the shell.\n\n    BEFORE       AFTER\n  1 │| /---\\ |│   │| /---\\ |│\n  2 │| o o   |│   │| O O   |│\n  3 │| \\---/ |│   │| \\---/ |│\n\nNEOVIM\nDecode :s/o/O/g on row 2.",
+    "animation_prompt": "Both matches on the current acting row change; surrounding rows stay fixed.\n\n    BEFORE       AFTER\n  1 │| /---\\ |│   │| /---\\ |│\n  2 │| o o   |│   │| O O   |│\n  3 │| \\---/ |│   │| \\---/ |│",
+    "animation_answer": "Change both eyes on only the current line.",
+    "neovim_prompt": "Explain the implicit current-line address and g flag.",
+    "neovim_answer": "With no explicit address, :s uses the current line; g replaces every o on that line.",
+    "choices": [
+      "ANIMATION: Brighten both eyes and leave the shell unchanged. | NEOVIM: :s uses the current line implicitly, and g replaces every match on that line.",
+      "ANIMATION: Brighten the first eye only. | NEOVIM: g means stop after the first match.",
+      "ANIMATION: Brighten every o in the entire file. | NEOVIM: an omitted address means all lines.",
+      "ANIMATION: Replace the complete middle row. | NEOVIM: s is a whole-line rewrite command."
+    ],
+    "compact_choices": [
+      "A: both eyes only · V: current line, every match",
+      "A: first eye only · V: g stops",
+      "A: whole file · V: omitted address means all lines",
+      "A: whole row replaced · V: s rewrites line"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. The cursor supplies the line scope; g supplies all matches within that scope.",
+      "g does the opposite: it continues through every match on the addressed line.",
+      "Whole-file scope must be written explicitly as %.",
+      "s replaces matching text, not the whole current line."
+    ]
+  },
+  "M0.06.P01": {
+    "prompt": "ANIMATION\nThe unfamiliar comet keeps its three-row silhouette. Only the core brightens and the tail widens.\n\n    BEFORE      AFTER\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │\n\nNEOVIM\nWhich account matches the edit you just performed?",
+    "compact_prompt": "ANIMATION\nBrighten the comet core and widen only its tail.\n\n    BEFORE      AFTER\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │\n\nNEOVIM\nWhich edit preserves row width and the contour?",
+    "animation_prompt": "The transfer applies the learned core-and-ray edit to different art without moving its contour.\n\n    BEFORE      AFTER\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │",
+    "animation_answer": "Change o to O and both tail dashes to equals signs on the middle row only.",
+    "neovim_prompt": "Identify a one-cell replacement followed by a current-line all-matches substitute.",
+    "neovim_answer": "rO overwrites the core; :s/-/=/g changes every tail dash on that same row.",
+    "choices": [
+      "ANIMATION: Brighten the core and widen the two-cell tail while preserving the contour. | NEOVIM: rO overwrites one core cell, then :s/-/=/g changes every dash on the current row.",
+      "ANIMATION: Insert a second core and push the tail right. | NEOVIM: iO inserts before o, increasing the fixed row width.",
+      "ANIMATION: Widen dashes in every frame of the project. | NEOVIM: :%s/-/=/g deliberately uses whole-file scope.",
+      "ANIMATION: Replace the complete comet with the earlier spark. | NEOVIM: p pastes the previous yank over this unfamiliar subject."
+    ],
+    "compact_choices": [
+      "A: core + tail only · V: r overwrite, current-line substitute",
+      "A: insert core; shift tail · V: insert mode",
+      "A: whole project widened · V: % whole-file substitute",
+      "A: replace comet with spark · V: paste old yank"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. The same bounded grammar transfers to unfamiliar art without shifting it.",
+      "Insertion changes the row width and breaks the comet's registered contour.",
+      "% is too broad; the requested tail exists on the current row only.",
+      "Transfer means applying a method to new art, not pasting the old subject."
+    ]
+  },
+  "M0.08.P01": {
+    "prompt": "ANIMATION\nThe loop needs a final dim settle frame. It must differ from the opening frame at the core so the seam reads as a transition, not an accidental duplicate.\n\n    BEFORE      AFTER\n 12 │  /|\\  │   │  /|\\  │\n 13 │       │   │  \\|/  │\n 14 │       │   │-- . --│\n 15 │       │   │  /|\\  │\n\nNEOVIM\nWhich plan copies a complete registered frame and then lowers only the settle core?",
+    "compact_prompt": "ANIMATION\nAppend a complete dim settle with a . core.\n\n    BEFORE      AFTER\n 12 │  /|\\  │   │  /|\\  │\n 13 │       │   │  \\|/  │\n 14 │       │   │-- . --│\n 15 │       │   │  /|\\  │\n\nNEOVIM\nChoose a bounded whole-frame copy plus one-cell core edit.",
+    "animation_prompt": "The appended settle retains all six rays and changes only its core to a low-energy dot.\n\n    BEFORE      AFTER\n 12 │  /|\\  │   │  /|\\  │\n 13 │       │   │  \\|/  │\n 14 │       │   │-- . --│\n 15 │       │   │  /|\\  │",
+    "animation_answer": "Append the complete dim frame, then change only its new core to a dot.",
+    "neovim_prompt": "Choose the plan whose scopes are a three-line frame followed by one character.",
+    "neovim_answer": "Copy the complete three-row source frame, then find and overwrite only the appended core cell.",
+    "choices": [
+      "ANIMATION: Append only the middle settle row. | NEOVIM: Open and type one row without copying its contour.",
+      "ANIMATION: Append the complete settle and change only its core to a dot. | NEOVIM: Copy all three source rows, then find and overwrite only the new frame's core cell.",
+      "ANIMATION: Change the opening core to a dot and add nothing. | NEOVIM: Edit the first frame in place instead of appending a settle.",
+      "ANIMATION: Append a settle but erase its lower rays. | NEOVIM: copying two lines is sufficient because blank space counts as the third contour row."
+    ],
+    "compact_choices": [
+      "A: middle row only · V: open and type one row",
+      "A: full settle; dot core · V: copy 3 rows, replace one cell",
+      "A: alter opening frame · V: edit row 2",
+      "A: missing lower rays · V: copy only 2 rows"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "A one-row fragment is not a registered animation frame.",
+      "Correct. The frame copy owns three lines; the settle edit owns one core cell.",
+      "That damages the opening pose and leaves the loop without a settle frame.",
+      "Blank space cannot stand in for the missing lower-ray row; the frame must stay complete."
+    ]
+  },
+  "M0.Q01": {
+    "prompt": "ANIMATION\nRead the visible change before choosing any keys.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- . --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nWhich edit has exactly the same one-cell scope as the animation change?",
+    "compact_prompt": "ANIMATION\nWhat changed?\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- . --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nChoose the operation with matching scope.",
+    "animation_prompt": "The core changes from . to o; every ray remains in the same column.\n\n    BEFORE      AFTER\n  1 │  \\|/│     │  \\|/│\n  2 │-- . --│   │-- o --│\n  3 │  /|\\│     │  /|\\│",
+    "animation_answer": "Only the centre cell changes.",
+    "neovim_prompt": "Match the one-cell visual scope with a one-cell overwrite.",
+    "neovim_answer": "Find the dot and use r to replace that cell without shifting the row.",
+    "choices": [
+      "ANIMATION: Only the centre cell changes. | NEOVIM: Find the dot and use r to overwrite that one cell.",
+      "ANIMATION: Both horizontal rays change along with the core. | NEOVIM: A row-2 substitute that matches dashes has broader scope than the one core cell.",
+      "ANIMATION: A second frame is added. | NEOVIM: 3yy followed by p copies three complete lines.",
+      "ANIMATION: A new lower-ray row is added. | NEOVIM: o opens a new row instead of changing the existing core cell."
+    ],
+    "compact_choices": [
+      "A: centre only · V: one-cell r overwrite",
+      "A: rays and core · V: substitute ray matches",
+      "A: second frame · V: yank/put three lines",
+      "A: add lower row · V: open a new row"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. The visual delta and the Vim operation both own one cell.",
+      "That substitute owns ray matches too, but the evidence shows only the core changed.",
+      "No new rows appear in AFTER, so a frame-copy operation is too large.",
+      "No row is added in AFTER; opening a new row has the wrong object and scope."
+    ]
+  },
+  "M0.Q02": {
+    "prompt": "ANIMATION\nThe ray columns are registration landmarks. The core may change, but the row width may not.\n\n    SAFE         SHIFTED\n  2 │-- o --│     │-- o. --│\n\nNEOVIM\nWhy is an in-place r replacement safer here than adding another character?",
+    "compact_prompt": "ANIMATION\nKeep the ray columns fixed.\n\n    SAFE         SHIFTED\n  2 │-- o --│     │-- o. --│\n\nNEOVIM\nWhy use r for this replacement?",
+    "animation_prompt": "A fixed-width replacement preserves registration; insertion can shift the right half of the pose.\n\n    SAFE         SHIFTED\n  2 │-- o --│     │-- o. --│",
+    "animation_answer": "Preserve the row width and the ray columns.",
+    "neovim_prompt": "Compare one-cell overwrite scope with adding a new cell.",
+    "neovim_answer": "r overwrites one existing cell and returns to Normal mode; adding a character would grow the row and shift later cells.",
+    "choices": [
+      "ANIMATION: Registration depends on equal row width. | NEOVIM: r overwrites one existing cell without entering a continuing Insert session.",
+      "ANIMATION: Registration improves when later cells shift. | NEOVIM: o opens a separate row, so it cannot replace the core in the existing row.",
+      "ANIMATION: Only line count matters, not columns. | NEOVIM: 3yy and p copy whole rows, so they are a substitute for a one-cell change.",
+      "ANIMATION: The rays should be redrawn after every core change. | NEOVIM: A row-scoped substitute should change ray characters even though only the core is acting."
+    ],
+    "compact_choices": [
+      "A: equal width matters · V: r overwrites one cell",
+      "A: shifting helps · V: open a separate row",
+      "A: columns irrelevant · V: copy whole rows",
+      "A: redraw rays · V: substitute ray characters"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. One-cell overwrite matches the intended visual scope and preserves width.",
+      "Opening a row changes the frame's line structure and cannot replace the core in place.",
+      "Linewise copy is useful for complete frames, not for replacing one acting cell.",
+      "The ray cells are stable evidence; a substitute aimed at them has the wrong scope."
+    ]
+  },
+  "M0.Q03": {
+    "prompt": "ANIMATION\nThe new flare should be a full frame. Diagnose this broken result.\n\n    REQUIRED     BROKEN\n  1 │  \\|/│     │       │\n  2 │== O ==│   │== O ==│\n  3 │  /|\\│     │       │\n\nNEOVIM\nWhich repair restores the frame object without disturbing earlier frames?",
+    "compact_prompt": "ANIMATION\nThe flare has only its middle row.\n\n    REQUIRED     BROKEN\n  1 │  \\|/│     │       │\n  2 │== O ==│   │== O ==│\n  3 │  /|\\│     │       │\n\nNEOVIM\nChoose the bounded repair.",
+    "animation_prompt": "The broken result is a one-row fragment; a valid pose needs upper rays, core row, and lower rays.\n\n    REQUIRED     BROKEN\n  1 │  \\|/│     │       │\n  2 │== O ==│   │== O ==│\n  3 │  /|\\│     │       │",
+    "animation_answer": "Restore the two missing contour rows around the flare core.",
+    "neovim_prompt": "Choose a local repair rather than a project-wide redraw.",
+    "neovim_answer": "Undo the fragment and copy the complete three-row bright frame, then widen only the copied middle row.",
+    "choices": [
+      "ANIMATION: Keep the fragment; the blank contour rows imply motion blur. | NEOVIM: Submit because the centre row alone proves a flare.",
+      "ANIMATION: Restore the upper and lower ray rows around the flare core. | NEOVIM: Undo the fragment, copy the complete three-row frame, then edit only its new middle row.",
+      "ANIMATION: Delete every earlier frame so the fragment stands alone. | NEOVIM: Use a whole-file delete and retype the project.",
+      "ANIMATION: Add two copies of the middle row above and below. | NEOVIM: Yank only the core row twice even though those rows need different glyphs."
+    ],
+    "compact_choices": [
+      "A: accept fragment · V: submit it",
+      "A: restore full contour · V: undo, copy full frame, edit middle",
+      "A: delete earlier frames · V: rewrite project",
+      "A: repeat middle row · V: yank core row twice"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "Blank contour rows are missing structure here, not declared motion blur.",
+      "Correct. Repair the frame object first, then apply the one-row acting change.",
+      "Earlier frames are valid evidence and must remain registered.",
+      "The contour rows use different slash directions; duplicating the core row cannot restore them."
+    ]
+  },
+  "M0.Q04": {
+    "prompt": "ANIMATION\nPredict the result of finding the dot and pressing ro on the middle row.\n\n    START       ?\n  1 │  \\|/│    │       │\n  2 │-- . --│  │       │\n  3 │  /|\\│    │       │\n\nNEOVIM\nWhat does the command do to row width and mode?",
+    "compact_prompt": "ANIMATION\nPredict ro on the dot.\n\n    START       ?\n  1 │  \\|/│    │       │\n  2 │-- . --│  │       │\n  3 │  /|\\│    │       │\n\nNEOVIM\nChoose the exact result.",
+    "animation_prompt": "The missing result must be inferred from a one-cell overwrite.\n\n    START       ?\n  1 │  \\|/│    │       │\n  2 │-- . --│  │       │\n  3 │  /|\\│    │       │",
+    "animation_answer": "The middle row becomes -- o -- and the contour is unchanged.",
+    "neovim_prompt": "Predict r plus replacement character.",
+    "neovim_answer": "ro replaces the character under the cursor with o, keeps row width constant, and remains in Normal mode.",
+    "choices": [
+      "ANIMATION: The middle row becomes -- o --; all rays stay fixed. | NEOVIM: ro overwrites one cell with o and returns immediately to Normal mode.",
+      "ANIMATION: The middle row becomes -- o. -- and grows. | NEOVIM: r enters Insert mode and keeps both old and new characters.",
+      "ANIMATION: The middle row becomes --  -- after deletion. | NEOVIM: r removes the cursor character without replacement.",
+      "ANIMATION: Every dot in the file becomes o. | NEOVIM: r is a whole-file replacement command."
+    ],
+    "compact_choices": [
+      "A: -- o --; rays fixed · V: overwrite one cell",
+      "A: -- o. --; row grows · V: insert and retain dot",
+      "A: core deleted · V: remove character",
+      "A: all dots change · V: whole-file replace"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. r consumes one replacement character and does not begin a continuing insertion.",
+      "That describes insertion, not replacement; the dot does not remain.",
+      "r requires a replacement character and overwrites rather than deleting.",
+      "r acts at the cursor only; it has no project-wide scope."
+    ]
+  },
+  "M0.Q05": {
+    "prompt": "ANIMATION\nYou need a second complete frame, not a partial row.\n\n    SOURCE      REQUIRED COPY\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nWhich description correctly uses the linewise object you have already learned?",
+    "compact_prompt": "ANIMATION\nCopy all three frame rows.\n\n    SOURCE      COPY\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│\n\nNEOVIM\nWhich method owns the full frame?",
+    "animation_prompt": "Source and copy must contain the same three registered rows.\n\n    SOURCE      REQUIRED COPY\n  1 │  \\|/│     │  \\|/│\n  2 │-- o --│   │-- o --│\n  3 │  /|\\│     │  /|\\│",
+    "animation_answer": "Copy the complete three-row pose as one object.",
+    "neovim_prompt": "Choose counted linewise yank followed by linewise put.",
+    "neovim_answer": "3yy copies three entire lines; p creates those three lines below the cursor.",
+    "choices": [
+      "ANIMATION: Copy all three pose rows together. | NEOVIM: 3yy yanks three whole lines and p puts that block below.",
+      "ANIMATION: Copy only the core row. | NEOVIM: yy on row 2 is enough because the contour is implied.",
+      "ANIMATION: Copy three characters from the top ray row. | NEOVIM: the count before yy measures characters.",
+      "ANIMATION: Move the source pose and leave its old location blank. | NEOVIM: yy removes the source before p places it."
+    ],
+    "compact_choices": [
+      "A: all 3 rows · V: linewise 3yy then p",
+      "A: core row only · V: yy row 2",
+      "A: 3 characters · V: count measures characters",
+      "A: move source · V: yank removes it"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. The Vim object and the animation object are both three complete lines.",
+      "A core row without its contour is not a complete frame.",
+      "yy is linewise, so its count measures lines.",
+      "Yank copies non-destructively; delete would remove the source."
+    ]
+  },
+  "M0.Q06": {
+    "prompt": "ANIMATION\nTransfer the learned idea to a comet: brighten its core and widen only its two-cell tail.\n\n    BEFORE      TARGET\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │\n\nNEOVIM\nWhich plan reuses the learned grammar without assuming the spark's old coordinates?",
+    "compact_prompt": "ANIMATION\nApply the core-and-rays idea to a comet.\n\n    BEFORE      TARGET\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │\n\nNEOVIM\nChoose the local, landmark-based plan.",
+    "animation_prompt": "The subject changes, but the intended scopes remain one core cell and the tail matches on its acting row.\n\n    BEFORE      TARGET\n  1 │  /|   │   │  /|   │\n  2 │< o >--│   │< O >==│\n  3 │  \\|   │   │  \\|   │",
+    "animation_answer": "Brighten the core and widen the tail without altering the contour.",
+    "neovim_prompt": "Use visible landmarks and current-line scope rather than memorized row 8.",
+    "neovim_answer": "Find the visible o, replace it with O, then substitute every dash on that current row.",
+    "choices": [
+      "ANIMATION: Change the comet core and tail while preserving its outline. | NEOVIM: Find the visible core, overwrite it, then use a current-line all-matches substitute for the tail.",
+      "ANIMATION: Paste the earlier spark over the comet. | NEOVIM: Reusing a method means reusing the previous yank contents unchanged.",
+      "ANIMATION: Change only the first tail dash. | NEOVIM: Omit the g flag even though two matches must change.",
+      "ANIMATION: Change every dash in the project. | NEOVIM: Use % because transfer always means whole-file scope."
+    ],
+    "compact_choices": [
+      "A: comet core + tail · V: landmarks and current line",
+      "A: paste old spark · V: reuse old yank",
+      "A: first dash only · V: omit g",
+      "A: all project dashes · V: use %"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. Transfer preserves the grammar and scope, not the old subject or coordinates.",
+      "A transferred skill operates on unfamiliar art; it does not replace that art with the training example.",
+      "The target changes both tail dashes, so all matches on the row are required.",
+      "The target marks one acting row; whole-file scope would damage unrelated art."
+    ]
+  },
+  "M0.Q07": {
+    "prompt": "ANIMATION\nThe two identical flare frames are consecutive. Decide whether the duplicate has a timing purpose.\n\n    F1           F2           F3\n    │  \\|/│      │  \\|/│      │  \\|/│\n    │-- O --│    │== O ==│    │== O ==│\n    │  /|\\│      │  /|\\│      │  /|\\│\n\nNEOVIM\nWhich edit creates exactly one extra full flare frame?",
+    "compact_prompt": "ANIMATION\nF2 and F3 are an intentional two-frame hold.\n\n    F1        F2        F3\n    │-- O --│  │== O ==│  │== O ==│\n\nNEOVIM\nChoose one complete-frame copy.",
+    "animation_prompt": "F2 and F3 are identical complete poses whose declared role is a brief flare hold.\n\n    F1           F2           F3\n    │  \\|/│      │  \\|/│      │  \\|/│\n    │-- O --│    │== O ==│    │== O ==│\n    │  /|\\│      │  /|\\│      │  /|\\│",
+    "animation_answer": "Treat the duplicate as one deliberate hold frame, not accidental repetition.",
+    "neovim_prompt": "Copy one complete three-line range once.",
+    "neovim_answer": "Either a three-line yank/put or one addressed :t copy creates the single added hold.",
+    "choices": [
+      "ANIMATION: F2 and F3 make a deliberate two-frame flare hold. | NEOVIM: Copy the complete three-row F2 once with one accepted whole-frame method.",
+      "ANIMATION: Identical adjacent frames can never be valid. | NEOVIM: Delete F3 regardless of the stated timing intent.",
+      "ANIMATION: The hold comes from duplicating only the core row. | NEOVIM: Copy one line and leave its contour absent.",
+      "ANIMATION: Three more copies are needed for any hold. | NEOVIM: Repeat the whole-frame copy three times without checking timing."
+    ],
+    "compact_choices": [
+      "A: intentional one-frame hold · V: one full-frame copy",
+      "A: duplicate always invalid · V: delete F3",
+      "A: core-row hold · V: copy one line",
+      "A: add three copies · V: repeat blindly"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. Identical frames are valid when their duration is intentional and explicit.",
+      "Text equality alone cannot distinguish an accidental duplicate from a timed hold.",
+      "A frame hold repeats the complete pose, not one detached acting row.",
+      "Hold duration is an animation decision; three extra copies were not requested."
+    ]
+  },
+  "M0.Q08": {
+    "prompt": "ANIMATION\nThe right ray must remain in column 7 while the core changes.\n\n    REGISTERED   SHIFTED\n    │-- O --│     │-- O  --│\n\nNEOVIM\nWhich editing principle prevents the shifted result?",
+    "compact_prompt": "ANIMATION\nDo not move the right ray.\n\n    REGISTERED   SHIFTED\n    │-- O --│     │-- O  --│\n\nNEOVIM\nChoose the width-preserving operation.",
+    "animation_prompt": "Stable landmarks must remain in the same display columns between frames.\n\n    REGISTERED   SHIFTED\n    │-- O --│     │-- O  --│",
+    "animation_answer": "Overwrite within the existing cells instead of inserting or deleting before stable rays.",
+    "neovim_prompt": "Choose an overwrite whose scope matches one existing cell.",
+    "neovim_answer": "r replaces one cell without changing the number of cells in the row.",
+    "choices": [
+      "ANIMATION: Preserve the ray columns between frames. | NEOVIM: Use r when one existing cell must change without altering row width.",
+      "ANIMATION: Let the ray drift to suggest speed. | NEOVIM: o opens a separate row, so it cannot replace the core in the existing row.",
+      "ANIMATION: Ignore columns as long as line count matches. | NEOVIM: 3yy and p copy whole rows, so they are a substitute for a one-cell change.",
+      "ANIMATION: Redraw every stable cell on each frame. | NEOVIM: A row-scoped substitute should change ray characters even though only the core is acting."
+    ],
+    "compact_choices": [
+      "A: preserve columns · V: r overwrite",
+      "A: drift ray · V: open a separate row",
+      "A: ignore columns · V: copy whole rows",
+      "A: redraw all · V: substitute ray characters"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. Fixed-width animation depends on column registration, and r preserves it.",
+      "Unplanned landmark drift reads as jitter, not controlled speed.",
+      "Display columns are the registration system for text animation.",
+      "Stable cells should remain untouched; broader edits create unnecessary failure surface."
+    ]
+  },
+  "M0.Q09": {
+    "prompt": "ANIMATION\nPredict the exact middle row after this current-line command runs on the comet: :s/-/=/g\n\n    BEFORE      RESULT ?\n  2 │< O >--│   │       │\n\nNEOVIM\nWhich output follows from pattern -, replacement =, and flag g?",
+    "compact_prompt": "ANIMATION\nPredict the comet's middle row.\n\n    BEFORE      RESULT ?\n  2 │< O >--│   │       │\n\nNEOVIM\nRun :s/-/=/g mentally.",
+    "animation_prompt": "Only the two tail dashes match; the core and brackets do not.\n\n    BEFORE      RESULT ?\n  2 │< O >--│   │       │",
+    "animation_answer": "The result is < O >==.",
+    "neovim_prompt": "Predict current-line substitution with the all-matches flag.",
+    "neovim_answer": "Every - on the current row becomes =, producing < O >==.",
+    "choices": [
+      "ANIMATION: The row becomes < O >=-. | NEOVIM: Only the first dash changes because g stops after one match.",
+      "ANIMATION: The row becomes < O >==. | NEOVIM: g applies the - to = substitution to both matches on the current line.",
+      "ANIMATION: The row becomes < = >--. | NEOVIM: The replacement targets the core between angle brackets.",
+      "ANIMATION: The entire row becomes ==. | NEOVIM: s discards all nonmatching characters on the line."
+    ],
+    "compact_choices": [
+      "A: < O >=- · V: first match only",
+      "A: < O >== · V: every dash on current line",
+      "A: < = >-- · V: replace core",
+      "A: == · V: discard nonmatches"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "Without g only the first match changes; with g both dashes change.",
+      "Correct. Pattern matching changes the two dashes and preserves every nonmatch.",
+      "The pattern is a dash, not the O core.",
+      "Substitution preserves text that does not match the pattern."
+    ]
+  },
+  "M0.Q10": {
+    "prompt": "ANIMATION\nOnly the new flare's middle row should widen. Compare the intended scope with a whole-file substitution.\n\n    INTENDED     OVERBROAD\n  2 │-- o --│     │== o ==│\n  8 │== O ==│     │== O ==│\n\nNEOVIM\nWhich scope protects earlier frames?",
+    "compact_prompt": "ANIMATION\nRow 2 must stay -- o --; row 8 becomes == O ==.\n\n    KEEP         CHANGE\n  2 │-- o --│     │-- o --│\n  8 │-- O --│     │== O ==│\n\nNEOVIM\nChoose row scope, not whole-file scope.",
+    "animation_prompt": "The flare edit owns row 8 only; changing row 2 destroys the dim keyframe.\n\n    INTENDED     OVERBROAD\n  2 │-- o --│     │== o ==│\n  8 │== O ==│     │== O ==│",
+    "animation_answer": "Widen the new flare row and preserve the earlier dim row.",
+    "neovim_prompt": "Distinguish an explicit row address from % whole-file scope.",
+    "neovim_answer": ":8s/-/=/g changes all dashes on row 8 only; :%s/-/=/g changes matching dashes throughout the file.",
+    "choices": [
+      "ANIMATION: Widen only the new flare on row 8. | NEOVIM: :8s/-/=/g addresses row 8 and changes every dash there.",
+      "ANIMATION: Widen every frame for consistency. | NEOVIM: :%s/-/=/g intentionally addresses all lines.",
+      "ANIMATION: Widen only the first dash of row 8. | NEOVIM: Remove g so the second ray remains narrow.",
+      "ANIMATION: Delete the dim frame before widening. | NEOVIM: A line delete is required before any substitute."
+    ],
+    "compact_choices": [
+      "A: row 8 only · V: :8 address + all matches",
+      "A: every frame · V: % whole file",
+      "A: first dash only · V: omit g",
+      "A: delete dim frame · V: delete before substitute"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct. The explicit address and g flag together mean every match on row 8 only.",
+      "% would also widen earlier frames and erase their contrast with the flare.",
+      "The target shows both horizontal rays widened, so g is required within row 8.",
+      "The dim frame is part of the animation arc and must remain intact."
+    ]
+  }
+}

@@ -374,15 +374,26 @@ viewer's `sjis_combos.v1` dataset. Held-out slugs remain excluded.
 | M18.07 | Q | Diagnose an inward slash, inconsistent body offset, generated rather than authored mirror, or unexplained duplicate. |
 | M18.08 | K | Append the approved overshoot and return ranges in reverse order, preserving a declared two-frame turnaround hold. |
 
+| Card | Kind | One new decision/edit and artifact result |
+|---|---|---|
+| M19.01 | G | Approve one uncertain eye cell with `gR`, preserving both fixed-width rails of the five-row key-pose still. |
+| M19.02 | G | Copy the complete five-row still as the working opposite-facing animation extreme. |
+| M19.03 | Q | Distinguish semantic hand mirroring from relocation, byte reversal, or insertion-driven row drift. |
+| M19.04 | G | Hand-author all five copied rows with Virtual Replace, exchanging directional spacing, slashes, and the arrowhead. |
+| M19.05 | X | Compare bounded `R` and `gR` runs on the same two-cell arrow material without crossing into its arrowhead. |
+| M19.06 | T | Transfer full-row Virtual Replace mirroring to unfamiliar fixed-rail key-pose art with the exact keys hidden. |
+| M19.07 | Q | Diagnose wrong-facing glyphs, unequal rails, accidental duplicates, and software-flipped rows. |
+| M19.08 | K | Retain a complete approved still as a third candidate and vary one eye without turning the plate into premature playback. |
+
 ## Content-authoring and delivery gates
 
-1. This is exactly nineteen modules and eight numbered cards per module. Each module
+1. This is exactly twenty modules and eight numbered cards per module. Each module
    has two scheduled conceptual encounters (`.03`, `.07`), one method contrast
    (`.05`), one distinct-art transfer (`.06`), and one mixed checkpoint (`.08`).
    The other three are focused guided edits. The generator owns 190 distinct
    conceptual items across visual reading, prediction, diagnosis, comparison,
    transfer, and coherence, with four choices and mistake-specific feedback;
-   the catalog owns the 152 learner-visible lesson contracts that frame them.
+   the catalog owns the 160 learner-visible lesson contracts that frame them.
 2. Each implemented card carries machine-readable `prerequisites`, `node_ids`,
    `source_ref`, `project_id`, `strip_delta`, `start_fixture`, `target_predicate`,
    `variant_group`, `hint_policy`, `required_method_family` (if any), and a

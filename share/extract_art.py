@@ -12,6 +12,30 @@ import json, os, sys
 SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.expanduser(
     "~/Downloads/asciicker-Y9-2/articles/2026-09-07-stone-story-video-transcripts-media/"
     "o5v-NS9o4yc/ascii-tutorial-page")
+OUT = os.environ.get("VIM_DAILY_ART_OUT",
+                     os.path.join(os.path.dirname(os.path.abspath(__file__)), "art.json"))
+
+PLATE_RIGHTS = {
+    "origin": {"kind": "published_tutorial", "title": "Stone Story RPG ASCII tutorial page",
+               "url": "https://stonestoryrpg.com/ascii_tutorial.html"},
+    "author": "Gabriel Santos / Martian Rex, Inc.",
+    "license": "not recorded",
+    "permission": "public tutorial access; excerpt redistribution permission not established",
+    "redistribution": "unverified",
+}
+
+if len(sys.argv) > 1 and sys.argv[1] == "--normalize-existing":
+    document = json.load(open(OUT, encoding="utf-8"))
+    for entry in document.get("art", {}).values():
+        if str(entry.get("source", "")).startswith("Stone Story RPG ASCII tutorial page"):
+            for field, value in PLATE_RIGHTS.items():
+                entry.setdefault(field, value)
+    document["schema"] = "vim-daily/art@2"
+    with open(OUT, "w", encoding="utf-8") as handle:
+        json.dump(document, handle, indent=1, ensure_ascii=False)
+        handle.write("\n")
+    print("normalized structured rights metadata in %s" % OUT)
+    raise SystemExit(0)
 
 def lines(path):
     return [l.replace("\t", "") for l in open(os.path.join(SRC, path), encoding="utf-8").read().split("\n")]
@@ -29,7 +53,11 @@ P2, P6, P3, P4, P5, P1 = ("02-poison-adept-walk-cycle.txt", "06-animation-subtra
 PLATE = "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html)"
 art = {}
 def add(key, rows, src):
-    art[key] = {"rows": rows, "source": src}
+    art[key] = {
+        "rows": rows,
+        "source": src,
+        **PLATE_RIGHTS,
+    }
 
 # --- plate 02: Poison Adept walk cycle, 10 frames of 6 rows ---------------
 for i in range(10):
@@ -101,11 +129,23 @@ for i, h in enumerate(hands[:5]):
 for i, s in enumerate(sparks[:6]):
     add("spark%d" % (i + 1), s, PLATE + " plate 01, particle layer frame %d" % (i + 1))
 
-out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "art.json")
-json.dump({"schema": "vim-daily/art@1",
+out = OUT
+# Re-extraction owns only the plate keys generated above.  Preserve separately
+# ingested user/local entries instead of silently deleting them.
+try:
+    previous = json.load(open(out, encoding="utf-8"))
+except (OSError, ValueError):
+    previous = {"art": {}}
+preserved = {key: value for key, value in previous.get("art", {}).items()
+             if key not in art}
+merged = dict(preserved)
+merged.update(art)
+with open(out, "w", encoding="utf-8") as handle:
+    json.dump({"schema": "vim-daily/art@2",
            "attribution": "Excerpts from the Stone Story RPG ASCII tutorial page by "
                           "Gabriel Santos, Martian Rex, Inc. Used as practice material.",
-           "art": art}, open(out, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
-print("wrote %s: %d entries" % (out, len(art)))
-for k in sorted(art):
-    print("  %-14s %d rows" % (k, len(art[k]["rows"])))
+           "art": merged}, handle, indent=1, ensure_ascii=False)
+    handle.write("\n")
+print("wrote %s: %d extracted + %d preserved entries" % (out, len(art), len(preserved)))
+for k in sorted(merged):
+    print("  %-14s %d rows" % (k, len(merged[k]["rows"])))

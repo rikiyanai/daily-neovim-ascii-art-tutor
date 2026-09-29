@@ -5,7 +5,7 @@
   "concepts": "share/concepts.json. Framing follows the paradigm-first style of blog.codeminer42.com 'A Noob's Neovim Journey Pt.1' (2024-10-23).",
   "spine": "The `tutor` field on each drill names the vimtutor lesson node it covers. vimtutor ships with vim and neovim ($VIMRUNTIME/tutor/en/); its lesson SEQUENCE is used as the curriculum spine. No vimtutor text is copied.",
   "drill_shape": "concept -> skill -> source -> recipe -> challenge -> mastery counter, the structure used by Vim Hero and vim-adventures lesson trees.",
-  "art": "share/art.json, extracted byte-exact from the Stone Story RPG ASCII tutorial plates by share/extract_art.py. Every drill's `source` field names the plate or the numbered rule in the ascii-art-authoring skill that it comes from."
+  "art": "share/art.json, extracted byte-exact from the Stone Story RPG ASCII tutorial plates by share/extract_art.py, plus user downloads via share/intake_art.py. Every drill's `source` field names the plate, the download file, or the numbered rule in the ascii-art-authoring skill that it comes from."
  },
  "tiers": {
   "1": {
@@ -2074,6 +2074,186 @@
    "buys": "One recorded edit, applied to every frame in the set.",
    "labels": false,
    "seconds": 53
+  },
+  {
+   "id": "ant-drop",
+   "title": "drop the leg row",
+   "skill": "delete whole lines",
+   "concept": "lines-and-blocks",
+   "tier": 1,
+   "tutor": "vim-01 2.6",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    " '\\__",
+    "  (o )     ___",
+    "  <>(_)(_)(___)",
+    "    < < > >",
+    "    ' ' ` `"
+   ],
+   "target": [
+    " '\\__",
+    "  (o )     ___",
+    "    < < > >",
+    "    ' ' ` `"
+   ],
+   "recipe": [
+    [
+     "2j",
+     "move down to the leg row"
+    ],
+    [
+     "dd",
+     "delete that line"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "2jdd:wq<CR>",
+   "source": "user download ~/Downloads/ant.txt (2026-09-21), signature row pb dropped",
+   "keys": [
+    "dd   delete a line      3dd  delete three lines      D  delete to end of line"
+   ],
+   "buys": "Frames are lines. Dropping one is one command.",
+   "labels": false,
+   "seconds": 26
+  },
+  {
+   "id": "centipede-hold",
+   "title": "hold the segments",
+   "skill": "yank and put a line",
+   "concept": "lines-and-blocks",
+   "tier": 1,
+   "tutor": "vim-01 6.4",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "                            .    .",
+    "                             )  (",
+    "       _ _ _ _ _ _ _ _ _ _ _(.--.)",
+    "     {{ { { { { { { { { { { ( '_')",
+    "   >>>>>>>>>>>>>>>>>>>>>>>`--'>"
+   ],
+   "target": [
+    "                            .    .",
+    "                            .    .",
+    "                             )  (",
+    "       _ _ _ _ _ _ _ _ _ _ _(.--.)",
+    "     {{ { { { { { { { { { { ( '_')",
+    "   >>>>>>>>>>>>>>>>>>>>>>>`--'>"
+   ],
+   "recipe": [
+    [
+     "yy",
+     "yank this line"
+    ],
+    [
+     "p",
+     "put a copy of it below"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "yyp:wq<CR>",
+   "source": "user download ~/Downloads/centipede.txt (2026-09-21), signature tag jgs stripped",
+   "keys": [
+    "yy p   the cheapest duplicate there is",
+    "3yy    yank three lines      \"ayy   yank into register a"
+   ],
+   "buys": "A hold in animation is a repeated frame, and two keystrokes here.",
+   "labels": false,
+   "seconds": 23
+  },
+  {
+   "id": "cheer-eyes",
+   "title": "wake the cheer",
+   "skill": "the replace command",
+   "concept": "motion-precision",
+   "tier": 1,
+   "tutor": "vim-01 3.2",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    " \\(\")/",
+    " -( )-",
+    " /(_)\\"
+   ],
+   "target": [
+    " \\(\")/",
+    " -(o)-",
+    " /(_)\\"
+   ],
+   "recipe": [
+    [
+     "j",
+     "move down to the body row"
+    ],
+    [
+     "2l",
+     "move onto the hollow"
+    ],
+    [
+     "ro",
+     "replace it with an eye"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "j2lro:wq<CR>",
+   "source": "user download ~/Downloads/ant.txt (2026-09-21), signature row tre dropped",
+   "keys": [
+    "r<char>  replace one character, staying in normal mode"
+   ],
+   "buys": "One glyph, one key, no mode change.",
+   "labels": false,
+   "seconds": 29
+  },
+  {
+   "id": "candle-join",
+   "title": "one wax row",
+   "skill": "join two lines",
+   "concept": "lines-and-blocks",
+   "tier": 1,
+   "tutor": "vim-01 extras",
+   "kind": "block",
+   "cursor": "^",
+   "start": [
+    "        \\O/",
+    "       '-O-'",
+    "        /o\\",
+    "         ^"
+   ],
+   "target": [
+    "        \\O/ '-O-'",
+    "        /o\\",
+    "         ^"
+   ],
+   "recipe": [
+    [
+     "J",
+     "join the next line onto this one, with a space between"
+    ],
+    [
+     ":wq",
+     "save and quit"
+    ]
+   ],
+   "expected": "J:wq<CR>",
+   "source": "user download ~/Downloads/ant.txt (2026-09-21)",
+   "keys": [
+    "J   join the line below, inserting a space",
+    "gJ  join without inserting anything",
+    "3J  join three lines"
+   ],
+   "buys": "Two rows become one row without retyping either.",
+   "labels": false,
+   "seconds": 17
   }
  ]
 }

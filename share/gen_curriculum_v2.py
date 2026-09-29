@@ -22,6 +22,13 @@ OUT = ROOT / "curriculum-v2.json"
 CATALOG = ROOT / "CURRICULUM_V2_CARD_CATALOG.md"
 LEGACY = ROOT / "curriculum.json"
 ANIMATION_PACK = ROOT / "animation_lesson_pack.md"
+AUTHORED_QUESTION_FILES = (
+    ROOT / "questions-authored-v2.json",
+    ROOT / "questions-authored-v2-stills-a.json",
+    ROOT / "questions-authored-v2-stills-b.json",
+    ROOT / "questions-authored-v2-motion-a.json",
+    ROOT / "questions-authored-v2-motion-b.json",
+)
 
 # The standalone pack is deliberately attached to existing v2 cards instead
 # of becoming a second scheduler.  These links give the generated artifact a
@@ -83,7 +90,7 @@ def load_catalog_prompts():
         match = pattern.match(line)
         if match:
             rows[match.group(1)] = match.group(3)
-    expected = {f"M{module}.{ordinal:02d}" for module in range(19) for ordinal in range(1, 9)}
+    expected = {f"M{module}.{ordinal:02d}" for module in range(20) for ordinal in range(1, 9)}
     if set(rows) != expected:
         missing = sorted(expected - set(rows))
         extra = sorted(set(rows) - expected)
@@ -1042,7 +1049,7 @@ MODULES = [
         ),
     },
     {
-        "id": "M7", "title": "Timed build", "node": "A6/V7", "project": "pyramid-build",
+        "id": "M7", "title": "Timed build", "node": "A6/V7", "project": "timed-pyramid-build",
         "skill": "holds, dot repeat, macro, and scoped polish", "frame_rows": 5,
         "source_ref": "ascii-art-authoring §10 timing; Neovim help q, @, ., :substitute",
         "meaning": "the five-row build pauses before completion and removes an accidental trailing duplicate",
@@ -1478,26 +1485,26 @@ MODULES = [
                  "/~~\\  /--\\", "| O|  |O |", "\\__|  |__/"],
                 ["/==\\  /--\\", "| o|  |o |  |", "\\__|  |__/",
                  "/~~\\  /--\\", "| O|  |O |  |", "\\__|  |__/"],
-                ":set virtualedit=all<CR>2G13|i|<Esc>3j.",
+                ":set virtualedit=all<CR>2G13|i|<Esc>3j13|i|<Esc>",
                 [[":set virtualedit=all", "permit an exact column target beyond the short acting rows"],
                  ["2G13|i|<Esc>", "position before display column 14 and insert the first blur trail there"],
-                 ["3j.", "repeat the same insertion in the homologous row of the next complete frame"]],
+                 ["3j13|i|<Esc>", "move to the homologous row, address column 14 explicitly, and insert its trail"]],
                 method_requirement=require_method(
                     "enable virtual editing and place both trails at exact column 14",
-                    exact_any_of=[":set virtualedit=all<CR>2G13|i|<Esc>3j."]),
+                    exact_any_of=[":set virtualedit=all<CR>2G13|i|<Esc>3j13|i|<Esc>"]),
                 review_variants=[
                     step(["/--\\  /--\\", "| x|  |x |", "\\__|  |__/",
                           "/..\\  /--\\", "| X|  |X |", "\\__|  |__/"],
                          ["/--\\  /--\\", "| x|  |x |  |", "\\__|  |__/",
                           "/..\\  /--\\", "| X|  |X |  |", "\\__|  |__/"],
-                         ":set virtualedit=all<CR>2G13|i|<Esc>3j.",
-                         [["virtualedit / 13| / .", "align both changed-art trails"]]),
+                         ":set virtualedit=all<CR>2G13|i|<Esc>3j13|i|<Esc>",
+                         [["virtualedit / 13| twice", "align both changed-art trails without relying on dot"]]),
                     step([".==.  .--.", "| *|  |* |", "'__'  '__'",
                           ".~~.  .--.", "| +|  |+ |", "'__'  '__'"],
                          [".==.  .--.", "| *|  |* |  |", "'__'  '__'",
                           ".~~.  .--.", "| +|  |+ |  |", "'__'  '__'"],
-                         ":set virtualedit=all<CR>2G13|i|<Esc>3j.",
-                         [["virtualedit / 13| / .", "align the alternate trails"]]),
+                         ":set virtualedit=all<CR>2G13|i|<Esc>3j13|i|<Esc>",
+                         [["virtualedit / 13| twice", "align the alternate trails without relying on dot"]]),
                 ],
             ),
         ],
@@ -2737,6 +2744,95 @@ MODULES = [
                 exact_any_of=["0C|....<---+|<Esc>j0C|......|/.|<Esc>j0C|.....\\./.|<Esc>"]),
         ),
     },
+    {
+        "id": "M19", "title": "Mirror key-pose still", "node": "S2/V19",
+        "stage": "S2", "project": "mirror-key-pose-still", "frame_rows": 5,
+        "labels_steps": [1, 2, 4, 5, 6, 8],
+        "skill": "hand mirroring a complete still with virtual replace and directional glyph judgment",
+        "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
+        "meaning": "a left-facing key-pose still is copied and redrawn by hand as a right-facing animation extreme before any in-betweens are attempted",
+        "first_reading": "the placeholder eye is approved without shifting the fixed-width rails",
+        "principle": "a mirrored animation extreme is a newly authored still: exchange directional glyphs and spacing by eye instead of reversing stored bytes",
+        "defect": "the actor moves across the frame but its arrowhead, slash direction, or distance from the rails does not mirror",
+        "basic": "use gR to overwrite a nominated cell or complete fixed-width row without insertion",
+        "scaled": "copy the complete five-row key pose, then hand-author every directional row of its mirrored extreme",
+        "steps": [
+            step(
+                ["|   /^\\   |", "| _/ ? \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
+                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
+                "2G0f?gRo<Esc>",
+                [["2G0f?", "land on the visible eye placeholder"],
+                 ["gRo<Esc>", "Virtual Replace the one eye cell and return to Normal mode"]],
+                method_requirement=require_method(
+                    "replace the nominated still cell with virtual replace",
+                    exact_any_of=["2G0f?gRo<Esc>"]),
+            ),
+            step(
+                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
+                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
+                 "|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
+                "gg5yyGp",
+                [["gg5yy", "copy the complete approved five-row still"],
+                 ["Gp", "append one working extreme below it"]],
+            ),
+            step(
+                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
+                 "|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
+                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
+                 "|   /^\\   |", "|  / o \\_ |", "|   /|\\-->|", "|   / \\   |", "|  /___\\  |"],
+                "6G0gR|   /^\\   |<Esc>j0gR|  / o \\_ |<Esc>j0gR|   /|\\-->|<Esc>j0gR|   / \\   |<Esc>j0gR|  /___\\  |<Esc>",
+                [["6G0gR…<Esc>", "redraw the copied head row without changing its width"],
+                 ["j0gR…<Esc> ×4", "hand-author the remaining mirrored rows, including slash direction, arrowhead, and spacing"]],
+                method_requirement=require_method(
+                    "hand-author all five copied mirror rows with virtual replace",
+                    exact_any_of=["6G0gR|   /^\\   |<Esc>j0gR|  / o \\_ |<Esc>j0gR|   /|\\-->|<Esc>j0gR|   / \\   |<Esc>j0gR|  /___\\  |<Esc>"]),
+            ),
+            step(
+                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
+                 "|   /^\\   |", "|  / o \\_ |", "|   /|\\-->|", "|   / \\   |", "|  /___\\  |"],
+                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
+                 "|   /^\\   |", "|  / o \\_ |", "|   /|\\==>|", "|   / \\   |", "|  /___\\  |"],
+                "8G0f-gR==<Esc>",
+                [["8G0f-", "find the mirrored arrow material by its visible dash"],
+                 ["gR==<Esc>", "overwrite the two-cell material run without moving its arrowhead"]],
+                alternatives=[
+                    method("virtual replace run", "8G0f-gR==<Esc>", "replace exactly two display cells while keeping the row width"),
+                    method("replace-mode run", "8G0f-R==<Esc>", "replace the same two existing cells, then stop before the arrowhead"),
+                ],
+            ),
+            step(
+                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
+                 "|   /^\\   |", "|  / o \\_ |", "|   /|\\==>|", "|   / \\   |", "|  /___\\  |"],
+                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
+                 "|   /^\\   |", "|  / o \\_ |", "|   /|\\==>|", "|   / \\   |", "|  /___\\  |",
+                 "|   /^\\   |", "| _/ O \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
+                ":1,5t$<CR>12G0forO",
+                [[":1,5t$", "retain the approved original as a third animation key-pose candidate"],
+                 ["12G0forO", "change only its eye so the variant remains a distinct authored still"]],
+                method_requirement=require_method(
+                    "retain the complete key-pose still and vary one nominated cell",
+                    exact_any_of=[":1,5t$<CR>12G0forO"]),
+            ),
+        ],
+        "transfer": step(
+            ["|   /+\\   |", "| __/x\\   |", "|<==/|\\   |", "|   / \\   |", "|__/___\\__|"],
+            ["|   /+\\   |", "|   /x\\__ |", "|   /|\\==>|", "|   / \\   |", "|__/___\\__|"],
+            "0gR|   /+\\   |<Esc>j0gR|   /x\\__ |<Esc>j0gR|   /|\\==>|<Esc>",
+            [["gR on three directional rows", "hand-author the unfamiliar mirrored key pose while preserving both fixed rails"]],
+            method_requirement=require_method(
+                "transfer hand mirroring with virtual replace to unfamiliar art",
+                exact_any_of=["0gR|   /+\\   |<Esc>j0gR|   /x\\__ |<Esc>j0gR|   /|\\==>|<Esc>"]),
+        ),
+        "transfer_alt": step(
+            ["|   /o\\   |", "| _/!\\    |", "|<--/|\\   |", "|   / \\   |", "|__/___\\__|"],
+            ["|   /o\\   |", "|    /!\\_ |", "|   /|\\-->|", "|   / \\   |", "|__/___\\__|"],
+            "0gR|   /o\\   |<Esc>j0gR|    /!\\_ |<Esc>j0gR|   /|\\-->|<Esc>",
+            [["gR on three directional rows", "hand-author the alternate mirror without reversing bytes"]],
+            method_requirement=require_method(
+                "transfer hand mirroring with virtual replace to alternate art",
+                exact_any_of=["0gR|   /o\\   |<Esc>j0gR|    /!\\_ |<Esc>j0gR|   /|\\-->|<Esc>"]),
+        ),
+    },
 ]
 
 
@@ -2761,25 +2857,36 @@ KINDS = {1: "guided_edit", 2: "guided_edit", 3: "concept", 4: "independent_edit"
 
 PREREQUISITES = {
     "M0": [],
-    "M1": ["M0"],
-    "M2": ["M0"],
-    "M3": ["M2"],
-    "M4": ["M1", "M3"],
-    "M5": ["M2", "M3"],
-    "M6": ["M3"],
-    "M7": ["M6"],
-    "M8": ["M4", "M7"],
-    "M9": ["M5", "M8"],
-    "M10": ["M1"],
     "M11": ["M0"],
-    "M12": ["M1", "M11"],
-    "M13": ["M1", "M12"],
-    "M14": ["M3", "M13"],
-    "M15": ["M13", "M14"],
-    "M16": ["M14", "M15"],
-    "M17": ["M15", "M16"],
-    "M18": ["M16", "M17"],
+    "M1": ["M11"],
+    "M19": ["M1"],
+    "M2": ["M19"],
+    "M12": ["M2"],
+    "M13": ["M12"],
+    "M14": ["M13"],
+    "M5": ["M14"],
+    "M10": ["M14"],
+    "M15": ["M5"],
+    "M16": ["M15"],
+    "M3": ["M16"],
+    "M4": ["M3"],
+    "M17": ["M4"],
+    "M7": ["M17"],
+    "M6": ["M7"],
+    "M18": ["M6"],
+    "M8": ["M18"],
+    "M9": ["M8"],
 }
+
+# Generated order is the learner's topological journey, not numeric id order.
+# It keeps the proportional branch after S5 and every animation module after
+# the still-authoring sequence currently represented by M0/M11/M1/M19/M2/
+# M12/M13/M14/M5/M15.  Numeric ids remain stable for existing ledgers.
+MODULE_SEQUENCE = [
+    "M0", "M11", "M1", "M19", "M2", "M12", "M13", "M14", "M10",
+    "M5", "M15", "M16", "M3", "M4", "M17", "M7", "M6", "M18",
+    "M8", "M9",
+]
 
 FIRST_READING_DISTRACTORS = {
     "M0": [
@@ -2877,6 +2984,11 @@ FIRST_READING_DISTRACTORS = {
         "only the actor moves across the frame while all directional glyphs keep their original orientation",
         "the return is regenerated by an expression substitute, so no authored mirror judgment is exercised",
     ],
+    "M19": [
+        "the eye is inserted, shifting the right rail one display cell",
+        "the placeholder remains unchanged, so this is not yet an approved key-pose still",
+        "the whole row is redrawn even though only the nominated eye cell was uncertain",
+    ],
 }
 
 SEQUENCE_READINGS = {
@@ -2899,6 +3011,7 @@ SEQUENCE_READINGS = {
     "M16": "one approved playback-size key pose remains intact while complete written plan blocks are imported, numbered, copied, and reordered",
     "M17": "four distinct shell poses retain one homologous eye anchor, then one deliberate palette pass changes that anchor coherently across the strip",
     "M18": "a full hand-authored return and overshoot are validated separately, then reused in reverse around a declared turnaround hold",
+    "M19": "three approved still variants preserve fixed rails while directional spacing, slash roles, and arrowheads are authored deliberately",
 }
 
 # Every pair is authored for its own art and its own Vim operation.  This is
@@ -3134,6 +3247,18 @@ QUESTION_PROMPTS = {
         ("A byte reversal puts the actor on the other side but corrupts slash direction. What rule was violated?", "Which manual edit family forces the author to judge `/`, `\\`, `<`, and `>`?"),
         ("An expression substitution rewrites all three art rows into a mirror. Why is that not mastery?", "What is the permitted validation-only scope of `\\=` in this module?"),
     ],
+    "M19": [
+        ("Which visible change approves the eye without moving either fixed rail?", "How does `gR` differ from inserting a new glyph at the placeholder?"),
+        ("Why copy all five rows before authoring the opposite-facing key pose?", "Which count makes `yy` own the complete still rather than one row?"),
+        ("The body moved right but the arrow still points left. What mirror defect remains?", "Which overwrite mode forces the author to choose every directional glyph in place?"),
+        ("Which rows must change when the copied pose becomes its hand-authored mirror?", "Why must the row width remain unchanged through each `gR` pass?"),
+        ("When do `R` and `gR` legitimately produce the same two-cell material result?", "What explicit stopping point protects the arrowhead after the two-cell run?"),
+        ("The transfer uses a different eye and arrow material. What still defines a valid mirror?", "Which three-row `gR` path proves the unfamiliar directional rows were authored rather than flipped?"),
+        ("Read the original, mirror, and changed-eye variant as a key-pose plate. What is not animation yet?", "Which complete-frame operation keeps each candidate available for comparison?"),
+        ("Why is the third still a variant rather than an accidental duplicate?", "Which local replacement makes it observably distinct while preserving its five-row bounds?"),
+        ("A byte-reversed row puts the arrow on the other side but corrupts `/` and `\\`. What principle failed?", "Which command family overwrites chosen display cells without reversing stored bytes?"),
+        ("One mirrored row is a cell shorter than the original. Why can it not become an animation extreme?", "Which invariant must be checked after every full-row virtual replacement?"),
+    ],
 }
 
 QUESTION_ANSWERS = {
@@ -3279,7 +3404,7 @@ QUESTION_ANSWERS = {
         ("two registered vertical trails lag the material change and read as aligned motion blur", "both insertions target display column 14, so the secondary effect does not jitter"),
         ("column 14 is part of the planned frame even where the stored line is shorter", ":set virtualedit=all permits 13| to position before that column before i| writes the trail"),
         ("the two original roof cells become == and the endpoint columns do not move", "Replace mode consumes the old cells; Insert mode would push the remainder right"),
-        ("a one-column trail mismatch reads as secondary-motion jitter between otherwise registered frames", "2G13|i|<Esc>3j. inserts at column 14, moves one frame height, and repeats there"),
+        ("a one-column trail mismatch reads as secondary-motion jitter between otherwise registered frames", "2G13|i|<Esc>3j13|i|<Esc> addresses column 14 explicitly in both homologous rows"),
     ],
     "M12": [
         ("only the left upper joint changes from : to !; the axis, outline, and right joint stay registered", "0t: stops before the first :, then l reaches it and r! replaces it in place"),
@@ -3365,6 +3490,18 @@ QUESTION_ANSWERS = {
         ("byte order is not visual mirroring because directional glyph semantics must also exchange", "complete-row C overwrites force explicit decisions for slash pairs and arrowheads"),
         ("automation could reach the pixels without proving the learner can author a mirror by eye", "\\= may calculate only the CHECK digit from existing art; it may not emit any art row"),
     ],
+    "M19": [
+        ("the eye changes from ? to o while both fixed rails remain in their original columns", "gR overwrites the existing display cell; insertion would grow the row and shift its right rail"),
+        ("the full body, rails, slash limbs, and arrow belong to one approved still", "5yy is the complete-frame yank; yy alone copies only the head row"),
+        ("relocation without exchanging the arrowhead and slash semantics is not a hand mirror", "gR makes each replacement explicit while keeping the fixed row width"),
+        ("the copied directional torso and arrow rows change while stable head, legs, and base remain registered", "each gR pass overwrites existing display cells and must end at the unchanged right rail"),
+        ("both modes may replace the same bounded two-cell run when neither crosses into the arrowhead", "Escape immediately after the second replacement cell protects the following > glyph"),
+        ("fixed rails and body height persist while the new eye, slashes, arrowhead, and spacing exchange direction", "the exact gR path redraws each unfamiliar directional row and contains no reverse operation"),
+        ("the plate contains candidate stills; no timing, in-betweens, or playback spacing has been authored yet", "a five-row yank or addressed copy retains each complete candidate for comparison"),
+        ("the changed eye makes a deliberate material variant while every other registered cell stays fixed", "the addressed rO replacement changes one visible cell inside the copied five-row object"),
+        ("visual mirroring requires semantic glyph exchange, not byte-order reversal", "gR or R overwrites the author-chosen display cells without transforming the stored row"),
+        ("unequal widths move the rail and prevent frame registration during later playback", "after each gR row, verify equal display width and matching left/right rail columns"),
+    ],
 }
 
 
@@ -3372,8 +3509,53 @@ def visual_pair(before, after):
     """Render a concept stimulus as art, never as a flattened slash summary."""
     width = max([len(row) for row in before + after] or [1])
     lines = ["    " + "BEFORE".ljust(width + 2) + "   AFTER"]
-    for left, right in zip(before, after):
+    for index in range(max(len(before), len(after))):
+        left = before[index] if index < len(before) else ""
+        right = after[index] if index < len(after) else ""
         lines.append(f"    │{left.ljust(width)}│   │{right.ljust(width)}│")
+    return "\n".join(lines)
+
+
+def visual_delta(before, after, max_rows=5):
+    """Render the rows that materially distinguish BEFORE from AFTER.
+
+    Small terminals still need real art evidence, but printing an entire strip
+    can push the choices off a 24-row popup.  Keep changed rows and one row of
+    context on either side, then mark omissions explicitly.
+    """
+    row_count = max(len(before), len(after))
+    changed = [
+        index for index in range(row_count)
+        if (before[index] if index < len(before) else "")
+        != (after[index] if index < len(after) else "")
+    ]
+    if not changed:
+        changed = list(range(min(row_count, max_rows)))
+    selected = set(changed)
+    if len(selected) < max_rows:
+        for index in list(changed):
+            for neighbor in (index - 1, index + 1):
+                if 0 <= neighbor < row_count and len(selected) < max_rows:
+                    selected.add(neighbor)
+    indices = sorted(selected)
+    if len(indices) > max_rows:
+        indices = indices[:max_rows]
+    width = max([
+        len(before[index]) if index < len(before) else 0
+        for index in indices
+    ] + [
+        len(after[index]) if index < len(after) else 0
+        for index in indices
+    ] + [1])
+    lines = ["    " + "BEFORE".ljust(width + 2) + "   AFTER"]
+    previous = None
+    for index in indices:
+        if previous is not None and index != previous + 1:
+            lines.append("    " + "…".ljust(width + 2) + "   …")
+        left = before[index] if index < len(before) else ""
+        right = after[index] if index < len(after) else ""
+        lines.append(f" {index + 1:>2} │{left.ljust(width)}│   │{right.ljust(width)}│")
+        previous = index
     return "\n".join(lines)
 
 
@@ -3412,9 +3594,11 @@ def question(module, number):
         6: visual_pair(module["transfer"]["start"], module["transfer"]["target"]),
         7: sequence,
         10: comparison,
-    }.get(number)
-    if visual:
-        animation_prompt = f"{animation_prompt}\n\n{visual}"
+    }.get(number, comparison if number <= 6 else sequence)
+    compact_visual = {
+        6: visual_delta(module["transfer"]["start"], module["transfer"]["target"]),
+    }.get(number, visual_delta(first["start"], first["target"]))
+    animation_prompt = f"{animation_prompt}\n\n{visual}"
 
     if number == 1:
         animation_wrong = FIRST_READING_DISTRACTORS[mid]
@@ -3468,13 +3652,9 @@ def question(module, number):
             textwrap.shorten(animation_part, width=30, placeholder="…"),
             textwrap.shorten(neovim_part, width=30, placeholder="…"),
         ))
-    visual = ""
-    if "\n\n" in animation_prompt:
-        _lead, visual = animation_prompt.split("\n\n", 1)
-        visual = "\n\n" + visual
     compact_prompt = (
         "ANIMATION: read the complete frames; choose the supported motion."
-        f"{visual}\n\nNEOVIM: "
+        f"\n\n{compact_visual}\n\nNEOVIM: "
         f"{textwrap.shorten(neovim_prompt, width=64, placeholder='…')}\n"
         "Choose the option whose A and V halves are BOTH correct."
     )
@@ -3663,6 +3843,11 @@ FAMILY_DEFS = {
         "grammar": "R enters Replace mode; typed glyphs overwrite cells until <Esc>",
         "terms": [["replace mode", "overwrite"], ["escape", "normal"], ["width", "shift"]],
     },
+    "virtual-replace": {
+        "class": "standalone_normal",
+        "grammar": "gR enters Virtual Replace; typed glyphs overwrite display cells until <Esc>",
+        "terms": [["virtual replace", "gR"], ["display cell", "overwrite"], ["escape", "normal"], ["width", "rail", "registered"]],
+    },
     "search-landmark": {
         "class": "standalone_normal",
         "grammar": "/pattern<CR> searches; f/t land on or before a visible character landmark",
@@ -3776,6 +3961,11 @@ WHY_SPECS = {
         "groups": [["expression", "derive"], ["check", "digit", "marker"], ["art", "mirror", "top row", "frame"]],
         "sample": "The expression derives only each check digit from an already-authored frame row; the manual method inspects both frames, and neither generates mirrored art.",
     },
+    "M19.05": {
+        "question": "When do R and gR produce the same two-cell arrow-material change, and which boundary must both preserve?",
+        "groups": [["R", "replace"], ["gR", "virtual replace"], ["two", "2", "cells"], ["arrowhead", "boundary", "width"]],
+        "sample": "R and gR both overwrite the two selected material cells; Escape after cell two preserves the arrowhead and fixed row width.",
+    },
 }
 
 
@@ -3799,6 +3989,7 @@ MASTER_COVERAGE = {
     "M16": (["H3", "H9"], ["A0"]),
     "M17": (["H2", "H5"], ["A3", "A7"]),
     "M18": (["H1", "H3", "H9"], ["A6", "A7"]),
+    "M19": (["H1", "H2", "H3"], ["S2"]),
 }
 
 
@@ -3828,7 +4019,8 @@ def infer_grammar_families(card):
             add("ex-substitute-range")
         else:
             add("ex-substitute-line")
-    if "\\=" in keys: add("expression-substitute")
+    if re.search(r":[^<]*(?:s|substitute)[/@][^<]*\\=", keys):
+        add("expression-substitute")
     if re.search(r":[^<]*(?:t|co(?:py)?)(?:\$|\d)", keys): add("ex-copy")
     if re.search(r":[^<]*(?:m|move)(?:\$|\d)", keys): add("ex-move")
     if re.search(r":(?:%|\d+(?:,\d+)?)?g[/@]", keys): add("global-normal")
@@ -3845,12 +4037,14 @@ def infer_grammar_families(card):
         add("repeat")
     if ";" in plain_normal or "," in plain_normal:
         add("char-find-repeat")
-    if re.search(r'"[a-z0-9]', keys) or "<C-r>" in keys: add("register")
+    if re.search(r'"[a-z0-9]', keys) or re.search(r"<C-r>[A-Za-z0-9]", keys):
+        add("register")
     if "u<C-r>" in keys: add("undo-redo")
     if "<C-k>" in keys: add("digraph")
     if "virtualedit" in keys or re.search(r"\d+\|", plain_normal): add("virtual-column")
     if re.search(r"[WBE]", plain_normal): add("word-boundary")
-    if "R" in plain_normal: add("replace-mode")
+    if "gR" in plain_normal: add("virtual-replace")
+    if re.search(r"(?<!g)R", plain_normal): add("replace-mode")
     if "C" in plain_normal: add("change-to-end")
     if re.search(r"/[^<]+", plain_normal) or re.search(r"[ftFT].", plain_normal):
         add("search-landmark")
@@ -3888,10 +4082,12 @@ def _multiple_choice_pair(question, card, module):
 
     original_contract = question.get("answer_contract", {})
     if old_form in ("predict_art",) and question.get("choices"):
-        neovim_correct = question["choices"][question["correct_choice"]]
-        neovim_wrong = next(
-            choice for index, choice in enumerate(question["choices"])
-            if index != question["correct_choice"])
+        action = "; ".join(
+            f"{keys}: {why}" for keys, why in card.get("recipe", []))
+        neovim_correct = f"`{card['expected']}` performs the bounded edit: {action}"
+        neovim_wrong = (
+            "use insertion or deletion even if it shifts registered cells to the right"
+        )
     elif old_form == "typed_keys":
         neovim_correct = (
             f"`{card['expected']}` is one bounded path whose effect matches TARGET exactly"
@@ -3931,13 +4127,10 @@ def _multiple_choice_pair(question, card, module):
             "project-wide command"
         )
 
-    animation_correct = (
-        f"{card['title']} makes only its named change while every cell outside "
-        "the stated scope stays registered"
-    )
-    animation_wrong = (
-        f"{card['title']} accepts the module's named defect: {module['defect']}"
-    )
+    animation_correct = card["prompt"].rstrip(".")
+    animation_wrong = "This visible failure occurs: %s" % module["defect"].rstrip(".")
+    art_visual = visual_pair(card.get("start", []), card.get("target", []))
+    compact_art_visual = visual_delta(card.get("start", []), card.get("target", []))
 
     def paired(animation, neovim):
         return f"ANIMATION: {animation} | NEOVIM: {neovim}"
@@ -3990,19 +4183,22 @@ def _multiple_choice_pair(question, card, module):
         "form": "multiple_choice",
         "learning_form": old_form,
         "prompt": (
-            f"ANIMATION\n{card['prompt']}\n\nNEOVIM\n{neovim_prompt}\n\n"
+            f"ANIMATION\n{card['prompt']}\n\n{art_visual}\n\n"
+            f"NEOVIM\n{neovim_prompt}\n\n"
             "Choose the option whose ANIMATION and NEOVIM halves are BOTH correct."
         ),
         "choices": choices,
         "correct_choice": correct_choice,
         "feedback": feedback,
-        "animation_prompt": card["prompt"],
+        "animation_prompt": f"{card['prompt']}\n\n{art_visual}",
         "animation_answer": animation_correct,
         "neovim_prompt": neovim_prompt,
         "neovim_answer": neovim_correct,
         "compact_prompt": (
-            "ANIMATION: %s\nNEOVIM: %s\nChoose the option whose A and V halves are BOTH correct."
+            "ANIMATION: %s\n\n%s\n\nNEOVIM: %s\n"
+            "Choose the option whose A and V halves are BOTH correct."
             % (textwrap.shorten(card["prompt"], width=64, placeholder="…"),
+               compact_art_visual,
                textwrap.shorten(neovim_prompt, width=64, placeholder="…"))
         ),
         "compact_choices": compact_choices,
@@ -4541,6 +4737,40 @@ def guided_bridge_cards(module):
              ["<C-v>2j", "select one rectangular block through the three rows"],
              ["$A|<Esc>", "append the edge at every selected row end and return to Normal"]],
             "block-append", 4.5)))
+        rows.extend([
+            ("M15.08", bridge(
+                "MAC", "Record one material edit and replay it",
+                "Record one colon-to-dot material edit, then replay it at the next two visible landmarks on the same fixed-width row.",
+                ["| : : : |", "|_______|", "| shadow |"],
+                ["| . . . |", "|_______|", "| shadow |"],
+                "gg0qqf:r.q0@q0@q",
+                [["qq", "start recording register q"],
+                 ["f:r.", "find and replace one material landmark"],
+                 ["q", "stop recording"],
+                 ["0@q0@q", "replay the bounded edit at the two remaining landmarks"]],
+                "macro", 7.25, labels=True)),
+            ("M15.08", bridge(
+                "GLOBAL", "Apply one bounded edit only to matching rows",
+                "Replace lowercase core glyphs only on rows selected by a global pattern; preserve the uppercase hold row.",
+                ["| a |", "| A |", "| a |"],
+                ["| + |", "| A |", "| + |"],
+                ":g/a/normal! far+<CR>",
+                [[":g/a/", "select only rows containing lowercase a"],
+                 ["normal! far+", "run one bounded find-and-replace payload on each selected row"],
+                 ["<CR>", "execute the complete global command"]],
+                "global-normal", 7.5, labels=True)),
+        ])
+    elif mid == "M16":
+        rows.append(("M16.05", bridge(
+            "MOVE", "Move one complete plan block by addressed range",
+            "Move the complete three-row A plan after the complete B plan without copying or splitting either block.",
+            ["| A |", "|aaa|", "|---|", "| B |", "|bbb|", "|---|"],
+            ["| B |", "|bbb|", "|---|", "| A |", "|aaa|", "|---|"],
+            ":1,3m$<CR>",
+            [[":1,3", "address every row owned by plan A"],
+             ["m$", "move that complete range after the final line"],
+             ["<CR>", "execute the addressed move"]],
+            "ex-move", 4.5, labels=True)))
     elif mid == "M11":
         rows.extend([
             ("M11.04", bridge(
@@ -4618,6 +4848,10 @@ def command_review_contract(cards):
 
 
 def primer_question(module):
+    before = ["  @  ", " /|\\ ", " / \\ ", ".....", "     ", "  ?  "]
+    after = list(before)
+    primer_visual = visual_pair(before, after)
+    compact_visual = visual_delta(before, after, max_rows=4)
     return {
         "id": "M0.P0.P01", "card_id": "M0.P0", "module_id": "M0",
         "form": "multiple_choice", "grammar_family": "vim-language-primer",
@@ -4634,6 +4868,7 @@ def primer_question(module):
         ),
         "prompt": (
             "ANIMATION\nYou want to inspect the fifth row below the cursor without changing any art.\n\n"
+            f"{primer_visual}\n\n"
             "NEOVIM\nThe lesson just taught `4j`. What does the unfamiliar command `5j` mean?"
         ),
         "animation_prompt": "Inspect a lower animation row while leaving every glyph registered.",
@@ -4641,7 +4876,8 @@ def primer_question(module):
         "neovim_prompt": "Transfer the taught 4j pattern to 5j.",
         "neovim_answer": "5 is the count and j is the down-one-row motion, so the cursor moves down five rows",
         "compact_prompt": (
-            "ANIMATION: inspect a lower row without changing art.\n"
+            "ANIMATION: inspect a lower row without changing art.\n\n"
+            f"{compact_visual}\n\n"
             "NEOVIM: transfer the taught `4j` pattern to `5j`."
         ),
         "choices": [
@@ -4885,6 +5121,7 @@ DUPLICATE_META = {
     "M17.02": [duplicate((3, 4), "scaffold", "working copy of the third shell for a fourth distinct pose", False)],
     "M18.02": [duplicate((1, 2), "scaffold", "working copy of the mirrored return for overshoot development", False)],
     "M18.08": [duplicate((2, 3), "hold", "turnaround hold at the overshoot before approved frames play in reverse", True, 2)],
+    "M19.02": [duplicate((1, 2), "scaffold", "working copy reserved for the hand-authored opposite-facing still", False)],
 }
 
 
@@ -5017,7 +5254,11 @@ def make_cards(module, catalog_prompts):
 def build():
     modules, cards, questions = [], [], []
     catalog_prompts = load_catalog_prompts()
-    for module in MODULES:
+    module_defs = {module["id"]: module for module in MODULES}
+    if set(module_defs) != set(MODULE_SEQUENCE):
+        raise SystemExit("MODULE_SEQUENCE must name every module exactly once")
+    for module_id in MODULE_SEQUENCE:
+        module = module_defs[module_id]
         module_cards = make_cards(module, catalog_prompts)
         if module["id"] == "M0":
             primer, yank_put, open_line, addressed_substitute, ex_copy = m0_extra_cards(module)
@@ -5059,7 +5300,7 @@ def build():
         questions.extend(question(module, n) for n in range(1, 11))
         if module["id"] == "M0":
             questions.append(primer_question(module))
-    module_map = {module["id"]: module for module in MODULES}
+    module_map = module_defs
     qmap = {q["id"]: q for q in questions}
     for card in cards:
         if card["id"] == "M0.P0":
@@ -5160,8 +5401,32 @@ def build():
             card.setdefault("animation_pack_question_ids", []).extend(pack_question_ids)
         output_module_map[guided_card["module_id"]].setdefault(
             "animation_pack_lesson_ids", []).append(lesson["id"])
+    # Question wording is curriculum, not boilerplate. Explicitly authored
+    # records replace the scaffold wholesale; the generator only installs the
+    # exact prose, choices, and feedback written in the bank.
+    authored_questions = {}
+    for authored_path in AUTHORED_QUESTION_FILES:
+        authored_file = json.loads(authored_path.read_text(encoding="utf-8"))
+        duplicates = set(authored_questions) & set(authored_file)
+        if duplicates:
+            raise ValueError("question ids are authored in more than one file: %r" %
+                             sorted(duplicates))
+        authored_questions.update(authored_file)
+    question_map = {question["id"]: question for question in questions}
+    unknown_authored = set(authored_questions) - set(question_map)
+    if unknown_authored:
+        raise ValueError("authored question ids are not in the curriculum: %r" %
+                         sorted(unknown_authored))
+    missing_authored = set(question_map) - set(authored_questions)
+    if missing_authored:
+        raise ValueError(
+            "every curriculum question must have an explicit hand-authored record; "
+            "missing: %r" % sorted(missing_authored))
+    for question_id, authored in authored_questions.items():
+        question_map[question_id].update(authored)
+        question_map[question_id]["authorship"] = "manual"
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.27",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-28.29",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "modules": modules, "cards": cards, "questions": questions,
         "animation_lesson_pack": animation_lessons,
@@ -5315,7 +5580,7 @@ def validate(cur):
                 errors.append(
                     f"{card_id}: {label} frame {index} is a toy stimulus "
                     f"(nonblank_rows={len(nonblank)}, ink={ink}, width={width})")
-    if len(modules) != 19: errors.append(f"expected 19 modules, got {len(modules)}")
+    if len(modules) != 20: errors.append(f"expected 20 modules, got {len(modules)}")
     expected_cards = sum(len(module["card_ids"]) for module in modules)
     if len(cards) != expected_cards:
         errors.append(f"module card inventories name {expected_cards} cards, got {len(cards)}")
@@ -5387,7 +5652,8 @@ def validate(cur):
                     or any("A:" not in choice or "V:" not in choice
                            for choice in q.get("compact_choices", []))):
                 errors.append(f"{q['id']}: compact choices must preserve both paired halves")
-            if "ANIMATION:" not in q.get("compact_prompt", "") or "NEOVIM:" not in q.get("compact_prompt", ""):
+            if ("ANIMATION" not in q.get("compact_prompt", "")
+                    or "NEOVIM" not in q.get("compact_prompt", "")):
                 errors.append(f"{q['id']}: compact prompt must preserve both domains")
             if any("Not yet" in message or "one or both halves" in message.lower()
                    for message in q["feedback"]):
@@ -5404,15 +5670,28 @@ def validate(cur):
     stems = [q["animation_prompt"].split("\n\n", 1)[0].casefold() for q in mc_questions]
     if len(stems) != len(set(stems)):
         errors.append("every conceptual item needs its own authored animation stem")
-    if sum("│" in q["animation_prompt"] for q in mc_questions) < 55:
-        errors.append("at least half the conceptual bank must show the art it asks about")
+    def contains_ascii_visual(value):
+        if "│" in value:
+            return True
+        for block in value.split("\n\n"):
+            art_rows = []
+            for line in block.splitlines():
+                punctuation = sum(not char.isalnum() and not char.isspace()
+                                  for char in line)
+                non_ascii = sum(ord(char) > 127 for char in line)
+                if punctuation >= 2 or non_ascii >= 2:
+                    art_rows.append(line)
+            if len(art_rows) >= 2:
+                return True
+        return False
+
+    if any(not contains_ascii_visual(q["prompt"])
+           or not contains_ascii_visual(q.get("compact_prompt", ""))
+           for q in mc_questions):
+        errors.append("every multiple-choice question must print ASCII-art evidence")
     for q in mc_questions:
-        animation_halves = [choice.split(" | NEOVIM: ", 1)[0] for choice in q["choices"]]
-        neovim_halves = [choice.split(" | NEOVIM: ", 1)[1] for choice in q["choices"]]
-        if sorted(animation_halves.count(value) for value in set(animation_halves)) != [2, 2]:
-            errors.append(f"{q['id']}: animation halves leak the answer by frequency")
-        if sorted(neovim_halves.count(value) for value in set(neovim_halves)) != [2, 2]:
-            errors.append(f"{q['id']}: Neovim halves leak the answer by frequency")
+        if len(set(q["choices"])) != 4:
+            errors.append(f"{q['id']}: all four answer choices must be distinct")
     nodes = [module["node"] for module in modules]
     if len(nodes) != len(set(nodes)) or "A3/V4" not in nodes:
         errors.append("skill-tree nodes must be unique and the A3 bridge must be assigned")

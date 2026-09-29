@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+"""Read-only audit of the Neovim learning surface used by vim-daily."""
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
+import sys
+
+
+PLUGIN_MARKERS = {
+    "Hardtime": ("hardtime.nvim", "m4xshen/hardtime"),
+    "WhichKey": ("which-key.nvim", "folke/which-key"),
+    "lualine": ("lualine.nvim", "nvim-lualine/lualine"),
+}
+
+THEME_MARKERS = (
+    "colorscheme",
+    "tokyonight.nvim",
+    "catppuccin/nvim",
+    "kanagawa.nvim",
+    "gruvbox.nvim",
+    "onedark.nvim",
+    "rose-pine/neovim",
+)
+
+SETUP_EXAMPLE = r'''
+Recommended Lazy.nvim learning setup (put this in a plugin spec file):
+
+  return {
+    {
+      "m4xshen/hardtime.nvim",
+      lazy = false,
+      dependencies = { "MunifTanjim/nui.nvim" },
+      opts = {
+        max_count = 3,
+        disable_mouse = true,
+        hint = true,
+        restriction_mode = "hint",
+      },
+    },
+    { "folke/which-key.nvim", event = "VeryLazy", opts = {} },
+    { "nvim-lualine/lualine.nvim", event = "VeryLazy", opts = {} },
+    {
+      "folke/tokyonight.nvim",
+      priority = 1000,
+      config = function() vim.cmd.colorscheme("tokyonight-moon") end,
+    },
+  }
+
+And in your options file:
+
+  vim.opt.number = true
+  vim.opt.relativenumber = true
+
+Official sources:
+  Hardtime   https://github.com/m4xshen/hardtime.nvim
+  WhichKey   https://github.com/folke/which-key.nvim
+  lualine    https://github.com/nvim-lualine/lualine.nvim
+  TokyoNight https://github.com/folke/tokyonight.nvim
+
+Optional, not enabled or installed by vim-daily:
+  1. motion hints: https://github.com/tris203/precognition.nvim
+  2. ASCII boxes:  https://github.com/jbyuki/venn.nvim
+  3. key display:  https://github.com/NStefan002/screenkey.nvim
+'''.strip()
+
+
+def config_root() -> Path:
+    base = os.environ.get("XDG_CONFIG_HOME")
+    return Path(base).expanduser() / "nvim" if base else Path.home() / ".config" / "nvim"
+
+
+def readable_config(root: Path) -> str:
+    chunks: list[str] = []
+    if not root.is_dir():
+        return ""
+    for path in sorted(root.rglob("*")):
+        if not path.is_file():
+            continue
+        if path.suffix.lower() not in {".lua", ".vim", ".json", ".toml"}:
+            continue
+        try:
+            chunks.append(path.read_text(encoding="utf-8", errors="ignore").lower())
+        except OSError:
+            continue
+    return "\n".join(chunks)
+
+
+def present(text: str, markers: tuple[str, ...]) -> bool:
+    return any(marker.lower() in text for marker in markers)
+
+
+def report(root: Path, text: str) -> int:
+    print("\nNeovim learning setup check (read-only)")
+    print(f"  config: {root}")
+    if not root.is_dir():
+        print("  [missing] Neovim config directory")
+
+    missing = False
+    for label, markers in PLUGIN_MARKERS.items():
+        if present(text, markers):
+            print(f"  [found]   {label}")
+        else:
+            missing = True
+            print(f"  [missing] {label}")
+
+    if present(text, THEME_MARKERS):
+        print("  [found]   configured color theme")
+    else:
+        missing = True
+        print("  [missing] configured color theme")
+
+    relative_markers = (
+        "relativenumber",
+        "relative_number",
+        "vim.opt.rnu",
+        "vim.o.rnu",
+        "set rnu",
+    )
+    if present(text, relative_markers):
+        print("  [found]   relative line numbers")
+    elif "lazyvim" in text:
+        print("  [verify]  relative line numbers (normally inherited from LazyVim)")
+    else:
+        missing = True
+        print("  [missing] relative line numbers")
+
+    if missing:
+        print("\nRecommendations only: vim-daily did not modify your Neovim config.")
+        print(SETUP_EXAMPLE)
+    else:
+        print("  baseline present; vim-daily made no Neovim-config changes")
+    return 0
+
+
+def main() -> int:
+    root = config_root()
+    return report(root, readable_config(root))
+
+
+if __name__ == "__main__":
+    sys.exit(main())

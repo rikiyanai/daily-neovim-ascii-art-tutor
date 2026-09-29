@@ -1,5 +1,5 @@
 {
- "schema": "vim-daily/art@1",
+ "schema": "vim-daily/art@2",
  "attribution": "Excerpts from the Stone Story RPG ASCII tutorial page by Gabriel Santos, Martian Rex, Inc. Used as practice material.",
  "art": {
   "walk1": {
@@ -11,7 +11,16 @@
     "   |/__\\",
     "    `  ´"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 1 of 10"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 1 of 10",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "walk2": {
    "rows": [
@@ -22,7 +31,16 @@
     "   |/__\\",
     "    `  ´"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 2 of 10"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 2 of 10",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "walk3": {
    "rows": [
@@ -33,7 +51,16 @@
     "   |( (",
     "     `¯"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 3 of 10"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 3 of 10",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "walk4": {
    "rows": [
@@ -44,7 +71,16 @@
     "    (_(",
     "      '"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 4 of 10"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 4 of 10",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "walk5": {
    "rows": [
@@ -55,7 +91,16 @@
     "   |`,/",
     "    /__\\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 5 of 10"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 5 of 10",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "walk6": {
    "rows": [
@@ -66,7 +111,16 @@
     "   /{\\\\",
     "  /`¯, )"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 6 of 10"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 6 of 10",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "walk7": {
    "rows": [
@@ -77,7 +131,16 @@
     "   /{\\\\",
     "  /-´, \\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 7 of 10"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 7 of 10",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "walk8": {
    "rows": [
@@ -88,7 +151,16 @@
     "   /{\\\\",
     "  /-´,/"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 8 of 10"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 8 of 10",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "walk9": {
    "rows": [
@@ -99,7 +171,16 @@
     "  | {\\\\",
     "  |-´, )"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 9 of 10"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 9 of 10",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "walk10": {
    "rows": [
@@ -110,7 +191,16 @@
     "  | {\\\\",
     "  |-´, \\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 10 of 10"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 02, Poison Adept walk cycle, frame 10 of 10",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "pyr1": {
    "rows": [
@@ -123,7 +213,16 @@
     "  \\´\\/_|__|__|__|_\\",
     "   \\/|__|__|__|__|_\\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 1 of 7"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 1 of 7",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "pyr2": {
    "rows": [
@@ -136,7 +235,16 @@
     "  \\´\\/_|__|__|__|_\\",
     "   \\/|__|__|__|__|_\\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 2 of 7"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 2 of 7",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "pyr3": {
    "rows": [
@@ -148,7 +256,16 @@
     "  \\´\\/_|__|__|__|_\\",
     "   \\/|__|__|__|__|_\\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 3 of 7"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 3 of 7",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "pyr4": {
    "rows": [
@@ -160,7 +277,16 @@
     "  \\´\\/_|__|__|__|_\\",
     "   \\/|__|__|__|__|_\\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 4 of 7"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 4 of 7",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "pyr5": {
    "rows": [
@@ -171,7 +297,16 @@
     "  \\´\\/_|__|__|__|_\\",
     "   \\/|__|__|__|__|_\\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 5 of 7"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 5 of 7",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "pyr6": {
    "rows": [
@@ -182,7 +317,16 @@
     "  \\´\\/_|__|__|__|_\\",
     "   \\/|__|__|__|__|_\\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 6 of 7"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 6 of 7",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "pyr7": {
    "rows": [
@@ -192,7 +336,16 @@
     "  \\´\\_____________\\",
     "   \\/|__|__|__|__|_\\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 7 of 7"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06 section 13, subtractive-animation pyramid, frame 7 of 7",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "pyr_apexes": {
    "rows": [
@@ -202,7 +355,16 @@
     "      ________",
     "    .─────────."
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06, apex rows of pyramid frames 1 to 5"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 06, apex rows of pyramid frames 1 to 5",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "lamp_block": {
    "rows": [
@@ -211,7 +373,16 @@
     " ▀█████▀",
     "   ▀█▀"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Block style"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Block style",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "lamp_filled": {
    "rows": [
@@ -221,7 +392,16 @@
     "  '888'",
     "    '"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Filled style"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Filled style",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "lamp_line": {
    "rows": [
@@ -230,7 +410,16 @@
     " `.   .´",
     "   `:´"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Line style"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Line style",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "lamp_box": {
    "rows": [
@@ -240,13 +429,31 @@
     " ╘═╕ ╒═╛",
     "   ╘╤╛"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Box Drawing style"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03, Box Drawing style",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "alphabet_ext": {
    "rows": [
     "´ ‾ ¡ ·"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03 section 5, the four extended glyphs"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 03 section 5, the four extended glyphs",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "run_steep": {
    "rows": [
@@ -254,7 +461,16 @@
     " /",
     "/"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the steep diagonal run"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the steep diagonal run",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "run_shallow": {
    "rows": [
@@ -262,7 +478,16 @@
     "  /",
     ",´"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, a shallower run using ,´"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, a shallower run using ,´",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "run_period": {
    "rows": [
@@ -270,7 +495,16 @@
     "  .´",
     ".´   _"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the .´ run"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the .´ run",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "run_under": {
    "rows": [
@@ -278,28 +512,64 @@
     " _/",
     "/"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the _/ run"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the _/ run",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "run_stair": {
    "rows": [
     "   _.-´",
     ".-´"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the classic _.-´ stair-step"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the classic _.-´ stair-step",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "run_long": {
    "rows": [
     "      _,.-",
     ",.-'´‾"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, a long shallow run"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, a long shallow run",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "run_flat": {
    "rows": [
     "     ___,-",
     ",---´"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the flattest run"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 6, the flattest run",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "aa_ramp": {
    "rows": [
@@ -309,7 +579,16 @@
     "|       \\         \\    .   '        |    \\    !    '",
     "|        \\        |    |    |        \\    \\    \\    \\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 7, anti-aliasing of near-vertical lines"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 04 section 7, anti-aliasing of near-vertical lines",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "seam_joined": {
    "rows": [
@@ -320,7 +599,16 @@
     " \\     /`---´         \\     / ·--´",
     "  `---´                `---´"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 9, two forms sharing a seam glyph"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 9, two forms sharing a seam glyph",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "dither_top": {
    "rows": [
@@ -330,7 +618,16 @@
     " .:'     ,´  _.-._\\¯¯`-.`.      `.",
     ".:'     /  ,´           `.`.    ` \\"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 10, the dithered sphere, upper band"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 10, the dithered sphere, upper band",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "dither_low": {
    "rows": [
@@ -338,7 +635,16 @@
     "  `':;:::::.:.'.'.'.'.'.'·´",
     "      `'::;;;;;;;:·:'·'´"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 10, the dithered sphere, lower band"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 10, the dithered sphere, lower band",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "shadow_gnd": {
    "rows": [
@@ -349,7 +655,16 @@
     "______\\_________\\__  _____\\_________\\_",
     "___\\________\\_______ _\\_________\\_____"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 11, hatched ground under a figure"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 05 section 11, hatched ground under a figure",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "hand1": {
    "rows": [
@@ -358,7 +673,16 @@
     " `, \\",
     " '-,_)"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, hand/arm layer frame 1"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, hand/arm layer frame 1",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "hand2": {
    "rows": [
@@ -367,7 +691,16 @@
     " ; (",
     "'-,_)"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, hand/arm layer frame 2"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, hand/arm layer frame 2",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "hand3": {
    "rows": [
@@ -376,28 +709,64 @@
     " _! |",
     "'-,_)"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, hand/arm layer frame 3"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, hand/arm layer frame 3",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "spark1": {
    "rows": [
     "'",
     "╨"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 1"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 1",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "spark2": {
    "rows": [
     "•",
     "╨"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 2"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 2",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "spark3": {
    "rows": [
     ":",
     "╨"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 3"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 3",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "spark4": {
    "rows": [
@@ -405,7 +774,16 @@
     "·",
     "╨"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 4"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 4",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "spark5": {
    "rows": [
@@ -413,7 +791,16 @@
     "'",
     "╨"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 5"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 5",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
   },
   "spark6": {
    "rows": [
@@ -421,7 +808,111 @@
     "'",
     "╨"
    ],
-   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 6"
+   "source": "Stone Story RPG ASCII tutorial page (stonestoryrpg.com/ascii_tutorial.html) plate 01, particle layer frame 6",
+   "origin": {
+    "kind": "published_tutorial",
+    "title": "Stone Story RPG ASCII tutorial page",
+    "url": "https://stonestoryrpg.com/ascii_tutorial.html"
+   },
+   "author": "Gabriel Santos / Martian Rex, Inc.",
+   "license": "not recorded",
+   "permission": "public tutorial access; excerpt redistribution permission not established",
+   "redistribution": "unverified"
+  },
+  "ant": {
+   "rows": [
+    " '\\__",
+    "  (o )     ___",
+    "  <>(_)(_)(___)",
+    "    < < > >",
+    "    ' ' ` `"
+   ],
+   "source": "user download ~/Downloads/ant.txt (2026-09-21), signature row pb dropped",
+   "origin": {
+    "kind": "user_download",
+    "path": "~/Downloads/ant.txt",
+    "acquired": "2026-09-21"
+   },
+   "author": "unknown; source carried a pb signature row",
+   "license": "unknown",
+   "permission": "not documented",
+   "redistribution": "unverified"
+  },
+  "centipede": {
+   "rows": [
+    "                            .    .",
+    "                             )  (",
+    "       _ _ _ _ _ _ _ _ _ _ _(.--.)",
+    "     {{ { { { { { { { { { { ( '_')",
+    "   >>>>>>>>>>>>>>>>>>>>>>>`--'>"
+   ],
+   "source": "user download ~/Downloads/centipede.txt (2026-09-21), signature tag jgs stripped",
+   "origin": {
+    "kind": "user_download",
+    "path": "~/Downloads/centipede.txt",
+    "acquired": "2026-09-21"
+   },
+   "author": "jgs (signature in source file)",
+   "license": "unknown",
+   "permission": "not documented",
+   "redistribution": "unverified"
+  },
+  "cheer": {
+   "rows": [
+    " \\(\")/",
+    " -( )-",
+    " /(_)\\"
+   ],
+   "source": "user download ~/Downloads/ant.txt (2026-09-21), signature row tre dropped",
+   "origin": {
+    "kind": "user_download",
+    "path": "~/Downloads/ant.txt",
+    "acquired": "2026-09-21"
+   },
+   "author": "unknown; source carried a tre signature row",
+   "license": "unknown",
+   "permission": "not documented",
+   "redistribution": "unverified"
+  },
+  "candle": {
+   "rows": [
+    "        \\O/",
+    "       '-O-'",
+    "        /o\\",
+    "         ^"
+   ],
+   "source": "user download ~/Downloads/ant.txt (2026-09-21)",
+   "origin": {
+    "kind": "user_download",
+    "path": "~/Downloads/ant.txt",
+    "acquired": "2026-09-21"
+   },
+   "author": "unknown",
+   "license": "unknown",
+   "permission": "not documented",
+   "redistribution": "unverified"
+  },
+  "cicada": {
+   "rows": [
+    "          ,_  _  _,",
+    "            \\o-o/",
+    "           ,(.-.),",
+    "         _/ |) (| \\_",
+    "           /\\=-=/\\",
+    "          ,| \\=/ |,",
+    "        _/ \\  |  / \\_",
+    "         \\_!_/"
+   ],
+   "source": "user download ~/Downloads/cicada.txt (2026-09-21), signature tag jgs stripped",
+   "origin": {
+    "kind": "user_download",
+    "path": "~/Downloads/cicada.txt",
+    "acquired": "2026-09-21"
+   },
+   "author": "jgs (signature in source file)",
+   "license": "unknown",
+   "permission": "not documented",
+   "redistribution": "unverified"
   }
  }
 }

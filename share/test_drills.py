@@ -4,7 +4,7 @@
 Falsifier: if the documented keystrokes do not produce the documented target,
 the drill is unpassable and must not ship.
 """
-import importlib.util, os, re, subprocess, sys, tempfile
+import importlib.util, json, os, re, subprocess, sys, tempfile
 
 spec = importlib.util.spec_from_loader(
     "gate", importlib.machinery.SourceFileLoader("gate", os.path.expanduser("~/.local/bin/vim-daily-gate")))
@@ -54,6 +54,10 @@ def glyph_violations(d):
 
 USE_REAL_CONFIG = "--real" in sys.argv
 cur = gate.load_curriculum()
+art_doc = json.load(open(os.path.join(os.path.dirname(__file__), "art.json"), encoding="utf-8"))
+assert art_doc.get("schema") == "vim-daily/art@2"
+rights_fields = {"origin", "author", "license", "permission", "redistribution"}
+assert all(rights_fields <= set(entry) for entry in art_doc["art"].values())
 fails = []
 for d in cur["drills"]:
     tmp = tempfile.mkdtemp()
