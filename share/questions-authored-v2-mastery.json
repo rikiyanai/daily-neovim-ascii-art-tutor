@@ -1107,30 +1107,30 @@
     ]
   },
   "M9.06.V2.P01": {
-    "prompt": "ANIMATION\nThe high-pose marker in this unfamiliar angled shell changes from x to X. The angle brackets, empty middle row, and `=====` ground are fixed bounds, not part of the edit.\n\n  BEFORE      AFTER\n  │<  x  >│    │<  X  >│\n  │<     >│ →  │<     >│\n  │<=====>│    │<=====>│\n\nNEOVIM\nWhich landmark-based edit commits the marker without disturbing its bounds?",
-    "compact_prompt": "ANIMATION\nInside the angled shell, only x becomes X.\n\n  │<  x  >│ → │<  X  >│\n  │<=====>│   │<=====>│\n\nNEOVIM\nWhy `fxrX`?",
-    "animation_prompt": "ANIMATION\nM9.06 variant 2 commits a one-cell high marker inside an unfamiliar angled three-row pose.",
-    "animation_answer": "Only x becomes X; shell width and ground material remain unchanged.",
-    "neovim_prompt": "NEOVIM\nDecode `fxrX` on the shown shell.",
-    "neovim_answer": "fx finds the visible x on the current row and rX overwrites that single marker cell, independent of the shell's wider bounds.",
+    "prompt": "ANIMATION\nBoo settles from hover frame 2 to frame 3. The crown stays fixed; row 2 loses its two underscore anchors, and the complete row-3 contour opens into a flare as shown.\n\n  BEFORE       AFTER\n  │  .-.│      │  .-.│\n  │_(   )_│    │ (   )│\n  │`.   .´│  → │-´   `-│\n\nNEOVIM\nWhich sequence makes the two bounded row changes while leaving the crown untouched?",
+    "compact_prompt": "ANIMATION\nRemove Boo's body anchors and flare its skirt for the settle; keep the crown fixed.\n\n  │_(   )_│ → │ (   )│\n  │`.   .´│   │-´   `-│\n\nNEOVIM\nDecode the row-2 edge edits and row-3 Replace-mode rewrite.",
+    "animation_prompt": "ANIMATION\nM9.06 variant 2 advances Boo's complete three-row hover from frame 2 to frame 3.",
+    "animation_answer": "Only the body and skirt rows change: both underscore anchors disappear and the lower contour flares outward; the crown remains fixed.",
+    "neovim_prompt": "NEOVIM\nExplain the row-2 edge edits followed by the row-3 Replace-mode rewrite.",
+    "neovim_answer": "2G0r plus a space clears the left anchor, $x deletes the right anchor, then j0 reaches row 3 and R overwrites its complete contour without shifting the crown.",
     "choices": [
-      "ANIMATION: Only the marker changes to X while the angled shell and ground stay fixed. | NEOVIM: `fx` lands on the marker and `rX` overwrites one cell.",
-      "ANIMATION: Every x-shaped crossing in the project changes. | NEOVIM: f starts a file-wide search and r applies at every match.",
-      "ANIMATION: The shell narrows around the marker. | NEOVIM: `rX` deletes the spaces crossed by f.",
-      "ANIMATION: A second marker is inserted beside x. | NEOVIM: r enters Insert mode and retains the old glyph."
+      "ANIMATION: The crown and body move down together. | NEOVIM: j moves the edited row's text rather than the cursor.",
+      "ANIMATION: Only the skirt changes; both body anchors remain. | NEOVIM: $x deletes the entire body row.",
+      "ANIMATION: Both body anchors disappear and the skirt flares while the crown stays fixed. | NEOVIM: row 2 uses a one-cell blank replacement plus end deletion, then `j0R…<Esc>` overwrites row 3 in place.",
+      "ANIMATION: The old hover is copied below as a hold. | NEOVIM: R duplicates the current line before typing."
     ],
     "compact_choices": [
-      "A: marker only · V: find x + replace",
-      "A: every x · V: f is file-wide",
-      "A: shell narrows · V: f deletes spaces",
-      "A: second marker · V: r inserts"
+      "A: whole pose drops · V: j moves text",
+      "A: skirt only · V: $x deletes body row",
+      "A: remove anchors + flare · V: r/x then row-3 R",
+      "A: copy hold · V: R duplicates line"
     ],
-    "correct_choice": 0,
+    "correct_choice": 2,
     "feedback": [
-      "Correct: the visible landmark makes the edit transfer across shell widths, and r keeps the fixed bounds registered.",
-      "f searches only forward on the current line and stops at one occurrence.",
-      "Cursor motion does not delete crossed cells, and r does not change row width.",
-      "r replaces the existing cursor cell and returns to Normal mode after the replacement glyph."
+      "j changes only the cursor row; it does not move any source text or the fixed crown.",
+      "$x deletes only the final underscore cell, not the complete row; the left anchor also needs a bounded replacement.",
+      "Correct: two row-scoped operations reproduce the real settle while the crown remains byte-for-byte stable.",
+      "Replace mode overwrites existing cells from the cursor; it does not copy or append a line."
     ]
   },
   "M10.06.V2.P01": {

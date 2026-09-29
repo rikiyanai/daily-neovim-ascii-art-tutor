@@ -4768,3 +4768,35 @@ pass real-user-config headed routes at 80x24.
 **Still open.** Fifteen module transfers still use tutor-authored primary
 variants. The pending M4/M19 headed processes and full route matrix remain
 unclaimed. No new source asset was imported and no push occurred.
+
+### VD-42 follow-through · revision `.50` — current M3 route is healthy; M9 now uses Boo's real hover squash
+
+**Route-report reconciliation.** On commit `00c3ebd`, M0.06 through M19.06
+each reached the editor and passed as an individually isolated real-user-config
+headed route at 80x24. M0.06 through M3.06 were also run consecutively and all
+passed. The reported M3.06 shell exit therefore does not reproduce on the
+current revision. This is per-card current-revision evidence, not a claim that
+the full same-process route matrix passes at every viewport.
+
+**M9 source replacement.** Both M9.06 variants now use `official-Pets/Boo`
+res01 hover frames identified by the corpus audit as a three-row M9
+bounce/squash fit:
+
+- frame 3 to 4 folds only the lower flare inward with a row-scoped `C` edit;
+- frame 2 to 3 removes both body anchors and restores the flared skirt contour,
+  combining one-cell replacement, end deletion, and a bounded Replace-mode
+  row rewrite. This distinct start avoids treating the identical frame-1 and
+  frame-3 loop poses as different retry art.
+
+Both questions were rewritten individually. Each prints its exact full
+BEFORE/AFTER source pose, asks about the visible animation change and the Vim
+scope together, and gives mistake-specific feedback.
+
+**Proof:** revision `.50` writes 215 cards / 395 questions; question quality,
+all 215 cards / 174 primary recipes, and every changed-art replay pass. Both
+M9.06 source variants pass their real-user-config headed routes at 80x24.
+
+**Still open.** Fourteen module transfers still use tutor-authored primary
+variants. Full same-process route coverage at all three viewport sizes remains
+unclaimed. The Boo excerpt is authorized for this local tutor only; no push or
+publication occurred.

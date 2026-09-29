@@ -1319,20 +1319,28 @@ MODULES = [
                  ["10GforO", "make the rebound a larger overshoot so the loop settles into the first frame"]],
             ),
         ],
-        "transfer": step(
-            ["[ x ]", "[   ]", "[___]"],
-            ["[ o ]", "[   ]", "[___]"],
-            "fxro",
-            [["fx", "find the changed bounce subject's planned high point"],
-             ["ro", "commit its primary keyframe without moving the ground"]],
-        ),
-        "transfer_alt": step(
-            ["<  x  >", "<     >", "<=====>"],
-            ["<  X  >", "<     >", "<=====>"],
-            "fxrX",
-            [["fx", "find the alternate plan marker independent of its horizontal offset"],
-             ["rX", "commit the changed subject while preserving the ground anchor"]],
-        ),
+        "transfer": dict(step(
+            stone_story_variants.BOO_HOVER_F3,
+            stone_story_variants.BOO_HOVER_F4,
+            "3G0C /   \\<Esc>",
+            [["3G0", "address only Boo's acting skirt row"],
+             ["C /   \\<Esc>", "redraw the flare as the inward-folded squash contour"]],
+        ), source="official-Pets/Boo res01 hover frame 3 to frame 4",
+           prompt=(
+               "Fold Boo's lower contour inward for the squash phase; redraw only the "
+               "third row and keep the crown and body registered."
+           )),
+        "transfer_alt": dict(step(
+            stone_story_variants.BOO_HOVER_F2,
+            stone_story_variants.BOO_HOVER_F3,
+            "2G0r $xj0R-´   `-<Esc>",
+            [["2G0r $x", "remove the two body anchors without shifting its interior"],
+             ["j0R-´   `-<Esc>", "overwrite the complete skirt contour for the outward settle"]],
+        ), source="official-Pets/Boo res01 hover frame 2 to frame 3",
+           prompt=(
+               "Settle Boo's hover outward by removing both underscore body anchors, "
+               "then restore the flared skirt contour; keep the crown fixed."
+           )),
     },
     {
         "id": "M10", "title": "SJIS puff tween", "node": "P/V10", "project": "sjis-puff-tween",
@@ -6351,7 +6359,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.49",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.50",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

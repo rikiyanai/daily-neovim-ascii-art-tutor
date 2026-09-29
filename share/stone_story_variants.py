@@ -63,6 +63,9 @@ FROG_OPEN = ["     ,Oo", "  (\\/ .-)", "  ´ ·-\\´\\"]    # official-Pets/Frog
 FROG_SHUT = ["     ,--", "  (\\/ .-)", "  ´ ·-\\´\\"]    # res01 + res07 overlay
 DRACULA_STAND = ["   \\(}_", "  ,' ¯/", " '-_.'"]          # official-Pets/Dracula res01 frame 1
 DRACULA_WALK_F2 = ["   \\(}_", ".-´  ,'", " ¯-´ \\"]       # frame 2
+BOO_HOVER_F2 = ["  .-.", "_(   )_", "`.   .´"]      # frame 2: body expands
+BOO_HOVER_F3 = ["  .-.", " (   )", "-´   `-"]       # frame 3
+BOO_HOVER_F4 = ["  .-.", " (   )", " /   \\"]       # frame 4: skirt folds inward
 
 
 def _rail(rows, column):

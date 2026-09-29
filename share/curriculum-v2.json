@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.49",
+ "revision": "2026-09-29.50",
  "review_intervals_hours": [
   4,
   24,
@@ -28406,87 +28406,92 @@
    "project_id": "original-micro",
    "variant_group": "M9.card-6",
    "start": [
-    "[ x ]",
-    "[   ]",
-    "[___]"
+    "  .-.",
+    " (   )",
+    "-´   `-"
    ],
    "target": [
-    "[ o ]",
-    "[   ]",
-    "[___]"
+    "  .-.",
+    " (   )",
+    " /   \\"
    ],
-   "expected": "fxro",
+   "expected": "3G0C /   \\<Esc>",
    "recipe": [
     [
-     "fx",
-     "find the changed bounce subject's planned high point"
+     "3G0",
+     "address only Boo's acting skirt row"
     ],
     [
-     "ro",
-     "commit its primary keyframe without moving the ground"
+     "C /   \\<Esc>",
+     "redraw the flare as the inward-folded squash contour"
     ]
    ],
    "cursor": "^",
+   "source": "official-Pets/Boo res01 hover frame 3 to frame 4",
    "prompt": "Commit a high keyframe in unfamiliar bracketed or angled bounds without moving its ground.",
    "artifact": "transfer",
    "variants": [
     {
      "start": [
-      "[ x ]",
-      "[   ]",
-      "[___]"
+      "  .-.",
+      " (   )",
+      "-´   `-"
      ],
      "target": [
-      "[ o ]",
-      "[   ]",
-      "[___]"
+      "  .-.",
+      " (   )",
+      " /   \\"
      ],
-     "expected": "fxro",
+     "expected": "3G0C /   \\<Esc>",
      "recipe": [
       [
-       "fx",
-       "find the changed bounce subject's planned high point"
+       "3G0",
+       "address only Boo's acting skirt row"
       ],
       [
-       "ro",
-       "commit its primary keyframe without moving the ground"
+       "C /   \\<Esc>",
+       "redraw the flare as the inward-folded squash contour"
       ]
      ],
      "cursor": "^",
+     "source": "official-Pets/Boo res01 hover frame 3 to frame 4",
+     "prompt": "Fold Boo's lower contour inward for the squash phase; redraw only the third row and keep the crown and body registered.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       "fxro"
+       "3G0C /   \\<Esc>"
       ]
      }
     },
     {
      "start": [
-      "<  x  >",
-      "<     >",
-      "<=====>"
+      "  .-.",
+      "_(   )_",
+      "`.   .´"
      ],
      "target": [
-      "<  X  >",
-      "<     >",
-      "<=====>"
+      "  .-.",
+      " (   )",
+      "-´   `-"
      ],
-     "expected": "fxrX",
+     "expected": "2G0r $xj0R-´   `-<Esc>",
      "recipe": [
       [
-       "fx",
-       "find the alternate plan marker independent of its horizontal offset"
+       "2G0r $x",
+       "remove the two body anchors without shifting its interior"
       ],
       [
-       "rX",
-       "commit the changed subject while preserving the ground anchor"
+       "j0R-´   `-<Esc>",
+       "overwrite the complete skirt contour for the outward settle"
       ]
      ],
      "cursor": "^",
+     "source": "official-Pets/Boo res01 hover frame 2 to frame 3",
+     "prompt": "Settle Boo's hover outward by removing both underscore body anchors, then restore the flared skirt contour; keep the crown fixed.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
       "exact_any_of": [
-       "fxrX"
+       "2G0r $xj0R-´   `-<Esc>"
       ]
      },
      "paired_question_ids": [
@@ -28497,13 +28502,13 @@
    "method_requirement": {
     "label": "perform the unfamiliar-art transfer with its taught command path",
     "exact_any_of": [
-     "fxro"
+     "3G0C /   \\<Esc>"
     ]
    },
    "required_before_mastery": true,
    "show_target": true,
    "show_recipe": false,
-   "hint": "Vim toolbox: a visible character landmark is safer than repeated unit motions. Scope: Treat each 3-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: a recycled subject or unplanned middle pose is mistaken for original keyframe authoring.",
+   "hint": "Vim toolbox: search can jump between homologous animation anchors. Scope: Treat each 3-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: a recycled subject or unplanned middle pose is mistaken for original keyframe authoring.",
    "review_source_card_id": "M9.06",
    "review_method_family": "required:perform the unfamiliar-art transfer with its taught command path",
    "master_habits": [
@@ -28515,13 +28520,15 @@
     "A7"
    ],
    "grammar_families": [
-    "normal-replace",
-    "search-landmark"
+    "change-to-end",
+    "search-landmark",
+    "normal-motion"
    ],
    "grammar_stage": "hidden",
    "key_vocabulary": [
-    "r + replacement glyph; overwrite one cell without shifting the row",
-    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+    "C is c$; change from the cursor through row end, type replacement text, then <Esc>",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
    ],
    "stage_owner": "A7",
    "artifact_mode": "animation-strip",
@@ -50226,11 +50233,12 @@
    "id": "M9.06.P01",
    "card_id": "M9.06",
    "module_id": "M9",
-   "grammar_family": "normal-replace",
-   "grammar_breakdown_id": "normal-replace",
+   "grammar_family": "change-to-end",
+   "grammar_breakdown_id": "change-to-end",
    "grammar_breakdown": [
-    "r + replacement glyph; overwrite one cell without shifting the row",
-    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+    "C is c$; change from the cursor through row end, type replacement text, then <Esc>",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "state the motion, frame size, extremes, timing, and ground anchor before inserting the falling midpoint",
    "source_ref": "ascii-art-authoring §§9-10; all mastered Neovim nodes",
@@ -50238,47 +50246,47 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The key-hidden transfer comes first; afterward, four explicit choices check the command path and animation scope without free-text grading.",
-   "prompt": "ANIMATION\nThe bracketed transfer changes x to o inside a complete three-row shell; ground remains fixed.\n\n    BEFORE        AFTER\n    │[ x ]│       │[ o ]│\n    │[   ]│       │[   ]│\n    │[___]│       │[___]│\n\nNEOVIM\nWhich landmark-based edit matches TARGET?",
+   "prompt": "ANIMATION\nBoo's hover squash folds only the lower flare inward. The crown and round body stay registered; compare the complete third row under BEFORE and AFTER.\n\n  BEFORE       AFTER\n  │  .-.│      │  .-.│\n  │ (   )│     │ (   )│\n  │-´   `-│  → │ /   \\│\n\nNEOVIM\nWhich bounded edit redraws the acting contour row without disturbing the two stable rows?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "typed_keys",
    "choices": [
-    "ANIMATION: Only the bracketed subject changes; shell and ground stay. | NEOVIM: fxro is landmark-based.",
-    "ANIMATION: Brackets must be shifted to match the old art. | NEOVIM: reuse the old numeric motion.",
-    "ANIMATION: Add a second three-row frame. | NEOVIM: :1,3t$ copies the transfer.",
-    "ANIMATION: Replace all brackets and underscores. | NEOVIM: run a global substitute."
+    "ANIMATION: The whole ghost shifts right for the squash. | NEOVIM: C inserts a new row before row 3.",
+    "ANIMATION: Only the lower flare folds inward; crown and body remain registered. | NEOVIM: `3G0` addresses row 3 and `C…<Esc>` replaces that row through end of line.",
+    "ANIMATION: A hold frame is appended after the hover. | NEOVIM: 3G selects three rows and C copies them.",
+    "ANIMATION: Both body sides are erased with the flare. | NEOVIM: C changes every row below the cursor."
    ],
-   "correct_choice": 0,
+   "correct_choice": 1,
    "feedback": [
-    "Correct: glyph search handles the changed horizontal vocabulary and r preserves width.",
-    "The transfer shell is already correctly placed.",
-    "No second frame is requested; only the subject marker changes.",
-    "Global replacement would damage the transfer's rails and ground."
+    "No position shift occurs: the upper rows are byte-for-byte stable between the source frames.",
+    "Correct: the frame change is a complete rewrite of one acting contour row, bounded by the absolute row address.",
+    "3G is an absolute jump to line 3, not a count that selects three rows, and no frame is appended.",
+    "Normal-mode C changes from the cursor to the end of its current line only."
    ],
-   "animation_prompt": "The changed rails do not change the task: commit the acting marker inside the fixed three-row bounce frame.\n\n    BEFORE        AFTER\n    │[ x ]│       │[ o ]│\n    │[   ]│       │[   ]│\n    │[___]│       │[___]│",
-   "animation_answer": "Replace x with o while preserving brackets, blank spacing, and ground.",
-   "neovim_prompt": "Use the visible marker, not an original column.",
-   "neovim_answer": "fxro finds x in the bracketed row and overwrites it with o.",
-   "compact_prompt": "ANIMATION\nTransfer the subject edit; keep the unfamiliar rails.\n\n    BEFORE      AFTER\n    │[ x ]│  →   │[ o ]│\n    │[___]│      │[___]│\n\nNEOVIM\nUse glyph search.",
+   "animation_prompt": "Boo hover frame 3 becomes frame 4 by folding only the bottom contour inward.",
+   "animation_answer": "The flared -´ and `- ends become an inward slash and backslash; the upper two rows do not change.",
+   "neovim_prompt": "Decode the row address and change-to-end operation in `3G0C /   \\<Esc>`.",
+   "neovim_answer": "3G0 selects the start of row 3; C replaces only that row's old contour through end of line, and Escape returns to Normal mode.",
+   "compact_prompt": "ANIMATION\nFold Boo's skirt inward; keep crown and body fixed.\n\n  │-´   `-│ → │ /   \\│\n\nNEOVIM\nWhat does `3G0C /   \\<Esc>` own?",
    "compact_choices": [
-    "A: subject only, shell fixed · V: fxro",
-    "A: shift brackets · V: old motion",
-    "A: add frame · V: :1,3t$",
-    "A: replace shell · V: global substitute"
+    "A: whole ghost shifts · V: C inserts row",
+    "A: skirt folds only · V: row 3 + change to EOL",
+    "A: append hold · V: 3G selects three rows",
+    "A: erase body too · V: C changes later rows"
    ],
    "source_answer_contract": {
     "form": "typed_keys",
     "initial_lines": [
-     "[ x ]",
-     "[   ]",
-     "[___]"
+     "  .-.",
+     " (   )",
+     "-´   `-"
     ],
     "target_lines": [
-     "[ o ]",
-     "[   ]",
-     "[___]"
+     "  .-.",
+     " (   )",
+     " /   \\"
     ],
     "initial_cursor": "^",
     "forbidden_side_effects": [
@@ -50287,7 +50295,7 @@
      "extra_window",
      "extra_tab"
     ],
-    "sample_answer": "fxro",
+    "sample_answer": "3G0C /   \\<Esc>",
     "effect_version": 1
    },
    "authorship": "manual"
@@ -52108,11 +52116,12 @@
    "id": "M9.06.V2.P01",
    "card_id": "M9.06",
    "module_id": "M9",
-   "grammar_family": "normal-replace",
-   "grammar_breakdown_id": "normal-replace",
+   "grammar_family": "change-to-end",
+   "grammar_breakdown_id": "change-to-end",
    "grammar_breakdown": [
-    "r + replacement glyph; overwrite one cell without shifting the row",
-    "/pattern<CR> searches; f/t land on or before a visible character landmark"
+    "C is c$; change from the cursor through row end, type replacement text, then <Esc>",
+    "/pattern<CR> searches; f/t land on or before a visible character landmark",
+    "motion or landmark command + optional count; movement alone must not change art"
    ],
    "paired_invariant": "state the motion, frame size, extremes, timing, and ground anchor before inserting the falling midpoint",
    "source_ref": "ascii-art-authoring §§9-10; all mastered Neovim nodes",
@@ -52120,53 +52129,57 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
-   "prompt": "ANIMATION\nThe high-pose marker in this unfamiliar angled shell changes from x to X. The angle brackets, empty middle row, and `=====` ground are fixed bounds, not part of the edit.\n\n  BEFORE      AFTER\n  │<  x  >│    │<  X  >│\n  │<     >│ →  │<     >│\n  │<=====>│    │<=====>│\n\nNEOVIM\nWhich landmark-based edit commits the marker without disturbing its bounds?",
+   "prompt": "ANIMATION\nBoo settles from hover frame 2 to frame 3. The crown stays fixed; row 2 loses its two underscore anchors, and the complete row-3 contour opens into a flare as shown.\n\n  BEFORE       AFTER\n  │  .-.│      │  .-.│\n  │_(   )_│    │ (   )│\n  │`.   .´│  → │-´   `-│\n\nNEOVIM\nWhich sequence makes the two bounded row changes while leaving the crown untouched?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "decode",
    "choices": [
-    "ANIMATION: Only the marker changes to X while the angled shell and ground stay fixed. | NEOVIM: `fx` lands on the marker and `rX` overwrites one cell.",
-    "ANIMATION: Every x-shaped crossing in the project changes. | NEOVIM: f starts a file-wide search and r applies at every match.",
-    "ANIMATION: The shell narrows around the marker. | NEOVIM: `rX` deletes the spaces crossed by f.",
-    "ANIMATION: A second marker is inserted beside x. | NEOVIM: r enters Insert mode and retains the old glyph."
+    "ANIMATION: The crown and body move down together. | NEOVIM: j moves the edited row's text rather than the cursor.",
+    "ANIMATION: Only the skirt changes; both body anchors remain. | NEOVIM: $x deletes the entire body row.",
+    "ANIMATION: Both body anchors disappear and the skirt flares while the crown stays fixed. | NEOVIM: row 2 uses a one-cell blank replacement plus end deletion, then `j0R…<Esc>` overwrites row 3 in place.",
+    "ANIMATION: The old hover is copied below as a hold. | NEOVIM: R duplicates the current line before typing."
    ],
-   "correct_choice": 0,
+   "correct_choice": 2,
    "feedback": [
-    "Correct: the visible landmark makes the edit transfer across shell widths, and r keeps the fixed bounds registered.",
-    "f searches only forward on the current line and stops at one occurrence.",
-    "Cursor motion does not delete crossed cells, and r does not change row width.",
-    "r replaces the existing cursor cell and returns to Normal mode after the replacement glyph."
+    "j changes only the cursor row; it does not move any source text or the fixed crown.",
+    "$x deletes only the final underscore cell, not the complete row; the left anchor also needs a bounded replacement.",
+    "Correct: two row-scoped operations reproduce the real settle while the crown remains byte-for-byte stable.",
+    "Replace mode overwrites existing cells from the cursor; it does not copy or append a line."
    ],
-   "animation_prompt": "ANIMATION\nM9.06 variant 2 commits a one-cell high marker inside an unfamiliar angled three-row pose.",
-   "animation_answer": "Only x becomes X; shell width and ground material remain unchanged.",
-   "neovim_prompt": "NEOVIM\nDecode `fxrX` on the shown shell.",
-   "neovim_answer": "fx finds the visible x on the current row and rX overwrites that single marker cell, independent of the shell's wider bounds.",
-   "compact_prompt": "ANIMATION\nInside the angled shell, only x becomes X.\n\n  │<  x  >│ → │<  X  >│\n  │<=====>│   │<=====>│\n\nNEOVIM\nWhy `fxrX`?",
+   "animation_prompt": "ANIMATION\nM9.06 variant 2 advances Boo's complete three-row hover from frame 2 to frame 3.",
+   "animation_answer": "Only the body and skirt rows change: both underscore anchors disappear and the lower contour flares outward; the crown remains fixed.",
+   "neovim_prompt": "NEOVIM\nExplain the row-2 edge edits followed by the row-3 Replace-mode rewrite.",
+   "neovim_answer": "2G0r plus a space clears the left anchor, $x deletes the right anchor, then j0 reaches row 3 and R overwrites its complete contour without shifting the crown.",
+   "compact_prompt": "ANIMATION\nRemove Boo's body anchors and flare its skirt for the settle; keep the crown fixed.\n\n  │_(   )_│ → │ (   )│\n  │`.   .´│   │-´   `-│\n\nNEOVIM\nDecode the row-2 edge edits and row-3 Replace-mode rewrite.",
    "compact_choices": [
-    "A: marker only · V: find x + replace",
-    "A: every x · V: f is file-wide",
-    "A: shell narrows · V: f deletes spaces",
-    "A: second marker · V: r inserts"
+    "A: whole pose drops · V: j moves text",
+    "A: skirt only · V: $x deletes body row",
+    "A: remove anchors + flare · V: r/x then row-3 R",
+    "A: copy hold · V: R duplicates line"
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": "fxrX",
+    "display": "2G0r $xj0R-´   `-<Esc>",
     "required_term_groups": [
      [
-      "replace",
-      "overwrite",
-      "r"
+      "change",
+      "operator",
+      "C"
      ],
      [
-      "cell",
-      "glyph"
+      "end",
+      "row",
+      "line"
+     ],
+     [
+      "escape",
+      "normal"
      ],
      [
       "width",
-      "shift",
-      "registered"
+      "shift"
      ],
      [
       "search",
@@ -52180,9 +52193,20 @@
      [
       "cursor",
       "cell"
+     ],
+     [
+      "motion",
+      "move",
+      "cursor"
+     ],
+     [
+      "landmark",
+      "row",
+      "column",
+      "cell"
      ]
     ],
-    "sample_answer": "replace cell width search pattern cursor"
+    "sample_answer": "change end escape width search pattern cursor motion landmark"
    },
    "authorship": "manual"
   }
@@ -52626,8 +52650,9 @@
      "search-landmark"
     ],
     "hidden_families": [
-     "normal-replace",
-     "search-landmark"
+     "change-to-end",
+     "search-landmark",
+     "normal-motion"
     ]
    },
    "delivery": {
@@ -56637,12 +56662,17 @@
   },
   {
    "hidden_card_id": "M9.06",
-   "grammar_family": "normal-replace",
-   "prior_guided_card_id": "M0.01"
+   "grammar_family": "change-to-end",
+   "prior_guided_card_id": "M10.02"
   },
   {
    "hidden_card_id": "M9.06",
    "grammar_family": "search-landmark",
+   "prior_guided_card_id": "M0.01"
+  },
+  {
+   "hidden_card_id": "M9.06",
+   "grammar_family": "normal-motion",
    "prior_guided_card_id": "M0.01"
   },
   {

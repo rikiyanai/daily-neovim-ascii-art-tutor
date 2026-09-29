@@ -1755,30 +1755,30 @@
     ]
   },
   "M9.06.P01": {
-    "prompt": "ANIMATION\nThe bracketed transfer changes x to o inside a complete three-row shell; ground remains fixed.\n\n    BEFORE        AFTER\n    │[ x ]│       │[ o ]│\n    │[   ]│       │[   ]│\n    │[___]│       │[___]│\n\nNEOVIM\nWhich landmark-based edit matches TARGET?",
-    "compact_prompt": "ANIMATION\nTransfer the subject edit; keep the unfamiliar rails.\n\n    BEFORE      AFTER\n    │[ x ]│  →   │[ o ]│\n    │[___]│      │[___]│\n\nNEOVIM\nUse glyph search.",
-    "animation_prompt": "The changed rails do not change the task: commit the acting marker inside the fixed three-row bounce frame.\n\n    BEFORE        AFTER\n    │[ x ]│       │[ o ]│\n    │[   ]│       │[   ]│\n    │[___]│       │[___]│",
-    "animation_answer": "Replace x with o while preserving brackets, blank spacing, and ground.",
-    "neovim_prompt": "Use the visible marker, not an original column.",
-    "neovim_answer": "fxro finds x in the bracketed row and overwrites it with o.",
+    "prompt": "ANIMATION\nBoo's hover squash folds only the lower flare inward. The crown and round body stay registered; compare the complete third row under BEFORE and AFTER.\n\n  BEFORE       AFTER\n  │  .-.│      │  .-.│\n  │ (   )│     │ (   )│\n  │-´   `-│  → │ /   \\│\n\nNEOVIM\nWhich bounded edit redraws the acting contour row without disturbing the two stable rows?",
+    "compact_prompt": "ANIMATION\nFold Boo's skirt inward; keep crown and body fixed.\n\n  │-´   `-│ → │ /   \\│\n\nNEOVIM\nWhat does `3G0C /   \\<Esc>` own?",
+    "animation_prompt": "Boo hover frame 3 becomes frame 4 by folding only the bottom contour inward.",
+    "animation_answer": "The flared -´ and `- ends become an inward slash and backslash; the upper two rows do not change.",
+    "neovim_prompt": "Decode the row address and change-to-end operation in `3G0C /   \\<Esc>`.",
+    "neovim_answer": "3G0 selects the start of row 3; C replaces only that row's old contour through end of line, and Escape returns to Normal mode.",
     "choices": [
-      "ANIMATION: Only the bracketed subject changes; shell and ground stay. | NEOVIM: fxro is landmark-based.",
-      "ANIMATION: Brackets must be shifted to match the old art. | NEOVIM: reuse the old numeric motion.",
-      "ANIMATION: Add a second three-row frame. | NEOVIM: :1,3t$ copies the transfer.",
-      "ANIMATION: Replace all brackets and underscores. | NEOVIM: run a global substitute."
+      "ANIMATION: The whole ghost shifts right for the squash. | NEOVIM: C inserts a new row before row 3.",
+      "ANIMATION: Only the lower flare folds inward; crown and body remain registered. | NEOVIM: `3G0` addresses row 3 and `C…<Esc>` replaces that row through end of line.",
+      "ANIMATION: A hold frame is appended after the hover. | NEOVIM: 3G selects three rows and C copies them.",
+      "ANIMATION: Both body sides are erased with the flare. | NEOVIM: C changes every row below the cursor."
     ],
     "compact_choices": [
-      "A: subject only, shell fixed · V: fxro",
-      "A: shift brackets · V: old motion",
-      "A: add frame · V: :1,3t$",
-      "A: replace shell · V: global substitute"
+      "A: whole ghost shifts · V: C inserts row",
+      "A: skirt folds only · V: row 3 + change to EOL",
+      "A: append hold · V: 3G selects three rows",
+      "A: erase body too · V: C changes later rows"
     ],
-    "correct_choice": 0,
+    "correct_choice": 1,
     "feedback": [
-      "Correct: glyph search handles the changed horizontal vocabulary and r preserves width.",
-      "The transfer shell is already correctly placed.",
-      "No second frame is requested; only the subject marker changes.",
-      "Global replacement would damage the transfer's rails and ground."
+      "No position shift occurs: the upper rows are byte-for-byte stable between the source frames.",
+      "Correct: the frame change is a complete rewrite of one acting contour row, bounded by the absolute row address.",
+      "3G is an absolute jump to line 3, not a count that selects three rows, and no frame is appended.",
+      "Normal-mode C changes from the cursor to the end of its current line only."
     ]
   },
   "M9.08.P01": {
