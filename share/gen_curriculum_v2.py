@@ -3800,6 +3800,16 @@ FAMILY_DEFS = {
         "grammar": "gv restores the previous Visual selection so the same registered cells can be refined without rebuilding the scope",
         "terms": [["gv", "reselect"], ["previous", "selection"], ["same", "cells", "scope"]],
     },
+    "trimmed-block-copy": {
+        "class": "visual",
+        "grammar": "Visual Block zy yanks each selected row without its trailing spaces; zp pastes the block without manufacturing a padded rectangle",
+        "terms": [["zy", "yank"], ["trailing", "spaces", "padding"], ["zp", "paste", "put"], ["block", "ragged"]],
+    },
+    "whitespace-column-audit": {
+        "class": "ex",
+        "grammar": ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace",
+        "terms": [["list", "whitespace"], ["cursorcolumn", "active column"], ["colorcolumn", "boundary"], ["substitute", "trailing", "cleanup"]],
+    },
     "glyph-inspect": {
         "class": "standalone_normal",
         "grammar": "ga reports the glyph under the cursor before a deliberate fixed-cell replacement",
@@ -4877,7 +4887,8 @@ def mastery_extension_cards(module):
         }
 
     def card(suffix, title, prompt, start, target, expected, recipe, family,
-             ordinal, source, *, guided, reviews=None, extra_families=None):
+             ordinal, source, *, guided, reviews=None, extra_families=None,
+             preserve_trailing_whitespace=False):
         card_id = "%s.%s" % (module["id"], suffix)
         families = [family, *(extra_families or [])]
         row = {
@@ -4914,6 +4925,8 @@ def mastery_extension_cards(module):
             "method_requirement": require_method(
                 "use the taught %s path" % family, exact_any_of=[expected]),
         }
+        if preserve_trailing_whitespace:
+            row["preserve_trailing_whitespace"] = True
         if reviews:
             row["review_variants"] = reviews
             row["review_source_card_id"] = card_id
@@ -5186,6 +5199,113 @@ def mastery_extension_cards(module):
                            "official-Pets/Skully res01 + res02/res04 overlays", dap_label,
                            "Skully review: remove the complete look pose paragraph before the blink.",
                            "Delete the frame object, not three guessed rows."),
+                ])),
+        ])
+
+    if module["id"] == "M15":
+        def trimmed_copy_art(art):
+            width = max(len(row) for row in art)
+            start = [row.ljust(width) for row in art] + ["|>--[]", "|>--[]", "|>--[]"]
+            target = start[:3] + ["|>" + row.rstrip() + "--[]" for row in art]
+            expected = "gg0<C-v>2j%d|zy4G2|zp" % width
+            return start, target, expected, width
+
+        zp_label = "copy a ragged pose without adding trailing block padding"
+        missile_start, missile_target, missile_expected, missile_width = trimmed_copy_art(ss.MISSILE_F1)
+        chick_start, chick_target, chick_expected, chick_width = trimmed_copy_art(ss.CHICK_PEEP_F3)
+        skully_start, skully_target, skully_expected, skully_width = trimmed_copy_art(ss.SKULLY_IDLE)
+        bunny_start, bunny_target, bunny_expected, bunny_width = trimmed_copy_art(ss.SNOWBUNNY_IDLE)
+        rows.extend([
+            ("M15.04", card(
+                "ZP", "Copy a ragged missile pose without padding its short rows",
+                "Copy the three-row missile from its padded palette into the three > destination rows. Preserve each source row's real visible width; do not paste a rectangular tail of spaces.",
+                missile_start, missile_target, missile_expected,
+                [["gg0<C-v>2j%d|" % missile_width, "select the complete padded palette block"],
+                 ["zy", "yank each row without its trailing alignment spaces"],
+                 ["4G2|zp", "paste after the > marker without rebuilding a padded rectangle"]],
+                "trimmed-block-copy", 3.15,
+                "official-Games/TowerDefense res18 missile frame 1", guided=True)),
+            ("M15.06", card(
+                "ZPH", "Retrieve trimmed block copy on a chick peep pose",
+                "On the unfamiliar Chick frame, copy the ragged three-row pose from its padded palette into the > destination rows without carrying invisible right-edge padding.",
+                chick_start, chick_target, chick_expected,
+                [["gg0<C-v>2j%d|" % chick_width, "select the padded Chick palette block"],
+                 ["zy", "drop trailing spaces from each yanked row"],
+                 ["4G2|zp", "paste the ragged pose after the destination markers"]],
+                "trimmed-block-copy", 5.15,
+                "official-Pets/Chick res03 peep frame 3", guided=False,
+                reviews=[
+                    review(skully_start, skully_target, skully_expected,
+                           [["gg0<C-v>2j%d|" % skully_width, "select the padded Skully pose"],
+                            ["zy", "yank without right-edge padding"],
+                            ["4G2|zp", "paste the ragged pose after the markers"]],
+                           "official-Pets/Skully res01", zp_label,
+                           "Skully review: copy the full ragged pose into the destination rows without padding every row to the skull's widest line.",
+                           "Use zy for the block yank and zp for the block put."),
+                    review(bunny_start, bunny_target, bunny_expected,
+                           [["gg0<C-v>2j%d|" % bunny_width, "select the padded SnowBunny pose"],
+                            ["zy", "trim each row's invisible tail while yanking"],
+                            ["4G2|zp", "paste without a rectangular space tail"]],
+                           "official-Pets/SnowBunny res01", zp_label,
+                           "SnowBunny review: copy the uneven pose after the destination markers and leave no manufactured trailing-space rectangle.",
+                           "The z-prefixed yank and put preserve the pose's ragged visible edge."),
+                ])),
+        ])
+
+    if module["id"] == "M11":
+        def padded_cleanup_art(art, padding=3):
+            start = [row + (" " * padding) for row in art]
+            target = [row.rstrip() for row in start]
+            boundary = max(len(row) for row in art) + 1
+            expected = (":set list<CR>:set cursorcolumn<CR>"
+                        ":set colorcolumn=%d<CR>:%%s/\\s\\+$//e<CR>" % boundary)
+            return start, target, expected, boundary
+
+        audit_label = "inspect registration columns, then remove only trailing whitespace"
+        missile_start, missile_target, missile_audit, missile_boundary = padded_cleanup_art(ss.MISSILE_F3)
+        chick_start, chick_target, chick_audit, chick_boundary = padded_cleanup_art(ss.CHICK_PEEP_F3)
+        skully_start, skully_target, skully_audit, skully_boundary = padded_cleanup_art(ss.SKULLY_IDLE)
+        bunny_start, bunny_target, bunny_audit, bunny_boundary = padded_cleanup_art(ss.SNOWBUNNY_IDLE)
+        rows.extend([
+            ("M11.04", card(
+                "WS", "Expose and clean only the invisible row tails",
+                "Inspect the padded missile frame with visible whitespace and column guides, then remove only trailing spaces. Every visible missile and exhaust glyph must remain unchanged.",
+                missile_start, missile_target, missile_audit,
+                [[":set list<CR>", "show otherwise invisible whitespace"],
+                 [":set cursorcolumn<CR>", "track the active registered column"],
+                 [":set colorcolumn=%d<CR>" % missile_boundary, "mark the first column beyond the intended frame width"],
+                 [":%s/\\s\\+$//e<CR>", "remove whitespace only when it reaches a row end"]],
+                "whitespace-column-audit", 3.6,
+                "official-Games/TowerDefense res18 missile frame 3", guided=True,
+                preserve_trailing_whitespace=True)),
+            ("M11.06", card(
+                "WSH", "Retrieve whitespace inspection on a padded Chick pose",
+                "On the unfamiliar Chick frame, turn on the whitespace and column guides, then remove only the three invisible tail spaces from each row. Preserve every visible pose cell.",
+                chick_start, chick_target, chick_audit,
+                [[":set list<CR>", "reveal the padded row tails"],
+                 [":set cursorcolumn<CR>", "keep the current registration column visible"],
+                 [":set colorcolumn=%d<CR>" % chick_boundary, "mark the pose-width boundary"],
+                 [":%s/\\s\\+$//e<CR>", "trim only whitespace anchored at row ends"]],
+                "whitespace-column-audit", 5.6,
+                "official-Pets/Chick res03 peep frame 3", guided=False,
+                preserve_trailing_whitespace=True,
+                reviews=[
+                    review(skully_start, skully_target, skully_audit,
+                           [[":set list<CR>", "show Skully's padded tails"],
+                            [":set cursorcolumn<CR>", "track the active column"],
+                            [":set colorcolumn=%d<CR>" % skully_boundary, "mark the intended right edge"],
+                            [":%s/\\s\\+$//e<CR>", "remove only trailing whitespace"]],
+                           "official-Pets/Skully res01", audit_label,
+                           "Skully review: inspect the registered right edge, then trim the invisible tail without touching the visible skull contour.",
+                           "Make whitespace visible before the end-anchored cleanup."),
+                    review(bunny_start, bunny_target, bunny_audit,
+                           [[":set list<CR>", "show SnowBunny's padded tails"],
+                            [":set cursorcolumn<CR>", "track the active column"],
+                            [":set colorcolumn=%d<CR>" % bunny_boundary, "mark the intended right edge"],
+                            [":%s/\\s\\+$//e<CR>", "remove only trailing whitespace"]],
+                           "official-Pets/SnowBunny res01", audit_label,
+                           "SnowBunny review: reveal and remove only invisible row tails; the ears, face, and body must remain byte-for-byte visible.",
+                           "The cleanup pattern is anchored at each row end."),
                 ])),
         ])
     return rows
@@ -5801,7 +5921,7 @@ def build():
         question_map[question_id].update(authored)
         question_map[question_id]["authorship"] = "manual"
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.30",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.32",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "modules": modules, "cards": cards, "questions": questions,
         "animation_lesson_pack": animation_lessons,

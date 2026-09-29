@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import fcntl
 import subprocess
 import sys
 import tempfile
@@ -512,23 +513,29 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             raise AssertionError("guided after-question is incomplete:\n" + question_screen)
         # Keyboard copy is a second route when drag-selection is inconvenient.
         # It must copy the displayed art question without submitting an answer.
-        clipboard_before = subprocess.run(
-            ["pbpaste"], text=True, capture_output=True, check=True).stdout
-        try:
-            tmux(outer_socket, "send-keys", "-t", outer_pane, "y", "Enter")
-            copied_screen = capture_until(
-                outer_socket, outer_pane,
-                ["copied the complete question and choices"])
-            if "copied the complete question and choices" not in " ".join(copied_screen.split()):
-                raise AssertionError("question copy control did not remain on the question:\n" + copied_screen)
-            copied_page = subprocess.run(
+        # pbcopy/pbpaste are process-global.  The private tmux sockets and
+        # temporary state roots do not stop a parallel size-matrix run from
+        # restoring its old clipboard between this run's copy and read.
+        clipboard_lock_path = Path(tempfile.gettempdir()) / "vim-daily-popup-clipboard.lock"
+        with clipboard_lock_path.open("a+", encoding="utf-8") as clipboard_lock:
+            fcntl.flock(clipboard_lock, fcntl.LOCK_EX)
+            clipboard_before = subprocess.run(
                 ["pbpaste"], text=True, capture_output=True, check=True).stdout
-            for copied_text in ("ANIMATION", "NEOVIM", "BEFORE", "AFTER", "a)", "d)"):
-                if copied_text not in copied_page:
-                    raise AssertionError(
-                        "question clipboard omitted %r:\n%s" % (copied_text, copied_page))
-        finally:
-            subprocess.run(["pbcopy"], input=clipboard_before, text=True, check=True)
+            try:
+                tmux(outer_socket, "send-keys", "-t", outer_pane, "y", "Enter")
+                copied_screen = capture_until(
+                    outer_socket, outer_pane,
+                    ["copied the complete question and choices"])
+                if "copied the complete question and choices" not in " ".join(copied_screen.split()):
+                    raise AssertionError("question copy control did not remain on the question:\n" + copied_screen)
+                copied_page = subprocess.run(
+                    ["pbpaste"], text=True, capture_output=True, check=True).stdout
+                for copied_text in ("ANIMATION", "NEOVIM", "BEFORE", "AFTER", "a)", "d)"):
+                    if copied_text not in copied_page:
+                        raise AssertionError(
+                            "question clipboard omitted %r:\n%s" % (copied_text, copied_page))
+            finally:
+                subprocess.run(["pbcopy"], input=clipboard_before, text=True, check=True)
         answer_letter = "abcd"[
             QUESTION_ORDER.index(M0_FIRST_QUESTION["correct_choice"])
         ]

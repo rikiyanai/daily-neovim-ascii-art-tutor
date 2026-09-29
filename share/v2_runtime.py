@@ -1099,9 +1099,17 @@ def _artifact_path(cfg, card):
     return base / "strip.txt"
 
 
-def _read_lines(path):
+def _read_lines(path, preserve_trailing_whitespace=False):
     with open(path, encoding="utf-8") as f:
         lines = f.read().splitlines()
+    if preserve_trailing_whitespace:
+        return lines
+    return [line.rstrip() for line in lines]
+
+
+def _card_lines(card, lines):
+    if card.get("preserve_trailing_whitespace"):
+        return list(lines)
     return [line.rstrip() for line in lines]
 
 
@@ -1615,7 +1623,7 @@ def _attempt_replay(cfg, card, keylog, before, got):
             "actual_keys": "".join(typed) or "(none)",
             "taught_keys": "".join(expected) or "(none)",
             "before": before, "got": got,
-            "target": [line.rstrip() for line in card["target"]]}
+            "target": _card_lines(card, card["target"])}
 
 
 def _next_attempt_keylog(directory, stem):
@@ -2581,17 +2589,18 @@ def run_edit(cfg, cur, progress, card):
     variants = card.get("variants", [])
     if variants:
         chosen = None
-        existing = _read_lines(path) if path.exists() else None
+        existing = (_read_lines(path, card.get("preserve_trailing_whitespace", False))
+                    if path.exists() else None)
         if existing is not None:
             chosen = next((variant for variant in variants
-                           if existing == [line.rstrip() for line in variant["target"]]), None)
+                           if existing == _card_lines(card, variant["target"])), None)
         if chosen is None:
             chosen = variants[progress["attempts"].get(card["id"], 0) % len(variants)]
         card = dict(card)
         card.update(chosen)
         card["variant_index"] = variants.index(chosen)
-        if existing is not None and existing != [line.rstrip() for line in card["start"]]:
-            known_starts = [[line.rstrip() for line in variant["start"]] for variant in variants]
+        if existing is not None and existing != _card_lines(card, card["start"]):
+            known_starts = [_card_lines(card, variant["start"]) for variant in variants]
             if existing in known_starts:
                 _write_lines_atomic(path, card["start"])
     if getattr(cfg, "practice", False):
@@ -2625,9 +2634,9 @@ def run_edit(cfg, cur, progress, card):
             return 1
     if not path.exists():
         _write_new(path, card["start"])
-    current = _read_lines(path)
+    current = _read_lines(path, card.get("preserve_trailing_whitespace", False))
     legacy_starts = [
-        [line.rstrip() for line in legacy]
+        _card_lines(card, legacy)
         for legacy in card.get("accepted_legacy_starts", [])
     ]
     if current in legacy_starts:
@@ -2642,10 +2651,10 @@ def run_edit(cfg, cur, progress, card):
             "artifact": str(path), "artifact_before_sha256": before_hash,
             "artifact_sha256": _hash_file(path),
         })
-        current = _read_lines(path)
+        current = _read_lines(path, card.get("preserve_trailing_whitespace", False))
         print("Upgraded the verified project checkpoint to the revised multi-row lesson art; "
               "the prior text remains in checkpoints/.")
-    target_lines = [x.rstrip() for x in card["target"]]
+    target_lines = _card_lines(card, card["target"])
     if current == target_lines:
         recovery_extra = {"artifact": str(path), "artifact_sha256": _hash_file(path),
                           "recovered": True}
@@ -2656,7 +2665,8 @@ def run_edit(cfg, cur, progress, card):
             keylog = str(recovered_keylog or path.parent / ("keys-%s.log" % card["id"]))
             recovery_extra.update(_keylog_fields(keylog))
             before_path = path.parent / "checkpoints" / (card["id"] + "-before.txt")
-            before = _read_lines(before_path) if before_path.exists() else card["start"]
+            before = (_read_lines(before_path, card.get("preserve_trailing_whitespace", False))
+                      if before_path.exists() else card["start"])
             recovery_replay = _attempt_replay(cfg, card, keylog, before, current)
             method_family = (_method_family(cfg, card, recovery_replay)
                              if card.get("method_alternatives") else None)
@@ -2713,7 +2723,7 @@ def run_edit(cfg, cur, progress, card):
             cfg.hold_open()
             return 1
         return _complete(cfg, cur, card, extra=recovery_extra, replay=recovery_replay)
-    if current != [x.rstrip() for x in card["start"]]:
+    if current != _card_lines(card, card["start"]):
         print("Project checkpoint differs from the start required by %s:" % card["id"])
         print("  %s" % path)
         print("Your text was preserved. Compare it with the latest file in checkpoints/ before retrying.")
@@ -2747,7 +2757,7 @@ def run_edit(cfg, cur, progress, card):
         lesson = _write_session_lesson(cfg, cur, progress, card)
         cfg.run_editor(str(path), 1, card.get("cursor", "^"), keylog, str(lesson),
                        card["prompt"], card.get("hint"))
-        got = _read_lines(path)
+        got = _read_lines(path, card.get("preserve_trailing_whitespace", False))
         replay = _attempt_replay(cfg, card, keylog, current, got)
         if check_replay:
             replay["check_replay"] = check_replay
@@ -2881,7 +2891,7 @@ def _run_review_edit(cfg, cur, progress, key, review):
     if path.exists():
         _checkpoint(cfg, card, path, "previous")
     _write_lines_atomic(path, card["start"])
-    before = [line.rstrip() for line in card["start"]]
+    before = _card_lines(card, card["start"])
     keylog = str(_next_attempt_keylog(base, "keys-%s" % key.replace(".", "-")))
     print("\nSPACED EDIT RETRIEVAL  ·  changed-art variant %d" % (
         card["variant_index"] + 1))
@@ -2889,12 +2899,12 @@ def _run_review_edit(cfg, cur, progress, key, review):
     lesson = _write_session_lesson(cfg, cur, progress, card)
     cfg.run_editor(str(path), 1, card.get("cursor", "^"), keylog, str(lesson),
                    card["prompt"], card.get("hint"))
-    got = _read_lines(path)
+    got = _read_lines(path, card.get("preserve_trailing_whitespace", False))
     replay = _attempt_replay(cfg, card, keylog, before, got)
     method_error = _required_method_error(cfg, card, replay)
     if method_error:
         replay["method_evidence_error"] = method_error
-    passed = (got == [line.rstrip() for line in card["target"]]
+    passed = (got == _card_lines(card, card["target"])
               and method_error is None)
     if not passed:
         _checkpoint(cfg, card, path, "failed")

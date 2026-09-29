@@ -4184,3 +4184,54 @@ trailing-whitespace inspection/cleanup; undo-tree travel with `g-`, `g+`, and
 art; remaining invented primary art; Stone Story provenance/publication intake;
 and a real stage gate that completes S0–S7 before A0–A7 rather than attaching
 mixed stage labels to modules.
+
+### VD-36 follow-through · revision `2026-09-29.32` — ragged block copy and whitespace/column inspection
+
+Two more guided → hidden → review paths are now executable and method-required:
+
+- `M15.ZP` → `M15.ZPH` teaches Visual Block `zy` plus `zp`. The source palette
+  is deliberately rectangular and padded, while the destination contains the
+  same complete Stone Story pose with each row ending at its actual visible
+  glyph. This makes the `z` commands' no-trailing-space contract observable,
+  rather than mentioning `zp` without a buffer where ordinary block padding is
+  the defect. Hidden Chick work reviews on Skully and SnowBunny.
+- `M11.WS` → `M11.WSH` teaches `:set list`, `cursorcolumn`, and `colorcolumn`
+  as inspection aids before `:%s/\s\+$//e` removes only row-end whitespace.
+  Interior spaces remain drawing cells. Hidden Chick work reviews on Skully
+  and SnowBunny.
+
+Both pairs have individually written four-choice animation + Neovim questions
+with visible art. The whitespace questions explicitly say that `·` visualizes
+a space only in the diagram; they do not pretend the display marker is stored
+in the art. The generated curriculum now contains 205 cards and 365 questions.
+`test_v2.py` passes 205/205 executable lessons and 164/164 primary recipes;
+`test_question_quality.py` passes all 365 questions; and the Stone Story
+variant test still reports zero border-swap reviews.
+
+The client-attached real-user-config popup passes at 80×24, 100×36, and
+188×49 on revision `.32`. The first concurrent 80×24/100×36 attempt exposed a
+test-harness race rather than a tutor failure: both tests saved and restored
+the process-global macOS clipboard, so one could restore old content between
+the other's `y` copy and `pbpaste` assertion. `test_tmux_v2.py` now holds an
+exclusive cross-process lock across clipboard save, copy, assertion, and
+restore. All three sizes then passed concurrently, including question copy,
+answer `c`, real user config, progress/debrief, repeat, and cleanup.
+
+The first direct live run of `M11.WSH` found a defect the clean recipe replay
+could not expose: `_read_lines()` stripped every row with `rstrip()`, so the
+three padded start rows were normalized to the already-clean target before the
+editor opened. Recovery then correctly rejected the missing method evidence,
+but the learner could never perform the lesson. Whitespace is now a per-card
+artifact contract. `M11.WS`/`M11.WSH` set
+`preserve_trailing_whitespace=true`; runtime reads, start/target comparisons,
+replay, recovery, and spaced review preserve bytes for those cards while all
+older cards retain their existing normalized behavior. A unit regression
+proves both read modes. The direct real-config `M11.WSH` popup then passed at
+80×24. `M15.ZPH` also passed as a direct 80×24 real-config route. The route
+driver now has `--only-card=<id>` so future inserted guided/hidden cards can be
+proved directly instead of being inferred from the module's `.06` transfer.
+
+**Remaining VD-26 command gaps after this revision:** `:diffthis` with
+`scrollbind`, plus undo-tree travel with `g-`, `g+`, and `:earlier`. The stage
+gate, transfer-question replacement, primary-art replacement, and archive
+provenance/publication work listed above also remain open.

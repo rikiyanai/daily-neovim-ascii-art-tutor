@@ -96,16 +96,24 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["paradigm"] == concept["paradigm"]
 
 assert len(cur["modules"]) == 20
-assert len(cur["cards"]) == 201
-assert len(cur["questions"]) == 361
-assert len({card["title"] for card in cur["cards"]}) == 201
-assert len({card["prompt"] for card in cur["cards"]}) == 201
+assert len(cur["cards"]) == 205
+assert len(cur["questions"]) == 365
+assert len({card["title"] for card in cur["cards"]}) == 205
+assert len({card["prompt"] for card in cur["cards"]}) == 205
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
+
+
+def card_lines(card, lines):
+    if card.get("preserve_trailing_whitespace"):
+        return list(lines)
+    return [line.rstrip() for line in lines]
+
+
 mc_questions = [question for question in cur["questions"]
                 if question["form"] == "multiple_choice"]
 assert {question["form"] for question in cur["questions"]} == {"multiple_choice"}
-assert len(mc_questions) == len(cur["questions"]) == 361
+assert len(mc_questions) == len(cur["questions"]) == 365
 assert not any(
     phrase in question["prompt"]
     for question in cur["questions"]
@@ -215,7 +223,7 @@ assert all("ANIMATION" in q["compact_prompt"] and "NEOVIM" in q["compact_prompt"
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == len(mc_questions) == 361
+            for q in mc_questions}) == len(mc_questions) == 365
 def contains_ascii_visual(value):
     if "│" in value:
         return True
@@ -358,9 +366,9 @@ assert all(card_by_id[row["review_card_id"]].get("show_recipe") is False
 required_reviews = cur["required_mastery_review_coverage"]
 extension_mastery_ids = {
     "M13.WH", "M13.GH", "M14.DAPH", "M3.GAH",
-    "M4.BIH", "M4.BCH", "M4.GVH",
+    "M4.BIH", "M4.BCH", "M4.GVH", "M15.ZPH", "M11.WSH",
 }
-assert len(required_reviews) == len(cur["modules"]) + len(extension_mastery_ids) == 27
+assert len(required_reviews) == len(cur["modules"]) + len(extension_mastery_ids) == 29
 assert {row["source_card_id"] for row in required_reviews} == {
     "%s.06" % module["id"] for module in cur["modules"]} | extension_mastery_ids
 assert all(row["changed_art_variants"] >= 2 and row["keys_hidden"] is True
@@ -381,6 +389,8 @@ mastery_extension_contract = {
     "M4.GVH": ("visual-reselect", "gg3|<C-v>2jc|<Esc>gvr:"),
     "M3.GAH": ("glyph-inspect", "3G0fogarO"),
     "M14.DAPH": ("paragraph-delete", "ggdap"),
+    "M15.ZPH": ("trimmed-block-copy", "gg0<C-v>2j6|zy4G2|zp"),
+    "M11.WSH": ("whitespace-column-audit", ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=7<CR>:%s/\\s\\+$//e<CR>"),
 }
 for card_id, (family, expected) in mastery_extension_contract.items():
     card = card_by_id[card_id]
@@ -393,6 +403,13 @@ for card_id, (family, expected) in mastery_extension_contract.items():
                for variant in card["review_variants"])
     paired = [question for question in mc_questions if question["card_id"] == card_id]
     assert len(paired) == 1 and paired[0]["authorship"] == "manual"
+assert card_by_id["M11.WS"]["preserve_trailing_whitespace"] is True
+assert card_by_id["M11.WSH"]["preserve_trailing_whitespace"] is True
+with tempfile.TemporaryDirectory() as tmp:
+    padded = Path(tmp) / "padded-art.txt"
+    padded.write_text("|o|   \n", encoding="utf-8")
+    assert v2._read_lines(padded) == ["|o|"]
+    assert v2._read_lines(padded, preserve_trailing_whitespace=True) == ["|o|   "]
 key_paths = "\n".join(card.get("expected", "") for card in cur["cards"])
 for padding in ("jwbewbwro", "6GJu04lr.", "13Gma2G'aj", "Go<Esc>I "):
     assert padding not in key_paths
@@ -1192,8 +1209,8 @@ for card in edit_cards:
         cmd += ["+set noautoindent nosmartindent nocindent indentexpr=", "+1",
                 "+normal! " + card.get("cursor", "^"), "-s", str(script), str(art)]
         result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        got = [line.rstrip() for line in art.read_text(encoding="utf-8").splitlines()]
-        want = [line.rstrip() for line in card["target"]]
+        got = card_lines(card, art.read_text(encoding="utf-8").splitlines())
+        want = card_lines(card, card["target"])
         ok = result.returncode == 0 and got == want
         print("%-4s %-7s %-18s %s" % ("PASS" if ok else "FAIL", card["id"], card["kind"], card["expected"]))
         if not ok:
@@ -1245,8 +1262,8 @@ for card in [c for c in cur["cards"] if c["kind"] == "compare_methods"]:
             cmd += ["+set noautoindent nosmartindent nocindent indentexpr=", "+1",
                     "+normal! " + card.get("cursor", "^"), "-s", str(script), str(art)]
             result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            got = [line.rstrip() for line in art.read_text(encoding="utf-8").splitlines()]
-            want = [line.rstrip() for line in card["target"]]
+            got = card_lines(card, art.read_text(encoding="utf-8").splitlines())
+            want = card_lines(card, card["target"])
             assert result.returncode == 0 and got == want, (card["id"], method, got, want)
 
 # Every transfer has a changed-art retry variant, and every variant's command
@@ -1293,8 +1310,8 @@ for source in review_sources:
                  "+set noautoindent nosmartindent nocindent indentexpr=", "+1",
                  "+normal! " + review_card.get("cursor", "^"), "-s", str(script), str(art)],
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            got = [line.rstrip() for line in art.read_text(encoding="utf-8").splitlines()]
-            assert result.returncode == 0 and got == [line.rstrip() for line in review_card["target"]], (
+            got = card_lines(review_card, art.read_text(encoding="utf-8").splitlines())
+            assert result.returncode == 0 and got == card_lines(review_card, review_card["target"]), (
                 source_id, stage, got, review_card["target"])
             replay = {"actual_tokens": tokenize(review_card["expected"])}
             assert v2._required_method_error(

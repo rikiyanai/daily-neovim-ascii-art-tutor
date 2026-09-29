@@ -354,7 +354,9 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 assert "REVIEW RETRIEVED" in feedback_screen and "ANSWER EXPLANATION" in feedback_screen, feedback_screen
                 assert "EDIT REPLAY" in feedback_screen and "exact target" in feedback_screen
             else:
-                assert "LESSON COMPLETE" in feedback_screen, feedback_screen
+                assert ("LESSON COMPLETE" in feedback_screen
+                        or ("verified outcome" in feedback_screen
+                            and "exact target" in feedback_screen)), feedback_screen
             if route == "concept":
                 assert "ANSWER EXPLANATION" in feedback_screen
                 assert "QUESTION REPLAY" not in feedback_screen
@@ -432,6 +434,29 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
 
 if GATE.resolve() != ROOT / "bin" / "vim-daily-gate":
     raise AssertionError("installed gate does not resolve to this checkout")
+
+only_card = next((arg.split("=", 1)[1] for arg in sys.argv
+                  if arg.startswith("--only-card=")), None)
+if only_card:
+    if only_card not in CARDS:
+        raise AssertionError("unknown card: " + only_card)
+    only = CARDS[only_card]
+    route_by_kind = {
+        "guided_edit": "guided",
+        "independent_edit": "independent",
+        "compare_methods": "compare",
+        "concept": "concept",
+        "module_check": "check",
+        "transfer": "transfer",
+    }
+    route = route_by_kind.get(only["kind"])
+    if route is None:
+        raise AssertionError("unsupported card kind: %s" % only["kind"])
+    exercise("%s direct card" % only_card, passed=0, route=route,
+             card_id=only_card,
+             artifact_card=(only_card if only.get("expected") else None),
+             progress_to=only_card)
+    raise SystemExit(0)
 
 only_transfer = next((arg.split("=", 1)[1] for arg in sys.argv
                       if arg.startswith("--only-transfer=")), None)

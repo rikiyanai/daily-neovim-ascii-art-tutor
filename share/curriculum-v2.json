@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.30",
+ "revision": "2026-09-29.32",
  "review_intervals_hours": [
   4,
   24,
@@ -73,14 +73,17 @@
     "M11.02",
     "M11.03",
     "M11.UR",
+    "M11.WS",
     "M11.04",
     "M11.05",
+    "M11.WSH",
     "M11.06",
     "M11.07",
     "M11.VE",
     "M11.08"
    ],
    "required_review_card_ids": [
+    "M11.WSH",
     "M11.06"
    ],
    "animation_pack_lesson_ids": [
@@ -393,9 +396,11 @@
     "M15.01",
     "M15.02",
     "M15.03",
+    "M15.ZP",
     "M15.04",
     "M15.BA",
     "M15.05",
+    "M15.ZPH",
     "M15.06",
     "M15.07",
     "M15.MAC",
@@ -403,6 +408,7 @@
     "M15.08"
    ],
    "required_review_card_ids": [
+    "M15.ZPH",
     "M15.06"
    ]
   },
@@ -2717,6 +2723,99 @@
    "pairing_exception": null
   },
   {
+   "id": "M11.WS",
+   "module_id": "M11",
+   "ordinal": 3.6,
+   "kind": "guided_edit",
+   "title": "Fixed-width redraw · Expose and clean only the invisible row tails",
+   "project_id": "mastery-m11-ws",
+   "artifact": "transfer",
+   "variant_group": "M11.WS.mastery",
+   "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar; official-Games/TowerDefense res18 missile frame 3",
+   "source": "official-Games/TowerDefense res18 missile frame 3",
+   "medium": "monospace",
+   "node_ids": [
+    "A9/V11"
+   ],
+   "master_habits": [
+    "H1",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S0",
+    "A3"
+   ],
+   "lesson_benefit": "perform whitespace-column-audit with visible keys",
+   "prompt": "Inspect the padded missile frame with visible whitespace and column guides, then remove only trailing spaces. Every visible missile and exhaust glyph must remain unchanged.",
+   "roadmap_contract": "Inspect the padded missile frame with visible whitespace and column guides, then remove only trailing spaces. Every visible missile and exhaust glyph must remain unchanged.",
+   "start": [
+    "  ____/   ",
+    "< / / |::'   ",
+    "  ¯¯¯¯\\   "
+   ],
+   "target": [
+    "  ____/",
+    "< / / |::'",
+    "  ¯¯¯¯\\"
+   ],
+   "expected": ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=11<CR>:%s/\\s\\+$//e<CR>",
+   "recipe": [
+    [
+     ":set list<CR>",
+     "show otherwise invisible whitespace"
+    ],
+    [
+     ":set cursorcolumn<CR>",
+     "track the active registered column"
+    ],
+    [
+     ":set colorcolumn=11<CR>",
+     "mark the first column beyond the intended frame width"
+    ],
+    [
+     ":%s/\\s\\+$//e<CR>",
+     "remove whitespace only when it reaches a row end"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "Follow the visible grammar once, then inspect the registered result.",
+   "grammar_families": [
+    "whitespace-column-audit"
+   ],
+   "grammar_stage": "guided",
+   "key_vocabulary": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught whitespace-column-audit path",
+    "exact_any_of": [
+     ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=11<CR>:%s/\\s\\+$//e<CR>"
+    ]
+   },
+   "preserve_trailing_whitespace": true,
+   "paired_question_ids": [
+    "M11.WS.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M11.WS.P01"
+    ],
+    "rationale": {
+     "M11.WS.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
    "id": "M11.04",
    "module_id": "M11",
    "ordinal": 4,
@@ -3070,6 +3169,186 @@
     ],
     "rationale": {
      "M11.05.P01": "The exact result must exist before the learner compares cursor dependence, scope, and animation risk across the two valid methods."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "id": "M11.WSH",
+   "module_id": "M11",
+   "ordinal": 5.6,
+   "kind": "independent_edit",
+   "title": "Fixed-width redraw · Retrieve whitespace inspection on a padded Chick pose",
+   "project_id": "mastery-m11-wsh",
+   "artifact": "transfer",
+   "variant_group": "M11.WSH.mastery",
+   "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar; official-Pets/Chick res03 peep frame 3",
+   "source": "official-Pets/Chick res03 peep frame 3",
+   "medium": "monospace",
+   "node_ids": [
+    "A9/V11"
+   ],
+   "master_habits": [
+    "H1",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S0",
+    "A3"
+   ],
+   "lesson_benefit": "retrieve whitespace-column-audit on unfamiliar animation art with the key path hidden",
+   "prompt": "On the unfamiliar Chick frame, turn on the whitespace and column guides, then remove only the three invisible tail spaces from each row. Preserve every visible pose cell.",
+   "roadmap_contract": "On the unfamiliar Chick frame, turn on the whitespace and column guides, then remove only the three invisible tail spaces from each row. Preserve every visible pose cell.",
+   "start": [
+    "  __O<   ",
+    "`{/ ;   ",
+    "  ^^   "
+   ],
+   "target": [
+    "  __O<",
+    "`{/ ;",
+    "  ^^"
+   ],
+   "expected": ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=7<CR>:%s/\\s\\+$//e<CR>",
+   "recipe": [
+    [
+     ":set list<CR>",
+     "reveal the padded row tails"
+    ],
+    [
+     ":set cursorcolumn<CR>",
+     "keep the current registration column visible"
+    ],
+    [
+     ":set colorcolumn=7<CR>",
+     "mark the pose-width boundary"
+    ],
+    [
+     ":%s/\\s\\+$//e<CR>",
+     "trim only whitespace anchored at row ends"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": false,
+   "hint": "Name the acting cells first. The exact key sequence remains hidden until evaluation.",
+   "grammar_families": [
+    "whitespace-column-audit"
+   ],
+   "grammar_stage": "hidden",
+   "key_vocabulary": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught whitespace-column-audit path",
+    "exact_any_of": [
+     ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=7<CR>:%s/\\s\\+$//e<CR>"
+    ]
+   },
+   "preserve_trailing_whitespace": true,
+   "review_variants": [
+    {
+     "start": [
+      "     ,--.   ",
+      "    (_o,o)   ",
+      "      `\"´   "
+     ],
+     "target": [
+      "     ,--.",
+      "    (_o,o)",
+      "      `\"´"
+     ],
+     "expected": ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=11<CR>:%s/\\s\\+$//e<CR>",
+     "recipe": [
+      [
+       ":set list<CR>",
+       "show Skully's padded tails"
+      ],
+      [
+       ":set cursorcolumn<CR>",
+       "track the active column"
+      ],
+      [
+       ":set colorcolumn=11<CR>",
+       "mark the intended right edge"
+      ],
+      [
+       ":%s/\\s\\+$//e<CR>",
+       "remove only trailing whitespace"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Skully res01",
+     "prompt": "Skully review: inspect the registered right edge, then trim the invisible tail without touching the visible skull contour.",
+     "hint": "Make whitespace visible before the end-anchored cleanup.",
+     "method_requirement": {
+      "label": "inspect registration columns, then remove only trailing whitespace",
+      "exact_any_of": [
+       ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=11<CR>:%s/\\s\\+$//e<CR>"
+      ]
+     }
+    },
+    {
+     "start": [
+      "   (\\(\\   ",
+      "  ( n.n)   ",
+      "o(,`_\"_)   "
+     ],
+     "target": [
+      "   (\\(\\",
+      "  ( n.n)",
+      "o(,`_\"_)"
+     ],
+     "expected": ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=9<CR>:%s/\\s\\+$//e<CR>",
+     "recipe": [
+      [
+       ":set list<CR>",
+       "show SnowBunny's padded tails"
+      ],
+      [
+       ":set cursorcolumn<CR>",
+       "track the active column"
+      ],
+      [
+       ":set colorcolumn=9<CR>",
+       "mark the intended right edge"
+      ],
+      [
+       ":%s/\\s\\+$//e<CR>",
+       "remove only trailing whitespace"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/SnowBunny res01",
+     "prompt": "SnowBunny review: reveal and remove only invisible row tails; the ears, face, and body must remain byte-for-byte visible.",
+     "hint": "The cleanup pattern is anchored at each row end.",
+     "method_requirement": {
+      "label": "inspect registration columns, then remove only trailing whitespace",
+      "exact_any_of": [
+       ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=9<CR>:%s/\\s\\+$//e<CR>"
+      ]
+     }
+    }
+   ],
+   "review_source_card_id": "M11.WSH",
+   "review_method_family": "whitespace-column-audit",
+   "required_before_mastery": true,
+   "paired_question_ids": [
+    "M11.WSH.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M11.WSH.P01"
+    ],
+    "rationale": {
+     "M11.WSH.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
     }
    },
    "pairing_exception": null
@@ -12302,6 +12581,100 @@
    "pairing_exception": null
   },
   {
+   "id": "M15.ZP",
+   "module_id": "M15",
+   "ordinal": 3.15,
+   "kind": "guided_edit",
+   "title": "Texture ground · Copy a ragged missile pose without padding its short rows",
+   "project_id": "mastery-m15-zp",
+   "artifact": "transfer",
+   "variant_group": "M15.ZP.mastery",
+   "skill": "dither, offset brick, isometric ground shadow, one-cell indentation, block edges, range edits, and reusable macros",
+   "source_ref": "ascii-art-authoring §§3,4,6,8; Neovim help shiftwidth, >>, visual-block, v_b_A, :substitute, q, @; official-Games/TowerDefense res18 missile frame 1",
+   "source": "official-Games/TowerDefense res18 missile frame 1",
+   "medium": "monospace",
+   "node_ids": [
+    "S7/V15"
+   ],
+   "master_habits": [
+    "H4",
+    "H8"
+   ],
+   "master_stages": [
+    "S7",
+    "A5"
+   ],
+   "lesson_benefit": "perform trimmed-block-copy with visible keys",
+   "prompt": "Copy the three-row missile from its padded palette into the three > destination rows. Preserve each source row's real visible width; do not paste a rectangular tail of spaces.",
+   "roadmap_contract": "Copy the three-row missile from its padded palette into the three > destination rows. Preserve each source row's real visible width; do not paste a rectangular tail of spaces.",
+   "start": [
+    "  ____/  ",
+    "< / / |:.",
+    "  ¯¯¯¯\\  ",
+    "|>--[]",
+    "|>--[]",
+    "|>--[]"
+   ],
+   "target": [
+    "  ____/  ",
+    "< / / |:.",
+    "  ¯¯¯¯\\  ",
+    "|>  ____/--[]",
+    "|>< / / |:.--[]",
+    "|>  ¯¯¯¯\\--[]"
+   ],
+   "expected": "gg0<C-v>2j9|zy4G2|zp",
+   "recipe": [
+    [
+     "gg0<C-v>2j9|",
+     "select the complete padded palette block"
+    ],
+    [
+     "zy",
+     "yank each row without its trailing alignment spaces"
+    ],
+    [
+     "4G2|zp",
+     "paste after the > marker without rebuilding a padded rectangle"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "Follow the visible grammar once, then inspect the registered result.",
+   "grammar_families": [
+    "trimmed-block-copy"
+   ],
+   "grammar_stage": "guided",
+   "key_vocabulary": [
+    "Visual Block zy yanks each selected row without its trailing spaces; zp pastes the block without manufacturing a padded rectangle"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3,
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught trimmed-block-copy path",
+    "exact_any_of": [
+     "gg0<C-v>2j9|zy4G2|zp"
+    ]
+   },
+   "paired_question_ids": [
+    "M15.ZP.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M15.ZP.P01"
+    ],
+    "rationale": {
+     "M15.ZP.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
    "id": "M15.04",
    "module_id": "M15",
    "ordinal": 4,
@@ -12810,6 +13183,191 @@
      "source": "skill §4.4: `\\` then `\\|` then `/` is the rotation triple. The bar is the tween."
     }
    ]
+  },
+  {
+   "id": "M15.ZPH",
+   "module_id": "M15",
+   "ordinal": 5.15,
+   "kind": "independent_edit",
+   "title": "Texture ground · Retrieve trimmed block copy on a chick peep pose",
+   "project_id": "mastery-m15-zph",
+   "artifact": "transfer",
+   "variant_group": "M15.ZPH.mastery",
+   "skill": "dither, offset brick, isometric ground shadow, one-cell indentation, block edges, range edits, and reusable macros",
+   "source_ref": "ascii-art-authoring §§3,4,6,8; Neovim help shiftwidth, >>, visual-block, v_b_A, :substitute, q, @; official-Pets/Chick res03 peep frame 3",
+   "source": "official-Pets/Chick res03 peep frame 3",
+   "medium": "monospace",
+   "node_ids": [
+    "S7/V15"
+   ],
+   "master_habits": [
+    "H4",
+    "H8"
+   ],
+   "master_stages": [
+    "S7",
+    "A5"
+   ],
+   "lesson_benefit": "retrieve trimmed-block-copy on unfamiliar animation art with the key path hidden",
+   "prompt": "On the unfamiliar Chick frame, copy the ragged three-row pose from its padded palette into the > destination rows without carrying invisible right-edge padding.",
+   "roadmap_contract": "On the unfamiliar Chick frame, copy the ragged three-row pose from its padded palette into the > destination rows without carrying invisible right-edge padding.",
+   "start": [
+    "  __O<",
+    "`{/ ; ",
+    "  ^^  ",
+    "|>--[]",
+    "|>--[]",
+    "|>--[]"
+   ],
+   "target": [
+    "  __O<",
+    "`{/ ; ",
+    "  ^^  ",
+    "|>  __O<--[]",
+    "|>`{/ ;--[]",
+    "|>  ^^--[]"
+   ],
+   "expected": "gg0<C-v>2j6|zy4G2|zp",
+   "recipe": [
+    [
+     "gg0<C-v>2j6|",
+     "select the padded Chick palette block"
+    ],
+    [
+     "zy",
+     "drop trailing spaces from each yanked row"
+    ],
+    [
+     "4G2|zp",
+     "paste the ragged pose after the destination markers"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": false,
+   "hint": "Name the acting cells first. The exact key sequence remains hidden until evaluation.",
+   "grammar_families": [
+    "trimmed-block-copy"
+   ],
+   "grammar_stage": "hidden",
+   "key_vocabulary": [
+    "Visual Block zy yanks each selected row without its trailing spaces; zp pastes the block without manufacturing a padded rectangle"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3,
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught trimmed-block-copy path",
+    "exact_any_of": [
+     "gg0<C-v>2j6|zy4G2|zp"
+    ]
+   },
+   "review_variants": [
+    {
+     "start": [
+      "     ,--. ",
+      "    (_o,o)",
+      "      `\"´ ",
+      "|>--[]",
+      "|>--[]",
+      "|>--[]"
+     ],
+     "target": [
+      "     ,--. ",
+      "    (_o,o)",
+      "      `\"´ ",
+      "|>     ,--.--[]",
+      "|>    (_o,o)--[]",
+      "|>      `\"´--[]"
+     ],
+     "expected": "gg0<C-v>2j10|zy4G2|zp",
+     "recipe": [
+      [
+       "gg0<C-v>2j10|",
+       "select the padded Skully pose"
+      ],
+      [
+       "zy",
+       "yank without right-edge padding"
+      ],
+      [
+       "4G2|zp",
+       "paste the ragged pose after the markers"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/Skully res01",
+     "prompt": "Skully review: copy the full ragged pose into the destination rows without padding every row to the skull's widest line.",
+     "hint": "Use zy for the block yank and zp for the block put.",
+     "method_requirement": {
+      "label": "copy a ragged pose without adding trailing block padding",
+      "exact_any_of": [
+       "gg0<C-v>2j10|zy4G2|zp"
+      ]
+     }
+    },
+    {
+     "start": [
+      "   (\\(\\ ",
+      "  ( n.n)",
+      "o(,`_\"_)",
+      "|>--[]",
+      "|>--[]",
+      "|>--[]"
+     ],
+     "target": [
+      "   (\\(\\ ",
+      "  ( n.n)",
+      "o(,`_\"_)",
+      "|>   (\\(\\--[]",
+      "|>  ( n.n)--[]",
+      "|>o(,`_\"_)--[]"
+     ],
+     "expected": "gg0<C-v>2j8|zy4G2|zp",
+     "recipe": [
+      [
+       "gg0<C-v>2j8|",
+       "select the padded SnowBunny pose"
+      ],
+      [
+       "zy",
+       "trim each row's invisible tail while yanking"
+      ],
+      [
+       "4G2|zp",
+       "paste without a rectangular space tail"
+      ]
+     ],
+     "cursor": "^",
+     "source": "official-Pets/SnowBunny res01",
+     "prompt": "SnowBunny review: copy the uneven pose after the destination markers and leave no manufactured trailing-space rectangle.",
+     "hint": "The z-prefixed yank and put preserve the pose's ragged visible edge.",
+     "method_requirement": {
+      "label": "copy a ragged pose without adding trailing block padding",
+      "exact_any_of": [
+       "gg0<C-v>2j8|zy4G2|zp"
+      ]
+     }
+    }
+   ],
+   "review_source_card_id": "M15.ZPH",
+   "review_method_family": "trimmed-block-copy",
+   "required_before_mastery": true,
+   "paired_question_ids": [
+    "M15.ZPH.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M15.ZPH.P01"
+    ],
+    "rationale": {
+     "M15.ZPH.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
   },
   {
    "id": "M15.06",
@@ -36910,6 +37468,77 @@
    "authorship": "manual"
   },
   {
+   "id": "M11.WS.P01",
+   "card_id": "M11.WS",
+   "module_id": "M11",
+   "grammar_family": "whitespace-column-audit",
+   "grammar_breakdown_id": "whitespace-column-audit",
+   "grammar_breakdown": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
+   "difficulty": 1,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThe missile's visible glyphs already form the correct frame, but every row has three invisible spaces after its real endpoint. In this diagram, · marks a space only so the defect can be seen.\n\n  BEFORE              AFTER\n  │  ____/···│        │  ____/│\n  │< / / |::'···│     │< / / |::'│\n  │  ¯¯¯¯\\···│        │  ¯¯¯¯\\│\n\nNEOVIM\nWhich inspection-and-cleanup grammar exposes the alignment defect before removing only row-end whitespace?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Only invisible row tails are removed. | NEOVIM: list reveals whitespace, the column options show registration, and `\\s\\+$` matches whitespace anchored at each row end.",
+    "ANIMATION: All interior spacing is collapsed. | NEOVIM: `\\s\\+` deletes every space anywhere in the art.",
+    "ANIMATION: The missile is cropped at one fixed byte count. | NEOVIM: colorcolumn automatically deletes everything to its right.",
+    "ANIMATION: Three dots are appended to each row. | NEOVIM: list converts spaces into permanent buffer glyphs before substitution."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: the options change what you can see, while the end anchor limits the actual edit to trailing whitespace.",
+    "The dollar anchor is essential: interior spaces draw the missile and must survive.",
+    "colorcolumn is a visual guide, not an editing command.",
+    "list changes display only. Its whitespace markers are not written into the art."
+   ],
+   "animation_prompt": "ANIMATION\nM11.WS removes invisible right-edge padding while preserving the complete visible missile frame.",
+   "animation_answer": "Only the three trailing spaces on each row disappear; every visible glyph remains registered.",
+   "neovim_prompt": "NEOVIM\nExplain the display guides and the pattern `\\s\\+$`.",
+   "neovim_answer": ":set list reveals whitespace, cursorcolumn tracks the active column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes whitespace only at row ends.",
+   "compact_prompt": "ANIMATION\nTrim only the ··· tails; visible missile cells stay fixed.\n\n  │|::'···│ → │|::'│\n  │¯¯¯¯\\···│ → │¯¯¯¯\\│\n\nNEOVIM\nWhat do list, cursorcolumn, colorcolumn, and the end-anchored substitute each do?",
+   "compact_choices": [
+    "A: trim tails only · V: guides + end anchor",
+    "A: collapse all spaces · V: any whitespace",
+    "A: fixed crop · V: colorcolumn deletes",
+    "A: append dots · V: list rewrites"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=11<CR>:%s/\\s\\+$//e<CR>",
+    "required_term_groups": [
+     [
+      "list",
+      "whitespace"
+     ],
+     [
+      "cursorcolumn",
+      "active column"
+     ],
+     [
+      "colorcolumn",
+      "boundary"
+     ],
+     [
+      "substitute",
+      "trailing",
+      "cleanup"
+     ]
+    ],
+    "sample_answer": "list cursorcolumn colorcolumn substitute"
+   },
+   "authorship": "manual"
+  },
+  {
    "id": "M11.04.P01",
    "card_id": "M11.04",
    "module_id": "M11",
@@ -37029,6 +37658,77 @@
      ]
     ],
     "sample_answer": "Current-row substitution changes both indicators on the copied row only; an unbounded substitute could alter indicators in other frames."
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M11.WSH.P01",
+   "card_id": "M11.WSH",
+   "module_id": "M11",
+   "grammar_family": "whitespace-column-audit",
+   "grammar_breakdown_id": "whitespace-column-audit",
+   "grammar_breakdown": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nAn unfamiliar Chick pose has three invisible tail spaces per row. The · symbols below visualize those spaces; they are not art glyphs.\n\n  BEFORE          AFTER\n  │  __O<···│     │  __O<│\n  │`{/ ;···│      │`{/ ;│\n  │  ^^···│       │  ^^│\n\nNEOVIM\nWhich method first makes the registration defect inspectable and then trims only the row tails?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Remove every space in the Chick pose. | NEOVIM: run a file-wide replacement with no row-end anchor.",
+    "ANIMATION: Keep the padding and hide it again. | NEOVIM: turn list off without changing the buffer.",
+    "ANIMATION: Remove only the invisible row tails. | NEOVIM: enable the whitespace/column guides, then use an end-anchored trailing-whitespace substitute.",
+    "ANIMATION: Cut every row at the same display column. | NEOVIM: use D at the colorcolumn marker on each row."
+   ],
+   "correct_choice": 2,
+   "feedback": [
+    "Interior spaces are part of the drawing; an unanchored whitespace replacement destroys it.",
+    "Changing display options alone cannot clean the saved frame.",
+    "Correct: inspection proves where the padding is, and the row-end anchor protects all interior pose spacing.",
+    "A fixed-column deletion would remove visible glyphs from shorter or wider rows and ignores the ragged contour."
+   ],
+   "animation_prompt": "ANIMATION\nM11.WSH transfers whitespace auditing to a different complete pose.",
+   "animation_answer": "The padded tail disappears from each row; all interior spaces and visible Chick glyphs remain.",
+   "neovim_prompt": "NEOVIM\nChoose the display guides plus end-anchored cleanup.",
+   "neovim_answer": "Enable list, cursorcolumn, and a colorcolumn boundary, then substitute one-or-more whitespace characters only where they meet the end of a row.",
+   "compact_prompt": "ANIMATION\nRemove only ··· tails from the Chick frame.\n\n  │__O<···│ → │__O<│\n  │ ^^···│ → │ ^^│\n\nNEOVIM\nWhich scope keeps interior pose spaces?",
+   "compact_choices": [
+    "A: remove all spaces · V: unanchored replace",
+    "A: keep tails · V: hide list",
+    "A: trim tails only · V: guides + end anchor",
+    "A: fixed cut · V: repeat D"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=7<CR>:%s/\\s\\+$//e<CR>",
+    "required_term_groups": [
+     [
+      "list",
+      "whitespace"
+     ],
+     [
+      "cursorcolumn",
+      "active column"
+     ],
+     [
+      "colorcolumn",
+      "boundary"
+     ],
+     [
+      "substitute",
+      "trailing",
+      "cleanup"
+     ]
+    ],
+    "sample_answer": "list cursorcolumn colorcolumn substitute"
    },
    "authorship": "manual"
   },
@@ -41240,6 +41940,78 @@
    "authorship": "manual"
   },
   {
+   "id": "M15.ZP.P01",
+   "card_id": "M15.ZP",
+   "module_id": "M15",
+   "grammar_family": "trimmed-block-copy",
+   "grammar_breakdown_id": "trimmed-block-copy",
+   "grammar_breakdown": [
+    "Visual Block zy yanks each selected row without its trailing spaces; zp pastes the block without manufacturing a padded rectangle"
+   ],
+   "paired_invariant": "texture is a material system: offset repeated motifs by measured cells, lighten dither by erasing density, and keep the shadow or isometric base as a stable depth cue",
+   "source_ref": "ascii-art-authoring §§3,4,6,8; Neovim help shiftwidth, >>, visual-block, v_b_A, :substitute, q, @",
+   "difficulty": 1,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThe missile pose has ragged visible row ends, even though its palette rows are padded to one rectangular width. The copied pose between each > marker and --[] stop must keep those ragged ends.\n\n  PADDED PALETTE     COPIED POSE\n  │  ____/  │        │|>  ____/--[]│\n  │< / / |:.│        │|>< / / |:.--[]│\n  │  ¯¯¯¯\\  │        │|>  ¯¯¯¯\\--[]│\n\nNEOVIM\nWhy use Visual Block zy followed by zp instead of an ordinary rectangular yank and put?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: The pose keeps each row's visible endpoint. | NEOVIM: zy omits trailing spaces per selected row and zp pastes without rebuilding a padded rectangle.",
+    "ANIMATION: Every copied row is padded to the widest missile row. | NEOVIM: zy and zp force a rectangular block width.",
+    "ANIMATION: Only the middle missile row is copied. | NEOVIM: z limits the yank and put to the cursor row.",
+    "ANIMATION: The missile is centred by adding spaces on both sides. | NEOVIM: zy is a centring operator and zp repeats it."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: the z-prefixed block operations preserve meaningful row content without manufacturing invisible right-edge cells.",
+    "That describes ordinary rectangular block behaviour; the target deliberately keeps three different visible endpoints.",
+    "The Visual Block selection spans all three rows, and every row appears at the destination.",
+    "Neither command centres text. Their special contract is trailing-space handling for blockwise data."
+   ],
+   "animation_prompt": "ANIMATION\nM15.ZP copies one complete missile pose while preserving the visible end of each uneven row.",
+   "animation_answer": "The three pose rows are copied, but no short row gains the palette's trailing alignment spaces.",
+   "neovim_prompt": "NEOVIM\nExplain the z-prefixed block yank and put.",
+   "neovim_answer": "Visual Block zy omits trailing whitespace from each selected row, and zp puts the resulting ragged block without adding trailing spaces.",
+   "compact_prompt": "ANIMATION\nCopy the missile without padding every row to width 9.\n\n  │  ____/  │ → │|>  ____/--[]│\n  │< / / |:.│ → │|>< / / |:.--[]│\n  │  ¯¯¯¯\\  │ → │|>  ¯¯¯¯\\--[]│\n\nNEOVIM\nWhat do zy and zp preserve?",
+   "compact_choices": [
+    "A: ragged endpoints stay · V: zy/zp omit tails",
+    "A: all rows padded · V: force rectangle",
+    "A: middle row only · V: cursor row",
+    "A: pose centred · V: z centres"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "gg0<C-v>2j9|zy4G2|zp",
+    "required_term_groups": [
+     [
+      "zy",
+      "yank"
+     ],
+     [
+      "trailing",
+      "spaces",
+      "padding"
+     ],
+     [
+      "zp",
+      "paste",
+      "put"
+     ],
+     [
+      "block",
+      "ragged"
+     ]
+    ],
+    "sample_answer": "zy trailing zp block"
+   },
+   "authorship": "manual"
+  },
+  {
    "id": "M15.04.P01",
    "card_id": "M15.04",
    "module_id": "M15",
@@ -41428,6 +42200,78 @@
      ]
     ],
     "sample_answer": "Blockwise $A appends at all three selected row ends; bounded substitution owns the same three-row range, and neither shifts existing cells."
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M15.ZPH.P01",
+   "card_id": "M15.ZPH",
+   "module_id": "M15",
+   "grammar_family": "trimmed-block-copy",
+   "grammar_breakdown_id": "trimmed-block-copy",
+   "grammar_breakdown": [
+    "Visual Block zy yanks each selected row without its trailing spaces; zp pastes the block without manufacturing a padded rectangle"
+   ],
+   "paired_invariant": "texture is a material system: offset repeated motifs by measured cells, lighten dither by erasing density, and keep the shadow or isometric base as a stable depth cue",
+   "source_ref": "ascii-art-authoring §§3,4,6,8; Neovim help shiftwidth, >>, visual-block, v_b_A, :substitute, q, @",
+   "difficulty": 2,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nThe unfamiliar Chick pose is stored in a six-column padded palette. Copy it between each > marker and --[] stop, but preserve the beak, crack, and feet rows at their true visible lengths.\n\n  PADDED PALETTE   REQUIRED COPY\n  │  __O<│         │|>  __O<--[]│\n  │`{/ ; │         │|>`{/ ;--[]│\n  │  ^^  │         │|>  ^^--[]│\n\nNEOVIM\nWhich method removes each selected row's invisible tail during copy and does not add it back during paste?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Copy a six-column rectangle including every space tail. | NEOVIM: ordinary y and p preserve the padded palette width.",
+    "ANIMATION: Copy all three rows at their visible lengths. | NEOVIM: use zy on the Visual Block and zp at the destination so trailing space tails are omitted.",
+    "ANIMATION: Copy only non-space glyphs into one line. | NEOVIM: join the block with J before putting it.",
+    "ANIMATION: Delete the palette after copying. | NEOVIM: d and p are required because zy cannot keep text in a register."
+   ],
+   "correct_choice": 1,
+   "feedback": [
+    "That would reproduce the invisible padding the task explicitly asks you not to carry.",
+    "Correct: zy trims each selected row's trailing whitespace, and zp keeps the block ragged when it is put.",
+    "Joining destroys the three-row pose and its vertical registration.",
+    "zy is a yank: it stores the selected text without deleting the source palette."
+   ],
+   "animation_prompt": "ANIMATION\nM15.ZPH transfers ragged block copying to the Chick peep frame.",
+   "animation_answer": "All three Chick rows are copied at their own visible lengths after the destination markers.",
+   "neovim_prompt": "NEOVIM\nChoose the block yank/put pair whose contract omits trailing spaces.",
+   "neovim_answer": "Select the complete palette block, use zy to yank it without trailing whitespace, then use zp at the destination markers.",
+   "compact_prompt": "ANIMATION\nCopy the ragged Chick pose, not a padded rectangle.\n\n  │  __O<│ → │|>  __O<--[]│\n  │`{/ ; │ → │|>`{/ ;--[]│\n  │  ^^  │ → │|>  ^^--[]│\n\nNEOVIM\nWhich block operations omit space tails?",
+   "compact_choices": [
+    "A: padded rectangle · V: ordinary y/p",
+    "A: three ragged rows · V: zy then zp",
+    "A: one joined line · V: J then put",
+    "A: delete palette · V: d/p required"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": "gg0<C-v>2j6|zy4G2|zp",
+    "required_term_groups": [
+     [
+      "zy",
+      "yank"
+     ],
+     [
+      "trailing",
+      "spaces",
+      "padding"
+     ],
+     [
+      "zp",
+      "paste",
+      "put"
+     ],
+     [
+      "block",
+      "ragged"
+     ]
+    ],
+    "sample_answer": "zy trailing zp block"
    },
    "authorship": "manual"
   },
@@ -48615,6 +49459,11 @@
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
+   "card_id": "M11.WS",
+   "label": "use the taught whitespace-column-audit path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M11.04",
    "label": "undo and redo a real fixed-width redraw",
    "evidence": "runtime-required ordered command path plus exact target"
@@ -48628,6 +49477,11 @@
    "card_id": "M11.05",
    "label": "current-row substitute",
    "evidence": "runtime-recognized comparison method"
+  },
+  {
+   "card_id": "M11.WSH",
+   "label": "use the taught whitespace-column-audit path",
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M11.06",
@@ -48875,6 +49729,11 @@
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
+   "card_id": "M15.ZP",
+   "label": "use the taught trimmed-block-copy path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M15.04",
    "label": "combine a one-cell brick shift with a row-bounded dither lightening",
    "evidence": "runtime-required ordered command path plus exact target"
@@ -48888,6 +49747,11 @@
    "card_id": "M15.05",
    "label": "bounded range append",
    "evidence": "runtime-recognized comparison method"
+  },
+  {
+   "card_id": "M15.ZPH",
+   "label": "use the taught trimmed-block-copy path",
+   "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M15.06",
@@ -49189,6 +50053,12 @@
    "evidence": "source-linked changed-art review bank"
   },
   {
+   "source_card_id": "M11.WSH",
+   "method_family": "whitespace-column-audit",
+   "changed_art_variants": 2,
+   "evidence": "source-linked changed-art review bank"
+  },
+  {
    "source_card_id": "M11.06",
    "method_family": "required:transfer the fixed-width redraw with Replace mode",
    "changed_art_variants": 2,
@@ -49365,6 +50235,12 @@
   {
    "source_card_id": "M15.05",
    "method_family": "comparison:M15.05",
+   "changed_art_variants": 2,
+   "evidence": "source-linked changed-art review bank"
+  },
+  {
+   "source_card_id": "M15.ZPH",
+   "method_family": "trimmed-block-copy",
    "changed_art_variants": 2,
    "evidence": "source-linked changed-art review bank"
   },
@@ -49751,6 +50627,11 @@
    "hidden_card_id": "M11.05",
    "grammar_family": "normal-motion",
    "prior_guided_card_id": "M0.01"
+  },
+  {
+   "hidden_card_id": "M11.WSH",
+   "grammar_family": "whitespace-column-audit",
+   "prior_guided_card_id": "M11.WS"
   },
   {
    "hidden_card_id": "M11.06",
@@ -50381,6 +51262,11 @@
    "hidden_card_id": "M15.05",
    "grammar_family": "normal-motion",
    "prior_guided_card_id": "M0.01"
+  },
+  {
+   "hidden_card_id": "M15.ZPH",
+   "grammar_family": "trimmed-block-copy",
+   "prior_guided_card_id": "M15.ZP"
   },
   {
    "hidden_card_id": "M15.06",
@@ -51110,6 +51996,14 @@
    "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
   },
   {
+   "grammar_family": "whitespace-column-audit",
+   "guided_card_id": "M11.WS",
+   "review_card_id": "M11.WSH",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+  },
+  {
    "grammar_family": "virtual-column",
    "guided_card_id": "M11.VE",
    "review_card_id": "M11.08",
@@ -51230,6 +52124,14 @@
    "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
   },
   {
+   "grammar_family": "trimmed-block-copy",
+   "guided_card_id": "M15.ZP",
+   "review_card_id": "M15.ZPH",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "evidence": "target-linked changed-art retrieval; method enforcement reported separately"
+  },
+  {
    "grammar_family": "block-append",
    "guided_card_id": "M15.BA",
    "review_card_id": "M15.05",
@@ -51338,6 +52240,15 @@
   },
   {
    "module_id": "M11",
+   "source_card_id": "M11.WSH",
+   "method_label": "use the taught whitespace-column-audit path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M11",
    "source_card_id": "M11.06",
    "method_label": "transfer the fixed-width redraw with Replace mode",
    "changed_art_variants": 2,
@@ -51439,6 +52350,15 @@
    "module_id": "M5",
    "source_card_id": "M5.06",
    "method_label": "perform the unfamiliar-art transfer with its taught command path",
+   "changed_art_variants": 2,
+   "keys_hidden": true,
+   "required_before_mastery": true,
+   "evidence": "method-required hidden transfer plus changed-art spaced review"
+  },
+  {
+   "module_id": "M15",
+   "source_card_id": "M15.ZPH",
+   "method_label": "use the taught trimmed-block-copy path",
    "changed_art_variants": 2,
    "keys_hidden": true,
    "required_before_mastery": true,
