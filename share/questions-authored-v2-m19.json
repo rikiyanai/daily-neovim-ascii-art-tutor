@@ -1,0 +1,354 @@
+{
+  "M19.Q01": {
+    "prompt": "ANIMATION\nPallas's left ghost has one uncertain eye. Only ? becomes -; both rails stay fixed.\n\nBEFORE          AFTER\n│    .-.   │    │    .-.   │\n│   (? -)  │ →  │   (- -)  │\n│   \\ ‾ `-´│    │   \\ ‾ `-´│\n\nNEOVIM\nWhich choice approves one existing cell without growing the row?",
+    "compact_prompt": "ANIMATION\nApprove one eye without moving the rails.\n│   (? -)  │ → │   (- -)  │\nNEOVIM\nHow should the existing ? cell change?",
+    "animation_prompt": "ANIMATION\nThe official calm face is (- -); accent and rails do not move.\n\n|   (? -)  | → |   (- -)  |",
+    "animation_answer": "Approve the first eye only and preserve both rail columns.",
+    "neovim_prompt": "NEOVIM\nWhich mode consumes the placeholder cell?\n\n|   (? -)  |",
+    "neovim_answer": "Find ? and use gR-<Esc>; Virtual Replace overwrites the existing display cell.",
+    "choices": [
+      "ANIMATION: Insert a dash before ?. | NEOVIM: i- preserves the row width.",
+      "ANIMATION: Redraw all six rows. | NEOVIM: 6ddP is a one-cell correction.",
+      "ANIMATION: Change ? to - and keep both rails fixed. | NEOVIM: gR- overwrites that display cell.",
+      "ANIMATION: Leave ? as an authored blink. | NEOVIM: movement alone completes the target."
+    ],
+    "compact_choices": ["A: insert dash · V: i-", "A: redraw pose · V: 6ddP", "A: ?→-; rails fixed · V: gR-", "A: keep ? · V: move only"],
+    "correct_choice": 2,
+    "feedback": [
+      "Insert mode adds a cell and shifts the right rail.",
+      "The target changes one eye cell, not the six-row object.",
+      "Correct: Virtual Replace consumes ? and leaves every following cell registered.",
+      "The official calm pose contains -, so cursor motion alone cannot finish it."
+    ]
+  },
+  "M19.Q02": {
+    "prompt": "ANIMATION\nCopy the complete Pallas left ghost before drawing its opposite pose.\n\n|    .-.   |\n|   (- -)  |\n|   \\ ‾ `-´|\n|    ) /   |\n|    |/    |\n|    '     |\n\nNEOVIM\nWhich count owns the whole source still?",
+    "compact_prompt": "ANIMATION\nThe crown, accent, body and tail form one six-row still.\n\n│    .-.   │\n│   \\ ‾ `-´│\n│    |/    │\n\nNEOVIM\nWhat must yy count?",
+    "animation_prompt": "ANIMATION\nThe source remains visible and an identical six-row working copy appears below it.",
+    "animation_answer": "Copy all six rows as one candidate still.",
+    "neovim_prompt": "NEOVIM\nWhat does 6yy own here?\n\n|    .-.   |\n|   (- -)  |\n|    '     |",
+    "neovim_answer": "6yy yanks six complete lines; Gp puts the working copy below.",
+    "choices": [
+      "ANIMATION: Preserve the complete six-row ghost. | NEOVIM: gg6yyGp copies all six lines below.",
+      "ANIMATION: Preserve only the eye row. | NEOVIM: yy means the complete semantic object.",
+      "ANIMATION: Move the source ghost. | NEOVIM: 6ddp leaves the original visible.",
+      "ANIMATION: Create six empty rows. | NEOVIM: 6o copies the source glyphs."
+    ],
+    "compact_choices": ["A: full ghost · V: 6yy/Gp", "A: eye row · V: yy=object", "A: move ghost · V: 6ddp", "A: blanks · V: 6o"],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the count matches the six-row source boundary.",
+      "yy is one physical line unless a count is supplied.",
+      "Delete/put removes the original instead of keeping two candidates.",
+      "Open-line commands create blanks; they do not copy art."
+    ]
+  },
+  "M19.Q03": {
+    "prompt": "ANIMATION\nThe copied ghost moved right, but this row still uses the left pose's long accent and tail direction.\n\nLEFT   |   \\ ‾ `-´|\nRIGHT  |`-´ ‾ /   |\n\nNEOVIM\nWhich method proves the mirror was judged glyph by glyph?",
+    "compact_prompt": "ANIMATION\nRe-author the accent and tail direction.\n│   \\ ‾ `-´│ → │`-´ ‾ /   │\nNEOVIM\nWhich method authors the directional row?",
+    "animation_prompt": "ANIMATION\nThe accent, curve and spacing exchange direction; a byte reversal is not accepted.",
+    "animation_answer": "Author the official right-facing row by eye.",
+    "neovim_prompt": "NEOVIM\nWhich mode writes deliberate glyphs into existing cells?",
+    "neovim_answer": "A bounded gR row pass overwrites the copied row while the rails expose drift.",
+    "choices": [
+      "ANIMATION: Reverse the stored bytes. | NEOVIM: ! chooses the correct mirror glyphs.",
+      "ANIMATION: Exchange accent, curve and spacing deliberately. | NEOVIM: bounded gR passes author the target rows in place.",
+      "ANIMATION: Keep the left accent after moving the body. | NEOVIM: only cursor movement is required.",
+      "ANIMATION: Insert the right pose beside the left. | NEOVIM: i preserves both rail columns."
+    ],
+    "compact_choices": ["A: byte reverse · V: !", "A: judge glyphs · V: bounded gR", "A: keep accent · V: move only", "A: insert beside · V: i"],
+    "correct_choice": 1,
+    "feedback": [
+      "Byte order cannot decide which directional glyph or gap the image needs.",
+      "Correct: explicit row overwrites make every mirror decision inspectable.",
+      "A relocated left-facing accent is still a mirror defect.",
+      "Insertion changes the composition and row width instead of replacing the copy."
+    ]
+  },
+  "M19.Q04": {
+    "prompt": "ANIMATION\nCompare the complete source-authored poses. Even the crown shifts within fixed rails.\n\nLEFT           RIGHT\n|    .-.   |   |   .-.    |\n|   \\ ‾ `-´|   |`-´ ‾ /   |\n|    ) /   |   |   \\ (    |\n|    |/    |   |    \\|    |\n\nNEOVIM\nWhat must each full-row gR pass preserve?",
+    "compact_prompt": "ANIMATION\n│   \\ ‾ `-´│ → │`-´ ‾ /   │\n│    |/    │   │    \\|    │\nNEOVIM\nWhat stays registered?",
+    "animation_prompt": "ANIMATION\nAll six row spellings are authored, while the two rail columns remain unchanged.",
+    "animation_answer": "Mirror all six rows and retain equal display widths.",
+    "neovim_prompt": "NEOVIM\nWhat boundary makes a gR pass safe?",
+    "neovim_answer": "Start at the left rail, type exactly one target row, then Escape at the unchanged right rail.",
+    "choices": [
+      "ANIMATION: Let short rows end early. | NEOVIM: rail drift is repaired by playback.",
+      "ANIMATION: Move both rails with the accent. | NEOVIM: type one extra cell in gR.",
+      "ANIMATION: Change only rows containing slash glyphs. | NEOVIM: unchanged-looking rows need no width check.",
+      "ANIMATION: Author six target rows inside fixed rails. | NEOVIM: each bounded gR pass ends at the original right rail."
+    ],
+    "compact_choices": ["A: ragged rows · V: playback fixes", "A: move rails · V: extra cell", "A: slash rows only · V: skip checks", "A: six rows; rails fixed · V: bounded gR"],
+    "correct_choice": 3,
+    "feedback": [
+      "Ragged widths become visible registration jitter.",
+      "The rails are the invariant, not moving decoration.",
+      "Crown and face spacing also differ and must be authored deliberately.",
+      "Correct: every target row is explicit and every rail stays in its original column."
+    ]
+  },
+  "M19.Q05": {
+    "prompt": "ANIMATION\nOnly the right ghost's eye expression changes from calm to strain.\n\n|  (- -)   | → |  (> <)   |\n|`-´ ‾ /   |   |`-´ ‾ /   |\n\nNEOVIM\nWhen are R and gR equivalent for this edit?",
+    "compact_prompt": "ANIMATION\n│  (- -)   │ → │  (> <)   │\nNEOVIM\nWhere must overwrite mode stop?",
+    "animation_prompt": "ANIMATION\nThe three cells - - become > <; parentheses and rails remain.",
+    "animation_answer": "Change the three-cell expression and preserve the face boundary.",
+    "neovim_prompt": "NEOVIM\nWhat makes either overwrite path bounded?",
+    "neovim_answer": "Enter R or gR on the first eye and Escape after typing > <, before the closing parenthesis.",
+    "choices": [
+      "ANIMATION: Change only the three eye-expression cells. | NEOVIM: R and gR are equivalent when Escape stops before ).",
+      "ANIMATION: Replace the closing parenthesis too. | NEOVIM: continue through the whole row.",
+      "ANIMATION: Insert > < before the calm eyes. | NEOVIM: i has the same fixed-width effect.",
+      "ANIMATION: Change both ghost faces. | NEOVIM: :%s is the required local scope."
+    ],
+    "compact_choices": ["A: 3 eye cells · V: stop before )", "A: include ) · V: whole row", "A: insert eyes · V: i", "A: both faces · V: %s"],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: both modes overwrite existing cells; the explicit stop protects the face contour.",
+      "The closing parenthesis is stable contour evidence.",
+      "Insertion leaves the old eyes behind and moves the rail.",
+      "The target owns one expression row, not every match in the file."
+    ]
+  },
+  "M19.Q06": {
+    "prompt": "ANIMATION\nTransfer the mirror rule to a folded Acronian wing.\n\n|   \\ `  ___.,/| → |\\,.___  ´ /   |\n|    \\  /_/\\   |   |   /\\_\\  /    |\n\nNEOVIM\nWhich evidence distinguishes hand authoring from a byte flip?",
+    "compact_prompt": "ANIMATION\n│   \\ `  ___.,/│ → │\\,.___  ´ /   │\nNEOVIM\nHow are all six rows rewritten?",
+    "animation_prompt": "ANIMATION\nOuter edge, inner fold, accents and gaps are all re-judged inside fixed rails.",
+    "animation_answer": "Author the official opposite wing row by row.",
+    "neovim_prompt": "NEOVIM\nWhich path exposes every decision?",
+    "neovim_answer": "Six bounded 0gR...<Esc> passes overwrite the source rows without a reverse transform.",
+    "choices": [
+      "ANIMATION: Preserve only the outer edge. | NEOVIM: one r changes the full wing.",
+      "ANIMATION: Reverse each row mechanically. | NEOVIM: gR chooses mirror glyphs automatically.",
+      "ANIMATION: Re-author edge, fold, accents and gaps. | NEOVIM: six bounded gR row passes provide the evidence.",
+      "ANIMATION: Insert a second wing beside the source. | NEOVIM: i keeps both rails fixed."
+    ],
+    "compact_choices": ["A: edge only · V: one r", "A: byte flip · V: gR auto", "A: all features · V: six gR rows", "A: insert beside · V: i"],
+    "correct_choice": 2,
+    "feedback": [
+      "The inner fold and spacing are part of the mirror reading.",
+      "gR writes supplied text; it does not understand visual mirroring.",
+      "Correct: complete row evidence shows the unfamiliar mirror was authored deliberately.",
+      "Insertion adds another object and changes the fixed-width plate."
+    ]
+  },
+  "M19.Q07": {
+    "prompt": "ANIMATION\nThese are variant stills, not a timed sequence.\n\n|   (- -)  |  |  (> <)   |  |   (> <)  |\n|   \\ ‾ `-´|  |`-´ ‾ /   |  |   \\ ‾ `-´|\n\nNEOVIM\nWhich operation keeps each six-row candidate available for comparison?",
+    "compact_prompt": "ANIMATION\nleft calm · right strain · left strain\n│   (- -)  │ │  (> <)   │ │   (> <)  │\nNEOVIM\nWhat is the object boundary?",
+    "animation_prompt": "ANIMATION\nThree complete still candidates exist; timing and in-betweens do not.",
+    "animation_answer": "Retain each complete six-row pose for visual comparison.",
+    "neovim_prompt": "NEOVIM\nWhich copy respects the candidate boundary?",
+    "neovim_answer": "6yy or :1,6t$ copies the complete still instead of a feature row.",
+    "choices": [
+      "ANIMATION: Delete each candidate after checking its eyes. | NEOVIM: 6dd is comparison.",
+      "ANIMATION: Keep each complete still. | NEOVIM: a six-line yank or addressed copy preserves it.",
+      "ANIMATION: Keep only the face rows. | NEOVIM: yy owns a semantic ghost automatically.",
+      "ANIMATION: Treat file order as playback timing. | NEOVIM: :t assigns frame duration."
+    ],
+    "compact_choices": ["A: delete after view · V: 6dd", "A: keep whole stills · V: six-line copy", "A: faces only · V: yy semantic", "A: file=timing · V: :t duration"],
+    "correct_choice": 1,
+    "feedback": [
+      "Deletion removes the evidence needed to compare variants.",
+      "Correct: the physical six-line boundary keeps crown, face, accent, body and tail together.",
+      "A single line loses the contour and spacing context.",
+      "Copy commands preserve text; they do not assign animation timing."
+    ]
+  },
+  "M19.Q08": {
+    "prompt": "ANIMATION\nThe third candidate reuses the left calm ghost and changes only its expression.\n\n|   (- -)  | → |   (> <)  |\n|   \\ ‾ `-´|   |   \\ ‾ `-´|\n|    |/    |   |    |/    |\n\nNEOVIM\nWhich bounded edit makes it a real variant?",
+    "compact_prompt": "ANIMATION\n│   (- -)  │ → │   (> <)  │\nNEOVIM\nWhat changes after the six-line copy?",
+    "animation_prompt": "ANIMATION\nThe expression changes; accent, body and tail remain byte-for-byte stable.",
+    "animation_answer": "Vary the three eye cells only.",
+    "neovim_prompt": "NEOVIM\nWhich scope follows :1,6t$?",
+    "neovim_answer": "Go to the copied face, find its first -, and overwrite exactly > <.",
+    "choices": [
+      "ANIMATION: Retype the entire copied ghost. | NEOVIM: 6dd then six open lines is the local edit.",
+      "ANIMATION: Change every calm face. | NEOVIM: :%s/-/>/g preserves each expression.",
+      "ANIMATION: Leave the copy identical. | NEOVIM: the copy alone proves variation.",
+      "ANIMATION: Change only the copied three-cell expression. | NEOVIM: a bounded gR> < pass preserves all other rows."
+    ],
+    "compact_choices": ["A: retype all · V: delete/open", "A: all faces · V: %s", "A: identical copy · V: copy only", "A: copied eyes only · V: bounded gR"],
+    "correct_choice": 3,
+    "feedback": [
+      "A full redraw adds needless opportunities for contour drift.",
+      "A file-wide substitute destroys the calm comparison pose.",
+      "An unchanged duplicate has no variant purpose.",
+      "Correct: one bounded expression change makes the copy distinct while preserving its source contour."
+    ]
+  },
+  "M19.Q09": {
+    "prompt": "ANIMATION\nA text reversal would put `-´ on the wrong semantic edge and would not choose the source-authored curve.\n\n|   \\ ‾ `-´| → |`-´ ‾ /   |\n|    ) /   |   |   \\ (    |\n\nNEOVIM\nWhich family supports visual, not byte, mirroring?",
+    "compact_prompt": "ANIMATION\naccent + body curve must be re-authored\n│    ) /   │ → │   \\ (    │\nNEOVIM\nWhich family overwrites chosen cells?",
+    "animation_prompt": "ANIMATION\nDirectional glyph meaning and spacing are judged from the official opposite pose.",
+    "animation_answer": "Mirror visually instead of reversing stored character order.",
+    "neovim_prompt": "NEOVIM\nWhich commands accept author-chosen replacement text?",
+    "neovim_answer": "R and gR overwrite existing cells; neither performs an automatic reverse.",
+    "choices": [
+      "ANIMATION: Judge every directional glyph and gap. | NEOVIM: R/gR writes the chosen replacement cells in place.",
+      "ANIMATION: Reverse bytes and trust punctuation. | NEOVIM: ! supplies semantic substitutions.",
+      "ANIMATION: Insert the target beside the source. | NEOVIM: i is an overwrite family.",
+      "ANIMATION: Keep the source unchanged. | NEOVIM: yy/p creates a mirror automatically."
+    ],
+    "compact_choices": ["A: judge glyphs/gaps · V: R/gR", "A: reverse bytes · V: !", "A: insert beside · V: i", "A: unchanged copy · V: yy/p"],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: overwrite modes preserve the grid while leaving visual decisions to the author.",
+      "A filter may reverse characters but cannot infer glyph semantics or spacing.",
+      "Insert mode shifts following cells and does not replace the source pose.",
+      "Yank/put duplicates the same facing direction."
+    ]
+  },
+  "M19.Q10": {
+    "prompt": "ANIMATION\nOne target row ends a cell early, so its right rail no longer aligns with the other five.\n\nGOOD |`-´ ‾ /   |\nBAD  |`-´ ‾ /  |\n\nNEOVIM\nWhich invariant catches the defect immediately?",
+    "compact_prompt": "ANIMATION\nGOOD │`-´ ‾ /   │\nBAD  │`-´ ‾ /  │\nNEOVIM\nWhat should be compared?",
+    "animation_prompt": "ANIMATION\nEvery mirrored row must retain the same two rail columns as its source.",
+    "animation_answer": "Reject any row with a shifted rail or unequal display width.",
+    "neovim_prompt": "NEOVIM\nWhat is checked after each gR pass?",
+    "neovim_answer": "Confirm that the cursor's authored row reaches the unchanged right rail at the expected width.",
+    "choices": [
+      "ANIMATION: Compare only the face glyphs. | NEOVIM: r proves full-row width.",
+      "ANIMATION: Accept ragged rows until playback. | NEOVIM: Neovim centres them automatically.",
+      "ANIMATION: Require equal display width and matching rails. | NEOVIM: verify the endpoint after every gR row.",
+      "ANIMATION: Move the other rows to the short rail. | NEOVIM: delete one cell from each source row."
+    ],
+    "compact_choices": ["A: face only · V: r", "A: defer width · V: auto-centre", "A: equal widths/rails · V: endpoint check", "A: shorten sources · V: delete cells"],
+    "correct_choice": 2,
+    "feedback": [
+      "A correct face can still sit in a misregistered row.",
+      "Playback exposes authored drift; it cannot repair it.",
+      "Correct: fixed rail columns make every width error visible before animation.",
+      "Damaging the source rows hides the error instead of fixing the target."
+    ]
+  },
+  "M19.01.P01": {
+    "prompt": "ANIMATION\nDO THIS changes only the first Pallas eye.\n\n|   (? -)  | → |   (- -)  |\n|   \\ ‾ `-´|   |   \\ ‾ `-´|\n\nNEOVIM\nWhich summary matches the edit you just made?",
+    "compact_prompt": "ANIMATION\n│   (? -)  │ → │   (- -)  │\nNEOVIM\nWhat did gR preserve?",
+    "animation_prompt": "ANIMATION\nOne eye becomes source-correct; the accent and rails remain.",
+    "animation_answer": "Approve one existing cell only.",
+    "neovim_prompt": "NEOVIM\nWhy did gR not move the right rail?",
+    "neovim_answer": "It overwrote ? with - in the same display cell.",
+    "choices": [
+      "ANIMATION: The full ghost was retyped. | NEOVIM: gR deleted six rows first.",
+      "ANIMATION: One eye was inserted. | NEOVIM: gR grows the row by one cell.",
+      "ANIMATION: The ghost was copied. | NEOVIM: gR is a linewise yank.",
+      "ANIMATION: ? became - and the rails stayed fixed. | NEOVIM: gR overwrote that existing cell."
+    ],
+    "compact_choices": ["A: full redraw · V: delete six", "A: inserted eye · V: grow row", "A: copied ghost · V: yank", "A: ?→-; rails fixed · V: overwrite"],
+    "correct_choice": 3,
+    "feedback": [
+      "Only one eye cell changed.",
+      "Virtual Replace does not insert before the placeholder.",
+      "No second ghost appears in this edit; the source remains a single still.",
+      "Correct: the cell changed in place and every later column remained registered."
+    ]
+  },
+  "M19.02.P01": {
+    "prompt": "ANIMATION\nThe complete source ghost now appears twice.\n\n|    .-.   |\n|   (- -)  |\n|   \\ ‾ `-´|\n|    ) /   |\n|    |/    |\n|    '     |\n\nNEOVIM\nWhich part of gg6yyGp owns the pose boundary?",
+    "compact_prompt": "ANIMATION\nOne six-row ghost becomes two complete candidates.\n│    .-.   │\n│    '     │\nNEOVIM\nWhich token protects the boundary?",
+    "animation_prompt": "ANIMATION\nCrown through tail are copied together.",
+    "animation_answer": "The whole source still becomes a working candidate.",
+    "neovim_prompt": "NEOVIM\nWhat does the 6 modify?",
+    "neovim_answer": "The count makes yy yank six whole lines before Gp appends them.",
+    "choices": [
+      "ANIMATION: Copy six display cells. | NEOVIM: 6 counts characters for yy.",
+      "ANIMATION: Copy the six-row ghost. | NEOVIM: 6 counts whole lines for linewise yy.",
+      "ANIMATION: Move the ghost. | NEOVIM: p deletes the yank source.",
+      "ANIMATION: Copy only the tail. | NEOVIM: G changes yy into a tail object."
+    ],
+    "compact_choices": ["A: six cells · V: char count", "A: six rows · V: line count", "A: move · V: put deletes", "A: tail only · V: G object"],
+    "correct_choice": 1,
+    "feedback": [
+      "Linewise yy counts lines, not display cells.",
+      "Correct: the count is the physical boundary of the source still.",
+      "Yank and put preserve the source; they do not move it.",
+      "G chooses the destination after the six-line yank."
+    ]
+  },
+  "M19.04.P01": {
+    "prompt": "ANIMATION\nYou replaced the copied left ghost with the official right calm pose.\n\n|   \\ ‾ `-´| → |`-´ ‾ /   |\n|    ) /   |   |   \\ (    |\n|    |/    |   |    \\|    |\n\nNEOVIM\nWhich evidence makes this hand mirroring?",
+    "compact_prompt": "ANIMATION\naccent, body curve and tail all reverse roles\n│   \\ ‾ `-´│ → │`-´ ‾ /   │\nNEOVIM\nWhat did six gR passes prove?",
+    "animation_prompt": "ANIMATION\nAll six target rows were typed deliberately inside unchanged rails.",
+    "animation_answer": "The result matches the source-authored right pose, not a reversed string.",
+    "neovim_prompt": "NEOVIM\nWhy is one gR pass per row important?",
+    "neovim_answer": "Each pass exposes the chosen target spelling and ends at the fixed right rail.",
+    "choices": [
+      "ANIMATION: Only screen position changed. | NEOVIM: cursor motion proves mirroring.",
+      "ANIMATION: Rows were reversed automatically. | NEOVIM: gR performs a byte reversal.",
+      "ANIMATION: Six official right-pose rows were authored. | NEOVIM: bounded gR passes preserve rails and expose every choice.",
+      "ANIMATION: A second object was inserted. | NEOVIM: gR shifts the old copy right."
+    ],
+    "compact_choices": ["A: position only · V: motion", "A: auto reverse · V: gR flip", "A: six authored rows · V: bounded gR", "A: inserted object · V: shift old"],
+    "correct_choice": 2,
+    "feedback": [
+      "Position alone does not exchange accent, curve and tail semantics.",
+      "gR overwrites typed cells; it has no reverse operation.",
+      "Correct: the keylog and fixed rails show deliberate row-by-row authorship.",
+      "The copied pose was replaced in place, not moved aside."
+    ]
+  },
+  "M19.05.P01": {
+    "prompt": "ANIMATION\nThe right calm face becomes the strain face and nothing else moves.\n\n|  (- -)   | → |  (> <)   |\n|`-´ ‾ /   |   |`-´ ‾ /   |\n\nNEOVIM\nWhy do both accepted methods pass?",
+    "compact_prompt": "ANIMATION\n│  (- -)   │ → │  (> <)   │\nNEOVIM\nCompare R with gR.",
+    "animation_prompt": "ANIMATION\nExactly three expression cells change.",
+    "animation_answer": "Both methods reach the same bounded face variant.",
+    "neovim_prompt": "NEOVIM\nWhat common boundary matters?",
+    "neovim_answer": "Both R and gR start on the first eye and Escape after > <, before ).",
+    "choices": [
+      "ANIMATION: Both ghost faces change. | NEOVIM: either method is file-wide.",
+      "ANIMATION: Three cells change and ) stays fixed. | NEOVIM: either R or gR passes when it stops before the contour.",
+      "ANIMATION: The expression is inserted. | NEOVIM: both modes add new cells.",
+      "ANIMATION: The full row is replaced. | NEOVIM: Escape is optional after > <."
+    ],
+    "compact_choices": ["A: both faces · V: file-wide", "A: 3 cells; ) fixed · V: bounded R/gR", "A: inserted · V: add cells", "A: full row · V: no stop"],
+    "correct_choice": 1,
+    "feedback": [
+      "The target owns the copied right face only.",
+      "Correct: method equivalence comes from the same start cell, text and stop boundary.",
+      "Replace modes consume existing cells rather than inserting before them.",
+      "Without Escape the stable contour and rail can be overwritten."
+    ]
+  },
+  "M19.06.P01": {
+    "prompt": "ANIMATION\nThe hidden transfer was a complete folded Acronian wing mirror.\n\n|   \\ `  ___.,/| → |\\,.___  ´ /   |\n|     \\ ‾` /   |   |   \\ ´‾ /     |\n\nNEOVIM\nWhich account matches a successful transfer?",
+    "compact_prompt": "ANIMATION\nA new six-row wing vocabulary was mirrored inside rails.\n│   \\ `  ___.,/│ → │\\,.___  ´ /   │\nNEOVIM\nWhat evidence was required?",
+    "animation_prompt": "ANIMATION\nEdge, fold, accents and gaps all match the official opposite wing.",
+    "animation_answer": "The unfamiliar source was mirrored by visual judgment.",
+    "neovim_prompt": "NEOVIM\nWhat did the grader require beyond final pixels?",
+    "neovim_answer": "The keylog had to contain the complete bounded gR row-rewrite method.",
+    "choices": [
+      "ANIMATION: Only final text matters. | NEOVIM: any insert/delete path demonstrates the same fixed-width overwrite skill.",
+      "ANIMATION: The rows were reversed by a filter. | NEOVIM: identical pixels prove hand authorship.",
+      "ANIMATION: Only the outer edge changed. | NEOVIM: one r command is complete evidence.",
+      "ANIMATION: The full opposite wing was judged row by row. | NEOVIM: the required bounded gR sequence appears in the keylog."
+    ],
+    "compact_choices": ["A: pixels only · V: any path", "A: filter reverse · V: pixels prove", "A: edge only · V: one r", "A: full judged wing · V: required gR log"],
+    "correct_choice": 3,
+    "feedback": [
+      "The exercise checks the learned overwrite path as well as the final drawing.",
+      "A byte transform does not demonstrate directional judgment.",
+      "The inner fold and spacing also change in the source-authored target.",
+      "Correct: unfamiliar art plus the recorded bounded overwrite proves the skill transferred."
+    ]
+  },
+  "M19.08.P01": {
+    "prompt": "ANIMATION\nThe final plate retains a third complete left ghost and changes only its expression.\n\n|   (- -)  | → |   (> <)  |\n|   \\ ‾ `-´|   |   \\ ‾ `-´|\n|    |/    |   |    |/    |\n\nNEOVIM\nWhich grammar completes the plate?",
+    "compact_prompt": "ANIMATION\ncopy six rows, then vary one three-cell expression\n│   (- -)  │ → │   (> <)  │\nNEOVIM\nWhich two scopes are required?",
+    "animation_prompt": "ANIMATION\nThe third still is complete and differs only at its eyes.",
+    "animation_answer": "Copy the full source object, then make one bounded variation.",
+    "neovim_prompt": "NEOVIM\nWhat do :1,6t$<CR> and the later gR each own?",
+    "neovim_answer": "The Ex range owns all six source rows; the gR pass owns only > < on the copied face.",
+    "choices": [
+      "ANIMATION: Copy the eye row only. | NEOVIM: :2t$ owns the complete ghost.",
+      "ANIMATION: Copy all six rows and vary only the copied eyes. | NEOVIM: execute :1,6t$ with Enter, then use bounded gR on the copied face.",
+      "ANIMATION: Move the original ghost. | NEOVIM: :1,6m$ preserves three candidates.",
+      "ANIMATION: Change every calm face. | NEOVIM: :%s/-/>/g is the bounded variant edit."
+    ],
+    "compact_choices": ["A: eye row copy · V: :2t$", "A: six-row copy + copied eyes · V: :t CR then gR", "A: move source · V: :m", "A: all faces · V: %s"],
+    "correct_choice": 1,
+    "feedback": [
+      "A face row alone is not a complete still candidate.",
+      "Correct: the copy and variation have separate, explicit boundaries.",
+      "Move removes the source from its original place instead of retaining it.",
+      "A whole-file substitute destroys the calm-vs-strain comparison."
+    ]
+  }
+}

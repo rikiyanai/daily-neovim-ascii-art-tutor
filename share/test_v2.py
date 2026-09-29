@@ -103,10 +103,10 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["paradigm"] == concept["paradigm"]
 
 assert len(cur["modules"]) == 20
-assert len(cur["cards"]) == 219
-assert len(cur["questions"]) == 399
-assert len({card["title"] for card in cur["cards"]}) == 219
-assert len({card["prompt"] for card in cur["cards"]}) == 219
+assert len(cur["cards"]) == 221
+assert len(cur["questions"]) == 401
+assert len({card["title"] for card in cur["cards"]}) == 221
+assert len({card["prompt"] for card in cur["cards"]}) == 221
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
 transfer_cards = [card for card in cur["cards"] if card["kind"] == "transfer"]
@@ -127,7 +127,7 @@ def card_lines(card, lines):
 mc_questions = [question for question in cur["questions"]
                 if question["form"] == "multiple_choice"]
 assert {question["form"] for question in cur["questions"]} == {"multiple_choice"}
-assert len(mc_questions) == len(cur["questions"]) == 399
+assert len(mc_questions) == len(cur["questions"]) == 401
 assert not any(
     phrase in question["prompt"]
     for question in cur["questions"]
@@ -216,10 +216,25 @@ assert all(question["prompt"].count("\n") >= 4 and "│" in question["compact_pr
 assert not any(token in json.dumps(question, ensure_ascii=False)
                for question in m1_questions
                for token in ("o_.-", " /---\\", "three-row contour", "V2j"))
+m19_edits = [card for card in cur["cards"]
+             if card["module_id"] == "M19" and card.get("expected")]
+assert len(m19_edits) == 6
+assert all(card.get("source", "").startswith(("official-Foes/PallasCrown",
+                                                   "official-Cosmetics/AcronianGuardian"))
+           for card in m19_edits)
+m19_questions = [question for question in cur["questions"]
+                 if question["module_id"] == "M19"]
+assert len(m19_questions) == 17
+assert all(question["prompt"].count("\n") >= 4
+           and ("|" in question["compact_prompt"] or "│" in question["compact_prompt"])
+           for question in m19_questions)
+assert not any(token in json.dumps(question, ensure_ascii=False)
+               for question in m19_questions
+               for token in ("<--/|", "/___\\", "arrowhead"))
 primary_edits = [card for card in cur["cards"] if card.get("expected")]
 assert sum(str(card.get("source", "")).startswith(("official-", "aahub-"))
-           for card in primary_edits) == 68
-assert sum(not card.get("source") for card in primary_edits) == 107
+           for card in primary_edits) == 75
+assert sum(not card.get("source") for card in primary_edits) == 102
 # The beginner must perform each concrete prerequisite visibly before the old
 # combined card or any hidden retrieval can demand it.  M0.O is intentionally
 # one open-line action, not a second-frame typing test.
@@ -267,7 +282,7 @@ assert all("ANIMATION" in q["compact_prompt"] and "NEOVIM" in q["compact_prompt"
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == len(mc_questions) == 399
+            for q in mc_questions}) == len(mc_questions) == 401
 def contains_ascii_visual(value):
     if "│" in value:
         return True
@@ -1065,7 +1080,7 @@ with tempfile.TemporaryDirectory() as tmp:
         assert first["title"] in text and first["prompt"] in text
         assert "DO THIS" in text
         assert "TARGET" in text and "COMMAND RECIPE" in text
-        assert "PROGRESS  S0 0/20 available  ·  M0 0/14" in text and "XP 0" in text
+        assert "PROGRESS  S0 0/22 available  ·  M0 0/14" in text and "XP 0" in text
         assert "WHY THIS EXISTS" in text
         assert first_module["meaning"] in text
         assert first_module["principle"] in text
@@ -1494,6 +1509,18 @@ assert v2._method_family(method_cfg, m005, {
 assert v2._method_family(method_cfg, m005, {
     "actual_tokens": tokenize(":7,9copy$<CR>:x<CR>"),
 }) == "addressed copy"
+m1905 = next(c for c in cur["cards"] if c["id"] == "M19.05")
+assert {method["evidence"]["kind"] for method in
+        m1905["method_alternatives"]} == {"mode_text"}
+# The operator's real config can replay a mapping prefix into scriptout.  The
+# semantic mode/text evidence still distinguishes gR from R while the exact
+# target remains the independent acceptance gate.
+assert v2._method_family(method_cfg, m1905, {
+    "actual_tokens": tokenize("8G0f-gRgR> <<Esc>:wq<CR>"),
+}) == "virtual replace expression"
+assert v2._method_family(method_cfg, m1905, {
+    "actual_tokens": tokenize("8G0f-RR> <<Esc>ZZ"),
+}) == "replace-mode expression"
 for submission in (":wq<CR>", ":w<CR>:q<CR>", ":write<CR>:quit<CR>",
                    ":x<CR>", "ZZ", "ZQ"):
     assert v2._edit_tokens_without_submit(tokenize("jj" + submission)) == ["j", "j"]

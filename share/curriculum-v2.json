@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/curriculum@4",
- "revision": "2026-09-29.64",
+ "revision": "2026-09-29.65",
  "review_intervals_hours": [
   4,
   24,
@@ -46,6 +46,8 @@
     "M11.03",
     "M11.UR",
     "M11.WS",
+    "M11.CC",
+    "M11.TR",
     "M11.UT",
     "M11.04",
     "M11.05",
@@ -594,6 +596,8 @@
     "M11.03",
     "M11.UR",
     "M11.WS",
+    "M11.CC",
+    "M11.TR",
     "M11.UT",
     "M11.04",
     "M11.05",
@@ -654,16 +658,16 @@
    "id": "M19",
    "title": "Mirror key-pose still",
    "node": "S2/V19",
-   "project_id": "mirror-key-pose-still",
+   "project_id": "pallas-mirror-study",
    "skill": "hand mirroring a complete still with virtual replace and directional glyph judgment",
    "preview_mode": "frames",
-   "frame_rows": 5,
-   "meaning": "a left-facing key-pose still is copied and redrawn by hand as a right-facing animation extreme before any in-betweens are attempted",
-   "first_reading": "the placeholder eye is approved without shifting the fixed-width rails",
+   "frame_rows": 6,
+   "meaning": "Pallas's left calm ghost is copied and redrawn by hand as the official right calm pose before any in-betweens are attempted",
+   "first_reading": "one uncertain left-ghost eye is approved without shifting either fixed-width rail",
    "principle": "a mirrored animation extreme is a newly authored still: exchange directional glyphs and spacing by eye instead of reversing stored bytes",
-   "defect": "the actor moves across the frame but its arrowhead, slash direction, or distance from the rails does not mirror",
+   "defect": "the ghost moves across the frame but its accent, body curve, tail wisp, or distance from the rails does not mirror",
    "basic": "use gR to overwrite a nominated cell or complete fixed-width row without insertion",
-   "scaled": "copy the complete five-row key pose, then hand-author every directional row of its mirrored extreme",
+   "scaled": "copy the complete six-row Pallas key pose, then hand-author every directional row of its official mirrored extreme",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "medium": "monospace",
    "prerequisites": [],
@@ -3442,6 +3446,189 @@
    "pairing_exception": null
   },
   {
+   "id": "M11.CC",
+   "module_id": "M11",
+   "ordinal": 3.7,
+   "kind": "guided_edit",
+   "title": "Missile fixed-width redraw · Use the colorcolumn ruler to find a stray cell",
+   "project_id": "mastery-m11-cc",
+   "artifact": "transfer",
+   "variant_group": "M11.CC.mastery",
+   "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar; official-Pets/Dracula res01 stand pose + one stray tutor cell",
+   "source": "official-Pets/Dracula res01 stand pose + one stray tutor cell",
+   "medium": "monospace",
+   "node_ids": [
+    "S0/V11"
+   ],
+   "master_habits": [
+    "H1",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S0"
+   ],
+   "lesson_benefit": "perform whitespace-column-audit with visible keys",
+   "prompt": "One stray spark sits past Dracula's right edge. Paint the first column beyond the 7-cell pose with colorcolumn, then delete only the cell that lands on the ruler. Every pose cell stays put.",
+   "roadmap_contract": "One stray spark sits past Dracula's right edge. Paint the first column beyond the 7-cell pose with colorcolumn, then delete only the cell that lands on the ruler. Every pose cell stays put.",
+   "start": [
+    "   \\(}_",
+    "  ,' ¯/*",
+    " '-_.'"
+   ],
+   "target": [
+    "   \\(}_",
+    "  ,' ¯/",
+    " '-_.'"
+   ],
+   "expected": ":set colorcolumn=8<CR>2G$x",
+   "recipe": [
+    [
+     ":set colorcolumn=8<CR>",
+     "paint column 8, the first column outside the 7-cell pose"
+    ],
+    [
+     "2G$",
+     "go to the row whose last cell touches the painted column"
+    ],
+    [
+     "x",
+     "delete that one stray cell; it was the last glyph, so nothing shifts"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "Painted column 8 is outside the pose: find the one row whose last glyph sits on it, jump to that end with $, delete it with x.",
+   "grammar_families": [
+    "whitespace-column-audit"
+   ],
+   "grammar_stage": "guided",
+   "key_vocabulary": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught whitespace-column-audit path",
+    "exact_any_of": [
+     ":set colorcolumn=8<CR>2G$x"
+    ]
+   },
+   "stage_owner": "S0",
+   "artifact_mode": "still-study",
+   "paired_question_ids": [
+    "M11.CC.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M11.CC.P01"
+    ],
+    "rationale": {
+     "M11.CC.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
+   "id": "M11.TR",
+   "module_id": "M11",
+   "ordinal": 3.8,
+   "kind": "guided_edit",
+   "title": "Missile fixed-width redraw · Read the end-anchored cleanup piece by piece",
+   "project_id": "mastery-m11-tr",
+   "artifact": "transfer",
+   "variant_group": "M11.TR.mastery",
+   "skill": "replace-mode redraw, meaningful undo/redo, and virtual-column motion blur",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar; official-Pets/SnowBunny res01 with trailing padding",
+   "source": "official-Pets/SnowBunny res01 with trailing padding",
+   "medium": "monospace",
+   "node_ids": [
+    "S0/V11"
+   ],
+   "master_habits": [
+    "H1",
+    "H4",
+    "H5"
+   ],
+   "master_stages": [
+    "S0"
+   ],
+   "lesson_benefit": "perform whitespace-column-audit with visible keys",
+   "prompt": "The snow bunny's rows carry invisible trailing spaces. Remove only those tails with one whole-file substitute whose pattern is anchored at the end of each row. Every visible bunny cell stays put.",
+   "roadmap_contract": "The snow bunny's rows carry invisible trailing spaces. Remove only those tails with one whole-file substitute whose pattern is anchored at the end of each row. Every visible bunny cell stays put.",
+   "start": [
+    "   (\\(\\   ",
+    "  ( n.n)   ",
+    "o(,`_\"_)   "
+   ],
+   "target": [
+    "   (\\(\\",
+    "  ( n.n)",
+    "o(,`_\"_)"
+   ],
+   "expected": ":%s/\\s\\+$//e<CR>",
+   "recipe": [
+    [
+     ":%",
+     "on every line of the file"
+    ],
+    [
+     "s/\\s\\+$/",
+     "find one or more spaces or tabs that reach the end of the row"
+    ],
+    [
+     "/",
+     "replace them with nothing"
+    ],
+    [
+     "e<CR>",
+     "e: no error on a row without a tail"
+    ]
+   ],
+   "cursor": "^",
+   "show_target": true,
+   "show_recipe": true,
+   "hint": "Read the pattern left to right: \\s a space or tab, \\+ one or more, $ only at the row end. Interior spaces never reach $, so the bunny survives.",
+   "grammar_families": [
+    "whitespace-column-audit"
+   ],
+   "grammar_stage": "guided",
+   "key_vocabulary": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "frame_rows": 3,
+   "frame_slices": [
+    3
+   ],
+   "method_requirement": {
+    "label": "use the taught whitespace-column-audit path",
+    "exact_any_of": [
+     ":%s/\\s\\+$//e<CR>"
+    ]
+   },
+   "preserve_trailing_whitespace": true,
+   "stage_owner": "S0",
+   "artifact_mode": "still-study",
+   "paired_question_ids": [
+    "M11.TR.P01"
+   ],
+   "question_placement": {
+    "before": [],
+    "after": [
+     "M11.TR.P01"
+    ],
+    "rationale": {
+     "M11.TR.P01": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope."
+    }
+   },
+   "pairing_exception": null
+  },
+  {
    "id": "M11.UT",
    "module_id": "M11",
    "ordinal": 3.7,
@@ -5786,38 +5973,40 @@
    "ordinal": 1,
    "kind": "guided_edit",
    "title": "Mirror key-pose still · Foundation edit",
-   "roadmap_contract": "Approve one uncertain eye cell with `gR`, preserving both fixed-width rails of the five-row still.",
-   "lesson_benefit": "establish the next verified mirror-key-pose-still state while practising the smallest clear edit",
+   "roadmap_contract": "Approve one uncertain Pallas eye cell with `gR`, preserving both fixed-width rails of the six-row left ghost.",
+   "lesson_benefit": "establish the next verified pallas-mirror-study state while practising the smallest clear edit",
    "skill": "hand mirroring a complete still with virtual replace and directional glyph judgment",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "medium": "monospace",
    "node_ids": [
     "S2/V19"
    ],
-   "project_id": "mirror-key-pose-still",
+   "project_id": "pallas-mirror-study",
    "variant_group": "M19.card-1",
    "start": [
-    "|   /^\\   |",
-    "| _/ ? \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |"
+    "|    .-.   |",
+    "|   (? -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |"
    ],
    "target": [
-    "|   /^\\   |",
-    "| _/ o \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |"
+    "|    .-.   |",
+    "|   (- -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |"
    ],
-   "expected": "2G0f?gRo<Esc>",
+   "expected": "2G0f?gR-<Esc>",
    "recipe": [
     [
      "2G0f?",
      "land on the visible eye placeholder"
     ],
     [
-     "gRo<Esc>",
+     "gR-<Esc>",
      "Virtual Replace the one eye cell and return to Normal mode"
     ]
    ],
@@ -5825,17 +6014,18 @@
    "method_requirement": {
     "label": "replace the nominated still cell with virtual replace",
     "exact_any_of": [
-     "2G0f?gRo<Esc>"
+     "2G0f?gR-<Esc>"
     ]
    },
-   "prompt": "Approve one uncertain eye cell with `gR`, preserving both fixed-width rails of the five-row still.",
+   "source": "official-Foes/PallasCrown res01-res04 calm/strain left/right ghost poses; fixed tutor rails; tutor-injected eye placeholder",
+   "prompt": "Approve one uncertain Pallas eye cell with `gR`, preserving both fixed-width rails of the six-row left ghost.",
    "labels": true,
    "artifact": "project",
    "show_target": true,
    "show_recipe": true,
-   "hint": "Vim toolbox: choose the smallest normal-mode operation whose scope matches the visible change. Scope: Treat each 5-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the actor moves across the frame but its arrowhead, slash direction, or distance from the rails does not mirror.",
+   "hint": "Vim toolbox: choose the smallest normal-mode operation whose scope matches the visible change. Scope: Treat each 6-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the ghost moves across the frame but its accent, body curve, tail wisp, or distance from the rails does not mirror.",
    "frame_slices": [
-    5
+    6
    ],
    "master_habits": [
     "H1",
@@ -5878,40 +6068,43 @@
    "ordinal": 2,
    "kind": "guided_edit",
    "title": "Mirror key-pose still · Develop the strip",
-   "roadmap_contract": "Copy the complete five-row still as the working opposite-facing candidate.",
-   "lesson_benefit": "extend the same saved mirror-key-pose-still strip instead of solving a disposable drill",
+   "roadmap_contract": "Copy the complete six-row Pallas still as the working opposite-facing candidate.",
+   "lesson_benefit": "extend the same saved pallas-mirror-study strip instead of solving a disposable drill",
    "skill": "hand mirroring a complete still with virtual replace and directional glyph judgment",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "medium": "monospace",
    "node_ids": [
     "S2/V19"
    ],
-   "project_id": "mirror-key-pose-still",
+   "project_id": "pallas-mirror-study",
    "variant_group": "M19.card-2",
    "start": [
-    "|   /^\\   |",
-    "| _/ o \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |"
+    "|    .-.   |",
+    "|   (- -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |"
    ],
    "target": [
-    "|   /^\\   |",
-    "| _/ o \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |",
-    "|   /^\\   |",
-    "| _/ o \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |"
+    "|    .-.   |",
+    "|   (- -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |",
+    "|    .-.   |",
+    "|   (- -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |"
    ],
-   "expected": "gg5yyGp",
+   "expected": "gg6yyGp",
    "recipe": [
     [
-     "gg5yy",
-     "copy the complete approved five-row still"
+     "gg6yy",
+     "copy the complete approved six-row Pallas still"
     ],
     [
      "Gp",
@@ -5919,15 +6112,16 @@
     ]
    ],
    "cursor": "^",
-   "prompt": "Copy the complete five-row still as the working opposite-facing candidate.",
+   "source": "official-Foes/PallasCrown res01-res04 calm/strain left/right ghost poses; fixed tutor rails; res01 left calm pose copied",
+   "prompt": "Copy the complete six-row Pallas still as the working opposite-facing candidate.",
    "labels": true,
    "artifact": "project",
    "show_target": true,
    "show_recipe": true,
-   "hint": "Vim toolbox: a counted linewise yank and put can copy a complete multi-row frame. Scope: Treat each 5-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the actor moves across the frame but its arrowhead, slash direction, or distance from the rails does not mirror.",
+   "hint": "Vim toolbox: a counted linewise yank and put can copy a complete multi-row frame. Scope: Treat each 6-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the ghost moves across the frame but its accent, body curve, tail wisp, or distance from the rails does not mirror.",
    "frame_slices": [
-    5,
-    5
+    6,
+    6
    ],
    "duplicate_frames": [
     {
@@ -5936,7 +6130,7 @@
       2
      ],
      "role": "scaffold",
-     "reason": "working copy reserved for the hand-authored opposite-facing still",
+     "reason": "working six-row Pallas copy reserved for the hand-authored opposite-facing still",
      "playback": false
     }
    ],
@@ -5987,7 +6181,7 @@
    "node_ids": [
     "S2/V19"
    ],
-   "project_id": "mirror-key-pose-still",
+   "project_id": "pallas-mirror-study",
    "variant_group": "M19.card-3",
    "prompt": "Inspect the complete hand-mirrored still below, then choose the interpretation supported by its visible glyph and spacing evidence.",
    "question_ids": [
@@ -6036,59 +6230,64 @@
    "node_ids": [
     "S2/V19"
    ],
-   "project_id": "mirror-key-pose-still",
+   "project_id": "pallas-mirror-study",
    "variant_group": "M19.card-4",
    "start": [
-    "|   /^\\   |",
-    "| _/ o \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |",
-    "|   /^\\   |",
-    "| _/ o \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |"
+    "|    .-.   |",
+    "|   (- -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |",
+    "|    .-.   |",
+    "|   (- -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |"
    ],
    "target": [
-    "|   /^\\   |",
-    "| _/ o \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |",
-    "|   /^\\   |",
-    "|  / o \\_ |",
-    "|   /|\\-->|",
-    "|   / \\   |",
-    "|  /___\\  |"
+    "|    .-.   |",
+    "|   (- -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |",
+    "|   .-.    |",
+    "|  (- -)   |",
+    "|`-´ ‾ /   |",
+    "|   \\ (    |",
+    "|    \\|    |",
+    "|     '    |"
    ],
-   "expected": "6G0gR|   /^\\   |<Esc>j0gR|  / o \\_ |<Esc>j0gR|   /|\\-->|<Esc>j0gR|   / \\   |<Esc>j0gR|  /___\\  |<Esc>",
+   "expected": "7G0gR|   .-.    |<Esc>j0gR|  (- -)   |<Esc>j0gR|`-´ ‾ /   |<Esc>j0gR|   \\ (    |<Esc>j0gR|    \\|    |<Esc>j0gR|     '    |<Esc>",
    "recipe": [
     [
-     "6G0gR…<Esc>",
-     "redraw the copied head row without changing its width"
+     "7G0gR…<Esc>",
+     "redraw the copied crown row without changing its width"
     ],
     [
-     "j0gR…<Esc> ×4",
-     "hand-author the remaining mirrored rows, including slash direction, arrowhead, and spacing"
+     "j0gR…<Esc> ×5",
+     "hand-author the remaining official right ghost, including accent, body curve, tail wisp, and spacing"
     ]
    ],
    "cursor": "^",
    "method_requirement": {
-    "label": "hand-author all five copied mirror rows with virtual replace",
+    "label": "hand-author all six copied Pallas mirror rows with virtual replace",
     "exact_any_of": [
-     "6G0gR|   /^\\   |<Esc>j0gR|  / o \\_ |<Esc>j0gR|   /|\\-->|<Esc>j0gR|   / \\   |<Esc>j0gR|  /___\\  |<Esc>"
+     "7G0gR|   .-.    |<Esc>j0gR|  (- -)   |<Esc>j0gR|`-´ ‾ /   |<Esc>j0gR|   \\ (    |<Esc>j0gR|    \\|    |<Esc>j0gR|     '    |<Esc>"
     ]
    },
+   "source": "official-Foes/PallasCrown res01-res04 calm/strain left/right ghost poses; fixed tutor rails; res01 left calm to res03 right calm",
    "prompt": "Hand-author all five copied rows with Virtual Replace, exchanging directional spacing, slashes, and the arrowhead.",
    "labels": true,
    "artifact": "project",
    "show_target": true,
    "show_recipe": false,
-   "hint": "Vim toolbox: search can jump between homologous animation anchors. Scope: Treat each 5-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the actor moves across the frame but its arrowhead, slash direction, or distance from the rails does not mirror.",
+   "hint": "Vim toolbox: search can jump between homologous animation anchors. Scope: Treat each 6-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the ghost moves across the frame but its accent, body curve, tail wisp, or distance from the rails does not mirror.",
    "frame_slices": [
-    5,
-    5
+    6,
+    6
    ],
    "master_habits": [
     "H1",
@@ -6137,65 +6336,80 @@
    "node_ids": [
     "S2/V19"
    ],
-   "project_id": "mirror-key-pose-still",
+   "project_id": "pallas-mirror-study",
    "variant_group": "M19.card-5",
    "start": [
-    "|   /^\\   |",
-    "| _/ o \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |",
-    "|   /^\\   |",
-    "|  / o \\_ |",
-    "|   /|\\-->|",
-    "|   / \\   |",
-    "|  /___\\  |"
+    "|    .-.   |",
+    "|   (- -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |",
+    "|   .-.    |",
+    "|  (- -)   |",
+    "|`-´ ‾ /   |",
+    "|   \\ (    |",
+    "|    \\|    |",
+    "|     '    |"
    ],
    "target": [
-    "|   /^\\   |",
-    "| _/ o \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |",
-    "|   /^\\   |",
-    "|  / o \\_ |",
-    "|   /|\\==>|",
-    "|   / \\   |",
-    "|  /___\\  |"
+    "|    .-.   |",
+    "|   (- -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |",
+    "|   .-.    |",
+    "|  (> <)   |",
+    "|`-´ ‾ /   |",
+    "|   \\ (    |",
+    "|    \\|    |",
+    "|     '    |"
    ],
-   "expected": "8G0f-gR==<Esc>",
+   "expected": "8G0f-gR> <<Esc>",
    "recipe": [
     [
      "8G0f-",
-     "find the mirrored arrow material by its visible dash"
+     "find the first calm eye in the official right ghost"
     ],
     [
-     "gR==<Esc>",
-     "overwrite the two-cell material run without moving its arrowhead"
+     "gR> <<Esc>",
+     "overwrite the three-cell eye expression without moving either rail"
     ]
    ],
    "cursor": "^",
-   "prompt": "M19.05 · USE ONE METHOD — choose one accepted path: virtual replace run or replace-mode run. Do not perform both. Complete the target with the one method you selected; the tutor compares the method evidence only after that single path passes.",
+   "source": "official-Foes/PallasCrown res01-res04 calm/strain left/right ghost poses; fixed tutor rails; res03 calm to res04 strain eye expression",
+   "prompt": "M19.05 · USE ONE METHOD — choose one accepted path: virtual replace expression or replace-mode expression. Do not perform both. Complete the target with the one method you selected; the tutor compares the method evidence only after that single path passes.",
    "labels": true,
    "artifact": "project",
    "show_target": true,
    "show_recipe": false,
-   "hint": "Vim toolbox: a visible character landmark is safer than repeated unit motions. Scope: Treat each 5-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the actor moves across the frame but its arrowhead, slash direction, or distance from the rails does not mirror.",
+   "hint": "Vim toolbox: a visible character landmark is safer than repeated unit motions. Scope: Treat each 6-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the ghost moves across the frame but its accent, body curve, tail wisp, or distance from the rails does not mirror.",
    "method_alternatives": [
     {
-     "label": "virtual replace run",
-     "keys": "8G0f-gR==<Esc>",
-     "why": "replace exactly two display cells while keeping the row width"
+     "label": "virtual replace expression",
+     "keys": "8G0f-gR> <<Esc>",
+     "why": "replace exactly the three eye-expression cells while keeping the row width",
+     "evidence": {
+      "kind": "mode_text",
+      "mode": "gR",
+      "text": "> <"
+     }
     },
     {
-     "label": "replace-mode run",
-     "keys": "8G0f-R==<Esc>",
-     "why": "replace the same two existing cells, then stop before the arrowhead"
+     "label": "replace-mode expression",
+     "keys": "8G0f-R> <<Esc>",
+     "why": "replace the same three existing cells, then stop before the closing parenthesis",
+     "evidence": {
+      "kind": "mode_text",
+      "mode": "R",
+      "text": "> <"
+     }
     }
    ],
    "frame_slices": [
-    5,
-    5
+    6,
+    6
    ],
    "master_habits": [
     "H1",
@@ -6248,7 +6462,7 @@
    "node_ids": [
     "S2/V19"
    ],
-   "project_id": "mirror-key-pose-still",
+   "project_id": "pallas-mirror-study",
    "variant_group": "M19.card-6",
    "start": [
     "|         ____ |",
@@ -6360,7 +6574,7 @@
    "required_before_mastery": true,
    "show_target": true,
    "show_recipe": false,
-   "hint": "Vim toolbox: search can jump between homologous animation anchors. Scope: Treat each 5-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the actor moves across the frame but its arrowhead, slash direction, or distance from the rails does not mirror.",
+   "hint": "Vim toolbox: search can jump between homologous animation anchors. Scope: Treat each 6-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the ghost moves across the frame but its accent, body curve, tail wisp, or distance from the rails does not mirror.",
    "review_source_card_id": "M19.06",
    "review_method_family": "required:hand-author the complete Acronian wing mirror with virtual replace",
    "master_habits": [
@@ -6410,7 +6624,7 @@
    "node_ids": [
     "S2/V19"
    ],
-   "project_id": "mirror-key-pose-still",
+   "project_id": "pallas-mirror-study",
    "variant_group": "M19.card-7",
    "prompt": "Diagnose the displayed hand-mirrored still, then choose the repair that preserves fixed rails and directional glyph roles.",
    "question_ids": [
@@ -6454,7 +6668,7 @@
    "ordinal": 8,
    "kind": "module_check",
    "title": "Mirror key-pose still · Module mastery check",
-   "roadmap_contract": "Answer five checks, then perform this key-hidden art task: retain the approved still as a third candidate and vary one eye without treating the plate as an ordered sequence. The target stays visible; the exact command path stays hidden until evaluation.",
+   "roadmap_contract": "Answer five checks, then perform this key-hidden art task: retain the complete left calm ghost as a third candidate and change only its three-cell eye expression. The target stays visible; the exact command path stays hidden until evaluation.",
    "lesson_benefit": "combine five conceptual decisions with one key-hidden art edit before mastery is awarded",
    "skill": "hand mirroring a complete still with virtual replace and directional glyph judgment",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
@@ -6462,65 +6676,71 @@
    "node_ids": [
     "S2/V19"
    ],
-   "project_id": "mirror-key-pose-still",
+   "project_id": "pallas-mirror-study",
    "variant_group": "M19.card-8",
    "start": [
-    "|   /^\\   |",
-    "| _/ o \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |",
-    "|   /^\\   |",
-    "|  / o \\_ |",
-    "|   /|\\==>|",
-    "|   / \\   |",
-    "|  /___\\  |"
+    "|    .-.   |",
+    "|   (- -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |",
+    "|   .-.    |",
+    "|  (> <)   |",
+    "|`-´ ‾ /   |",
+    "|   \\ (    |",
+    "|    \\|    |",
+    "|     '    |"
    ],
    "target": [
-    "|   /^\\   |",
-    "| _/ o \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |",
-    "|   /^\\   |",
-    "|  / o \\_ |",
-    "|   /|\\==>|",
-    "|   / \\   |",
-    "|  /___\\  |",
-    "|   /^\\   |",
-    "| _/ O \\  |",
-    "|<--/|\\   |",
-    "|   / \\   |",
-    "|  /___\\  |"
+    "|    .-.   |",
+    "|   (- -)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |",
+    "|   .-.    |",
+    "|  (> <)   |",
+    "|`-´ ‾ /   |",
+    "|   \\ (    |",
+    "|    \\|    |",
+    "|     '    |",
+    "|    .-.   |",
+    "|   (> <)  |",
+    "|   \\ ‾ `-´|",
+    "|    ) /   |",
+    "|    |/    |",
+    "|    '     |"
    ],
-   "expected": ":1,5t$<CR>12G0forO",
+   "expected": ":1,6t$<CR>14G0f-gR> <<Esc>",
    "recipe": [
     [
-     ":1,5t$",
-     "retain the approved original as a third animation key-pose candidate"
+     ":1,6t$",
+     "retain the approved left calm ghost as a third still candidate"
     ],
     [
-     "12G0forO",
-     "change only its eye so the variant remains a distinct authored still"
+     "14G0f-gR> <<Esc>",
+     "change only its three-cell eye expression so the variant is visibly distinct"
     ]
    ],
    "cursor": "^",
    "method_requirement": {
     "label": "retain the complete key-pose still and vary one nominated cell",
     "exact_any_of": [
-     ":1,5t$<CR>12G0forO"
+     ":1,6t$<CR>14G0f-gR> <<Esc>"
     ]
    },
-   "prompt": "Answer five checks, then perform this key-hidden art task: retain the approved still as a third candidate and vary one eye without treating the plate as an ordered sequence. The target stays visible; the exact command path stays hidden until evaluation.",
+   "source": "official-Foes/PallasCrown res01-res04 calm/strain left/right ghost poses; fixed tutor rails; res01 left calm copied with res02 strain eye expression",
+   "prompt": "Answer five checks, then perform this key-hidden art task: retain the complete left calm ghost as a third candidate and change only its three-cell eye expression. The target stays visible; the exact command path stays hidden until evaluation.",
    "labels": true,
    "artifact": "project",
    "show_target": true,
    "show_recipe": false,
-   "hint": "Vim toolbox: an addressed Ex copy can duplicate a complete row range without moving the cursor through it. Scope: Treat each 5-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the actor moves across the frame but its arrowhead, slash direction, or distance from the rails does not mirror.",
+   "hint": "Vim toolbox: an addressed Ex copy can duplicate a complete row range without moving the cursor through it. Scope: Treat each 6-row block as one frame; do not count only the nonblank glyph rows. Check against this failure: the ghost moves across the frame but its accent, body curve, tail wisp, or distance from the rails does not mirror.",
    "frame_slices": [
-    5,
-    5,
-    5
+    6,
+    6,
+    6
    ],
    "question_ids": [
     "M19.Q01",
@@ -6545,14 +6765,14 @@
    ],
    "grammar_families": [
     "ex-copy",
-    "normal-replace",
+    "virtual-replace",
     "search-landmark",
     "normal-motion"
    ],
    "grammar_stage": "hidden",
    "key_vocabulary": [
     "source address/range + t/copy command + destination address + <CR> execution",
-    "r + replacement glyph; overwrite one cell without shifting the row",
+    "gR enters Virtual Replace; typed glyphs overwrite display cells until <Esc>",
     "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
@@ -31309,33 +31529,33 @@
    "placement": "before",
    "placement_reason": "The learner must interpret the visible animation evidence and bounded edit before the concept or diagnosis card can advance.",
    "type": "visual_reading",
-   "prompt": "ANIMATION\nOne uncertain eye is approved; the five-row rails remain unchanged.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ ? \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich mode overwrites the placeholder without growing the row?",
+   "prompt": "ANIMATION\nPallas's left ghost has one uncertain eye. Only ? becomes -; both rails stay fixed.\n\nBEFORE          AFTER\n│    .-.   │    │    .-.   │\n│   (? -)  │ →  │   (- -)  │\n│   \\ ‾ `-´│    │   \\ ‾ `-´│\n\nNEOVIM\nWhich choice approves one existing cell without growing the row?",
    "choices": [
-    "ANIMATION: ? becomes o and both rails retain their columns. | NEOVIM: gR overwrites the existing display cell.",
-    "ANIMATION: The eye is inserted and the right rail shifts right. | NEOVIM: i adds o before ?.",
-    "ANIMATION: The whole five-row still moves down. | NEOVIM: 5ddp recreates the pose below.",
-    "ANIMATION: The arrowhead reverses while the eye stays ?. | NEOVIM: ! flips the stored bytes automatically."
+    "ANIMATION: Insert a dash before ?. | NEOVIM: i- preserves the row width.",
+    "ANIMATION: Redraw all six rows. | NEOVIM: 6ddP is a one-cell correction.",
+    "ANIMATION: Change ? to - and keep both rails fixed. | NEOVIM: gR- overwrites that display cell.",
+    "ANIMATION: Leave ? as an authored blink. | NEOVIM: movement alone completes the target."
    ],
-   "correct_choice": 0,
+   "correct_choice": 2,
    "feedback": [
-    "Correct: virtual replacement consumes the placeholder and preserves fixed width.",
-    "Insertion changes row width and shifts the right rail.",
-    "The still remains in place; a five-line move is unrelated.",
-    "The arrow and eye are separate decisions; no automatic flip is used."
+    "Insert mode adds a cell and shifts the right rail.",
+    "The target changes one eye cell, not the six-row object.",
+    "Correct: Virtual Replace consumes ? and leaves every following cell registered.",
+    "The official calm pose contains -, so cursor motion alone cannot finish it."
    ],
    "variant_group": "M19.concept-0",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "difficulty": 1,
-   "animation_prompt": "ANIMATION\nThe eye placeholder changes and neither fixed rail moves.\n\n    │ _/ ? \\  │  →  │ _/ o \\  │\n    │<--/|\\   │      │<--/|\\   │",
-   "animation_answer": "Approve one eye cell; keep the five-row still's rails and widths fixed.",
-   "neovim_prompt": "NEOVIM\nWhich operation overwrites the existing eye cell?\n\n    │ _/ ? \\  │\n    │<--/|\\   │",
-   "neovim_answer": "gR virtual-replaces the nominated cell; insertion would push the right rail.",
-   "compact_prompt": "ANIMATION\nOnly ? becomes o; both rails stay registered.\n\n    │   /^\\   │   │   /^\\   │\n    │ _/ ? \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich overwrite mode fits one nominated cell?",
+   "animation_prompt": "ANIMATION\nThe official calm face is (- -); accent and rails do not move.\n\n|   (? -)  | → |   (- -)  |",
+   "animation_answer": "Approve the first eye only and preserve both rail columns.",
+   "neovim_prompt": "NEOVIM\nWhich mode consumes the placeholder cell?\n\n|   (? -)  |",
+   "neovim_answer": "Find ? and use gR-<Esc>; Virtual Replace overwrites the existing display cell.",
+   "compact_prompt": "ANIMATION\nApprove one eye without moving the rails.\n│   (? -)  │ → │   (- -)  │\nNEOVIM\nHow should the existing ? cell change?",
    "compact_choices": [
-    "A: eye only; rails fixed · V: Virtual Replace",
-    "A: eye inserted; rail shifts · V: insert before",
-    "A: still moves down · V: delete/put five rows",
-    "A: arrow reverses · V: automatic byte flip"
+    "A: insert dash · V: i-",
+    "A: redraw pose · V: 6ddP",
+    "A: ?→-; rails fixed · V: gR-",
+    "A: keep ? · V: move only"
    ],
    "answer_contract": {
     "form": "multiple_choice"
@@ -31358,33 +31578,33 @@
    "placement": "before",
    "placement_reason": "The learner must interpret the visible animation evidence and bounded edit before the concept or diagnosis card can advance.",
    "type": "principle_choice",
-   "prompt": "ANIMATION\nA complete five-row key pose is copied as one candidate still.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n                    │   /^\\   │\n                    │ _/ o \\  │\n                    │<--/|\\   │\n                    │   / \\   │\n                    │  /___\\  │\n\nNEOVIM\nWhich count owns the still?",
+   "prompt": "ANIMATION\nCopy the complete Pallas left ghost before drawing its opposite pose.\n\n|    .-.   |\n|   (- -)  |\n|   \\ ‾ `-´|\n|    ) /   |\n|    |/    |\n|    '     |\n\nNEOVIM\nWhich count owns the whole source still?",
    "choices": [
-    "ANIMATION: Copy the complete five-row key pose. | NEOVIM: 5yy owns all five lines.",
-    "ANIMATION: Copy only the head and eye. | NEOVIM: yy copies the five cells under the cursor.",
-    "ANIMATION: Move the pose to the lower candidate. | NEOVIM: 5ddp transfers it and removes the original.",
-    "ANIMATION: Add five blank rows for a hold. | NEOVIM: 5o creates the candidate without art."
+    "ANIMATION: Preserve the complete six-row ghost. | NEOVIM: gg6yyGp copies all six lines below.",
+    "ANIMATION: Preserve only the eye row. | NEOVIM: yy means the complete semantic object.",
+    "ANIMATION: Move the source ghost. | NEOVIM: 6ddp leaves the original visible.",
+    "ANIMATION: Create six empty rows. | NEOVIM: 6o copies the source glyphs."
    ],
    "correct_choice": 0,
    "feedback": [
-    "Correct: the count matches the five-row frame boundary.",
-    "yy is linewise and does not copy a five-cell object; the pose needs all rows.",
-    "The original candidate remains visible, so the operation is a copy.",
-    "Blank rows cannot preserve the directional still."
+    "Correct: the count matches the six-row source boundary.",
+    "yy is one physical line unless a count is supplied.",
+    "Delete/put removes the original instead of keeping two candidates.",
+    "Open-line commands create blanks; they do not copy art."
    ],
    "variant_group": "M19.concept-0",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "difficulty": 1,
-   "animation_prompt": "ANIMATION\nThe body, eye, arrow, limbs, and base remain one five-row object in both candidates.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
-   "animation_answer": "Copy all five rows so the still's silhouette and directional details remain coherent.",
-   "neovim_prompt": "NEOVIM\nWhich linewise copy preserves the full pose?\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
-   "neovim_answer": "5yy yanks five whole lines; yy alone would copy only the current row.",
-   "compact_prompt": "ANIMATION\nDuplicate this complete five-row still below itself.\n\n  SOURCE\n  │   /^\\   │\n  │ _/ o \\  │\n  │<--/|\\   │\n  │   / \\   │\n  │  /___\\  │\n  ↓ identical five-row copy\n\nNEOVIM\nWhat does yy count here?",
+   "animation_prompt": "ANIMATION\nThe source remains visible and an identical six-row working copy appears below it.",
+   "animation_answer": "Copy all six rows as one candidate still.",
+   "neovim_prompt": "NEOVIM\nWhat does 6yy own here?\n\n|    .-.   |\n|   (- -)  |\n|    '     |",
+   "neovim_answer": "6yy yanks six complete lines; Gp puts the working copy below.",
+   "compact_prompt": "ANIMATION\nThe crown, accent, body and tail form one six-row still.\n\n│    .-.   │\n│   \\ ‾ `-´│\n│    |/    │\n\nNEOVIM\nWhat must yy count?",
    "compact_choices": [
-    "A: full five-row still · V: 5yy",
-    "A: head/eye only · V: five cells",
-    "A: move pose · V: delete then put",
-    "A: blank hold rows · V: open five lines"
+    "A: full ghost · V: 6yy/Gp",
+    "A: eye row · V: yy=object",
+    "A: move ghost · V: 6ddp",
+    "A: blanks · V: 6o"
    ],
    "answer_contract": {
     "form": "multiple_choice"
@@ -31407,33 +31627,33 @@
    "placement": "before",
    "placement_reason": "The learner must interpret the visible animation evidence and bounded edit before the concept or diagnosis card can advance.",
    "type": "diagnosis",
-   "prompt": "ANIMATION\nThe arrow row is mirrored deliberately while both outer rail columns stay fixed.\n\n    BEFORE         AFTER\n    │<--/|\\   │   │   /|\\-->|\n\nNEOVIM\nWhich mode makes each directional glyph an in-place choice?",
+   "prompt": "ANIMATION\nThe copied ghost moved right, but this row still uses the left pose's long accent and tail direction.\n\nLEFT   |   \\ ‾ `-´|\nRIGHT  |`-´ ‾ /   |\n\nNEOVIM\nWhich method proves the mirror was judged glyph by glyph?",
    "choices": [
-    "ANIMATION: Directional glyphs are chosen in place while rails stay fixed. | NEOVIM: gR makes each replacement explicit.",
-    "ANIMATION: The row is byte-reversed and accepted unchanged. | NEOVIM: ! mirrors every slash and arrow automatically.",
-    "ANIMATION: New glyphs are inserted before the rail. | NEOVIM: i is safer because it preserves the existing cells.",
-    "ANIMATION: Delete the whole row and let the engine infer a mirror. | NEOVIM: dd is the hand-mirroring mode."
+    "ANIMATION: Reverse the stored bytes. | NEOVIM: ! chooses the correct mirror glyphs.",
+    "ANIMATION: Exchange accent, curve and spacing deliberately. | NEOVIM: bounded gR passes author the target rows in place.",
+    "ANIMATION: Keep the left accent after moving the body. | NEOVIM: only cursor movement is required.",
+    "ANIMATION: Insert the right pose beside the left. | NEOVIM: i preserves both rail columns."
    ],
-   "correct_choice": 0,
+   "correct_choice": 1,
    "feedback": [
-    "Correct: gR supports a deliberate row-by-row mirror with fixed width.",
-    "Byte order does not choose the correct directional glyph semantics.",
-    "Insert mode shifts the rail; it does not preserve the row.",
-    "Deleting a row loses the authored evidence rather than mirroring it."
+    "Byte order cannot decide which directional glyph or gap the image needs.",
+    "Correct: explicit row overwrites make every mirror decision inspectable.",
+    "A relocated left-facing accent is still a mirror defect.",
+    "Insertion changes the composition and row width instead of replacing the copy."
    ],
    "variant_group": "M19.concept-1",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "difficulty": 1,
-   "animation_prompt": "ANIMATION\nThe row's arrows and slashes may change, but its fixed rails and width do not.\n\n    │<--/|\\   │  →  │   /|\\-->|",
-   "animation_answer": "Hand-author the directional row while preserving the fixed frame rails.",
-   "neovim_prompt": "NEOVIM\nWhich mode forces explicit in-place glyph choices?\n\n    │<--/|\\   │",
-   "neovim_answer": "gR virtual-replaces each chosen display cell without inserting a new column.",
-   "compact_prompt": "ANIMATION\nThe directional row is authored in place.\n\n    │<--/|\\   │   │<--/|\\   │\n\nNEOVIM\nWhich mode avoids shifting the rails?",
+   "animation_prompt": "ANIMATION\nThe accent, curve and spacing exchange direction; a byte reversal is not accepted.",
+   "animation_answer": "Author the official right-facing row by eye.",
+   "neovim_prompt": "NEOVIM\nWhich mode writes deliberate glyphs into existing cells?",
+   "neovim_answer": "A bounded gR row pass overwrites the copied row while the rails expose drift.",
+   "compact_prompt": "ANIMATION\nRe-author the accent and tail direction.\n│   \\ ‾ `-´│ → │`-´ ‾ /   │\nNEOVIM\nWhich method authors the directional row?",
    "compact_choices": [
-    "A: choose each glyph; rails fixed · V: Virtual Replace",
-    "A: byte reversal · V: automatic mirror",
-    "A: insert glyphs before rail · V: Insert preserves cells",
-    "A: delete row; infer mirror · V: dd is mirror mode"
+    "A: byte reverse · V: !",
+    "A: judge glyphs · V: bounded gR",
+    "A: keep accent · V: move only",
+    "A: insert beside · V: i"
    ],
    "answer_contract": {
     "form": "multiple_choice"
@@ -31456,33 +31676,33 @@
    "placement": "before",
    "placement_reason": "The learner must interpret the visible animation evidence and bounded edit before the concept or diagnosis card can advance.",
    "type": "command_prediction",
-   "prompt": "ANIMATION\nA five-row mirror remains the same width after each row is authored.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhy is width an invariant?",
+   "prompt": "ANIMATION\nCompare the complete source-authored poses. Even the crown shifts within fixed rails.\n\nLEFT           RIGHT\n|    .-.   |   |   .-.    |\n|   \\ ‾ `-´|   |`-´ ‾ /   |\n|    ) /   |   |   \\ (    |\n|    |/    |   |    \\|    |\n\nNEOVIM\nWhat must each full-row gR pass preserve?",
    "choices": [
-    "ANIMATION: Direction changes inside a fixed-width frame. | NEOVIM: after each gR row, verify equal width and both rail columns.",
-    "ANIMATION: Direction changes by adding cells to the right. | NEOVIM: gR is allowed to extend the row until the arrow fits.",
-    "ANIMATION: Rails move with the arrowhead. | NEOVIM: gR must end one cell beyond the old rail.",
-    "ANIMATION: Width is irrelevant because playback centres every frame. | NEOVIM: dd/p repairs any width after mirroring."
+    "ANIMATION: Let short rows end early. | NEOVIM: rail drift is repaired by playback.",
+    "ANIMATION: Move both rails with the accent. | NEOVIM: type one extra cell in gR.",
+    "ANIMATION: Change only rows containing slash glyphs. | NEOVIM: unchanged-looking rows need no width check.",
+    "ANIMATION: Author six target rows inside fixed rails. | NEOVIM: each bounded gR pass ends at the original right rail."
    ],
-   "correct_choice": 0,
+   "correct_choice": 3,
    "feedback": [
-    "Correct: width and rail positions are the registration invariant for the mirrored still.",
-    "Virtual Replace does not authorize extending the frame's row boundary.",
-    "Moving rails changes the frame placement and breaks comparison.",
-    "Playback cannot repair authored width; the rows must be right before playback."
+    "Ragged widths become visible registration jitter.",
+    "The rails are the invariant, not moving decoration.",
+    "Crown and face spacing also differ and must be authored deliberately.",
+    "Correct: every target row is explicit and every rail stays in its original column."
    ],
    "variant_group": "M19.concept-1",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "difficulty": 1,
-   "animation_prompt": "ANIMATION\nThe actor's direction changes while the left and right rails retain their columns.\n\n    │ _/ o \\  │  →  │  / o \\_ │\n    │<--/|\\   │      │   /|\\-->|",
-   "animation_answer": "Each mirrored row may exchange spacing and directional glyphs, but its fixed rails remain aligned.",
-   "neovim_prompt": "NEOVIM\nWhat is checked after each row?\n\n    │ _/ o \\  │\n    │<--/|\\   │",
-   "neovim_answer": "Every gR pass must end at the unchanged right rail with equal display width.",
-   "compact_prompt": "ANIMATION\nDirectional spacing changes but rail columns do not.\n\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n\nNEOVIM\nWhat must every gR pass preserve?",
+   "animation_prompt": "ANIMATION\nAll six row spellings are authored, while the two rail columns remain unchanged.",
+   "animation_answer": "Mirror all six rows and retain equal display widths.",
+   "neovim_prompt": "NEOVIM\nWhat boundary makes a gR pass safe?",
+   "neovim_answer": "Start at the left rail, type exactly one target row, then Escape at the unchanged right rail.",
+   "compact_prompt": "ANIMATION\n│   \\ ‾ `-´│ → │`-´ ‾ /   │\n│    |/    │   │    \\|    │\nNEOVIM\nWhat stays registered?",
    "compact_choices": [
-    "A: direction changes; rails fixed · V: verify equal width",
-    "A: add cells right · V: gR extends row",
-    "A: rails move · V: end beyond rail",
-    "A: width irrelevant · V: delete/put repairs"
+    "A: ragged rows · V: playback fixes",
+    "A: move rails · V: extra cell",
+    "A: slash rows only · V: skip checks",
+    "A: six rows; rails fixed · V: bounded gR"
    ],
    "answer_contract": {
     "form": "multiple_choice"
@@ -31505,33 +31725,33 @@
    "placement": "before",
    "placement_reason": "The learner must interpret the visible animation evidence and bounded edit before the concept or diagnosis card can advance.",
    "type": "method_comparison",
-   "prompt": "ANIMATION\nThe arrow row changes -- to == while the arrowhead remains outside the run.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │  / o \\_ │   │  / o \\_ │\n    │   /|\\-->|   │   /|\\==>|\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich explicit stop protects the arrowhead?",
+   "prompt": "ANIMATION\nOnly the right ghost's eye expression changes from calm to strain.\n\n|  (- -)   | → |  (> <)   |\n|`-´ ‾ /   |   |`-´ ‾ /   |\n\nNEOVIM\nWhen are R and gR equivalent for this edit?",
    "choices": [
-    "ANIMATION: Replace the two dashes and preserve >. | NEOVIM: press Escape immediately after the second replacement cell.",
-    "ANIMATION: Replace dashes and arrowhead together. | NEOVIM: remain in Replace mode through >.",
-    "ANIMATION: Insert == before the dashes, leaving old dashes behind. | NEOVIM: i is the safe explicit stop.",
-    "ANIMATION: Delete the complete arrow row before retyping. | NEOVIM: dd and p protect > automatically."
+    "ANIMATION: Change only the three eye-expression cells. | NEOVIM: R and gR are equivalent when Escape stops before ).",
+    "ANIMATION: Replace the closing parenthesis too. | NEOVIM: continue through the whole row.",
+    "ANIMATION: Insert > < before the calm eyes. | NEOVIM: i has the same fixed-width effect.",
+    "ANIMATION: Change both ghost faces. | NEOVIM: :%s is the required local scope."
    ],
    "correct_choice": 0,
    "feedback": [
-    "Correct: the explicit stop defines the intended run boundary.",
-    "The arrowhead is outside the acting run and must remain unchanged.",
-    "Insertion leaves old material and changes width, so it is not the target.",
-    "Row deletion is broader than the two-cell redraw."
+    "Correct: both modes overwrite existing cells; the explicit stop protects the face contour.",
+    "The closing parenthesis is stable contour evidence.",
+    "Insertion leaves the old eyes behind and moves the rail.",
+    "The target owns one expression row, not every match in the file."
    ],
    "variant_group": "M19.concept-2",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "difficulty": 2,
-   "animation_prompt": "ANIMATION\nThe arrowhead > remains; only the two preceding dashes become ==.\n\n    │   /|\\-->|  →  │   /|\\==>|",
-   "animation_answer": "The two-cell material run changes, then the author exits before the arrowhead.",
-   "neovim_prompt": "NEOVIM\nWhich stop is part of the method?\n\n    │   /|\\-->|",
-   "neovim_answer": "Escape immediately after the second replacement cell so > is not consumed or shifted.",
-   "compact_prompt": "ANIMATION\nOnly the two cells before > change.\n\n    │   /|\\-->|   │   /|\\==>|\n\nNEOVIM\nWhere should Replace mode stop?",
+   "animation_prompt": "ANIMATION\nThe three cells - - become > <; parentheses and rails remain.",
+   "animation_answer": "Change the three-cell expression and preserve the face boundary.",
+   "neovim_prompt": "NEOVIM\nWhat makes either overwrite path bounded?",
+   "neovim_answer": "Enter R or gR on the first eye and Escape after typing > <, before the closing parenthesis.",
+   "compact_prompt": "ANIMATION\n│  (- -)   │ → │  (> <)   │\nNEOVIM\nWhere must overwrite mode stop?",
    "compact_choices": [
-    "A: two dashes; > preserved · V: Escape after cell two",
-    "A: dashes plus > · V: Replace through arrow",
-    "A: insert before old dashes · V: Insert stop",
-    "A: row deleted/retyped · V: dd/p protects"
+    "A: 3 eye cells · V: stop before )",
+    "A: include ) · V: whole row",
+    "A: insert eyes · V: i",
+    "A: both faces · V: %s"
    ],
    "answer_contract": {
     "form": "multiple_choice"
@@ -31554,33 +31774,33 @@
    "placement": "before",
    "placement_reason": "The learner must interpret the visible animation evidence and bounded edit before the concept or diagnosis card can advance.",
    "type": "transfer_reasoning",
-   "prompt": "ANIMATION\nUnfamiliar art keeps fixed rails while its eye, slashes, and arrowhead exchange direction.\n\n    BEFORE         AFTER\n    │   /+\\   │   │   /+\\   │\n    │ __/x\\   │   │   /x\\__ │\n    │<==/|\\   │   │   /|\\==>|\n    │   / \\   │   │   / \\   │\n    │__/___\\__|   │__/___\\__|\n\nNEOVIM\nWhich transfer proves hand-authored direction?",
+   "prompt": "ANIMATION\nTransfer the mirror rule to a folded Acronian wing.\n\n|   \\ `  ___.,/| → |\\,.___  ´ /   |\n|    \\  /_/\\   |   |   /\\_\\  /    |\n\nNEOVIM\nWhich evidence distinguishes hand authoring from a byte flip?",
    "choices": [
-    "ANIMATION: Redraw directional rows deliberately while preserving five-row rails. | NEOVIM: a gR pass on each changed row proves the mirror was authored.",
-    "ANIMATION: Flip the stored bytes and keep every glyph in reverse order. | NEOVIM: ! performs the full semantic mirror.",
-    "ANIMATION: Rebuild the shell with a different width. | NEOVIM: 3ddGp copies and stretches the rows.",
-    "ANIMATION: Change only the eye; slashes and arrow remain unchanged. | NEOVIM: r is sufficient for every directional row."
+    "ANIMATION: Preserve only the outer edge. | NEOVIM: one r changes the full wing.",
+    "ANIMATION: Reverse each row mechanically. | NEOVIM: gR chooses mirror glyphs automatically.",
+    "ANIMATION: Re-author edge, fold, accents and gaps. | NEOVIM: six bounded gR row passes provide the evidence.",
+    "ANIMATION: Insert a second wing beside the source. | NEOVIM: i keeps both rails fixed."
    ],
-   "correct_choice": 0,
+   "correct_choice": 2,
    "feedback": [
-    "Correct: repeated gR passes let the author choose each directional glyph in place.",
-    "Byte reversal does not swap glyph roles or spacing by visual judgment.",
-    "The transfer preserves the fixed rails and width.",
-    "The unfamiliar target changes more than the eye; a one-cell r cannot author all rows."
+    "The inner fold and spacing are part of the mirror reading.",
+    "gR writes supplied text; it does not understand visual mirroring.",
+    "Correct: complete row evidence shows the unfamiliar mirror was authored deliberately.",
+    "Insertion adds another object and changes the fixed-width plate."
    ],
    "variant_group": "M19.concept-2",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "difficulty": 2,
-   "animation_prompt": "ANIMATION\nThe unfamiliar body remains five rows wide while directional rows are deliberately redrawn.\n\n    │ __/x\\   │  →  │   /x\\__ │\n    │<==/|\\   │      │   /|\\==>|",
-   "animation_answer": "Hand-author each directional row with fixed rails; do not reverse stored bytes.",
-   "neovim_prompt": "NEOVIM\nWhich path demonstrates the transfer?\n\n    │   /+\\   │\n    │ __/x\\   │\n    │<==/|\\   │",
-   "neovim_answer": "Use gR on each directional row, ending each pass at the unchanged right rail.",
-   "compact_prompt": "ANIMATION\nThe unfamiliar mirror changes directional rows, not rails.\n\n    │ __/x\\   │   │   /x\\__ │\n    │<==/|\\   │   │   /|\\==>|\n\nNEOVIM\nWhich family makes each row explicit?",
+   "animation_prompt": "ANIMATION\nOuter edge, inner fold, accents and gaps are all re-judged inside fixed rails.",
+   "animation_answer": "Author the official opposite wing row by row.",
+   "neovim_prompt": "NEOVIM\nWhich path exposes every decision?",
+   "neovim_answer": "Six bounded 0gR...<Esc> passes overwrite the source rows without a reverse transform.",
+   "compact_prompt": "ANIMATION\n│   \\ `  ___.,/│ → │\\,.___  ´ /   │\nNEOVIM\nHow are all six rows rewritten?",
    "compact_choices": [
-    "A: hand-authored directional rows · V: repeated gR",
-    "A: byte flip · V: automatic semantic mirror",
-    "A: different-width shell · V: delete/stretch",
-    "A: eye only · V: one r for all rows"
+    "A: edge only · V: one r",
+    "A: byte flip · V: gR auto",
+    "A: all features · V: six gR rows",
+    "A: insert beside · V: i"
    ],
    "answer_contract": {
     "form": "multiple_choice"
@@ -31603,33 +31823,33 @@
    "placement": "before",
    "placement_reason": "The learner must interpret the visible animation evidence and bounded edit before the concept or diagnosis card can advance.",
    "type": "coherence_check",
-   "prompt": "ANIMATION\nSeveral complete still candidates remain available for comparison.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n\nNEOVIM\nWhich operation keeps a full candidate instead of erasing it?",
+   "prompt": "ANIMATION\nThese are variant stills, not a timed sequence.\n\n|   (- -)  |  |  (> <)   |  |   (> <)  |\n|   \\ ‾ `-´|  |`-´ ‾ /   |  |   \\ ‾ `-´|\n\nNEOVIM\nWhich operation keeps each six-row candidate available for comparison?",
    "choices": [
-    "ANIMATION: Keep each complete five-row still for comparison. | NEOVIM: 5yy or an addressed five-line copy preserves the candidate.",
-    "ANIMATION: Delete each candidate after inspecting its eye. | NEOVIM: 5dd is the comparison operation.",
-    "ANIMATION: Keep only the arrow row because it defines direction. | NEOVIM: yy copies the complete still by meaning.",
-    "ANIMATION: Convert candidates directly into playback frames. | NEOVIM: :m moves each row into the animation register."
+    "ANIMATION: Delete each candidate after checking its eyes. | NEOVIM: 6dd is comparison.",
+    "ANIMATION: Keep each complete still. | NEOVIM: a six-line yank or addressed copy preserves it.",
+    "ANIMATION: Keep only the face rows. | NEOVIM: yy owns a semantic ghost automatically.",
+    "ANIMATION: Treat file order as playback timing. | NEOVIM: :t assigns frame duration."
    ],
-   "correct_choice": 0,
+   "correct_choice": 1,
    "feedback": [
-    "Correct: comparison requires a preserved complete candidate.",
-    "Deletion prevents side-by-side visual comparison.",
-    "A single arrow row loses body, eye, and rail context.",
-    "A candidate still is not playback until timing and in-betweens are deliberately authored."
+    "Deletion removes the evidence needed to compare variants.",
+    "Correct: the physical six-line boundary keeps crown, face, accent, body and tail together.",
+    "A single line loses the contour and spacing context.",
+    "Copy commands preserve text; they do not assign animation timing."
    ],
    "variant_group": "M19.concept-3",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "difficulty": 2,
-   "animation_prompt": "ANIMATION\nEach candidate remains a complete still for visual comparison, not a fragment.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
-   "animation_answer": "Preserve complete five-row stills so directional details can be compared before animation.",
-   "neovim_prompt": "NEOVIM\nWhich operation preserves the candidate?\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
-   "neovim_answer": "A five-row yank or addressed copy keeps the complete candidate available.",
-   "compact_prompt": "ANIMATION\nKeep the entire five-row candidate visible.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n\nNEOVIM\nWhich copy is frame-sized?",
+   "animation_prompt": "ANIMATION\nThree complete still candidates exist; timing and in-betweens do not.",
+   "animation_answer": "Retain each complete six-row pose for visual comparison.",
+   "neovim_prompt": "NEOVIM\nWhich copy respects the candidate boundary?",
+   "neovim_answer": "6yy or :1,6t$ copies the complete still instead of a feature row.",
+   "compact_prompt": "ANIMATION\nleft calm · right strain · left strain\n│   (- -)  │ │  (> <)   │ │   (> <)  │\nNEOVIM\nWhat is the object boundary?",
    "compact_choices": [
-    "A: full stills retained · V: five-line yank/copy",
-    "A: candidates deleted · V: five-line delete",
-    "A: arrow row only · V: yy means full still",
-    "A: immediate playback · V: move rows to register"
+    "A: delete after view · V: 6dd",
+    "A: keep whole stills · V: six-line copy",
+    "A: faces only · V: yy semantic",
+    "A: file=timing · V: :t duration"
    ],
    "answer_contract": {
     "form": "multiple_choice"
@@ -31652,33 +31872,33 @@
    "placement": "before",
    "placement_reason": "The learner must interpret the visible animation evidence and bounded edit before the concept or diagnosis card can advance.",
    "type": "principle_application",
-   "prompt": "ANIMATION\nA copied five-row still gets a distinct eye while all rails remain fixed.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │ _/ O \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich local replacement preserves the frame?",
+   "prompt": "ANIMATION\nThe third candidate reuses the left calm ghost and changes only its expression.\n\n|   (- -)  | → |   (> <)  |\n|   \\ ‾ `-´|   |   \\ ‾ `-´|\n|    |/    |   |    |/    |\n\nNEOVIM\nWhich bounded edit makes it a real variant?",
    "choices": [
-    "ANIMATION: Only the copied eye changes; rails and directional rows remain. | NEOVIM: a local rO replacement changes one cell.",
-    "ANIMATION: The copied still is replaced by a new width. | NEOVIM: iO inserts an eye before the old one.",
-    "ANIMATION: The whole head row is deleted and redrawn. | NEOVIM: dd then O is the one-cell replacement.",
-    "ANIMATION: Every eye in every candidate changes. | NEOVIM: :%s/o/O/g has the same local scope."
+    "ANIMATION: Retype the entire copied ghost. | NEOVIM: 6dd then six open lines is the local edit.",
+    "ANIMATION: Change every calm face. | NEOVIM: :%s/-/>/g preserves each expression.",
+    "ANIMATION: Leave the copy identical. | NEOVIM: the copy alone proves variation.",
+    "ANIMATION: Change only the copied three-cell expression. | NEOVIM: a bounded gR> < pass preserves all other rows."
    ],
-   "correct_choice": 0,
+   "correct_choice": 3,
    "feedback": [
-    "Correct: rO is a one-cell overwrite, so fixed-row registration survives.",
-    "Insertion creates a second cell and shifts the rail.",
-    "Deleting the row is broader than the nominated eye edit.",
-    "A whole-file substitute changes more candidates than the visible target."
+    "A full redraw adds needless opportunities for contour drift.",
+    "A file-wide substitute destroys the calm comparison pose.",
+    "An unchanged duplicate has no variant purpose.",
+    "Correct: one bounded expression change makes the copy distinct while preserving its source contour."
    ],
    "variant_group": "M19.concept-3",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "difficulty": 2,
-   "animation_prompt": "ANIMATION\nThe eye is distinct; the rails, arrow, and base remain registered.\n\n    │ _/ o \\  │  →  │ _/ O \\  │",
-   "animation_answer": "Change one eye cell so the candidate differs without altering its five-row bounds.",
-   "neovim_prompt": "NEOVIM\nWhich local replacement changes one visible eye?\n\n    │ _/ o \\  │",
-   "neovim_answer": "An addressed rO replacement overwrites the eye cell in place.",
-   "compact_prompt": "ANIMATION\nOnly the copied eye becomes O.\n\n    │ _/ o \\  │   │ _/ O \\  │\n\nNEOVIM\nWhich one-cell operation is appropriate?",
+   "animation_prompt": "ANIMATION\nThe expression changes; accent, body and tail remain byte-for-byte stable.",
+   "animation_answer": "Vary the three eye cells only.",
+   "neovim_prompt": "NEOVIM\nWhich scope follows :1,6t$?",
+   "neovim_answer": "Go to the copied face, find its first -, and overwrite exactly > <.",
+   "compact_prompt": "ANIMATION\n│   (- -)  │ → │   (> <)  │\nNEOVIM\nWhat changes after the six-line copy?",
    "compact_choices": [
-    "A: one copied eye · V: rO",
-    "A: width grows · V: insert O",
-    "A: head row deleted · V: dd/O",
-    "A: every eye changes · V: global substitute"
+    "A: retype all · V: delete/open",
+    "A: all faces · V: %s",
+    "A: identical copy · V: copy only",
+    "A: copied eyes only · V: bounded gR"
    ],
    "answer_contract": {
     "form": "multiple_choice"
@@ -31701,33 +31921,33 @@
    "placement": "before",
    "placement_reason": "The learner must interpret the visible animation evidence and bounded edit before the concept or diagnosis card can advance.",
    "type": "output_prediction",
-   "prompt": "ANIMATION\nThe mirror must exchange arrow and slash direction while preserving the stored row widths.\n\n    BEFORE         AFTER\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n\nNEOVIM\nWhich family writes chosen display cells without reversing bytes?",
+   "prompt": "ANIMATION\nA text reversal would put `-´ on the wrong semantic edge and would not choose the source-authored curve.\n\n|   \\ ‾ `-´| → |`-´ ‾ /   |\n|    ) /   |   |   \\ (    |\n\nNEOVIM\nWhich family supports visual, not byte, mirroring?",
    "choices": [
-    "ANIMATION: Exchange directional glyphs and spacing by judgment; keep rails fixed. | NEOVIM: gR/R overwrites selected display cells in place.",
-    "ANIMATION: Reverse the bytes and trust every slash to mirror. | NEOVIM: ! is the hand-authored replacement mode.",
-    "ANIMATION: Insert mirrored glyphs before the old ones. | NEOVIM: i preserves the row because it adds only intended cells.",
-    "ANIMATION: Copy the original still unchanged. | NEOVIM: yy/p performs semantic mirroring automatically."
+    "ANIMATION: Judge every directional glyph and gap. | NEOVIM: R/gR writes the chosen replacement cells in place.",
+    "ANIMATION: Reverse bytes and trust punctuation. | NEOVIM: ! supplies semantic substitutions.",
+    "ANIMATION: Insert the target beside the source. | NEOVIM: i is an overwrite family.",
+    "ANIMATION: Keep the source unchanged. | NEOVIM: yy/p creates a mirror automatically."
    ],
    "correct_choice": 0,
    "feedback": [
-    "Correct: gR/R lets the author choose the actual directional glyphs cell by cell.",
-    "Byte reversal is explicitly not the hand-mirroring method.",
-    "Insertion changes width and cannot preserve the rails.",
-    "Copying preserves the original; it does not make an opposite-facing still."
+    "Correct: overwrite modes preserve the grid while leaving visual decisions to the author.",
+    "A filter may reverse characters but cannot infer glyph semantics or spacing.",
+    "Insert mode shifts following cells and does not replace the source pose.",
+    "Yank/put duplicates the same facing direction."
    ],
    "variant_group": "M19.concept-4",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "difficulty": 3,
-   "animation_prompt": "ANIMATION\nHand mirroring exchanges directional glyph roles and spacing by eye.\n\n    │ _/ o \\  │  →  │  / o \\_ │\n    │<--/|\\   │      │   /|\\-->|",
-   "animation_answer": "The mirror is a newly authored still, not a byte-order reversal.",
-   "neovim_prompt": "NEOVIM\nWhich operation writes the chosen glyphs in existing cells?\n\n    │ _/ o \\  │\n    │<--/|\\   │",
-   "neovim_answer": "gR or R overwrites the author-selected display cells without transforming stored bytes.",
-   "compact_prompt": "ANIMATION\nDirectional glyphs change semantically; rails remain.\n\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n\nNEOVIM\nWhich command family supports hand mirroring?",
+   "animation_prompt": "ANIMATION\nDirectional glyph meaning and spacing are judged from the official opposite pose.",
+   "animation_answer": "Mirror visually instead of reversing stored character order.",
+   "neovim_prompt": "NEOVIM\nWhich commands accept author-chosen replacement text?",
+   "neovim_answer": "R and gR overwrite existing cells; neither performs an automatic reverse.",
+   "compact_prompt": "ANIMATION\naccent + body curve must be re-authored\n│    ) /   │ → │   \\ (    │\nNEOVIM\nWhich family overwrites chosen cells?",
    "compact_choices": [
-    "A: semantic glyph exchange; rails fixed · V: gR/R overwrite",
-    "A: byte reversal · V: ! mirror mode",
-    "A: insert mirrored glyphs · V: Insert preserves",
-    "A: unchanged copy · V: yank/put mirrors"
+    "A: judge glyphs/gaps · V: R/gR",
+    "A: reverse bytes · V: !",
+    "A: insert beside · V: i",
+    "A: unchanged copy · V: yy/p"
    ],
    "answer_contract": {
     "form": "multiple_choice"
@@ -31750,33 +31970,33 @@
    "placement": "before",
    "placement_reason": "The learner must interpret the visible animation evidence and bounded edit before the concept or diagnosis card can advance.",
    "type": "risk_diagnosis",
-   "prompt": "ANIMATION\nThe mirror must stay registered when several rows have different directional widths.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\==>|\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich invariant catches a bad full-row replacement?",
+   "prompt": "ANIMATION\nOne target row ends a cell early, so its right rail no longer aligns with the other five.\n\nGOOD |`-´ ‾ /   |\nBAD  |`-´ ‾ /  |\n\nNEOVIM\nWhich invariant catches the defect immediately?",
    "choices": [
-    "ANIMATION: Directional rows differ but frame width and rail columns match. | NEOVIM: verify equal display width after every gR row.",
-    "ANIMATION: Let each row choose its own width for a stronger mirror. | NEOVIM: width does not matter until playback.",
-    "ANIMATION: Move the rails to follow the arrowhead. | NEOVIM: gR should finish one cell past the old rail.",
-    "ANIMATION: Check only the eye because it is the focal glyph. | NEOVIM: rO confirms the whole row's width."
+    "ANIMATION: Compare only the face glyphs. | NEOVIM: r proves full-row width.",
+    "ANIMATION: Accept ragged rows until playback. | NEOVIM: Neovim centres them automatically.",
+    "ANIMATION: Require equal display width and matching rails. | NEOVIM: verify the endpoint after every gR row.",
+    "ANIMATION: Move the other rows to the short rail. | NEOVIM: delete one cell from each source row."
    ],
-   "correct_choice": 0,
+   "correct_choice": 2,
    "feedback": [
-    "Correct: equal width and fixed rails are the observable registration checks.",
-    "Independent widths cause jitter or drift when candidates are compared or animated.",
-    "Rails define the frame; moving them changes composition.",
-    "The eye alone cannot prove row registration."
+    "A correct face can still sit in a misregistered row.",
+    "Playback exposes authored drift; it cannot repair it.",
+    "Correct: fixed rail columns make every width error visible before animation.",
+    "Damaging the source rows hides the error instead of fixing the target."
    ],
    "variant_group": "M19.concept-4",
    "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
    "difficulty": 3,
-   "animation_prompt": "ANIMATION\nThe mirrored directional details change, but frame height and rail columns match.\n\n    │ _/ o \\  │  →  │  / o \\_ │\n    │<--/|\\   │      │   /|\\==>|",
-   "animation_answer": "Check equal row widths and matching rail columns after each authored mirrored row.",
-   "neovim_prompt": "NEOVIM\nWhich check protects registration?\n\n    │ _/ o \\  │\n    │<--/|\\   │",
-   "neovim_answer": "After each gR pass, verify the row ends at the unchanged right rail and retains the intended width.",
-   "compact_prompt": "ANIMATION\nThe mirror's rails remain in matching columns.\n\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\==>|\n\nNEOVIM\nWhat must be checked after each row?",
+   "animation_prompt": "ANIMATION\nEvery mirrored row must retain the same two rail columns as its source.",
+   "animation_answer": "Reject any row with a shifted rail or unequal display width.",
+   "neovim_prompt": "NEOVIM\nWhat is checked after each gR pass?",
+   "neovim_answer": "Confirm that the cursor's authored row reaches the unchanged right rail at the expected width.",
+   "compact_prompt": "ANIMATION\nGOOD │`-´ ‾ /   │\nBAD  │`-´ ‾ /  │\nNEOVIM\nWhat should be compared?",
    "compact_choices": [
-    "A: directional rows; width/rails match · V: verify every row",
-    "A: independent widths · V: width checked only at playback",
-    "A: rails follow arrow · V: finish past rail",
-    "A: eye only · V: rO checks whole row"
+    "A: face only · V: r",
+    "A: defer width · V: auto-centre",
+    "A: equal widths/rails · V: endpoint check",
+    "A: shorten sources · V: delete cells"
    ],
    "answer_contract": {
     "form": "multiple_choice"
@@ -40663,6 +40883,148 @@
    "authorship": "manual"
   },
   {
+   "id": "M11.CC.P01",
+   "card_id": "M11.CC",
+   "module_id": "M11",
+   "grammar_family": "whitespace-column-audit",
+   "grammar_breakdown_id": "whitespace-column-audit",
+   "grammar_breakdown": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
+   "difficulty": 1,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nDracula's pose is 7 cells wide. One stray spark sits in column 8, outside the pose. The ruler (colorcolumn) is drawn here as ▒ in column 8.\n\n  BEFORE          AFTER\n  │   \\(}_ ▒│     │   \\(}_ ▒│\n  │  ,' ¯/*▒│     │  ,' ¯/ ▒│\n  │ '-_.'  ▒│     │ '-_.'  ▒│\n\nNEOVIM\nWhat does :set colorcolumn=8 do, and what removes the stray cell?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Only the stray cell past the pose edge goes. | NEOVIM: colorcolumn=8 only paints column 8 as a ruler; 2G$x deletes the cell standing on it.",
+    "ANIMATION: The whole pose is cropped at column 8. | NEOVIM: colorcolumn=8 deletes everything from column 8 to the right.",
+    "ANIMATION: The row shifts left to close the gap. | NEOVIM: x in the middle of the row pulls the stray back inside the pose.",
+    "ANIMATION: The ruler is saved into the art as a new column. | NEOVIM: colorcolumn writes a visible character into column 8 of every row."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: colorcolumn is display only. It shows where the pose ends; $x then removes the one cell sitting on that ruler.",
+    "colorcolumn never edits the buffer. It only paints a column so you can see the edge.",
+    "The stray is the LAST cell of its row, so $x removes it without moving any pose cell. An x inside the row would shift the pose.",
+    "The painted column exists only on screen. :set colorcolumn= removes it and the file never contained it."
+   ],
+   "animation_prompt": "ANIMATION\nA cell outside the pose's right edge is found and removed; the pose itself does not move.",
+   "animation_answer": "Only the stray cell in column 8 disappears; all 7 pose columns stay registered.",
+   "neovim_prompt": "NEOVIM\nExplain colorcolumn and the deleting keys.",
+   "neovim_answer": ":set colorcolumn=8 paints column 8 as a ruler without editing anything; 2G$x then deletes the one cell standing on it.",
+   "compact_prompt": "ANIMATION\nOne stray * sits in column 8, past the 7-cell pose.\n\n  │  ,' ¯/*▒│ → │  ,' ¯/ ▒│\n\nNEOVIM\nWhat does colorcolumn=8 do; what deletes the *?",
+   "compact_choices": [
+    "A: remove stray only · V: ruler paints, $x deletes",
+    "A: crop at 8 · V: colorcolumn deletes",
+    "A: shift row left · V: mid-row x",
+    "A: ruler saved in art · V: colorcolumn writes"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": ":set colorcolumn=8<CR>2G$x",
+    "required_term_groups": [
+     [
+      "list",
+      "whitespace"
+     ],
+     [
+      "cursorcolumn",
+      "active column"
+     ],
+     [
+      "colorcolumn",
+      "boundary"
+     ],
+     [
+      "substitute",
+      "trailing",
+      "cleanup"
+     ]
+    ],
+    "sample_answer": "list cursorcolumn colorcolumn substitute"
+   },
+   "authorship": "manual"
+  },
+  {
+   "id": "M11.TR.P01",
+   "card_id": "M11.TR",
+   "module_id": "M11",
+   "grammar_family": "whitespace-column-audit",
+   "grammar_breakdown_id": "whitespace-column-audit",
+   "grammar_breakdown": [
+    ":set list reveals whitespace, cursorcolumn tracks the active registration column, colorcolumn marks the width boundary, and :%s/\\s\\+$//e removes only trailing whitespace"
+   ],
+   "paired_invariant": "overwrite fixed-width art when the row length must remain stable, and use virtual columns only when the intended glyph lies beyond end-of-line",
+   "source_ref": "ascii-art-authoring §§4.4,9h-10; Neovim help R, undo-redo, virtualedit, bar",
+   "difficulty": 1,
+   "form": "multiple_choice",
+   "placement": "after",
+   "placement_reason": "This inserted bridge first shows and practises the new command, then asks the learner to name every command part and its animation scope.",
+   "prompt": "ANIMATION\nEvery snow bunny row ends in three invisible spaces (shown here as ·). Only those tails go.\n\n  BEFORE               AFTER\n  │   (\\(\\···│        │   (\\(\\│\n  │  ( n.n)···│        │  ( n.n)│\n  │o(,`_\"_)···│        │o(,`_\"_)│\n\nNEOVIM\nIn :%s/\\s\\+$//e, what does each piece do?",
+   "answer_contract": {
+    "form": "multiple_choice",
+    "answer_mode": "choice"
+   },
+   "learning_form": "decode",
+   "choices": [
+    "ANIMATION: Only the row tails go. | NEOVIM: % every line, \\s a space or tab, \\+ one or more, $ at the row end, empty replacement deletes, e no error if none.",
+    "ANIMATION: Every space in the bunny goes. | NEOVIM: \\s\\+ without $ is what the command uses, so interior spaces match too.",
+    "ANIMATION: Only the first row is cleaned. | NEOVIM: % means the current line and e means edit once.",
+    "ANIMATION: The tails become dots. | NEOVIM: the empty replacement inserts the · marks shown in the diagram."
+   ],
+   "correct_choice": 0,
+   "feedback": [
+    "Correct: $ pins the match to the row end, so the spaces inside the bunny's face never match.",
+    "The $ is in the command and it is what protects the art: without it, \\s\\+ would also delete the spaces between the ears and in the face.",
+    "% is the whole-file range: every line. e only silences the error on a line that has no tail.",
+    "The · marks exist only in this diagram. An empty replacement deletes the match and writes nothing."
+   ],
+   "animation_prompt": "ANIMATION\nInvisible row tails are removed; every visible bunny cell stays registered.",
+   "animation_answer": "Only the trailing spaces disappear; the interior spaces that draw the bunny stay.",
+   "neovim_prompt": "NEOVIM\nRead the substitute piece by piece.",
+   "neovim_answer": "% = every line; \\s = a space or tab; \\+ = one or more of them; $ = only at the end of the row; the empty replacement deletes them; e = no error on a row without a tail.",
+   "compact_prompt": "ANIMATION\nOnly the ··· tails go; the bunny stays.\n\n  │  ( n.n)···│ → │  ( n.n)│\n\nNEOVIM\nWhat do %, \\s, \\+, $ and e each mean?",
+   "compact_choices": [
+    "A: tails only · V: %,\\s,\\+,$ end, e quiet",
+    "A: all spaces · V: no $ anchor",
+    "A: first row only · V: % = current line",
+    "A: tails become dots · V: inserts ·"
+   ],
+   "source_answer_contract": {
+    "form": "decode",
+    "display": ":%s/\\s\\+$//e<CR>",
+    "required_term_groups": [
+     [
+      "list",
+      "whitespace"
+     ],
+     [
+      "cursorcolumn",
+      "active column"
+     ],
+     [
+      "colorcolumn",
+      "boundary"
+     ],
+     [
+      "substitute",
+      "trailing",
+      "cleanup"
+     ]
+    ],
+    "sample_answer": "list cursorcolumn colorcolumn substitute"
+   },
+   "authorship": "manual"
+  },
+  {
    "id": "M11.UT.P01",
    "card_id": "M11.UT",
    "module_id": "M11",
@@ -41671,35 +42033,35 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The learner first sees and types the new command in the guided edit; this short choice then checks the resulting scope without demanding a second key sequence.",
-   "prompt": "ANIMATION\nThe guided still approves one uncertain eye.\n\n    BEFORE         AFTER\n    │   /^\\   │   │   /^\\   │\n    │ _/ ? \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich summary matches the bounded edit?",
+   "prompt": "ANIMATION\nDO THIS changes only the first Pallas eye.\n\n|   (? -)  | → |   (- -)  |\n|   \\ ‾ `-´|   |   \\ ‾ `-´|\n\nNEOVIM\nWhich summary matches the edit you just made?",
    "choices": [
-    "ANIMATION: Approve one eye while five-row rails stay fixed. | NEOVIM: gR overwrites the nominated display cell.",
-    "ANIMATION: Insert a second eye and shift the rail. | NEOVIM: i adds o before ?.",
-    "ANIMATION: Replace the complete head row. | NEOVIM: dd then O redraws it.",
-    "ANIMATION: Copy the still below itself. | NEOVIM: 5yyGp is the eye approval."
+    "ANIMATION: The full ghost was retyped. | NEOVIM: gR deleted six rows first.",
+    "ANIMATION: One eye was inserted. | NEOVIM: gR grows the row by one cell.",
+    "ANIMATION: The ghost was copied. | NEOVIM: gR is a linewise yank.",
+    "ANIMATION: ? became - and the rails stayed fixed. | NEOVIM: gR overwrote that existing cell."
    ],
-   "correct_choice": 0,
+   "correct_choice": 3,
    "feedback": [
-    "Correct: gR performs the nominated one-cell overwrite.",
-    "Insertion would create an extra display cell.",
-    "The guided target does not alter a full row.",
-    "No second still appears; copying is unrelated to eye approval."
+    "Only one eye cell changed.",
+    "Virtual Replace does not insert before the placeholder.",
+    "No second ghost appears in this edit; the source remains a single still.",
+    "Correct: the cell changed in place and every later column remained registered."
    ],
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "predict_art",
-   "animation_prompt": "ANIMATION\nThe approved eye is the only new glyph; rails and body remain.\n\n    │ _/ ? \\  │  →  │ _/ o \\  │",
-   "animation_answer": "One eye cell is approved without changing any row width or rail.",
-   "neovim_prompt": "NEOVIM\nWhich command summary matches?\n\n    │ _/ ? \\  │\n    │<--/|\\   │",
-   "neovim_answer": "Find the placeholder and use gR to overwrite one cell, then return to Normal mode.",
-   "compact_prompt": "ANIMATION\nOnly the eye placeholder changes.\n\n    │ _/ ? \\  │   │ _/ o \\  │\n    │<--/|\\   │   │<--/|\\   │\n\nNEOVIM\nWhat did Virtual Replace do?",
+   "animation_prompt": "ANIMATION\nOne eye becomes source-correct; the accent and rails remain.",
+   "animation_answer": "Approve one existing cell only.",
+   "neovim_prompt": "NEOVIM\nWhy did gR not move the right rail?",
+   "neovim_answer": "It overwrote ? with - in the same display cell.",
+   "compact_prompt": "ANIMATION\n│   (? -)  │ → │   (- -)  │\nNEOVIM\nWhat did gR preserve?",
    "compact_choices": [
-    "A: one eye; rails fixed · V: gR cell overwrite",
-    "A: second eye; rail shifts · V: insert",
-    "A: head row replaced · V: delete/open",
-    "A: still copied · V: five-line yank/put"
+    "A: full redraw · V: delete six",
+    "A: inserted eye · V: grow row",
+    "A: copied ghost · V: yank",
+    "A: ?→-; rails fixed · V: overwrite"
    ],
    "source_answer_contract": {
     "form": "predict_art",
@@ -41723,39 +42085,39 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The complete recipe is shown and practised first; the learner then decomposes the command without being asked to infer untaught keys.",
-   "prompt": "ANIMATION\nThe complete five-row still is copied as a working opposite-facing candidate.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n                    │   /^\\   │\n                    │ _/ o \\  │\n                    │<--/|\\   │\n                    │   / \\   │\n                    │  /___\\  │\n\nNEOVIM\nWhich explanation decomposes the copy?",
+   "prompt": "ANIMATION\nThe complete source ghost now appears twice.\n\n|    .-.   |\n|   (- -)  |\n|   \\ ‾ `-´|\n|    ) /   |\n|    |/    |\n|    '     |\n\nNEOVIM\nWhich part of gg6yyGp owns the pose boundary?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "decode",
    "choices": [
-    "ANIMATION: Copy the complete five-row pose. | NEOVIM: gg5yyGp yanks and puts five whole lines.",
-    "ANIMATION: Copy only the arrow row. | NEOVIM: yy copies the whole still because the cursor is on its arrow.",
-    "ANIMATION: Move the original to make room. | NEOVIM: 5ddp transfers and removes it.",
-    "ANIMATION: Add five blank lines. | NEOVIM: 5o opens a working candidate with no glyphs."
+    "ANIMATION: Copy six display cells. | NEOVIM: 6 counts characters for yy.",
+    "ANIMATION: Copy the six-row ghost. | NEOVIM: 6 counts whole lines for linewise yy.",
+    "ANIMATION: Move the ghost. | NEOVIM: p deletes the yank source.",
+    "ANIMATION: Copy only the tail. | NEOVIM: G changes yy into a tail object."
    ],
-   "correct_choice": 0,
+   "correct_choice": 1,
    "feedback": [
-    "Correct: the count protects the five-row still as one working object.",
-    "A single row cannot carry the complete key pose.",
-    "The original remains for visual comparison.",
-    "The working candidate contains copied art, not blanks."
+    "Linewise yy counts lines, not display cells.",
+    "Correct: the count is the physical boundary of the source still.",
+    "Yank and put preserve the source; they do not move it.",
+    "G chooses the destination after the six-line yank."
    ],
-   "animation_prompt": "ANIMATION\nThe second candidate contains all five rows, including its arrow and base.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
-   "animation_answer": "Copy the complete five-row still before authoring its mirror.",
-   "neovim_prompt": "NEOVIM\nWhich command copies the complete still?\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
-   "neovim_answer": "gg5yyGp yanks five whole lines and puts them below.",
-   "compact_prompt": "ANIMATION\nThe five-row key pose appears again below.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n\nNEOVIM\nWhat does the line count own?",
+   "animation_prompt": "ANIMATION\nCrown through tail are copied together.",
+   "animation_answer": "The whole source still becomes a working candidate.",
+   "neovim_prompt": "NEOVIM\nWhat does the 6 modify?",
+   "neovim_answer": "The count makes yy yank six whole lines before Gp appends them.",
+   "compact_prompt": "ANIMATION\nOne six-row ghost becomes two complete candidates.\n│    .-.   │\n│    '     │\nNEOVIM\nWhich token protects the boundary?",
    "compact_choices": [
-    "A: complete five-row pose · V: 5 linewise yank/put",
-    "A: arrow row only · V: yy means full still",
-    "A: move original · V: delete/put",
-    "A: blank candidate · V: open lines"
+    "A: six cells · V: char count",
+    "A: six rows · V: line count",
+    "A: move · V: put deletes",
+    "A: tail only · V: G object"
    ],
    "source_answer_contract": {
     "form": "decode",
-    "display": "gg5yyGp",
+    "display": "gg6yyGp",
     "required_term_groups": [
      [
       "yank",
@@ -41802,35 +42164,35 @@
    "form": "multiple_choice",
    "placement": "before",
    "placement_reason": "Prediction makes the learner state the intended changed region before a key-hidden retrieval, without revealing its command path.",
-   "prompt": "ANIMATION\nThe copied still must be hand-authored as a right-facing extreme.\n\n    │   /^\\   │   │   /^\\   │\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n    │   / \\   │   │   / \\   │\n    │  /___\\  │   │  /___\\  │\n\nNEOVIM\nWhich result preserves rails while changing directional rows?",
+   "prompt": "ANIMATION\nYou replaced the copied left ghost with the official right calm pose.\n\n|   \\ ‾ `-´| → |`-´ ‾ /   |\n|    ) /   |   |   \\ (    |\n|    |/    |   |    \\|    |\n\nNEOVIM\nWhich evidence makes this hand mirroring?",
    "choices": [
-    "ANIMATION: Author all five rows as a right-facing extreme with rails fixed. | NEOVIM: run bounded gR passes row by row.",
-    "ANIMATION: Reverse the stored five-row bytes. | NEOVIM: ! mirrors every directional glyph without inspection.",
-    "ANIMATION: Add a second arrowhead after the old one. | NEOVIM: i inserts the new direction before >.",
-    "ANIMATION: Delete the copied still and let playback infer its mirror. | NEOVIM: 5dd is the complete mirroring workflow."
+    "ANIMATION: Only screen position changed. | NEOVIM: cursor motion proves mirroring.",
+    "ANIMATION: Rows were reversed automatically. | NEOVIM: gR performs a byte reversal.",
+    "ANIMATION: Six official right-pose rows were authored. | NEOVIM: bounded gR passes preserve rails and expose every choice.",
+    "ANIMATION: A second object was inserted. | NEOVIM: gR shifts the old copy right."
    ],
-   "correct_choice": 0,
+   "correct_choice": 2,
    "feedback": [
-    "Correct: each row is deliberately overwritten while the frame boundary stays fixed.",
-    "The method rejects automatic byte reversal because glyph roles and spaces differ.",
-    "A second arrowhead is not the mirror target and changes row width.",
-    "Playback cannot infer an authored still that was deleted."
+    "Position alone does not exchange accent, curve and tail semantics.",
+    "gR overwrites typed cells; it has no reverse operation.",
+    "Correct: the keylog and fixed rails show deliberate row-by-row authorship.",
+    "The copied pose was replaced in place, not moved aside."
    ],
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "predict_art",
-   "animation_prompt": "ANIMATION\nThe eye, slash spacing, arrowhead, and rails are judged row by row.\n\n    │ _/ o \\  │  →  │  / o \\_ │\n    │<--/|\\   │      │   /|\\-->|",
-   "animation_answer": "Hand-author all five copied rows, changing direction while preserving row width and rails.",
-   "neovim_prompt": "NEOVIM\nWhich workflow represents that scope?\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │",
-   "neovim_answer": "Use a gR pass on each copied row, exiting each row after its intended fixed-width content.",
-   "compact_prompt": "ANIMATION\nThe opposite-facing still is authored row by row.\n\n    │ _/ o \\  │   │  / o \\_ │\n    │<--/|\\   │   │   /|\\-->|\n\nNEOVIM\nWhat is the bounded scope?",
+   "animation_prompt": "ANIMATION\nAll six target rows were typed deliberately inside unchanged rails.",
+   "animation_answer": "The result matches the source-authored right pose, not a reversed string.",
+   "neovim_prompt": "NEOVIM\nWhy is one gR pass per row important?",
+   "neovim_answer": "Each pass exposes the chosen target spelling and ends at the fixed right rail.",
+   "compact_prompt": "ANIMATION\naccent, body curve and tail all reverse roles\n│   \\ ‾ `-´│ → │`-´ ‾ /   │\nNEOVIM\nWhat did six gR passes prove?",
    "compact_choices": [
-    "A: five authored rows; rails fixed · V: gR each row",
-    "A: byte reversal · V: automatic mirror",
-    "A: extra arrowhead · V: insert before >",
-    "A: delete and infer · V: five-line delete"
+    "A: position only · V: motion",
+    "A: auto reverse · V: gR flip",
+    "A: six authored rows · V: bounded gR",
+    "A: inserted object · V: shift old"
    ],
    "source_answer_contract": {
     "form": "predict_art",
@@ -41856,35 +42218,35 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The exact result must exist before the learner compares cursor dependence, scope, and animation risk across the two valid methods.",
-   "prompt": "ANIMATION\nThe copied arrow row changes -- to ==, stopping before >.\n\n    │   /|\\-->|   │   │   /|\\==>|\n\nNEOVIM\nWhich comparison describes the one-method choice?",
+   "prompt": "ANIMATION\nThe right calm face becomes the strain face and nothing else moves.\n\n|  (- -)   | → |  (> <)   |\n|`-´ ‾ /   |   |`-´ ‾ /   |\n\nNEOVIM\nWhy do both accepted methods pass?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "why",
    "choices": [
-    "ANIMATION: Two cells change and > stays fixed. | NEOVIM: choose either a bounded gR run or R run, but do not perform both.",
-    "ANIMATION: The whole arrow row changes width. | NEOVIM: Insert mode is the only accepted path.",
-    "ANIMATION: The arrowhead is replaced too. | NEOVIM: stay in Replace mode through > for semantic mirroring.",
-    "ANIMATION: The complete frame is copied again. | NEOVIM: 5yyGp is equivalent to the two-cell overwrite."
+    "ANIMATION: Both ghost faces change. | NEOVIM: either method is file-wide.",
+    "ANIMATION: Three cells change and ) stays fixed. | NEOVIM: either R or gR passes when it stops before the contour.",
+    "ANIMATION: The expression is inserted. | NEOVIM: both modes add new cells.",
+    "ANIMATION: The full row is replaced. | NEOVIM: Escape is optional after > <."
    ],
-   "correct_choice": 0,
+   "correct_choice": 1,
    "feedback": [
-    "Correct: both overwrite paths can reach the same registered target, but only one should be used.",
-    "Insertion is not a fixed-width method.",
-    "The arrowhead is outside the run and must be protected.",
-    "Copying a frame does not replace the two arrow-row cells."
+    "The target owns the copied right face only.",
+    "Correct: method equivalence comes from the same start cell, text and stop boundary.",
+    "Replace modes consume existing cells rather than inserting before them.",
+    "Without Escape the stable contour and rail can be overwritten."
    ],
-   "animation_prompt": "ANIMATION\nThe arrowhead remains fixed while the two-cell run changes.\n\n    │   /|\\-->|  →  │   /|\\==>|",
-   "animation_answer": "Either accepted overwrite mode can replace the two existing cells if it stops before >.",
-   "neovim_prompt": "NEOVIM\nWhat is the tradeoff between the accepted paths?\n\n    │   /|\\-->|\n    │   /|\\==>|",
-   "neovim_answer": "gR and R both overwrite the same two cells; the explicit stop protects the following arrowhead.",
-   "compact_prompt": "ANIMATION\nThe two material cells before > change only.\n\n    │   /|\\-->|   │   │   /|\\==>|\n\nNEOVIM\nCompare Virtual Replace and Replace mode.",
+   "animation_prompt": "ANIMATION\nExactly three expression cells change.",
+   "animation_answer": "Both methods reach the same bounded face variant.",
+   "neovim_prompt": "NEOVIM\nWhat common boundary matters?",
+   "neovim_answer": "Both R and gR start on the first eye and Escape after > <, before ).",
+   "compact_prompt": "ANIMATION\n│  (- -)   │ → │  (> <)   │\nNEOVIM\nCompare R with gR.",
    "compact_choices": [
-    "A: two cells; > fixed · V: choose one bounded overwrite",
-    "A: row width changes · V: Insert only",
-    "A: > replaced too · V: Replace through arrow",
-    "A: frame copied · V: five-line yank/put"
+    "A: both faces · V: file-wide",
+    "A: 3 cells; ) fixed · V: bounded R/gR",
+    "A: inserted · V: add cells",
+    "A: full row · V: no stop"
    ],
    "source_answer_contract": {
     "form": "why",
@@ -41898,17 +42260,17 @@
       "virtual replace"
      ],
      [
-      "two",
-      "2",
+      "three",
+      "3",
       "cells"
      ],
      [
-      "arrowhead",
+      "parenthesis",
       "boundary",
       "width"
      ]
     ],
-    "sample_answer": "R and gR both overwrite the two selected material cells; Escape after cell two preserves the arrowhead and fixed row width."
+    "sample_answer": "R and gR both overwrite the three selected eye-expression cells; Escape after cell three preserves the closing parenthesis and fixed row width."
    },
    "authorship": "manual"
   },
@@ -41928,35 +42290,35 @@
    "form": "multiple_choice",
    "placement": "after",
    "placement_reason": "The key-hidden transfer comes first; afterward, four explicit choices check the command path and animation scope without free-text grading.",
-   "prompt": "ANIMATION\nHand-mirror this complete Acronian folded mid-wing. The outer edge, inner fold, accents, and empty space must be authored deliberately; both rails stay fixed.\n\nSTART\n|         ____ |\n|   /‾‾‾‾‾  ` \\|\n|   \\ `  ___.,/|\n|    \\  /_/\\   |\n|     \\ ‾` /   |\n|      ‾‾‾‾    |\n\nTARGET\n| ____         |\n|/ ´  ‾‾‾‾‾\\   |\n|\\,.___  ´ /   |\n|   /\\_\\  /    |\n|   \\ ´‾ /     |\n|    ‾‾‾‾      |\n\nNEOVIM\nWhich method redraws six complete fixed-width rows without inserting columns or mechanically reversing bytes?",
+   "prompt": "ANIMATION\nThe hidden transfer was a complete folded Acronian wing mirror.\n\n|   \\ `  ___.,/| → |\\,.___  ´ /   |\n|     \\ ‾` /   |   |   \\ ´‾ /     |\n\nNEOVIM\nWhich account matches a successful transfer?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "typed_keys",
    "choices": [
-    "ANIMATION: Hand-author all six mirrored wing rows while preserving both rails. | NEOVIM: bounded `0gR...<Esc>` passes overwrite each complete display row.",
-    "ANIMATION: Reverse each row's bytes and accept the glyph directions. | NEOVIM: gR automatically reverses text.",
-    "ANIMATION: Insert the mirrored wing beside the old one. | NEOVIM: gR inserts cells and shifts the right rail.",
-    "ANIMATION: Change only the top edge and leave the inner fold facing left. | NEOVIM: one `r` command redraws all six rows."
+    "ANIMATION: Only final text matters. | NEOVIM: any insert/delete path demonstrates the same fixed-width overwrite skill.",
+    "ANIMATION: The rows were reversed by a filter. | NEOVIM: identical pixels prove hand authorship.",
+    "ANIMATION: Only the outer edge changed. | NEOVIM: one r command is complete evidence.",
+    "ANIMATION: The full opposite wing was judged row by row. | NEOVIM: the required bounded gR sequence appears in the keylog."
    ],
-   "correct_choice": 0,
+   "correct_choice": 3,
    "feedback": [
-    "Correct: Virtual Replace supports a deliberate row-for-row redraw while the rails expose any width drift.",
-    "gR overwrites what you type; it does not reverse a string or choose directional glyphs for you.",
-    "Virtual Replace overwrites display cells. The target replaces the old pose rather than adding a second one.",
-    "The inner fold and five other rows also change direction and spacing, so a one-cell replacement cannot reach the target."
+    "The exercise checks the learned overwrite path as well as the final drawing.",
+    "A byte transform does not demonstrate directional judgment.",
+    "The inner fold and spacing also change in the source-authored target.",
+    "Correct: unfamiliar art plus the recorded bounded overwrite proves the skill transferred."
    ],
-   "animation_prompt": "ANIMATION\nThe target is the source-authored opposite folded wing, not a reversed string. All six rows remain between fixed rails.",
-   "animation_answer": "Author the six target rows explicitly, choosing the correct outer edge, inner fold, accents, and gaps while preserving both rails.",
-   "neovim_prompt": "NEOVIM\nWhy use a bounded `0gR...<Esc>` pass on each row?",
-   "neovim_answer": "0 begins at the left rail, gR overwrites display cells with the authored target, and Escape ends that row before moving down; repeat for all six rows.",
-   "compact_prompt": "ANIMATION\nMirror the complete folded Acronian wing; preserve both rails.\n\n|   \\ `  ___.,/|  →  |\\,.___  ´ /   |\n|    \\  /_/\\   |     |   /\\_\\  /    |\n\nNEOVIM\nWhich mode overwrites complete display rows?",
+   "animation_prompt": "ANIMATION\nEdge, fold, accents and gaps all match the official opposite wing.",
+   "animation_answer": "The unfamiliar source was mirrored by visual judgment.",
+   "neovim_prompt": "NEOVIM\nWhat did the grader require beyond final pixels?",
+   "neovim_answer": "The keylog had to contain the complete bounded gR row-rewrite method.",
+   "compact_prompt": "ANIMATION\nA new six-row wing vocabulary was mirrored inside rails.\n│   \\ `  ___.,/│ → │\\,.___  ´ /   │\nNEOVIM\nWhat evidence was required?",
    "compact_choices": [
-    "A: author six rows; rails fixed · V: bounded gR",
-    "A: byte reverse · V: gR auto-reverses",
-    "A: insert second wing · V: gR shifts rail",
-    "A: top edge only · V: one r redraws rows"
+    "A: pixels only · V: any path",
+    "A: filter reverse · V: pixels prove",
+    "A: edge only · V: one r",
+    "A: full judged wing · V: required gR log"
    ],
    "source_answer_contract": {
     "form": "typed_keys",
@@ -41996,7 +42358,7 @@
    "grammar_breakdown_id": "ex-copy",
    "grammar_breakdown": [
     "source address/range + t/copy command + destination address + <CR> execution",
-    "r + replacement glyph; overwrite one cell without shifting the row",
+    "gR enters Virtual Replace; typed glyphs overwrite display cells until <Esc>",
     "/pattern<CR> searches; f/t land on or before a visible character landmark",
     "motion or landmark command + optional count; movement alone must not change art"
    ],
@@ -42006,35 +42368,35 @@
    "form": "multiple_choice",
    "placement": "before",
    "placement_reason": "The learner completes the reusable grammar before the checkpoint; the card's exact hidden recipe remains undisclosed.",
-   "prompt": "ANIMATION\nA third complete still is retained, with only its eye varied.\n\n    │   /^\\   │\n    │ _/ o \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n\nNEOVIM\nWhich choice keeps this a still candidate and completes the grammar?",
+   "prompt": "ANIMATION\nThe final plate retains a third complete left ghost and changes only its expression.\n\n|   (- -)  | → |   (> <)  |\n|   \\ ‾ `-´|   |   \\ ‾ `-´|\n|    |/    |   |    |/    |\n\nNEOVIM\nWhich grammar completes the plate?",
    "answer_contract": {
     "form": "multiple_choice",
     "answer_mode": "choice"
    },
    "learning_form": "complete",
    "choices": [
-    "ANIMATION: Keep a complete third still and vary one eye only. | NEOVIM: execute the addressed copy with <CR>, then make the local replacement.",
-    "ANIMATION: Turn the three stills into playback immediately. | NEOVIM: omit <CR>; the copy executes when playback starts.",
-    "ANIMATION: Delete the approved still after copying. | NEOVIM: 5dd is the complete candidate grammar.",
-    "ANIMATION: Change every eye in every candidate. | NEOVIM: :%s/o/O/g is the local variation command."
+    "ANIMATION: Copy the eye row only. | NEOVIM: :2t$ owns the complete ghost.",
+    "ANIMATION: Copy all six rows and vary only the copied eyes. | NEOVIM: execute :1,6t$ with Enter, then use bounded gR on the copied face.",
+    "ANIMATION: Move the original ghost. | NEOVIM: :1,6m$ preserves three candidates.",
+    "ANIMATION: Change every calm face. | NEOVIM: :%s/-/>/g is the bounded variant edit."
    ],
-   "correct_choice": 0,
+   "correct_choice": 1,
    "feedback": [
-    "Correct: the plate remains a set of authored stills, and Ex execution must be explicit.",
-    "No timing is inferred from still candidates, and an Ex command waits for <CR>.",
-    "The approved candidate is retained for comparison.",
-    "The variation is one nominated eye, not every eye in the plate."
+    "A face row alone is not a complete still candidate.",
+    "Correct: the copy and variation have separate, explicit boundaries.",
+    "Move removes the source from its original place instead of retaining it.",
+    "A whole-file substitute destroys the calm-vs-strain comparison."
    ],
-   "animation_prompt": "ANIMATION\nThe third candidate is complete and differs at one eye; no playback timing is inferred.\n\n    │ _/ O \\  │\n    │<--/|\\   │\n    │   /___\\  │",
-   "animation_answer": "Retain the complete approved still and vary only the nominated eye for comparison.",
-   "neovim_prompt": "NEOVIM\nWhich missing execution piece belongs in the addressed copy grammar?\n\n    │   /^\\   │\n    │ _/ O \\  │",
-   "neovim_answer": "The Ex copy needs <CR> to execute before the local eye replacement.",
-   "compact_prompt": "ANIMATION\nKeep a full third still; change one eye only.\n\n    │   /^\\   │\n    │ _/ O \\  │\n    │<--/|\\   │\n    │   / \\   │\n    │  /___\\  │\n\nNEOVIM\nWhat does the copy grammar require?",
+   "animation_prompt": "ANIMATION\nThe third still is complete and differs only at its eyes.",
+   "animation_answer": "Copy the full source object, then make one bounded variation.",
+   "neovim_prompt": "NEOVIM\nWhat do :1,6t$<CR> and the later gR each own?",
+   "neovim_answer": "The Ex range owns all six source rows; the gR pass owns only > < on the copied face.",
+   "compact_prompt": "ANIMATION\ncopy six rows, then vary one three-cell expression\n│   (- -)  │ → │   (> <)  │\nNEOVIM\nWhich two scopes are required?",
    "compact_choices": [
-    "A: full third still; one eye · V: execute copy with CR",
-    "A: immediate playback · V: omit CR",
-    "A: approved still deleted · V: five-line delete",
-    "A: all eyes change · V: global substitute"
+    "A: eye row copy · V: :2t$",
+    "A: six-row copy + copied eyes · V: :t CR then gR",
+    "A: move source · V: :m",
+    "A: all faces · V: %s"
    ],
    "source_answer_contract": {
     "form": "complete",
@@ -55570,6 +55932,16 @@
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
+   "card_id": "M11.CC",
+   "label": "use the taught whitespace-column-audit path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
+   "card_id": "M11.TR",
+   "label": "use the taught whitespace-column-audit path",
+   "evidence": "runtime-required ordered command path plus exact target"
+  },
+  {
    "card_id": "M11.UT",
    "label": "use the taught undo-tree-travel path",
    "evidence": "runtime-required ordered command path plus exact target"
@@ -55631,17 +56003,17 @@
   },
   {
    "card_id": "M19.04",
-   "label": "hand-author all five copied mirror rows with virtual replace",
+   "label": "hand-author all six copied Pallas mirror rows with virtual replace",
    "evidence": "runtime-required ordered command path plus exact target"
   },
   {
    "card_id": "M19.05",
-   "label": "virtual replace run",
+   "label": "virtual replace expression",
    "evidence": "runtime-recognized comparison method"
   },
   {
    "card_id": "M19.05",
-   "label": "replace-mode run",
+   "label": "replace-mode expression",
    "evidence": "runtime-recognized comparison method"
   },
   {
@@ -57014,8 +57386,8 @@
   },
   {
    "hidden_card_id": "M19.08",
-   "grammar_family": "normal-replace",
-   "prior_guided_card_id": "M0.01"
+   "grammar_family": "virtual-replace",
+   "prior_guided_card_id": "M19.01"
   },
   {
    "hidden_card_id": "M19.08",

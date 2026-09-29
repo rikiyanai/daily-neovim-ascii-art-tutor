@@ -104,6 +104,63 @@ EX_NAMES = {
 }
 
 
+# VD-34: a recipe line must say what an option or a pattern DOES, not echo it.
+OPTION_ALIASES = {"cuc": "cursorcolumn", "cc": "colorcolumn", "ve": "virtualedit",
+                  "sw": "shiftwidth", "scb": "scrollbind", "nolist": "list",
+                  "nocursorcolumn": "cursorcolumn", "nocuc": "cursorcolumn"}
+OPTION_NOTES = {
+    "list": lambda _v: ("show invisible characters: a tab, a trailing space and the line end "
+                        "become visible marks (display only; turn off with :set nolist)"),
+    "cursorcolumn": lambda _v: ("highlight the whole screen column the cursor is in, so you can "
+                                "check that cells line up across rows (off: :set nocursorcolumn)"),
+    "colorcolumn": lambda v: ("paint screen column %s as a ruler; anything touching or past it "
+                              "is outside the frame (off: :set colorcolumn=)" % (v or "N")),
+    "virtualedit": lambda v: ("let the cursor stand in empty cells past a row's end "
+                              "(%s); off: :set virtualedit=" % (v or "all")),
+    "shiftwidth": lambda v: ("make >> and << shift a row by %s cell%s" %
+                             (v or "N", "" if v == "1" else "s")),
+    "scrollbind": lambda _v: "scroll this window together with every other scrollbind window",
+}
+
+_PATTERN_ATOMS = [
+    ("\\s", "a space or tab"), ("\\S", "any non-space glyph"), ("\\d", "a digit"),
+    ("\\+", "one or more of the previous item"), ("\\=", "zero or one of the previous item"),
+    ("\\.", "a literal ."), ("\\*", "a literal *"), ("\\/", "a literal /"),
+    ("\\\\", "a literal backslash"), ("*", "zero or more of the previous item"),
+    (".", "any one character"), ("^", "the start of the line"), ("$", "the end of the line"),
+]
+
+
+def pattern_parts(pattern):
+    """Split a search pattern into (piece, meaning) pairs for teaching."""
+    parts, i = [], 0
+    while i < len(pattern):
+        if pattern[i] == "[":
+            j = pattern.find("]", i + 1)
+            if j > i:
+                parts.append((pattern[i:j + 1], "any one of %s" % pattern[i + 1:j]))
+                i = j + 1
+                continue
+        for atom, meaning in _PATTERN_ATOMS:
+            if pattern.startswith(atom, i):
+                if atom == "^" and i != 0 or atom == "$" and i != len(pattern) - 1:
+                    continue
+                parts.append((atom, meaning))
+                i += len(atom)
+                break
+        else:
+            parts.append((pattern[i], "the literal %s" % pattern[i]))
+            i += 1
+    return parts
+
+
+def _pattern_gloss(pattern):
+    parts = pattern_parts(pattern)
+    if all(meaning.startswith("the literal ") for _p, meaning in parts):
+        return _q(pattern)
+    return "%s (%s)" % (_q(pattern), ", then ".join(meaning for _p, meaning in parts))
+
+
 def _range_words(rng):
     if not rng:
         return "on the current line"
@@ -146,10 +203,14 @@ def _explain_ex(text):
         old = parts[0] if parts else ""
         new = parts[1] if len(parts) > 1 else ""
         flags = parts[2] if len(parts) > 2 else ""
-        text_ = "%s, substitute %s with %s" % (where, _q(old), _q(new))
+        text_ = "%s, replace %s with %s" % (
+            where, _pattern_gloss(old), _q(new) if new else "nothing (delete the match)")
         text_ += ("; g = every match on the line, not just the first" if "g" in flags
                   else "; first match on each line only")
-        return text_, ":%ss/old/new/%s" % (fam_rng, "g" if "g" in flags else "")
+        if "e" in flags:
+            text_ += "; e = no error when a line has no match"
+        family_flags = "".join(flag for flag in "ge" if flag in flags)
+        return text_, ":%ss/old/new/%s" % (fam_rng, family_flags)
     if name in ("t", "co", "copy", "m", "move"):
         verb = "copy" if name in ("t", "co", "copy") else "move"
         return ("%s %s %s" % (verb, where.replace("on ", "", 1), _dest_words(rest)),
@@ -160,7 +221,14 @@ def _explain_ex(text):
         return ("%s, run the Normal-mode keys %s" % (where, _q(rest.strip())),
                 ":%snormal {keys}" % fam_rng)
     if name == "set":
-        return "set the editor option %s" % _q(rest.strip()), ":set {option}"
+        option = rest.strip()
+        base = re.split(r"[=!&?]", option, 1)[0]
+        base = OPTION_ALIASES.get(base, base)
+        note = OPTION_NOTES.get(base)
+        if note is None:
+            return "set the editor option %s" % _q(option), ":set %s" % base
+        value = option.split("=", 1)[1] if "=" in option else ""
+        return note(value), ":set %s" % base
     if name in EX_NAMES:
         return "%s, %s%s" % (where, EX_NAMES[name], (" " + rest.strip()) if rest.strip() else ""), \
             ":%s%s" % (fam_rng, name)
@@ -385,6 +453,13 @@ def families(keys):
 
 
 FAMILY_TEACH = {
+    ":set list": ":set list  show invisible whitespace as marks (display only; :set nolist hides them)",
+    ":set cursorcolumn": ":set cursorcolumn  highlight the cursor's column top to bottom (off: :set nocursorcolumn)",
+    ":set colorcolumn": ":set colorcolumn={N}  paint column N as a ruler for the frame's right edge (off: :set colorcolumn=)",
+    ":set virtualedit": ":set virtualedit=all  let the cursor stand past a row's end",
+    ":set shiftwidth": ":set shiftwidth={N}  choose how far >> and << shift a row",
+    ":[range]s/old/new/e": ":{range}s/pattern//e  delete what the pattern matches; e = stay quiet on lines with no match",
+    ":[range]s/old/new/ge": ":{range}s/pattern/new/ge  every match on each line; e = no error when a line has none",
     "j": "j k h l  move down / up / left / right one cell",
     "k": "j k h l  move down / up / left / right one cell",
     "h": "j k h l  move down / up / left / right one cell",
@@ -512,6 +587,13 @@ def explain_lines(keys, width=None):
 # VD-13: a worked example on neutral text for each command family, shown the
 # first time a hidden-recipe lesson needs a family that no earlier lesson showed.
 EXAMPLES = {
+    ":set list": "after :set list, `ab   ` shows as `ab···$`: three trailing spaces you could not see before",
+    ":set cursorcolumn": "with the cursor on column 7, :set cursorcolumn lights column 7 on every row, so a glyph one cell off stands out",
+    ":set colorcolumn": ":set colorcolumn=11 paints column 11; a 10-cell frame must end before the painted stripe",
+    ":set virtualedit": "on a 3-cell row, :set virtualedit=all then 9| puts the cursor in empty column 9",
+    ":set shiftwidth": ":set shiftwidth=1 then >> moves a row right by exactly one cell",
+    ":[range]s/old/new/e": "on `ab   ` and `cd`: :%s/\\s\\+$//e makes `ab` and leaves `cd` (no error for it)",
+    ":[range]s/old/new/ge": ":%s/-/=/ge changes every - in the file and stays quiet on lines without one",
     "f{char}": "on `ab-cd-ef` with the cursor on a: f- lands on the first '-'; ; lands on the next '-'",
     "t{char}": "on `ab-cd` with the cursor on a: t- stops on 'b', just before the '-'",
     "F{char}": "on `ab-cd` with the cursor on d: F- jumps back onto the '-'",

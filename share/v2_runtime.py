@@ -1276,6 +1276,77 @@ def _families_shown_before(cur, card):
     return shown
 
 
+def _new_concepts(card, cur):
+    """Command families this lesson uses that no earlier guided lesson showed."""
+    shown_before = _families_shown_before(cur, card)
+    strings = _card_key_strings(card)
+    if shown_before is None or not strings:
+        return []
+    K = _keys_module()
+    trivial = {"j", "k", "h", "l", "[count]j", "[count]k", "[count]h", "[count]l"}
+    return [(family, meaning) for family, meaning in K.families(strings[0])
+            if family not in shown_before and family not in trivial]
+
+
+def _new_concept_banner(card, cur, width=66):
+    """VD-34: one-line compact banner naming each new idea."""
+    new = _new_concepts(card, cur)
+    if not new:
+        return None
+    names = []
+    for family, _meaning in new:
+        name = family.replace("[range]", "").replace("{text}<Esc>", "").replace("[count]", "")
+        if name.startswith(":s/"):
+            name = ":s///" + name.rsplit("/", 1)[1]
+        if name.startswith(":set ") and any(n.startswith(":set ") for n in names):
+            name = name[5:]
+        if name not in names:
+            names.append(name)
+    return _clip("★ NEW %d · %s · read NEW CONCEPT ALERT" % (len(names), " · ".join(names)), width)
+
+
+def _new_concept_alert(card, cur, width=None):
+    """VD-34: explain every first-time idea before the learner edits.
+
+    A guided lesson used to print a recipe such as `:%s/\\s\\+$//e` with the
+    generic hint "follow the visible grammar once"; four new ideas arrived with
+    no explanation. Each new family now gets its meaning, a neutral example
+    and, when the recipe is visible, a piece-by-piece pattern breakdown.
+    """
+    new = _new_concepts(card, cur)
+    K = _keys_module()
+    wrap = (lambda text, indent: textwrap.wrap(text, width=width, initial_indent=indent,
+                                              subsequent_indent=indent + "   ")
+            ) if width else (lambda text, indent: [indent + text])
+    if not new:
+        # A reinforcement lesson reuses an earlier idea: remind, do not alert.
+        lines = []
+        if card.get("show_recipe"):
+            for pattern in re.findall(r":[^:<]*?s/((?:\\/|[^/])+)/", card.get("expected", "")):
+                parts = K.pattern_parts(pattern)
+                if any(not meaning.startswith("the literal ") for _p, meaning in parts):
+                    lines += wrap("REMEMBER · PATTERN %s, piece by piece:" % pattern, "")
+                    lines += ["     %-4s %s" % (piece, meaning) for piece, meaning in parts]
+        return lines
+    lines = ["★ NEW CONCEPT ALERT · %d new idea%s · %s" % (
+        len(new), "" if len(new) == 1 else "s",
+        "Ctrl-W W, then scroll to read all" if width and width <= 66 else "read before editing")]
+    for number, (family, meaning) in enumerate(new, 1):
+        base = family.replace('"{reg}', "")
+        teach = K.FAMILY_TEACH.get(base) or K.FAMILY_TEACH.get(base.replace("[count]", "")) or meaning
+        lines += wrap("%d. %s" % (number, teach), "  ")
+        example = K.example_for(family)
+        if example:
+            lines += wrap("example: " + example, "     ")
+    if card.get("show_recipe"):
+        for pattern in re.findall(r":[^:<]*?s/((?:\\/|[^/])+)/", card.get("expected", "")):
+            parts = K.pattern_parts(pattern)
+            if any(not meaning.startswith("the literal ") for _piece, meaning in parts):
+                lines += wrap("PATTERN %s, piece by piece:" % pattern, "  ")
+                lines += ["     %-4s %s" % (piece, meaning) for piece, meaning in parts]
+    return lines
+
+
 def _key_teaching(card, width=None, cur=None):
     """VD-13: teach how the needed keys work; reveal the exact answer only when shown.
 
@@ -1309,9 +1380,6 @@ def _key_teaching(card, width=None, cur=None):
         return lines
     lines = ["HOW THE KEYS YOU NEED WORK  (the exact answer stays hidden)",
              "  " + clip(K.GRAMMAR)]
-    if new_lines:
-        lines.append("FIRST TIME YOU NEED THESE  (no earlier lesson showed them)")
-        lines += [clip(line) for line in new_lines]
     seen = []
     for keys in strings:
         for line in K.teach_lines(keys):
@@ -1428,7 +1496,8 @@ def _write_session_lesson(cfg, cur, progress, card):
                 "method_alternatives") else "exact command keys hidden"
             header.append("HINT · %s · %s" % (boundary, _clip(hint, 30)))
         else:
-            header.append("HINT · " + _clip(hint, 59))
+            banner = _new_concept_banner(card, cur)
+            header.append(banner or "HINT · " + _clip(hint, 59))
         if show_target:
             header.append("TARGET")
             header.extend(_compact_target_lines(card))
@@ -1436,6 +1505,7 @@ def _write_session_lesson(cfg, cur, progress, card):
             header.append("RECIPE  " + recipe)
         else:
             header.append("EVIDENCE  exact command keys remain hidden")
+        header.extend(_new_concept_alert(card, cur, width=66))
         header.extend(_key_teaching(card, width=66, cur=cur))
         if card.get("method_alternatives"):
             header.append("USE ONE METHOD  either one passes; both are compared after you pass")
@@ -1478,6 +1548,9 @@ def _write_session_lesson(cfg, cur, progress, card):
             evidence += "; comparison appears after verification"
         header.append("EVIDENCE  " + evidence)
     header.extend(["DO THIS", "  %s" % card["prompt"]])
+    banner = _new_concept_banner(card, cur, width=78)
+    if banner:
+        header.append(banner)
     if show_target:
         header.append("TARGET")
         header.extend("  │" + line for line in card["target"])
@@ -1496,6 +1569,12 @@ def _write_session_lesson(cfg, cur, progress, card):
         header.append("INDEPENDENT ATTEMPT")
     header.append("WHY THIS EXISTS")
     header.extend("  " + line for line in context["why"])
+    # VD-34: the full alert follows the task, target and why block so those
+    # stay on the first screen; the banner under DO THIS points down here.
+    alert = _new_concept_alert(card, cur, width=78)
+    if alert:
+        header.append("")
+        header.extend(alert)
     header.extend([
         "",
         "WHAT THIS LESSON BUYS YOU",
@@ -1851,6 +1930,18 @@ def _normalise_ex(command):
     return re.sub(r"\s+", "", command).lower()
 
 
+def _mode_text_matches(tokens, mode, text):
+    """Recognize Replace/Virtual Replace plus the literal text it entered.
+
+    A real plugin mapping can replay the mode prefix into Neovim's ``-w``
+    scriptout (for example ``gRgR``).  The final buffer remains the exact
+    result gate; method attribution therefore looks for the mode, then the
+    contiguous authored text, then the mode exit, while allowing mapping
+    replay or learner navigation between those three semantic events.
+    """
+    return _contains_ordered(tokens, [list(mode), list(text), ["<Esc>"]])
+
+
 def _method_evidence_matches(method, actual, executed_commands):
     evidence = method.get("evidence") or {}
     kind = evidence.get("kind")
@@ -1867,6 +1958,10 @@ def _method_evidence_matches(method, actual, executed_commands):
         }
         return any(_normalise_ex(command) in accepted
                    for _first, _last, command in executed_commands)
+    if kind == "mode_text":
+        return _mode_text_matches(
+            actual, str(evidence["mode"]), str(evidence["text"])
+        )
     return False
 
 

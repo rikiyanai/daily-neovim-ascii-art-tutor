@@ -5461,3 +5461,80 @@ Three defects appeared only in the headed M1 routes:
 These are real-user-config compatibility repairs. Clean-Neovim success alone
 did not predict them, which is why the three-size headed proof remains required.
 No source archive, remote, or publication state changed.
+
+## VD-34 · 2026-09-29 13:00 — M11.WS taught four ideas with no explanation; no reinforcement before retrieval
+
+**Status:** IMPLEMENTED in the working tree (not committed); verified below.
+
+**Operator:** "the latest lesson was hard and probably needs reinforcement,
+like color column etc, in addition to the %s/... stuff. needs better
+pedagogical wording / maybe like a 'NEW CONCEPT ALERT'." The lesson meant is
+M11.WS; the one after it, M11.UT, failed at 12:43.
+
+**Progress at the time:** revision `.65`. Passed: M0 (14 cards) and M11.01,
+.02, .03, .UR, .WS. Failed and scheduled for remediation: the M0.08 module
+check (paired question) and the M0.01, M0.SL and M0.06 spaced reviews.
+M11.UT failed with target-mismatch.
+
+**Defects in M11.WS:**
+- One guided card introduced `:set list`, `:set cursorcolumn`,
+  `:set colorcolumn=11` and `:%s/\s\+$//e`, which also brings `%`, `\s`,
+  `\+`, the `$` anchor, an empty replacement and the `e` flag.
+- The hint was the generic "Follow the visible grammar once".
+- The key explainer printed "set the editor option 'list'" and
+  "substitute '\s\+$' with ''". Neither says what the command does.
+- Every `:set` option shared one family, `:set {option}`, so a later
+  option could never count as new.
+- The runtime's "FIRST TIME YOU NEED THESE" block appeared only on
+  hidden-recipe cards. Guided cards, where a concept is first met, had none.
+- The next cards went straight to more new content (UT) or hidden retrieval
+  (WSH), with no single-idea practice in between.
+
+**Fix:**
+- `share/v2_keys.py`:
+  - `:set` options now say what they do and how to turn them off: list,
+    cursorcolumn, colorcolumn, virtualedit, shiftwidth, scrollbind.
+  - Each option is its own family (`:set list`, `:set colorcolumn`, …).
+  - Substitute patterns are glossed piece by piece (`pattern_parts`:
+    `\s`, `\S`, `\d`, `\+`, `\=`, `*`, `.`, `^`, `$`, `[…]`, escaped
+    literals).
+  - An empty replacement reads "nothing (delete the match)"; the `e` flag is
+    explained; `…/e` and `…/ge` have their own families with teaching lines
+    and examples.
+- `share/v2_runtime.py`:
+  - **★ NEW CONCEPT ALERT** on every card, guided or hidden. It lists each
+    family that no earlier guided card showed, with its meaning and a
+    neutral example, and — only when the recipe is shown — the recipe's
+    pattern piece by piece.
+  - A one-line `★ NEW n · …` banner sits under DO THIS; on compact guided
+    cards it replaces the generic HINT. The full alert follows the task,
+    target and WHY blocks, so they stay on the first screen.
+  - Cards that reuse a pattern get a `REMEMBER · PATTERN … piece by piece`
+    block.
+  - The old hidden-only "FIRST TIME" lines were folded into the alert.
+- `share/gen_curriculum_v2.py`: two guided single-idea reinforcements after
+  WS, each with its own authored question and a card-specific hint.
+  - **M11.CC:** colorcolumn alone. The Dracula stand pose has one stray cell
+    in column 8: `:set colorcolumn=8<CR>2G$x`.
+  - **M11.TR:** the end-anchored cleanup alone, on the padded SnowBunny.
+    The recipe is split as `:%` / `s/\s\+$/` / `/` / `e<CR>`.
+- `share/test_v2.py`: course counts 219→221 cards, 399→401 questions,
+  sourced primary edits 73→75, stage S0 20→22.
+
+**Evidence:**
+- `share/test_v2.py` exit 0 (221/221 lessons, 180/180 recipes).
+- `test_question_quality.py` PASS on 401 questions.
+- `test_stone_story_variants.py` exit 0.
+- `test_tmux_v2.py` PASS at 80×24, 100×36 and 188×49 with the real user
+  config. This caught one regression: at 188×49 the alert had pushed
+  "Failure to watch" off screen, and it now passes after the alert moved
+  below WHY.
+- Headed M11.WS, M11.CC and M11.TR routes pass at 80×24 and 188×49. Screens
+  were read after the last change: banner, TARGET and recipe are visible on
+  the first screen, and the key-by-key block says what each option and
+  pattern piece does.
+- 0 orphaned `nvim --embed` after the runs.
+
+**Still open:**
+- M11.UT (failed 12:43) has not been reviewed for the same bundling.
+- The remediation queue (M0.08 check, M0.01/SL/06 reviews) is unchanged.

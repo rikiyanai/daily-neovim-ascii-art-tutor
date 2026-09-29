@@ -31,6 +31,12 @@ AUTHORED_QUESTION_FILES = (
     ROOT / "questions-authored-v2-motion-b.json",
     ROOT / "questions-authored-v2-mastery.json",
 )
+AUTHORED_QUESTION_OVERRIDE_FILES = (
+    # Manual per-question source-art rewrites.  These are explicit editorial
+    # records, not generated stems; keeping the active revision separate makes
+    # the currently reviewed module auditable while the wider bank is revised.
+    ROOT / "questions-authored-v2-m19.json",
+)
 
 # The standalone pack is deliberately attached to existing v2 cards instead
 # of becoming a second scheduler.  These links give the generated artifact a
@@ -411,6 +417,13 @@ PALLAS_LEFT_STRAIN_RAILS = stone_story_variants.fixed_rails(
     stone_story_variants.PALLAS_GHOST_LEFT_STRAIN, 10)
 PALLAS_RIGHT_STRAIN_RAILS = stone_story_variants.fixed_rails(
     stone_story_variants.PALLAS_GHOST_RIGHT_STRAIN, 10)
+M19_LEFT_PLACEHOLDER = PALLAS_LEFT_CALM_RAILS[:1] + ["|   (? -)  |"] + PALLAS_LEFT_CALM_RAILS[2:]
+M19_RIGHT_EYES = PALLAS_RIGHT_CALM_RAILS[:1] + PALLAS_RIGHT_STRAIN_RAILS[1:2] + PALLAS_RIGHT_CALM_RAILS[2:]
+M19_LEFT_EYES = PALLAS_LEFT_CALM_RAILS[:1] + PALLAS_LEFT_STRAIN_RAILS[1:2] + PALLAS_LEFT_CALM_RAILS[2:]
+M19_PRIMARY_SOURCE = (
+    "official-Foes/PallasCrown res01-res04 calm/strain left/right ghost poses; "
+    "fixed tutor rails"
+)
 ACRONIAN_LEFT_F2_RAILS = stone_story_variants.fixed_rails(
     stone_story_variants.ACRONIAN_WING_LEFT_F2, 14)
 ACRONIAN_RIGHT_F2_RAILS = stone_story_variants.fixed_rails(
@@ -2938,73 +2951,73 @@ MODULES = [
     },
     {
         "id": "M19", "title": "Mirror key-pose still", "node": "S2/V19",
-        "stage": "S2", "project": "mirror-key-pose-still", "frame_rows": 5,
+        "stage": "S2", "project": "pallas-mirror-study", "frame_rows": 6,
         "labels_steps": [1, 2, 4, 5, 6, 8],
         "skill": "hand mirroring a complete still with virtual replace and directional glyph judgment",
         "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
-        "meaning": "a left-facing key-pose still is copied and redrawn by hand as a right-facing animation extreme before any in-betweens are attempted",
-        "first_reading": "the placeholder eye is approved without shifting the fixed-width rails",
+        "meaning": "Pallas's left calm ghost is copied and redrawn by hand as the official right calm pose before any in-betweens are attempted",
+        "first_reading": "one uncertain left-ghost eye is approved without shifting either fixed-width rail",
         "principle": "a mirrored animation extreme is a newly authored still: exchange directional glyphs and spacing by eye instead of reversing stored bytes",
-        "defect": "the actor moves across the frame but its arrowhead, slash direction, or distance from the rails does not mirror",
+        "defect": "the ghost moves across the frame but its accent, body curve, tail wisp, or distance from the rails does not mirror",
         "basic": "use gR to overwrite a nominated cell or complete fixed-width row without insertion",
-        "scaled": "copy the complete five-row key pose, then hand-author every directional row of its mirrored extreme",
+        "scaled": "copy the complete six-row Pallas key pose, then hand-author every directional row of its official mirrored extreme",
         "steps": [
-            step(
-                ["|   /^\\   |", "| _/ ? \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
-                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
-                "2G0f?gRo<Esc>",
+            dict(step(
+                M19_LEFT_PLACEHOLDER,
+                PALLAS_LEFT_CALM_RAILS,
+                "2G0f?gR-<Esc>",
                 [["2G0f?", "land on the visible eye placeholder"],
-                 ["gRo<Esc>", "Virtual Replace the one eye cell and return to Normal mode"]],
+                 ["gR-<Esc>", "Virtual Replace the one eye cell and return to Normal mode"]],
                 method_requirement=require_method(
                     "replace the nominated still cell with virtual replace",
-                    exact_any_of=["2G0f?gRo<Esc>"]),
-            ),
-            step(
-                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
-                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
-                 "|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
-                "gg5yyGp",
-                [["gg5yy", "copy the complete approved five-row still"],
+                    exact_any_of=["2G0f?gR-<Esc>"]),
+            ), source=M19_PRIMARY_SOURCE + "; tutor-injected eye placeholder"),
+            dict(step(
+                PALLAS_LEFT_CALM_RAILS,
+                PALLAS_LEFT_CALM_RAILS + PALLAS_LEFT_CALM_RAILS,
+                "gg6yyGp",
+                [["gg6yy", "copy the complete approved six-row Pallas still"],
                  ["Gp", "append one working extreme below it"]],
-            ),
-            step(
-                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
-                 "|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
-                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
-                 "|   /^\\   |", "|  / o \\_ |", "|   /|\\-->|", "|   / \\   |", "|  /___\\  |"],
-                "6G0gR|   /^\\   |<Esc>j0gR|  / o \\_ |<Esc>j0gR|   /|\\-->|<Esc>j0gR|   / \\   |<Esc>j0gR|  /___\\  |<Esc>",
-                [["6G0gR…<Esc>", "redraw the copied head row without changing its width"],
-                 ["j0gR…<Esc> ×4", "hand-author the remaining mirrored rows, including slash direction, arrowhead, and spacing"]],
+            ), source=M19_PRIMARY_SOURCE + "; res01 left calm pose copied"),
+            dict(step(
+                PALLAS_LEFT_CALM_RAILS + PALLAS_LEFT_CALM_RAILS,
+                PALLAS_LEFT_CALM_RAILS + PALLAS_RIGHT_CALM_RAILS,
+                "7G" + full_row_rewrite(PALLAS_RIGHT_CALM_RAILS, "gR"),
+                [["7G0gR…<Esc>", "redraw the copied crown row without changing its width"],
+                 ["j0gR…<Esc> ×5", "hand-author the remaining official right ghost, including accent, body curve, tail wisp, and spacing"]],
                 method_requirement=require_method(
-                    "hand-author all five copied mirror rows with virtual replace",
-                    exact_any_of=["6G0gR|   /^\\   |<Esc>j0gR|  / o \\_ |<Esc>j0gR|   /|\\-->|<Esc>j0gR|   / \\   |<Esc>j0gR|  /___\\  |<Esc>"]),
-            ),
-            step(
-                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
-                 "|   /^\\   |", "|  / o \\_ |", "|   /|\\-->|", "|   / \\   |", "|  /___\\  |"],
-                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
-                 "|   /^\\   |", "|  / o \\_ |", "|   /|\\==>|", "|   / \\   |", "|  /___\\  |"],
-                "8G0f-gR==<Esc>",
-                [["8G0f-", "find the mirrored arrow material by its visible dash"],
-                 ["gR==<Esc>", "overwrite the two-cell material run without moving its arrowhead"]],
+                    "hand-author all six copied Pallas mirror rows with virtual replace",
+                    exact_any_of=["7G" + full_row_rewrite(PALLAS_RIGHT_CALM_RAILS, "gR")]),
+            ), source=M19_PRIMARY_SOURCE + "; res01 left calm to res03 right calm"),
+            dict(step(
+                PALLAS_LEFT_CALM_RAILS + PALLAS_RIGHT_CALM_RAILS,
+                PALLAS_LEFT_CALM_RAILS + M19_RIGHT_EYES,
+                "8G0f-gR> <<Esc>",
+                [["8G0f-", "find the first calm eye in the official right ghost"],
+                 ["gR> <<Esc>", "overwrite the three-cell eye expression without moving either rail"]],
                 alternatives=[
-                    method("virtual replace run", "8G0f-gR==<Esc>", "replace exactly two display cells while keeping the row width"),
-                    method("replace-mode run", "8G0f-R==<Esc>", "replace the same two existing cells, then stop before the arrowhead"),
+                    method(
+                        "virtual replace expression", "8G0f-gR> <<Esc>",
+                        "replace exactly the three eye-expression cells while keeping the row width",
+                        evidence={"kind": "mode_text", "mode": "gR", "text": "> <"},
+                    ),
+                    method(
+                        "replace-mode expression", "8G0f-R> <<Esc>",
+                        "replace the same three existing cells, then stop before the closing parenthesis",
+                        evidence={"kind": "mode_text", "mode": "R", "text": "> <"},
+                    ),
                 ],
-            ),
-            step(
-                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
-                 "|   /^\\   |", "|  / o \\_ |", "|   /|\\==>|", "|   / \\   |", "|  /___\\  |"],
-                ["|   /^\\   |", "| _/ o \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |",
-                 "|   /^\\   |", "|  / o \\_ |", "|   /|\\==>|", "|   / \\   |", "|  /___\\  |",
-                 "|   /^\\   |", "| _/ O \\  |", "|<--/|\\   |", "|   / \\   |", "|  /___\\  |"],
-                ":1,5t$<CR>12G0forO",
-                [[":1,5t$", "retain the approved original as a third animation key-pose candidate"],
-                 ["12G0forO", "change only its eye so the variant remains a distinct authored still"]],
+            ), source=M19_PRIMARY_SOURCE + "; res03 calm to res04 strain eye expression"),
+            dict(step(
+                PALLAS_LEFT_CALM_RAILS + M19_RIGHT_EYES,
+                PALLAS_LEFT_CALM_RAILS + M19_RIGHT_EYES + M19_LEFT_EYES,
+                ":1,6t$<CR>14G0f-gR> <<Esc>",
+                [[":1,6t$", "retain the approved left calm ghost as a third still candidate"],
+                 ["14G0f-gR> <<Esc>", "change only its three-cell eye expression so the variant is visibly distinct"]],
                 method_requirement=require_method(
                     "retain the complete key-pose still and vary one nominated cell",
-                    exact_any_of=[":1,5t$<CR>12G0forO"]),
-            ),
+                    exact_any_of=[":1,6t$<CR>14G0f-gR> <<Esc>"]),
+            ), source=M19_PRIMARY_SOURCE + "; res01 left calm copied with res02 strain eye expression"),
         ],
         "transfer": dict(step(
             ACRONIAN_LEFT_MID_RAILS,
@@ -3144,12 +3157,12 @@ STILL_PROMPT_REWRITES = {
     "M1.DD": "Remove only the second redundant five-row wing candidate; keep the first complete pose registered.",
     "M1.04": "Replace the copied left wing with the shown five-row right-facing source pose, typing its directional glyphs by eye instead of software-flipping bytes.",
     "M1.07": "Diagnose the displayed Acronian wing study, then choose the bounded repair that preserves all five rows, feather edges, and the nominated joint material.",
-    "M19.01": "Approve one uncertain eye cell with `gR`, preserving both fixed-width rails of the five-row still.",
-    "M19.02": "Copy the complete five-row still as the working opposite-facing candidate.",
+    "M19.01": "Approve one uncertain Pallas eye cell with `gR`, preserving both fixed-width rails of the six-row left ghost.",
+    "M19.02": "Copy the complete six-row Pallas still as the working opposite-facing candidate.",
     "M19.03": "Inspect the complete hand-mirrored still below, then choose the interpretation supported by its visible glyph and spacing evidence.",
     "M19.06": "Transfer full-row Virtual Replace mirroring to unfamiliar fixed-rail still art with the exact keys hidden.",
     "M19.07": "Diagnose the displayed hand-mirrored still, then choose the repair that preserves fixed rails and directional glyph roles.",
-    "M19.08": "Answer five checks, then perform this key-hidden art task: retain the approved still as a third candidate and vary one eye without treating the plate as an ordered sequence. The target stays visible; the exact command path stays hidden until evaluation.",
+    "M19.08": "Answer five checks, then perform this key-hidden art task: retain the complete left calm ghost as a third candidate and change only its three-cell eye expression. The target stays visible; the exact command path stays hidden until evaluation.",
     "M2.07": "Diagnose the displayed face study, then choose the bounded repair that preserves silhouette, focus, and fixed width.",
     "M2.08": "Answer five checks, then perform this key-hidden art task: copy the complete face as a second expression candidate and close only its eye. The target stays visible; the exact command path stays hidden until evaluation.",
     "M12.AA": "On this single four-row stroke study, replace the hard vertical bars with the shown off-vertical anti-aliasing glyphs: apostrophe, dot, exclamation, then inverted exclamation. The four rows form one drawing.",
@@ -3274,7 +3287,7 @@ FIRST_READING_DISTRACTORS = {
     "M19": [
         "the eye is inserted, shifting the right rail one display cell",
         "the placeholder remains unchanged, so this is not yet an approved key-pose still",
-        "the whole row is redrawn even though only the nominated eye cell was uncertain",
+        "the whole ghost is redrawn even though only one nominated eye cell was uncertain",
     ],
 }
 
@@ -3298,7 +3311,7 @@ SEQUENCE_READINGS = {
     "M16": "one approved playback-size key pose remains intact while complete written plan blocks are imported, numbered, copied, and reordered",
     "M17": "four distinct shell poses retain one homologous eye anchor, then one deliberate palette pass changes that anchor coherently across the strip",
     "M18": "a full hand-authored return and overshoot are validated separately, then reused in reverse around a declared turnaround hold",
-    "M19": "three approved still variants preserve fixed rails while directional spacing, slash roles, and arrowheads are authored deliberately",
+    "M19": "three approved Pallas still variants preserve fixed rails while accent placement, body curves, tail wisps, and expressions are authored deliberately",
 }
 
 # Every pair is authored for its own art and its own Vim operation.  This is
@@ -3536,14 +3549,14 @@ QUESTION_PROMPTS = {
     ],
     "M19": [
         ("Which visible change approves the eye without moving either fixed rail?", "How does `gR` differ from inserting a new glyph at the placeholder?"),
-        ("Why copy all five rows before authoring the opposite-facing key pose?", "Which count makes `yy` own the complete still rather than one row?"),
-        ("The body moved right but the arrow still points left. What mirror defect remains?", "Which overwrite mode forces the author to choose every directional glyph in place?"),
-        ("Which rows must change when the copied pose becomes its hand-authored mirror?", "Why must the row width remain unchanged through each `gR` pass?"),
-        ("When do `R` and `gR` legitimately produce the same two-cell material result?", "What explicit stopping point protects the arrowhead after the two-cell run?"),
-        ("The transfer uses a different eye and arrow material. What still defines a valid mirror?", "Which three-row `gR` path proves the unfamiliar directional rows were authored rather than flipped?"),
-        ("Read the original, mirror, and changed-eye variant as a key-pose plate. What is not animation yet?", "Which complete-frame operation keeps each candidate available for comparison?"),
-        ("Why is the third still a variant rather than an accidental duplicate?", "Which local replacement makes it observably distinct while preserving its five-row bounds?"),
-        ("A byte-reversed row puts the arrow on the other side but corrupts `/` and `\\`. What principle failed?", "Which command family overwrites chosen display cells without reversing stored bytes?"),
+        ("Why copy all six ghost rows before authoring the opposite-facing key pose?", "Which count makes `yy` own the complete still rather than one row?"),
+        ("The ghost moved right but its long accent and tail wisp still face left. What mirror defect remains?", "Which overwrite mode forces the author to choose every directional glyph in place?"),
+        ("Which rows change when the copied left ghost becomes the official right ghost?", "Why must the row width remain unchanged through each `gR` pass?"),
+        ("When do `R` and `gR` legitimately produce the same three-cell eye-expression result?", "What explicit stopping point protects the closing parenthesis after the eye run?"),
+        ("The transfer uses folded wing contours instead of a ghost. What still defines a valid hand mirror?", "Which six-row `gR` path proves the unfamiliar directional rows were authored rather than flipped?"),
+        ("Read left calm, right strain, and left strain as a still-variant plate. What is not animation yet?", "Which complete-frame operation keeps each candidate available for comparison?"),
+        ("Why is the third ghost a variant rather than an accidental duplicate?", "Which local replacement makes it observably distinct while preserving its six-row bounds?"),
+        ("A byte-reversed row moves the accent but corrupts curve and tail semantics. What principle failed?", "Which command family overwrites chosen display cells without reversing stored bytes?"),
         ("One mirrored row is a cell shorter than the original. Why can it not become an animation extreme?", "Which invariant must be checked after every full-row virtual replacement?"),
     ],
 }
@@ -3778,14 +3791,14 @@ QUESTION_ANSWERS = {
         ("automation could reach the pixels without proving the learner can author a mirror by eye", "\\= may calculate only the CHECK digit from existing art; it may not emit any art row"),
     ],
     "M19": [
-        ("the eye changes from ? to o while both fixed rails remain in their original columns", "gR overwrites the existing display cell; insertion would grow the row and shift its right rail"),
-        ("the full body, rails, slash limbs, and arrow belong to one approved still", "5yy is the complete-frame yank; yy alone copies only the head row"),
-        ("relocation without exchanging the arrowhead and slash semantics is not a hand mirror", "gR makes each replacement explicit while keeping the fixed row width"),
-        ("the copied directional torso and arrow rows change while stable head, legs, and base remain registered", "each gR pass overwrites existing display cells and must end at the unchanged right rail"),
-        ("both modes may replace the same bounded two-cell run when neither crosses into the arrowhead", "Escape immediately after the second replacement cell protects the following > glyph"),
-        ("fixed rails and body height persist while the new eye, slashes, arrowhead, and spacing exchange direction", "the exact gR path redraws each unfamiliar directional row and contains no reverse operation"),
-        ("the plate contains candidate stills; no timing, in-betweens, or playback spacing has been authored yet", "a five-row yank or addressed copy retains each complete candidate for comparison"),
-        ("the changed eye makes a deliberate material variant while every other registered cell stays fixed", "the addressed rO replacement changes one visible cell inside the copied five-row object"),
+        ("the eye changes from ? to - while both fixed rails remain in their original columns", "gR overwrites the existing display cell; insertion would grow the row and shift its right rail"),
+        ("the crown, face, long accent, body curve, tail wisp, and rails belong to one approved still", "6yy is the complete-frame yank; yy alone copies only the crown row"),
+        ("relocation without exchanging accent, curve, and tail semantics is not a hand mirror", "gR makes each replacement explicit while keeping the fixed row width"),
+        ("all six copied rows are authored because even unchanged-looking crown and face spacing shift within the rails", "each gR pass overwrites existing display cells and must end at the unchanged right rail"),
+        ("both modes may replace the same bounded three-cell eye run when neither crosses into the parenthesis", "Escape immediately after the third replacement cell protects the following ) glyph"),
+        ("fixed rails and pose height persist while wing edges, folds, accents, and spacing exchange direction", "the exact gR path redraws each unfamiliar directional row and contains no reverse operation"),
+        ("the plate contains candidate stills; no timing, in-betweens, or playback spacing has been authored yet", "a six-row yank or addressed copy retains each complete candidate for comparison"),
+        ("the changed eye expression makes a deliberate variant while every other registered cell stays fixed", "the addressed gR replacement changes the visible three-cell eye run inside the copied six-row object"),
         ("visual mirroring requires semantic glyph exchange, not byte-order reversal", "gR or R overwrites the author-chosen display cells without transforming the stored row"),
         ("unequal widths move the rail and prevent frame registration during later playback", "after each gR row, verify equal display width and matching left/right rail columns"),
     ],
@@ -4304,9 +4317,9 @@ WHY_SPECS = {
         "sample": "The expression derives only each check digit from an already-authored frame row; the manual method inspects both frames, and neither generates mirrored art.",
     },
     "M19.05": {
-        "question": "When do R and gR produce the same two-cell arrow-material change, and which boundary must both preserve?",
-        "groups": [["R", "replace"], ["gR", "virtual replace"], ["two", "2", "cells"], ["arrowhead", "boundary", "width"]],
-        "sample": "R and gR both overwrite the two selected material cells; Escape after cell two preserves the arrowhead and fixed row width.",
+        "question": "When do R and gR produce the same three-cell Pallas eye-expression change, and which boundary must both preserve?",
+        "groups": [["R", "replace"], ["gR", "virtual replace"], ["three", "3", "cells"], ["parenthesis", "boundary", "width"]],
+        "sample": "R and gR both overwrite the three selected eye-expression cells; Escape after cell three preserves the closing parenthesis and fixed row width.",
     },
 }
 
@@ -5322,6 +5335,11 @@ def mastery_extension_cards(module):
             row["required_before_mastery"] = True
         return row
 
+    def _with_hint(hint, row):
+        """VD-34: a reinforcement lesson names its own acting cells."""
+        row["hint"] = hint
+        return row
+
     ss = stone_story_variants
     rows = []
     if module["id"] == "M12":
@@ -5977,6 +5995,30 @@ def mastery_extension_cards(module):
                 "whitespace-column-audit", 3.6,
                 "official-Games/TowerDefense res18 missile frame 3", guided=True,
                 preserve_trailing_whitespace=True)),
+            # VD-34: WS introduces four ideas at once. Two single-idea
+            # reinforcements follow it before any hidden retrieval: the
+            # colorcolumn ruler alone, then the end-anchored cleanup alone.
+            ("M11.04", _with_hint('Painted column 8 is outside the pose: find the one row whose last glyph sits on it, jump to that end with $, delete it with x.', card(
+                "CC", "Use the colorcolumn ruler to find a stray cell",
+                "One stray spark sits past Dracula's right edge. Paint the first column beyond the 7-cell pose with colorcolumn, then delete only the cell that lands on the ruler. Every pose cell stays put.",
+                [*ss.DRACULA_STAND[:1], ss.DRACULA_STAND[1] + "*", *ss.DRACULA_STAND[2:]],
+                list(ss.DRACULA_STAND), ":set colorcolumn=8<CR>2G$x",
+                [[":set colorcolumn=8<CR>", "paint column 8, the first column outside the 7-cell pose"],
+                 ["2G$", "go to the row whose last cell touches the painted column"],
+                 ["x", "delete that one stray cell; it was the last glyph, so nothing shifts"]],
+                "whitespace-column-audit", 3.7,
+                "official-Pets/Dracula res01 stand pose + one stray tutor cell", guided=True))),
+            ("M11.04", _with_hint('Read the pattern left to right: \\s a space or tab, \\+ one or more, $ only at the row end. Interior spaces never reach $, so the bunny survives.', card(
+                "TR", "Read the end-anchored cleanup piece by piece",
+                "The snow bunny's rows carry invisible trailing spaces. Remove only those tails with one whole-file substitute whose pattern is anchored at the end of each row. Every visible bunny cell stays put.",
+                bunny_start, bunny_target, ":%s/\\s\\+$//e<CR>",
+                [[":%", "on every line of the file"],
+                 ["s/\\s\\+$/", "find one or more spaces or tabs that reach the end of the row"],
+                 ["/", "replace them with nothing"],
+                 ["e<CR>", "e: no error on a row without a tail"]],
+                "whitespace-column-audit", 3.8,
+                "official-Pets/SnowBunny res01 with trailing padding",
+                guided=True, preserve_trailing_whitespace=True))),
             ("M11.06", card(
                 "WSH", "Retrieve whitespace inspection on a padded Chick pose",
                 "On the unfamiliar Chick frame, turn on the whitespace and column guides, then remove only the three invisible tail spaces from each row. Preserve every visible pose cell.",
@@ -6365,7 +6407,7 @@ DUPLICATE_META = {
     "M17.02": [duplicate((3, 4), "scaffold", "working copy of the third shell for a fourth distinct pose", False)],
     "M18.02": [duplicate((1, 2), "scaffold", "working copy of the mirrored return for overshoot development", False)],
     "M18.08": [duplicate((2, 3), "hold", "turnaround hold at the overshoot before approved frames play in reverse", True, 2)],
-    "M19.02": [duplicate((1, 2), "scaffold", "working copy reserved for the hand-authored opposite-facing still", False)],
+    "M19.02": [duplicate((1, 2), "scaffold", "working six-row Pallas copy reserved for the hand-authored opposite-facing still", False)],
 }
 
 
@@ -6715,6 +6757,15 @@ def build():
     for question_id, authored in authored_questions.items():
         question_map[question_id].update(authored)
         question_map[question_id]["authorship"] = "manual"
+    for override_path in AUTHORED_QUESTION_OVERRIDE_FILES:
+        overrides = json.loads(override_path.read_text(encoding="utf-8"))
+        unknown_overrides = set(overrides) - set(question_map)
+        if unknown_overrides:
+            raise ValueError("manual question overrides are not in the curriculum: %r" %
+                             sorted(unknown_overrides))
+        for question_id, authored in overrides.items():
+            question_map[question_id].update(authored)
+            question_map[question_id]["authorship"] = "manual"
 
     stage_order = [*MAIN_STAGE_SEQUENCE, "P"]
     stages = []
@@ -6738,7 +6789,7 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.64",
+        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.65",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,

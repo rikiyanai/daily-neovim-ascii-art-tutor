@@ -1402,5 +1402,59 @@
       "Software reversal is not hand-authored mirroring, and this expression reads metadata rather than art geometry.",
       "Whole-file scope can change embedded art digits and also destroys the intended leading CHECK value."
     ]
+  },
+  "M11.CC.P01": {
+    "prompt": "ANIMATION\nDracula's pose is 7 cells wide. One stray spark sits in column 8, outside the pose. The ruler (colorcolumn) is drawn here as ▒ in column 8.\n\n  BEFORE          AFTER\n  │   \\(}_ ▒│     │   \\(}_ ▒│\n  │  ,' ¯/*▒│     │  ,' ¯/ ▒│\n  │ '-_.'  ▒│     │ '-_.'  ▒│\n\nNEOVIM\nWhat does :set colorcolumn=8 do, and what removes the stray cell?",
+    "compact_prompt": "ANIMATION\nOne stray * sits in column 8, past the 7-cell pose.\n\n  │  ,' ¯/*▒│ → │  ,' ¯/ ▒│\n\nNEOVIM\nWhat does colorcolumn=8 do; what deletes the *?",
+    "animation_prompt": "ANIMATION\nA cell outside the pose's right edge is found and removed; the pose itself does not move.",
+    "animation_answer": "Only the stray cell in column 8 disappears; all 7 pose columns stay registered.",
+    "neovim_prompt": "NEOVIM\nExplain colorcolumn and the deleting keys.",
+    "neovim_answer": ":set colorcolumn=8 paints column 8 as a ruler without editing anything; 2G$x then deletes the one cell standing on it.",
+    "choices": [
+      "ANIMATION: Only the stray cell past the pose edge goes. | NEOVIM: colorcolumn=8 only paints column 8 as a ruler; 2G$x deletes the cell standing on it.",
+      "ANIMATION: The whole pose is cropped at column 8. | NEOVIM: colorcolumn=8 deletes everything from column 8 to the right.",
+      "ANIMATION: The row shifts left to close the gap. | NEOVIM: x in the middle of the row pulls the stray back inside the pose.",
+      "ANIMATION: The ruler is saved into the art as a new column. | NEOVIM: colorcolumn writes a visible character into column 8 of every row."
+    ],
+    "compact_choices": [
+      "A: remove stray only · V: ruler paints, $x deletes",
+      "A: crop at 8 · V: colorcolumn deletes",
+      "A: shift row left · V: mid-row x",
+      "A: ruler saved in art · V: colorcolumn writes"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: colorcolumn is display only. It shows where the pose ends; $x then removes the one cell sitting on that ruler.",
+      "colorcolumn never edits the buffer. It only paints a column so you can see the edge.",
+      "The stray is the LAST cell of its row, so $x removes it without moving any pose cell. An x inside the row would shift the pose.",
+      "The painted column exists only on screen. :set colorcolumn= removes it and the file never contained it."
+    ]
+  },
+  "M11.TR.P01": {
+    "prompt": "ANIMATION\nEvery snow bunny row ends in three invisible spaces (shown here as ·). Only those tails go.\n\n  BEFORE               AFTER\n  │   (\\(\\···│        │   (\\(\\│\n  │  ( n.n)···│        │  ( n.n)│\n  │o(,`_\"_)···│        │o(,`_\"_)│\n\nNEOVIM\nIn :%s/\\s\\+$//e, what does each piece do?",
+    "compact_prompt": "ANIMATION\nOnly the ··· tails go; the bunny stays.\n\n  │  ( n.n)···│ → │  ( n.n)│\n\nNEOVIM\nWhat do %, \\s, \\+, $ and e each mean?",
+    "animation_prompt": "ANIMATION\nInvisible row tails are removed; every visible bunny cell stays registered.",
+    "animation_answer": "Only the trailing spaces disappear; the interior spaces that draw the bunny stay.",
+    "neovim_prompt": "NEOVIM\nRead the substitute piece by piece.",
+    "neovim_answer": "% = every line; \\s = a space or tab; \\+ = one or more of them; $ = only at the end of the row; the empty replacement deletes them; e = no error on a row without a tail.",
+    "choices": [
+      "ANIMATION: Only the row tails go. | NEOVIM: % every line, \\s a space or tab, \\+ one or more, $ at the row end, empty replacement deletes, e no error if none.",
+      "ANIMATION: Every space in the bunny goes. | NEOVIM: \\s\\+ without $ is what the command uses, so interior spaces match too.",
+      "ANIMATION: Only the first row is cleaned. | NEOVIM: % means the current line and e means edit once.",
+      "ANIMATION: The tails become dots. | NEOVIM: the empty replacement inserts the · marks shown in the diagram."
+    ],
+    "compact_choices": [
+      "A: tails only · V: %,\\s,\\+,$ end, e quiet",
+      "A: all spaces · V: no $ anchor",
+      "A: first row only · V: % = current line",
+      "A: tails become dots · V: inserts ·"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: $ pins the match to the row end, so the spaces inside the bunny's face never match.",
+      "The $ is in the command and it is what protects the art: without it, \\s\\+ would also delete the spaces between the ears and in the face.",
+      "% is the whole-file range: every line. e only silences the error on a line that has no tail.",
+      "The · marks exist only in this diagram. An empty replacement deletes the match and writes nothing."
+    ]
   }
 }
