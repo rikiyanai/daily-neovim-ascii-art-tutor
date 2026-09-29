@@ -646,7 +646,7 @@ with contextlib.redirect_stdout(decode_output):
     right, answer = v2.ask_authored_question(
         decode_question, input_fn=lambda _prompt: next(decode_answers), shuffle=False)
 assert right and answer == decode_question["correct_choice"]
-assert "answer with a, b, c, d, or y to copy; this did not count as an attempt" in decode_output.getvalue()
+assert "answer with a, b, c, d, y to copy, or f to send feedback; this did not count as an attempt" in decode_output.getvalue()
 
 # Choice c must remain a valid answer; the copy control cannot claim any of
 # the four answer letters.

@@ -52,6 +52,67 @@ LAST_RUN_CARD_ID = None
 LAST_RUN_KIND = None
 
 
+# VD-35: the learner can send a message about what is wrong from any
+# question prompt or result page (`f`). Rows go to <state>/feedback.jsonl with
+# the lesson context so a maintainer can reproduce the exact screen.
+FEEDBACK = {"path": None, "context": {}}
+
+
+def feedback_path(state):
+    return Path(state) / "feedback.jsonl"
+
+
+def note_feedback_context(**fields):
+    """Remember what the learner is looking at; None clears a field."""
+    for key, value in fields.items():
+        if value is None:
+            FEEDBACK["context"].pop(key, None)
+        else:
+            FEEDBACK["context"][key] = value
+
+
+def collect_feedback(input_fn=input, screen=None):
+    """Ask for one feedback message and append it; never counts as an answer."""
+    try:
+        message = input_fn("  FEEDBACK · what is wrong or confusing here? "
+                           "(Enter alone cancels)\n  > ")
+    except (EOFError, KeyboardInterrupt, StopIteration):
+        print()
+        return False
+    message = (message or "").strip()
+    if not message:
+        print("  feedback cancelled")
+        return False
+    path = FEEDBACK["path"]
+    if path is None:
+        print("  feedback could not be saved: no state directory is configured")
+        return False
+    row = dict(FEEDBACK["context"])
+    row.update({"at": _now().isoformat(), "screen": screen or row.get("screen"),
+                "message": message})
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a", encoding="utf-8") as handle:
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+    print("  ✓ feedback saved — thank you (%s)" % path)
+    return True
+
+
+def print_feedback(state, limit=20):
+    """`--feedback`: show the most recent learner feedback rows."""
+    path = feedback_path(state)
+    if not path.exists():
+        print("no feedback yet (%s)" % path)
+        return
+    rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()
+            if line.strip()]
+    for row in rows[-limit:]:
+        where = " ".join(str(row[key]) for key in ("card_id", "question_id", "screen")
+                         if row.get(key))
+        print("%s  %s\n    %s" % (row.get("at", "")[:16], where, row.get("message", "")))
+    print("%d feedback row(s) in %s" % (len(rows), path))
+
+
 def load_curriculum(share):
     path = os.environ.get("VIM_DAILY_CURRICULUM_V2",
                           os.path.join(share, "curriculum-v2.json"))
@@ -773,11 +834,16 @@ def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=Non
     while True:
         try:
             answer = input_fn(
-                "  answer (a-%s) · y copies this question: " % letters[-1]
+                "  answer (a-%s) · y copies this question · f feedback: " % letters[-1]
             ).strip().lower()
         except (EOFError, KeyboardInterrupt):
             print()
             return None, None
+        if answer == "f":
+            note_feedback_context(question_id=q.get("id"),
+                                  question_prompt=_clip(" ".join(prompt.split()), 160))
+            collect_feedback(input_fn, screen="question")
+            continue
         if answer == "y":
             if _copy_text_to_clipboard(clipboard_page):
                 print("  copied the complete question and choices to the macOS clipboard")
@@ -786,12 +852,14 @@ def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=Non
             continue
         if answer in letters and len(answer) == 1:
             break
-        print("  answer with %s, or y to copy; this did not count as an attempt" %
+        print("  answer with %s, y to copy, or f to send feedback; this did not count as an attempt" %
               ", ".join(letters))
     chosen = order[letters.index(answer)]
     if evidence is not None:
         evidence.update({"raw_answer": answer, "semantic_choice": chosen})
     right = chosen == q["correct_choice"]
+    note_feedback_context(question_id=q.get("id"), answer="abcd"[chosen] if chosen < 4 else chosen,
+                          answer_correct=bool(right), screen="after-answer")
     print("  %s" % q["feedback"][chosen])
     return right, chosen
 
@@ -1466,6 +1534,10 @@ def _compact_target_lines(card, width=66):
 
 
 def _write_session_lesson(cfg, cur, progress, card):
+    note_feedback_context(revision=cur.get("revision"), card_id=card.get("id"),
+                          card_title=card.get("title"), module_id=card.get("module_id"),
+                          question_id=None, answer=None, answer_correct=None,
+                          lesson_result=None, screen="lesson")
     """Build the brief rendered above an art-only project strip by Neovim."""
     lesson = _paths(cfg)["sessions"] / card["project_id"] / (card["id"] + ".txt")
     context = _lesson_context(cur, card)
@@ -2316,6 +2388,10 @@ def _print_feedback_do_this(card, replay, completed, concept_replay, compact, bo
 
 def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
     """Render held page one: artifact evidence and authored correction."""
+    note_feedback_context(revision=cur.get("revision"), card_id=card.get("id"),
+                          card_title=card.get("title"), module_id=card.get("module_id"),
+                          lesson_result="complete" if completed else "not passed",
+                          screen="result")
     bold, dim, off, green, _red, _yellow = cfg.colours
     context = _lesson_context(cur, card)
     compact = (__import__("sys").stdout.isatty()
@@ -3042,12 +3118,17 @@ def run_edit(cfg, cur, progress, card):
             return 1
         if cfg.post_rendered:
             cfg.post_rendered()
-        try:
-            answer = input("Restore this card's checkpoint and retry? [Y/n] ").strip().lower()
-        except (EOFError, KeyboardInterrupt):
-            print()
-            cfg.hold_open()
-            return 0
+        while True:
+            try:
+                answer = input("Restore this card's checkpoint and retry? [Y/n] "
+                               "· f = feedback ").strip().lower()
+            except (EOFError, KeyboardInterrupt):
+                print()
+                cfg.hold_open()
+                return 0
+            if answer not in ("f", "feedback"):
+                break
+            collect_feedback(input, screen="retry")
         if answer in ("n", "no", "q"):
             cfg.hold_open()
             return 0
@@ -3385,6 +3466,11 @@ def run(cfg, argv, *, force=False):
     mode = argv[0] if argv else "run"
     continuation = mode == "--continue"
     cfg.practice = mode in ("--practice-card", "--practice-review")
+    FEEDBACK["path"] = feedback_path(cfg.state)
+    note_feedback_context(revision=cur.get("revision"))
+    if mode == "--feedback":
+        print_feedback(cfg.state)
+        return 0
     if mode in ("--tree", "--status"):
         print_tree(cur, progress, cfg)
         return 0

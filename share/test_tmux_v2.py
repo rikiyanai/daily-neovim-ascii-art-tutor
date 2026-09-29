@@ -628,9 +628,29 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         held_flat = " ".join(held_after.split())
         for control in ("r = repeat this lesson",
                         "n = next lesson",
+                        "f = feedback",
                         "Enter = close"):
             if control not in held_flat:
                 raise AssertionError("held result omitted %r:\n%s" % (control, held_after))
+
+        # VD-35: `f` on the held result records a feedback message with the
+        # lesson context, then returns to the same held controls.
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "f", "Enter")
+        asked = capture_until(outer_socket, outer_pane, ["what is wrong or confusing"])
+        if "what is wrong or confusing" not in " ".join(asked.split()):
+            raise AssertionError("feedback control did not ask for a message:\n" + asked)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", "headed feedback probe")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        saved = capture_until(outer_socket, outer_pane, ["feedback saved"])
+        if "feedback saved" not in " ".join(saved.split()):
+            raise AssertionError("feedback was not confirmed:\n" + saved)
+        feedback_rows = [
+            json.loads(line) for line in
+            (state / "vim-daily" / "feedback.jsonl").read_text(encoding="utf-8").splitlines()]
+        if not any(row.get("message") == "headed feedback probe"
+                   and row.get("card_id") == "M0.01" and row.get("screen") == "lesson-end"
+                   for row in feedback_rows):
+            raise AssertionError("feedback row lacks lesson context: %r" % feedback_rows)
 
         # `r` repeats this passed lesson as isolated practice. It must reopen
         # the same card, accept the same edit, and preserve awarded progress.

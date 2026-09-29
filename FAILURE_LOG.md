@@ -5538,3 +5538,44 @@ M11.UT failed with target-mismatch.
 **Still open:**
 - M11.UT (failed 12:43) has not been reviewed for the same bundling.
 - The remediation queue (M0.08 check, M0.01/SL/06 reviews) is unchanged.
+
+## VD-35 · 2026-09-29 13:15 — no way to report what is wrong from inside a lesson
+
+**Status:** IMPLEMENTED and verified (headed).
+
+**Operator:** "i need a 'feedback' button so i can send messages about what is
+wrong. it should be right after i complete / answer something or after i wq
+and shows me lesson complete or whatever."
+
+**Implemented:**
+- `f` sends feedback from four places:
+  - every multiple-choice prompt (`answer (a-d) · y copies this question ·
+    f feedback`); it does not count as an attempt;
+  - the result page (`Enter = skill-tree progress · f = feedback`);
+  - the retry prompt after a failed `:wq` (`… [Y/n] · f = feedback`);
+  - the final held page (`Enter = close · r = repeat · n = next` plus
+    `f = feedback (tell us what is wrong)` on its own line, so it survives
+    80×24).
+- After sending, the same controls return. An empty message cancels.
+- Rows are appended, under a file lock, to
+  `~/.local/state/vim-daily/feedback.jsonl`. Each row records curriculum
+  revision, card id and title, module, question id and prompt excerpt, the
+  chosen answer and whether it was correct, lesson result, screen
+  (`question`, `result`, `retry`, `lesson-end`), time and message.
+- `vim-daily-gate --feedback` lists the latest rows. Maintainers read this
+  inbox at the start of a session and log actionable rows here.
+- Code: `share/v2_runtime.py` (`FEEDBACK`, `note_feedback_context`,
+  `collect_feedback`, `print_feedback`; context set in
+  `_write_session_lesson`, `ask_question` and `_post_feedback`) and
+  `bin/vim-daily-gate` (`hold_open`, `post_page_break`, `_collect_feedback`,
+  `--feedback`).
+
+**Evidence:**
+- `share/test_feedback.py` PASS: question feedback is saved with card and
+  question context, an empty message cancels, grading is unchanged, and the
+  result-page row carries the answer context.
+- `share/test_v2.py` exit 0.
+- `share/test_tmux_v2.py` PASS at 80×24, 100×36 and 188×49 (real user
+  config). The test now presses `f` on the held lesson-end page in the real
+  popup, types a message, waits for "feedback saved", and asserts the
+  `feedback.jsonl` row has `card_id` M0.01 and `screen` lesson-end.
