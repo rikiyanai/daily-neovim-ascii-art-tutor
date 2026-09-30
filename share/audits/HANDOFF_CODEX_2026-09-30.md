@@ -180,8 +180,15 @@ Source: `share/audits/DASHBOARD_UI_DESIGN_PROPOSAL_2026-09-29.md` (see its
    purple-ish. SEE THE Y9-2 GRADIENT." I did not find a pink-purple gradient
    in `/Users/r/Projects/asciicker-Y9-2/scripts/` (`anim_B_rainbow.py` is full
    hue, `anim_B_cool.py` is green-cyan-blue, and there is `anim_B_hellish.py`).
-   Ask which file or colours. `dashboard_theme.TIERS["pro"].gradient` is a
-   placeholder.
+   Operator follow-up: the game has a gradient effect on certain enchanted
+   items (like Minecraft enchant glint). The best lead is the Stone Story
+   StoneScript `Rainbowifier`
+   (`asciicker-Y9-2/articles/discord-3d-pixel-art-godot-media/SSRPG/Rainbowifier-139bcfe26295ad62.txt`,
+   plus `RainbowWitch-*.txt`). It is a 48-stop colour cycle; its pink→purple
+   band is `#FF324F #FC255F #F61A6F #EF1180 #E60A91 #DB04A1 #CE01B1 #C000C0
+   #B101CE #A104DB #910AE6 #8011EF`. Use that band, stepped over time like the
+   script's NextShade, for the pro tier. Show it to the operator before
+   shipping. `dashboard_theme.TIERS["pro"].gradient` is a placeholder until then.
 2. **TUI library in the popup.** The operator chose Textual ("i go with tui
    lib"), and the dashboard uses it. omp's demo still says "TUI-lib … reject
    for popup". The operator's choice wins. Confirm whether lesson screens
