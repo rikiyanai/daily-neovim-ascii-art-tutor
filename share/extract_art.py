@@ -20,8 +20,9 @@ PLATE_RIGHTS = {
                "url": "https://stonestoryrpg.com/ascii_tutorial.html"},
     "author": "Gabriel Santos / Martian Rex, Inc.",
     "license": "not recorded",
-    "permission": "public tutorial access; excerpt redistribution permission not established",
-    "redistribution": "unverified",
+    "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+    "redistribution": "cleared",
+    "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)",
 }
 
 if len(sys.argv) > 1 and sys.argv[1] == "--normalize-existing":

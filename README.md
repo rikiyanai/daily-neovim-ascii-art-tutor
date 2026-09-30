@@ -410,7 +410,20 @@ badge trophy art in the dashboard. The art is Gabriel Santos's / Martian Rex,
 Inc.'s, not mine; each trophy page credits "Stone Story RPG by Gabriel Santos
 (Martian Rex, Inc.)". The full source page/plate/sheet files are not
 redistributed in this repo; the exact sheets used are listed in
-`share/audits/STONE_STORY_LOCAL_PROVENANCE.md`. The authoring method those excerpts illustrate is summarised, with
+`share/audits/STONE_STORY_LOCAL_PROVENANCE.md`.
+
+Other pieces, credited here and in each `share/art.json` entry's `credit` field:
+
+- **AAHub** (`aahub.org`), page 爆発・煙 (explosions and smoke),
+  `aahub.org/mlt/a60392576bd5eefca3ed22d55606b85f`: two smoke puffs (resK-119,
+  resK-123) used in M10.06. The art belongs to its original AA posters as
+  collected on AAHub.
+- **Joan G. Stark** (signed "jgs"): centipede, cicada.
+- An ASCII artist who signed **"pb"**: ant. An ASCII artist who signed
+  **"tre"**: cheer. Candle: artist unknown (no signature in the source file).
+
+The operator confirmed publication of all of the above on 2026-09-29, on the
+condition that the authors are credited (FAILURE_LOG VD-60, VD-61). The authoring method those excerpts illustrate is summarised, with
 per-rule citations, in the `ascii-art-authoring` skill.
 
 ## Licence

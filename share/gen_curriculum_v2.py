@@ -1494,7 +1494,7 @@ MODULES = [
             [["0f?", "find the redacted partner inside the source lobe"],
              ["rヽ", "restore the measured ⌒ヽ shoulder without reflowing the puff"]],
         ), frame_rows=4,
-           source="AAHub bakuhatsu-kemuri resK-119 complete four-row smoke puff; one source glyph redacted for retrieval",
+           source="AAHub (aahub.org/mlt/a60392576bd5eefca3ed22d55606b85f, 爆発・煙, art by its original 2ch/AA posters) bakuhatsu-kemuri resK-119 complete four-row smoke puff; one source glyph redacted for retrieval",
            prompt=(
                "Restore the missing ヽ in the complete AAHub smoke puff's ⌒ヽ shoulder; "
                "preserve its body, tail, leading-space pattern, and proportional text."
@@ -1506,7 +1506,7 @@ MODULES = [
             [["0f?", "find the redacted partner in the alternate corpus lobe"],
              ["rヽ", "restore only the source-authored ⌒ヽ idiom"]],
         ), frame_rows=3,
-           source="AAHub bakuhatsu-kemuri resK-123 first complete three-row smoke puff; one source glyph redacted for retrieval",
+           source="AAHub (aahub.org/mlt/a60392576bd5eefca3ed22d55606b85f, 爆発・煙, art by its original 2ch/AA posters) bakuhatsu-kemuri resK-123 first complete three-row smoke puff; one source glyph redacted for retrieval",
            prompt=(
                "Restore the missing ヽ in the alternate AAHub puff's ⌒ヽ shoulder; "
                "leave its full-width spaces, lower contour, and ﾐ wisp unchanged."

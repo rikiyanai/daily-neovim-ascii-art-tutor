@@ -11984,7 +11984,7 @@
    ],
    "cursor": "^",
    "frame_rows": 4,
-   "source": "AAHub bakuhatsu-kemuri resK-119 complete four-row smoke puff; one source glyph redacted for retrieval",
+   "source": "AAHub (aahub.org/mlt/a60392576bd5eefca3ed22d55606b85f, 爆発・煙, art by its original 2ch/AA posters) bakuhatsu-kemuri resK-119 complete four-row smoke puff; one source glyph redacted for retrieval",
    "prompt": "Complete an unseen `｀ヽ` or `／￣` shoulder while preserving the changed pose's two registered lower rows.",
    "artifact": "transfer",
    "variants": [
@@ -12014,7 +12014,7 @@
      ],
      "cursor": "^",
      "frame_rows": 4,
-     "source": "AAHub bakuhatsu-kemuri resK-119 complete four-row smoke puff; one source glyph redacted for retrieval",
+     "source": "AAHub (aahub.org/mlt/a60392576bd5eefca3ed22d55606b85f, 爆発・煙, art by its original 2ch/AA posters) bakuhatsu-kemuri resK-119 complete four-row smoke puff; one source glyph redacted for retrieval",
      "prompt": "Restore the missing ヽ in the complete AAHub smoke puff's ⌒ヽ shoulder; preserve its body, tail, leading-space pattern, and proportional text.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",
@@ -12047,7 +12047,7 @@
      ],
      "cursor": "^",
      "frame_rows": 3,
-     "source": "AAHub bakuhatsu-kemuri resK-123 first complete three-row smoke puff; one source glyph redacted for retrieval",
+     "source": "AAHub (aahub.org/mlt/a60392576bd5eefca3ed22d55606b85f, 爆発・煙, art by its original 2ch/AA posters) bakuhatsu-kemuri resK-123 first complete three-row smoke puff; one source glyph redacted for retrieval",
      "prompt": "Restore the missing ヽ in the alternate AAHub puff's ⌒ヽ shoulder; leave its full-width spaces, lower contour, and ﾐ wisp unchanged.",
      "method_requirement": {
       "label": "repeat the taught transfer method on changed art",

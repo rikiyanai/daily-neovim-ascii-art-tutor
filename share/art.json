@@ -1,6 +1,6 @@
 {
  "schema": "vim-daily/art@2",
- "attribution": "Excerpts from the Stone Story RPG ASCII tutorial page by Gabriel Santos, Martian Rex, Inc. Used as practice material.",
+ "attribution": "Most excerpts are from the Stone Story RPG ASCII tutorial page by Gabriel Santos, Martian Rex, Inc. (stonestoryrpg.com/ascii_tutorial.html). ant, cheer, candle, centipede and cicada are classic ASCII-art pieces credited per entry ('credit'); jgs = Joan G. Stark. Used as practice material.",
  "art": {
   "walk1": {
    "rows": [
@@ -19,8 +19,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "walk2": {
    "rows": [
@@ -39,8 +40,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "walk3": {
    "rows": [
@@ -59,8 +61,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "walk4": {
    "rows": [
@@ -79,8 +82,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "walk5": {
    "rows": [
@@ -99,8 +103,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "walk6": {
    "rows": [
@@ -119,8 +124,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "walk7": {
    "rows": [
@@ -139,8 +145,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "walk8": {
    "rows": [
@@ -159,8 +166,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "walk9": {
    "rows": [
@@ -179,8 +187,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "walk10": {
    "rows": [
@@ -199,8 +208,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "pyr1": {
    "rows": [
@@ -221,8 +231,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "pyr2": {
    "rows": [
@@ -243,8 +254,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "pyr3": {
    "rows": [
@@ -264,8 +276,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "pyr4": {
    "rows": [
@@ -285,8 +298,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "pyr5": {
    "rows": [
@@ -305,8 +319,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "pyr6": {
    "rows": [
@@ -325,8 +340,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "pyr7": {
    "rows": [
@@ -344,8 +360,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "pyr_apexes": {
    "rows": [
@@ -363,8 +380,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "lamp_block": {
    "rows": [
@@ -381,8 +399,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "lamp_filled": {
    "rows": [
@@ -400,8 +419,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "lamp_line": {
    "rows": [
@@ -418,8 +438,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "lamp_box": {
    "rows": [
@@ -437,8 +458,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "alphabet_ext": {
    "rows": [
@@ -452,8 +474,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "run_steep": {
    "rows": [
@@ -469,8 +492,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "run_shallow": {
    "rows": [
@@ -486,8 +510,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "run_period": {
    "rows": [
@@ -503,8 +528,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "run_under": {
    "rows": [
@@ -520,8 +546,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "run_stair": {
    "rows": [
@@ -536,8 +563,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "run_long": {
    "rows": [
@@ -552,8 +580,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "run_flat": {
    "rows": [
@@ -568,8 +597,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "aa_ramp": {
    "rows": [
@@ -587,8 +617,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "seam_joined": {
    "rows": [
@@ -607,8 +638,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "dither_top": {
    "rows": [
@@ -626,8 +658,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "dither_low": {
    "rows": [
@@ -643,8 +676,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "shadow_gnd": {
    "rows": [
@@ -663,8 +697,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "hand1": {
    "rows": [
@@ -681,8 +716,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "hand2": {
    "rows": [
@@ -699,8 +735,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "hand3": {
    "rows": [
@@ -717,8 +754,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "spark1": {
    "rows": [
@@ -733,8 +771,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "spark2": {
    "rows": [
@@ -749,8 +788,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "spark3": {
    "rows": [
@@ -765,8 +805,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "spark4": {
    "rows": [
@@ -782,8 +823,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "spark5": {
    "rows": [
@@ -799,8 +841,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "spark6": {
    "rows": [
@@ -816,8 +859,9 @@
    },
    "author": "Gabriel Santos / Martian Rex, Inc.",
    "license": "not recorded",
-   "permission": "public tutorial access; excerpt redistribution permission not established",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
   },
   "ant": {
    "rows": [
@@ -835,8 +879,9 @@
    },
    "author": "unknown; source carried a pb signature row",
    "license": "unknown",
-   "permission": "not documented",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "ASCII artist who signed \"pb\" (signature row in the source file)"
   },
   "centipede": {
    "rows": [
@@ -854,8 +899,9 @@
    },
    "author": "jgs (signature in source file)",
    "license": "unknown",
-   "permission": "not documented",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Joan G. Stark (signed \"jgs\")"
   },
   "cheer": {
    "rows": [
@@ -871,8 +917,9 @@
    },
    "author": "unknown; source carried a tre signature row",
    "license": "unknown",
-   "permission": "not documented",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "ASCII artist who signed \"tre\" (signature row in the source file)"
   },
   "candle": {
    "rows": [
@@ -889,8 +936,9 @@
    },
    "author": "unknown",
    "license": "unknown",
-   "permission": "not documented",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "unknown ASCII artist (no signature in the source file)"
   },
   "cicada": {
    "rows": [
@@ -911,8 +959,9 @@
    },
    "author": "jgs (signature in source file)",
    "license": "unknown",
-   "permission": "not documented",
-   "redistribution": "unverified"
+   "permission": "operator confirmed publication 2026-09-29 (FAILURE_LOG VD-61); credit the author",
+   "redistribution": "cleared",
+   "credit": "Joan G. Stark (signed \"jgs\")"
   }
  }
 }

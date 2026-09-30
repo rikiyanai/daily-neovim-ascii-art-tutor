@@ -6159,3 +6159,21 @@ Plan: `share/audits/MEMORY_SPACED_REVIEW_PLAN_2026-09-29.md`.
 - **Remaining:** no unlock banner/animation plays the trophy at the moment a
   badge is earned (that belongs with the post-completion viewer work, owned by
   the omp session); the static `--tree` still lists only the 8 runtime badges.
+
+## VD-61 · 2026-09-29 — AAHub and the remaining third-party art credited and cleared
+
+- **Operator decision (chat):** "AGAIN SAME WITH AAHUB AND THE REST, CREDIT AND
+  COMMIT." Extends VD-60 beyond Stone Story.
+- **Changed:** every `share/art.json` entry is `redistribution: cleared` with a
+  `credit` field and the permission text citing this entry; the attribution
+  string names every author. `share/extract_art.py` PLATE_RIGHTS writes the same
+  values, so a re-extraction does not revert them. The two M10.06 AAHub sources
+  in `share/gen_curriculum_v2.py` now carry the page URL
+  (aahub.org/mlt/a60392576bd5eefca3ed22d55606b85f, taken from the saved page's
+  canonical link) and credit the original posters; `curriculum-v2.json`
+  regenerated. README Attribution lists AAHub, Joan G. Stark (jgs), the "pb"
+  and "tre" signers, and the unsigned candle. Provenance register updated.
+- **Test:** `share/test_stone_story_provenance.py` asserted "Publication: blocked"; VD-60 broke it (not run before that commit). It now asserts the credited status, per-entry `credit`, and README names; PASS.
+- **Not changed:** the signature rows that were stripped at intake (jgs, pb,
+  tre) are not restored into the lesson art; credit lives in metadata, README
+  and the provenance register.

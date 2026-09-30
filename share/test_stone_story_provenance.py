@@ -70,11 +70,18 @@ for card in transfer_cards:
         assert source.startswith("official-") or source.startswith("AAHub"), (
             card["id"], source
         )
-assert "**Publication:** blocked" in text
+# VD-60/VD-61: publication confirmed by the operator on condition of credit.
+assert "**Publication (updated 2026-09-29, VD-60):**" in text
+assert "Gabriel Santos" in text and "aahub.org/mlt/a60392576bd5eefca3ed22d55606b85f" in text
+art = json.loads((ROOT / "share" / "art.json").read_text(encoding="utf-8"))["art"]
+assert all(entry.get("credit") and entry["redistribution"] == "cleared" for entry in art.values())
+readme = (ROOT / "README.md").read_text(encoding="utf-8")
+for name in ("Gabriel Santos", "AAHub", "Joan G. Stark"):
+    assert name in readme, name
 assert "not archive ingestion" in text
 print(
     "PASS local provenance: %d Stone Story source sets, %d AAHub files, "
     "%d curriculum source families, %d/20 source-backed transfers; "
-    "publication remains blocked"
+    "published with credit (VD-60, VD-61)"
     % (len(set_rows), len(aahub_rows), len(external_sources), len(transfer_cards))
 )
