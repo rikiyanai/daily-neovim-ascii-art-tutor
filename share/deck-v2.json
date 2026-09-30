@@ -1,0 +1,1273 @@
+{
+ "schema": "vim-daily/deck@1",
+ "about": "Authored flashcard deck (memory plan 2026-09-29). Each family has a front, back, memory anchor, shape and items with a named misconception.",
+ "families": [
+  {
+   "id": "DK.G",
+   "family": "{N}G and G",
+   "parser_families": [
+    "[count]G"
+   ],
+   "front": "What does 3G do? What does G on its own do?",
+   "back": "3G jumps to line 3, counted from the top of the file, wherever the cursor is now. G on its own jumps to the last line of the file.",
+   "anchor": "G = ground floor: the bottom of the file. A number in front picks the floor, counted from the top.",
+   "shape": "{N}G = line N from the top · G alone = the last line",
+   "example_keys": "3G",
+   "contrasts": [
+    "DK.J",
+    "DK.GG"
+   ],
+   "items": [
+    {
+     "id": "DK.G.01",
+     "kind": "predict",
+     "prompt": "The cursor is on line 5. You type 3G. Where does the cursor go?",
+     "rows": [
+      " /\\_/\\",
+      "( o.o )",
+      " > ^ <",
+      " /   \\",
+      "(__|__)"
+     ],
+     "cursor": [
+      5,
+      0
+     ],
+     "keys": "3G",
+     "choices": [
+      "to line 3",
+      "to line 8, three lines further down",
+      "to the end of the third block of art",
+      "to line 2, three lines up"
+     ],
+     "answer": 0,
+     "why": [
+      "3G always means line 3, counted from the top. Where you start does not matter.",
+      "Moving three lines down from here is 3j. G counts from the top of the file.",
+      "G counts lines, not blocks. On its own G is the last line of the whole file.",
+      "Three lines up from here is 3k. 3G is line 3 from the top."
+     ],
+     "misconception": "3G read as a move relative to the cursor, or as 'three blocks'"
+    },
+    {
+     "id": "DK.G.02",
+     "kind": "typed_keys",
+     "prompt": "The cursor is on line 1. Turn the first glyph of line 3 into #.",
+     "keys": "3Gr#",
+     "contract": {
+      "initial_lines": [
+       "-a-",
+       "-b-",
+       "-c-",
+       "-d-",
+       "-e-"
+      ],
+      "target_lines": [
+       "-a-",
+       "-b-",
+       "#c-",
+       "-d-",
+       "-e-"
+      ]
+     },
+     "sample_answer": "3Gr#",
+     "trap_answers": [
+      {
+       "keys": "3jr#",
+       "why": "3j moves three lines down from line 1, so it lands on line 4. 3G goes to line 3."
+      }
+     ],
+     "misconception": "{N}j (N lines down from here) used where {N}G (line N) was meant"
+    }
+   ]
+  },
+  {
+   "id": "DK.GG",
+   "family": "gg",
+   "parser_families": [
+    "gg"
+   ],
+   "front": "Where does gg go? And where does G go?",
+   "back": "gg goes to the first line of the file. G goes to the last line. With a number both mean that line: 4gg and 4G both go to line 4.",
+   "anchor": "gg = the top floor; G = ground floor at the bottom.",
+   "shape": "gg = the first line · G = the last line",
+   "example_keys": "gg",
+   "contrasts": [
+    "DK.G"
+   ],
+   "items": [
+    {
+     "id": "DK.GG.01",
+     "kind": "predict",
+     "prompt": "The cursor is on line 2 of this 5-line art. Where do gg and G each take it?",
+     "rows": [
+      " /\\_/\\",
+      "( o.o )",
+      " > ^ <",
+      " /   \\",
+      "(__|__)"
+     ],
+     "cursor": [
+      2,
+      0
+     ],
+     "keys": "gg",
+     "choices": [
+      "gg to line 1, G to line 5",
+      "gg to line 5, G to line 1",
+      "gg to line 1, G one line down to line 3",
+      "gg to the start of line 2, G to the end of line 2"
+     ],
+     "answer": 0,
+     "why": [
+      "gg is the top of the file and G is the bottom.",
+      "That swaps them. G is the ground floor, at the bottom.",
+      "G without a number never means 'one line down'; that is j.",
+      "Both jump between lines. The start and end of this row are 0 and $."
+     ],
+     "misconception": "top and bottom swapped, or G read as a move along the row"
+    }
+   ]
+  },
+  {
+   "id": "DK.J",
+   "family": "{N}j",
+   "parser_families": [
+    "j",
+    "[count]j"
+   ],
+   "front": "3j or 3G?",
+   "back": "3j moves three lines down from where the cursor is. 3G jumps to line 3 no matter where the cursor is.",
+   "anchor": "j hangs down below the line, like its hook: j = down.",
+   "shape": "{N}j = N lines down from here · {N}G = line N from the top",
+   "example_keys": "3j",
+   "contrasts": [
+    "DK.G"
+   ],
+   "items": [
+    {
+     "id": "DK.J.01",
+     "kind": "predict",
+     "prompt": "The cursor is on line 2. You type 3j, and then 3G. Which line is it on after each?",
+     "rows": [
+      "1111",
+      "2222",
+      "3333",
+      "4444",
+      "5555",
+      "6666",
+      "7777",
+      "8888"
+     ],
+     "cursor": [
+      2,
+      0
+     ],
+     "keys": "3j3G",
+     "choices": [
+      "3j: line 5, then 3G: line 3",
+      "3j: line 5, then 3G: line 8",
+      "3j: line 3, then 3G: line 3",
+      "3j: line 5, then 3G: the last line"
+     ],
+     "answer": 0,
+     "why": [
+      "3j counts from the cursor (2 + 3 = 5). 3G counts from the top.",
+      "3G does not add to where you are; it is line 3 from the top.",
+      "3j is not a line number; it moves three lines down from line 2.",
+      "The number in front of G is the line. Only G alone means the last line."
+     ],
+     "misconception": "the number in front of G and j read the same way"
+    }
+   ]
+  },
+  {
+   "id": "DK.F",
+   "family": "f{char}",
+   "parser_families": [
+    "f{char}"
+   ],
+   "front": "What does fo do?",
+   "back": "fo moves right along the CURRENT row to the next o. If this row has no o, nothing happens: the cursor stays. ; repeats the find on the same row.",
+   "anchor": "f = run your finger along this row.",
+   "shape": "f{char} = this row only · /text<CR> = the whole file",
+   "example_keys": "fo",
+   "contrasts": [
+    "DK.SEARCH"
+   ],
+   "items": [
+    {
+     "id": "DK.F.01",
+     "kind": "predict",
+     "prompt": "The cursor is at the start of line 1, which has no o. The only o is on line 2. You type fo. What happens?",
+     "rows": [
+      " /\\_/\\",
+      "( o.o )",
+      " > ^ <"
+     ],
+     "cursor": [
+      1,
+      0
+     ],
+     "keys": "fo",
+     "choices": [
+      "nothing: the cursor stays on line 1",
+      "the cursor jumps to the o on line 2",
+      "the cursor jumps to the end of line 1",
+      "an o is typed at the cursor"
+     ],
+     "answer": 0,
+     "why": [
+      "f only looks along the row the cursor is on. No o on this row, so no move.",
+      "Searching the whole file is /o then Enter. f never leaves the row.",
+      "A failed f does not move at all. The end of the row is $.",
+      "f only moves; it never types. Typing needs i, a or o first."
+     ],
+     "misconception": "f read as a whole-file search"
+    },
+    {
+     "id": "DK.F.02",
+     "kind": "typed_keys",
+     "prompt": "The cursor is on line 1. Change the o on line 3 into O. Line 1 has no o.",
+     "keys": "3GforO",
+     "contract": {
+      "initial_lines": [
+       "|__|",
+       "|--|",
+       "|o-|",
+       "|__|"
+      ],
+      "target_lines": [
+       "|__|",
+       "|--|",
+       "|O-|",
+       "|__|"
+      ]
+     },
+     "sample_answer": "3GforO",
+     "trap_answers": [
+      {
+       "keys": "forO",
+       "why": "fo only searches line 1, which has no o, so the cursor stays and rO changes the | under it. Go to the row first (3G), or search the file with /o<CR>."
+      }
+     ],
+     "misconception": "f expected to find a glyph on another row"
+    }
+   ]
+  },
+  {
+   "id": "DK.SEARCH",
+   "family": "/text",
+   "parser_families": [
+    "/pattern"
+   ],
+   "front": "What does /o then Enter do?",
+   "back": "/ opens a search line at the bottom of the screen. Type the text; Enter jumps to the next match anywhere in the file, even rows below. n jumps to the match after that.",
+   "anchor": "/ = search the whole file.",
+   "shape": "/text<CR> = the next match in the file · n = the one after",
+   "example_keys": "/o<CR>",
+   "contrasts": [
+    "DK.F"
+   ],
+   "items": [
+    {
+     "id": "DK.SEARCH.01",
+     "kind": "predict",
+     "prompt": "The next o is two rows below the cursor. Which keys reach it?",
+     "keys": "/o<CR>",
+     "choices": [
+      "/o then Enter",
+      "fo",
+      "o",
+      "ro"
+     ],
+     "answer": 0,
+     "why": [
+      "/ searches the whole file, so it can reach another row.",
+      "fo only looks along the current row.",
+      "o opens a new empty line below and starts typing.",
+      "ro replaces the cell under the cursor with o."
+     ],
+     "misconception": "f and / treated as the same kind of search"
+    }
+   ]
+  },
+  {
+   "id": "DK.DOLLAR",
+   "family": "$",
+   "parser_families": [
+    "$"
+   ],
+   "front": "What are the three jobs of $?",
+   "back": "On its own, $ jumps to the end of the row (2G$ = the end of line 2). In a line range, $ is the last line (:1,3t$). At the end of a pattern, $ means 'only at the row end' (\\s\\+$ = spaces at the end).",
+   "anchor": "$ = the end: the row end, the last line, or a wall the pattern must touch.",
+   "shape": "$ = the end of the row · :1,3t$ = the last line · -$ in a pattern = only at the row end",
+   "example_keys": "2G$",
+   "contrasts": [
+    "DK.G"
+   ],
+   "items": [
+    {
+     "id": "DK.D.01",
+     "kind": "predict",
+     "prompt": "The cursor is on line 4. You type 2G$. Where does it end up?",
+     "rows": [
+      "ab",
+      "cdef",
+      "gh",
+      "ijkl",
+      "mn"
+     ],
+     "cursor": [
+      4,
+      0
+     ],
+     "keys": "2G$",
+     "choices": [
+      "on f, the last glyph of line 2",
+      "on n, two lines down at the end of the row",
+      "on the last line of the file",
+      "on c, the start of line 2"
+     ],
+     "answer": 0,
+     "why": [
+      "2G is line 2 from the top; $ then goes to the end of that row.",
+      "2G is not 'two lines down'. Two down would be 2j.",
+      "$ on its own is the end of the ROW. The last line is G.",
+      "The start of the row would be 0 or ^. $ is the end."
+     ],
+     "misconception": "2G read as 'down two', or $ read as the last line"
+    },
+    {
+     "id": "DK.D.02",
+     "kind": "predict",
+     "prompt": "You run :%s/-$// on these rows. Which rows change?",
+     "rows": [
+      "a-b-",
+      "c--d",
+      "-e-"
+     ],
+     "keys": ":%s/-$//<CR>",
+     "choices": [
+      "rows 1 and 3 lose their last -, row 2 is unchanged",
+      "every - on every row is deleted",
+      "only the first - on each row is deleted",
+      "on every row, the text from the first - to the end is deleted"
+     ],
+     "answer": 0,
+     "why": [
+      "$ is a wall: the - must touch the row end. Row 2 ends in d, so it stays.",
+      "Only a - right before the row end can match; the others stay.",
+      "The first - of a row is not at the end, so it cannot match.",
+      "$ is not 'up to the end'. The pattern is one - that touches the end."
+     ],
+     "misconception": "pattern $ read as 'up to the end of the line'"
+    },
+    {
+     "id": "DK.D.03",
+     "kind": "typed_keys",
+     "prompt": "The cursor is on line 1. Delete the last glyph of line 2.",
+     "keys": "2G$x",
+     "contract": {
+      "initial_lines": [
+       "ab",
+       "cd#",
+       "ef#"
+      ],
+      "target_lines": [
+       "ab",
+       "cd",
+       "ef#"
+      ]
+     },
+     "sample_answer": "2G$x",
+     "trap_answers": [
+      {
+       "keys": "2j$x",
+       "why": "2j moves two lines down from line 1, to line 3. 2G is line 2."
+      }
+     ],
+     "misconception": "{N}G and {N}j confused before $"
+    }
+   ]
+  },
+  {
+   "id": "DK.YY",
+   "family": "{N}yy",
+   "parser_families": [
+    "[count]yy"
+   ],
+   "front": "What does 3yy copy? Does anything change on screen?",
+   "back": "3yy copies (yanks) three whole lines, starting with the cursor line. Nothing changes on screen until you put the copy somewhere with p or P.",
+   "anchor": "yy = yank the line: the doubled letter means the whole line.",
+   "shape": "[count] verb target: 3yy = yank 3 lines · then p puts them",
+   "example_keys": "3yyGp",
+   "contrasts": [
+    "DK.P"
+   ],
+   "items": [
+    {
+     "id": "DK.YP.01",
+     "kind": "decode",
+     "prompt": "The cursor is on line 1 of an 8-line file. What does 3yyGp do?",
+     "keys": "3yyGp",
+     "choices": [
+      "copies lines 1-3, jumps to the last line, puts the copy below it",
+      "copies three lines and stops there",
+      "copies lines 1-3 and puts them below line 3",
+      "copies lines 1-3 and puts them at the top of the file"
+     ],
+     "answer": 0,
+     "why": [
+      "Three parts: 3yy copies, G goes to the last line, p puts below it.",
+      "That reads only 3yy. G then moves and p puts the copy.",
+      "G moved the cursor to the last line first, so p puts below line 8.",
+      "G is the bottom of the file, and p puts BELOW the cursor line."
+     ],
+     "misconception": "3yyGp read as only 'yank three lines'"
+    },
+    {
+     "id": "DK.YP.02",
+     "kind": "typed_keys",
+     "prompt": "The cursor is on line 1. Copy the first two lines to below the last line.",
+     "keys": "2yyGp",
+     "contract": {
+      "initial_lines": [
+       "/\\",
+       "\\/",
+       "--",
+       "=="
+      ],
+      "target_lines": [
+       "/\\",
+       "\\/",
+       "--",
+       "==",
+       "/\\",
+       "\\/"
+      ]
+     },
+     "sample_answer": "2yyGp",
+     "trap_answers": [
+      {
+       "keys": "2yyp",
+       "why": "Without G the copy is put below line 1, not at the end."
+      },
+      {
+       "keys": "2yyGP",
+       "why": "P puts the copy ABOVE the cursor line, so it lands before the last line."
+      }
+     ],
+     "misconception": "the move (G) or the direction of put (p/P) left out"
+    }
+   ]
+  },
+  {
+   "id": "DK.P",
+   "family": "p and P",
+   "parser_families": [
+    "p",
+    "P"
+   ],
+   "front": "After yy, where does p put the line? And P?",
+   "back": "After copying whole lines, p puts them BELOW the cursor line and P puts them ABOVE it.",
+   "anchor": "p = put below · P = Put above (the capital stands taller).",
+   "shape": "p = below or after · P = above or before",
+   "example_keys": "yyP",
+   "contrasts": [
+    "DK.YY"
+   ],
+   "items": [
+    {
+     "id": "DK.P.01",
+     "kind": "predict",
+     "prompt": "You copied the line ab with yy. The cursor is on line 2. You type P. Where does ab appear?",
+     "rows": [
+      "11",
+      "22",
+      "33"
+     ],
+     "cursor": [
+      2,
+      0
+     ],
+     "keys": "yyP",
+     "choices": [
+      "between 11 and 22, above the cursor line",
+      "between 22 and 33, below the cursor line",
+      "after the last line",
+      "in place of 22"
+     ],
+     "answer": 0,
+     "why": [
+      "Capital P puts above the cursor line.",
+      "Below is lower-case p.",
+      "P uses the cursor line, not the end of the file. Go there first with G.",
+      "P adds a line; nothing is replaced."
+     ],
+     "misconception": "p and P swapped"
+    }
+   ]
+  },
+  {
+   "id": "DK.S",
+   "family": ":s with no range",
+   "parser_families": [
+    ":s/old/new/g"
+   ],
+   "front": ":s/o/O/g with nothing between : and s. Which lines change?",
+   "back": "With nothing before s, :s changes the CURRENT line only. Put a range before s to reach more lines.",
+   "anchor": ":s is a fill-in form: :{where}s/{find}/{replace}/{flags}.",
+   "shape": ":{where}s/{find}/{replace}/{flags} · empty {where} = this line",
+   "example_keys": ":s/-/=/g<CR>",
+   "contrasts": [
+    "DK.RANGE",
+    "DK.GFLAG"
+   ],
+   "items": [
+    {
+     "id": "DK.S.01",
+     "kind": "predict",
+     "prompt": "The cursor is on line 2. You run :s/-/=/ once. What changes?",
+     "rows": [
+      "a-a",
+      "b-b",
+      "c-c"
+     ],
+     "cursor": [
+      2,
+      0
+     ],
+     "keys": ":s/-/=/<CR>",
+     "choices": [
+      "only line 2, which becomes b=b",
+      "all three lines",
+      "only line 1, the first match in the file",
+      "nothing: :s needs a range"
+     ],
+     "answer": 0,
+     "why": [
+      "No range before s means the current line only.",
+      "Every line needs a range: :%s/-/=/.",
+      ":s does not search the file for its first match; it works on the lines you give it.",
+      "The range is optional; without it you get the current line."
+     ],
+     "misconception": "no range read as 'every line'"
+    },
+    {
+     "id": "DK.S.03",
+     "kind": "typed_keys",
+     "prompt": "Change exactly the first three - into =. Leave the fourth - alone.",
+     "keys": "f-r=;.;.",
+     "contract": {
+      "initial_lines": [
+       "a-b-c-d-e"
+      ],
+      "target_lines": [
+       "a=b=c=d-e"
+      ]
+     },
+     "sample_answer": "f-r=;.;.",
+     "trap_answers": [
+      {
+       "keys": ":s/-/=/g 3<CR>",
+       "why": "A number after :s counts LINES (three lines from here), not matches, so all four change."
+      },
+      {
+       "keys": ":s/-/=/g<CR>",
+       "why": "g changes every match on the line: all four."
+      }
+     ],
+     "misconception": "a number after :s read as a number of matches"
+    }
+   ]
+  },
+  {
+   "id": "DK.RANGE",
+   "family": "ranges: % and 4,6",
+   "parser_families": [
+    ":[range]s/old/new/g",
+    ":[range]s/old/new/e",
+    ":[range]s/old/new/"
+   ],
+   "front": "How do you change every line? Only lines 4 to 6?",
+   "back": "Put the lines BEFORE s. :%s/-/=/ = every line, because % means all of them. :4,6s/-/=/ = lines 4 to 6. No range = the current line.",
+   "anchor": "% = 100% of the lines.",
+   "shape": ":%s = every line · :4,6s = lines 4-6 · :s = this line",
+   "example_keys": ":4,6s/o/O/g<CR>",
+   "contrasts": [
+    "DK.S"
+   ],
+   "items": [
+    {
+     "id": "DK.S.02",
+     "kind": "typed_keys",
+     "prompt": "Replace every - with = on every row, with one : command.",
+     "keys": ":%s/-/=/g<CR>",
+     "contract": {
+      "initial_lines": [
+       "-o-",
+       "--",
+       "o-o-"
+      ],
+      "target_lines": [
+       "=o=",
+       "==",
+       "o=o="
+      ]
+     },
+     "sample_answer": ":%s/-/=/g<CR>",
+     "trap_answers": [
+      {
+       "keys": ":%s/-/=/<CR>",
+       "why": "Without g only the first - on each row changes."
+      },
+      {
+       "keys": ":s/-/=/g<CR>",
+       "why": "No range: only the current line changes. % goes before s."
+      }
+     ],
+     "misconception": "% placed after s, or g left out"
+    },
+    {
+     "id": "DK.RANGE.01",
+     "kind": "predict",
+     "prompt": "Which command changes o to O on lines 4, 5 and 6 only?",
+     "keys": ":4,6s/o/O/g<CR>",
+     "choices": [
+      ":4,6s/o/O/g",
+      ":s/o/O/g 4,6",
+      ":%s/o/O/g",
+      ":s4,6/o/O/g"
+     ],
+     "answer": 0,
+     "why": [
+      "The lines go between : and s.",
+      "Anything after the last divider is a flag or a line count, not the lines to change.",
+      "% is every line of the file.",
+      "Right after s comes the divider; the range must come before s."
+     ],
+     "misconception": "the range written after s"
+    }
+   ]
+  },
+  {
+   "id": "DK.GFLAG",
+   "family": "the g flag",
+   "parser_families": [
+    ":[range]s/old/new/g",
+    ":s/old/new/g"
+   ],
+   "front": "What does the g at the end of :s/o/O/g change?",
+   "back": "Without g, :s changes only the FIRST match on each line. With g it changes every match on each line. g never adds lines; the range picks the lines.",
+   "anchor": "g flag = global on the line: every match on it.",
+   "shape": ":s/{find}/{replace}/ = the first match per line · add g = every match",
+   "example_keys": ":s/o/O/g<CR>",
+   "contrasts": [
+    "DK.RANGE"
+   ],
+   "items": [
+    {
+     "id": "DK.GFLAG.01",
+     "kind": "predict",
+     "prompt": "The cursor is on the row o-o-o. You run :s/o/O/ (no g). What is the row now?",
+     "rows": [
+      "o-o-o"
+     ],
+     "cursor": [
+      1,
+      0
+     ],
+     "keys": ":s/o/O/<CR>",
+     "choices": [
+      "O-o-o",
+      "O-O-O",
+      "o-o-O",
+      "o-o-o (nothing changes)"
+     ],
+     "answer": 0,
+     "why": [
+      "Without g only the first match on the line changes.",
+      "Changing all three needs the g flag.",
+      ":s starts from the left of the row; the first match is the first o.",
+      "There is a match, so the first one changes."
+     ],
+     "misconception": "g expected by default"
+    }
+   ]
+  },
+  {
+   "id": "DK.EFLAG",
+   "family": "the e flag",
+   "parser_families": [
+    ":[range]s/old/new/e"
+   ],
+   "front": "What does the e in :%s/\\s\\+$//e do?",
+   "back": "e keeps :s quiet when nothing matches. Without it, a search that finds nothing shows an error message. The edit itself is the same.",
+   "anchor": "e flag = excuse the errors.",
+   "shape": ":s/{find}/{replace}/e = no error message when nothing matches",
+   "example_keys": ":%s/\\s\\+$//e<CR>",
+   "contrasts": [
+    "DK.GFLAG"
+   ],
+   "items": [
+    {
+     "id": "DK.EFLAG.01",
+     "kind": "predict",
+     "prompt": "No row ends in a space. What does the e change in :%s/\\s\\+$//e?",
+     "keys": ":%s/\\s\\+$//e<CR>",
+     "choices": [
+      "no error message is shown; nothing is edited",
+      "it deletes to the end of every row",
+      "it edits every row even without a match",
+      "it asks before each change"
+     ],
+     "answer": 0,
+     "why": [
+      "e only silences the 'pattern not found' error.",
+      "The pattern decides what is deleted, not e.",
+      "Rows without a match are never edited.",
+      "Asking first is the c flag."
+     ],
+     "misconception": "e read as an edit instead of a quiet switch"
+    }
+   ]
+  },
+  {
+   "id": "DK.BSLASH",
+   "family": "/ and \\ in :s",
+   "parser_families": [
+    ":[range]s/old/new/e"
+   ],
+   "front": "In :%s/\\s\\+$//e, what is the job of / and of \\?",
+   "back": "/ divides the parts of :s: s/find/replace/flags. \\ inside the find part makes the NEXT letter special: \\s = a space or tab, \\+ = one or more of it. You type both keys yourself.",
+   "anchor": "\\ = a power-up for the next letter.",
+   "shape": "s/{find}/{replace}/ · \\s = space or tab · \\+ = one or more",
+   "example_keys": ":%s/\\s\\+$//e<CR>",
+   "contrasts": [
+    "DK.S"
+   ],
+   "items": [
+    {
+     "id": "DK.BSLASH.01",
+     "kind": "decode",
+     "prompt": "In :%s/\\s\\+$//e, what does \\s mean?",
+     "keys": ":%s/\\s\\+$//e<CR>",
+     "choices": [
+      "a space or tab: the \\ makes the s special",
+      "a divider between the parts",
+      "the letter s",
+      "the Escape key"
+     ],
+     "answer": 0,
+     "why": [
+      "\\ powers up the next letter; \\s matches a space or a tab.",
+      "The dividers are the / signs.",
+      "Without the \\ it would be the letter s.",
+      "\\ is a key you type. Escape is written <Esc>."
+     ],
+     "misconception": "\\ read as a divider or as Escape"
+    },
+    {
+     "id": "DK.BSLASH.02",
+     "kind": "decode",
+     "prompt": "In :s/o/O/g, which character separates the find part from the replace part?",
+     "keys": ":s/o/O/g<CR>",
+     "choices": [
+      "/",
+      "\\",
+      "$",
+      "%"
+     ],
+     "answer": 0,
+     "why": [
+      "/ is the divider: s/find/replace/flags.",
+      "\\ powers up the letter after it inside a pattern; it divides nothing.",
+      "$ is an end: the row end or the last line.",
+      "% before s means every line."
+     ],
+     "misconception": "/ and \\ swapped"
+    }
+   ]
+  },
+  {
+   "id": "DK.U",
+   "family": "u and Ctrl-r",
+   "parser_families": [
+    "u",
+    "<C-r>"
+   ],
+   "front": "What do u and Ctrl-r do?",
+   "back": "u undoes the last change: one step back. Ctrl-r (hold Ctrl, press r) redoes what u undid.",
+   "anchor": "u = one step back. Ctrl-r = redo.",
+   "shape": "u = undo one change · <C-r> = redo it",
+   "example_keys": "u<C-r>",
+   "contrasts": [
+    "DK.GMINUS"
+   ],
+   "items": [
+    {
+     "id": "DK.U.01",
+     "kind": "predict",
+     "prompt": "The row says cat. You type rX (Xat), then u (cat), then rZ (Zat). Which keys bring back Xat?",
+     "rows": [
+      "Zat"
+     ],
+     "cursor": [
+      1,
+      0
+     ],
+     "keys": "g-",
+     "choices": [
+      "g-",
+      "u",
+      "<C-r>",
+      "none: Xat is gone for good"
+     ],
+     "answer": 0,
+     "why": [
+      "g- steps back in time across undo branches: Zat, then Xat.",
+      "u walks back along the newest branch only: Zat becomes cat.",
+      "Ctrl-r redoes an undo on this branch; after rZ there is nothing to redo.",
+      "Vim keeps both branches; g- and g+ reach them."
+     ],
+     "misconception": "u expected to reach an older branch"
+    },
+    {
+     "id": "DK.U.02",
+     "kind": "typed_keys",
+     "prompt": "The row was cat. Someone typed rX, u, rZ, so it says Zat. Bring back Xat.",
+     "keys": "g-",
+     "contract": {
+      "setup_keys": "rXurZ",
+      "initial_lines": [
+       "cat"
+      ],
+      "target_lines": [
+       "Xat"
+      ]
+     },
+     "sample_answer": "g-",
+     "trap_answers": [
+      {
+       "keys": "u",
+       "why": "u goes back along the newest branch, to cat. The Xat change is on the other branch: use g-."
+      }
+     ],
+     "misconception": "the undo branch (g-) unknown"
+    }
+   ]
+  },
+  {
+   "id": "DK.GMINUS",
+   "family": "g- and g+",
+   "parser_families": [
+    "g-",
+    "g+",
+    ":earlier"
+   ],
+   "front": "You undid a change, then made a new one. How do you get the undone version back?",
+   "back": "u only walks back along the newest branch. The old change is on another branch. g- steps back in time across branches, g+ steps forward. :earlier 1 is the same as g-.",
+   "anchor": "g- = a time machine across branches.",
+   "shape": "u = back on this branch · g- / g+ = back / forward in time",
+   "example_keys": "g-g+",
+   "contrasts": [
+    "DK.U"
+   ],
+   "items": [
+    {
+     "id": "DK.GMINUS.01",
+     "kind": "predict",
+     "prompt": "After g- you are looking at an older version. Which key returns to the newest one?",
+     "keys": "g+",
+     "choices": [
+      "g+",
+      "u",
+      "gg",
+      "g- again"
+     ],
+     "answer": 0,
+     "why": [
+      "g+ steps forward in time, back to the newer version.",
+      "u undoes a change; it moves further back, not forward.",
+      "gg moves the cursor to the first line; it does not touch history.",
+      "g- again goes even further back in time."
+     ],
+     "misconception": "g+ and u confused"
+    }
+   ]
+  },
+  {
+   "id": "DK.XR",
+   "family": "x and r",
+   "parser_families": [
+    "x",
+    "r{char}"
+   ],
+   "front": "x or r=: which keeps the row the same width?",
+   "back": "x deletes the cell under the cursor: the rest of the row shifts left. r{char} replaces it in place: the row keeps its width. In art, r keeps the columns lined up.",
+   "anchor": "x = cross it out. r = replace in place.",
+   "shape": "x = delete one cell (row shrinks) · r{char} = replace one cell",
+   "example_keys": "r=",
+   "contrasts": [
+    "DK.R"
+   ],
+   "items": [
+    {
+     "id": "DK.XR.01",
+     "kind": "predict",
+     "prompt": "The row is |ab| and the cursor is on a. You type x. What is the row now?",
+     "rows": [
+      "|ab|"
+     ],
+     "cursor": [
+      1,
+      1
+     ],
+     "keys": "x",
+     "choices": [
+      "|b|",
+      "| b|",
+      "|xb|",
+      "|ab"
+     ],
+     "answer": 0,
+     "why": [
+      "x deletes the a and the rest of the row moves left.",
+      "Keeping a blank cell there is r then a space.",
+      "x is a command here, not a letter to type. Turning a into x is rx.",
+      "x deletes the cell under the cursor, not the end of the row."
+     ],
+     "misconception": "x expected to keep the row width"
+    },
+    {
+     "id": "DK.XR.02",
+     "kind": "typed_keys",
+     "prompt": "The cursor is on the first cell. Turn the a into = without changing the row's width.",
+     "keys": "lr=",
+     "contract": {
+      "initial_lines": [
+       "|a|"
+      ],
+      "target_lines": [
+       "|=|"
+      ]
+     },
+     "sample_answer": "lr=",
+     "trap_answers": [
+      {
+       "keys": "lx",
+       "why": "x deletes the a, so the row becomes || and loses a cell. r= replaces in place."
+      }
+     ],
+     "misconception": "delete used where replace was meant"
+    }
+   ]
+  },
+  {
+   "id": "DK.R",
+   "family": "R{text}<Esc>",
+   "parser_families": [
+    "R{text}<Esc>"
+   ],
+   "front": "R==<Esc> or r=?",
+   "back": "R types over the cells one by one until <Esc>; the row keeps its width. r{char} changes exactly one cell and returns to Normal mode by itself.",
+   "anchor": "R = Replace until you stop.",
+   "shape": "r{char} = one cell · R{text}<Esc> = many cells",
+   "example_keys": "R==<Esc>",
+   "contrasts": [
+    "DK.XR"
+   ],
+   "items": [
+    {
+     "id": "DK.R.01",
+     "kind": "predict",
+     "prompt": "The row is a--b and the cursor is on the first -. You type R==<Esc>. What is the row?",
+     "rows": [
+      "a--b"
+     ],
+     "cursor": [
+      1,
+      1
+     ],
+     "keys": "R==<Esc>",
+     "choices": [
+      "a==b",
+      "a==--b",
+      "a=-b",
+      "a=="
+     ],
+     "answer": 0,
+     "why": [
+      "R overwrites two cells; the width stays the same.",
+      "Pushing text right is Insert mode (i).",
+      "That is r=: one cell only.",
+      "R only overwrites as many cells as you type."
+     ],
+     "misconception": "R read as insert"
+    }
+   ]
+  },
+  {
+   "id": "DK.O",
+   "family": "o{text}<Esc>",
+   "parser_families": [
+    "o{text}<Esc>"
+   ],
+   "front": "What does o do?",
+   "back": "o opens a NEW empty line below the cursor line and starts typing there; <Esc> ends. O opens the new line above.",
+   "anchor": "o = open a line below.",
+   "shape": "o{text}<Esc> = a new line below · O = above",
+   "example_keys": "o--<Esc>",
+   "contrasts": [
+    "DK.P"
+   ],
+   "items": [
+    {
+     "id": "DK.O.01",
+     "kind": "predict",
+     "prompt": "The cursor is on line 1 of the rows ab and cd. You type o-<Esc>. What are the rows?",
+     "rows": [
+      "ab",
+      "cd"
+     ],
+     "cursor": [
+      1,
+      0
+     ],
+     "keys": "o-<Esc>",
+     "choices": [
+      "ab, then -, then cd",
+      "-ab, then cd",
+      "ab, then cd, then -",
+      "ab-, then cd"
+     ],
+     "answer": 0,
+     "why": [
+      "o opens a line right below the cursor line.",
+      "Typing at the start of the row is I.",
+      "o opens below the CURSOR line. The end of the file would be Go.",
+      "Typing at the end of the row is A."
+     ],
+     "misconception": "o read as 'add at the end of the file'"
+    }
+   ]
+  },
+  {
+   "id": "DK.T",
+   "family": ":{from},{to}t{dest}",
+   "parser_families": [
+    ":[range]t{dest}"
+   ],
+   "front": "What does :1,3t$ do?",
+   "back": "It copies lines 1 to 3 and puts the copy below the last line. t means 'to'; here $ is the last line. :1,3t0 would put the copy at the top.",
+   "anchor": ":t = copy lines To a place.",
+   "shape": ":{from},{to}t{dest} = copy those lines below line {dest}",
+   "example_keys": ":1,3t$<CR>",
+   "contrasts": [
+    "DK.DOLLAR",
+    "DK.YY"
+   ],
+   "items": [
+    {
+     "id": "DK.T.01",
+     "kind": "typed_keys",
+     "prompt": "Copy lines 1 and 2 to below the last line with one : command.",
+     "keys": ":1,2t$<CR>",
+     "contract": {
+      "initial_lines": [
+       "<>",
+       "()",
+       "[]"
+      ],
+      "target_lines": [
+       "<>",
+       "()",
+       "[]",
+       "<>",
+       "()"
+      ]
+     },
+     "sample_answer": ":1,2t$<CR>",
+     "trap_answers": [
+      {
+       "keys": ":1,2t0<CR>",
+       "why": "0 puts the copy above line 1. $ is the last line."
+      }
+     ],
+     "misconception": "$ as a line (the last line) unknown"
+    }
+   ]
+  },
+  {
+   "id": "DK.LIST",
+   "family": ":set list and the rulers",
+   "parser_families": [
+    ":set list",
+    ":set cursorcolumn",
+    ":set colorcolumn"
+   ],
+   "front": "Does :set list change the file?",
+   "back": "No. :set list only SHOWS hidden characters, such as spaces at the end of a row, as marks. The text is unchanged. Deleting them is still an edit: :%s/\\s\\+$//e or $x.",
+   "anchor": "list = let me see the invisible.",
+   "shape": ":set list / :set nolist = show / hide the marks · display only",
+   "example_keys": ":set list<CR>",
+   "contrasts": [
+    "DK.EFLAG"
+   ],
+   "items": [
+    {
+     "id": "DK.LIST.01",
+     "kind": "predict",
+     "prompt": "A row ends with two spaces. You run :set list. What changed in the file?",
+     "keys": ":set list<CR>",
+     "choices": [
+      "nothing: the spaces are only shown as marks",
+      "the two spaces were deleted",
+      "the spaces became tabs",
+      "the row was cut at its last glyph"
+     ],
+     "answer": 0,
+     "why": [
+      ":set list changes the display, never the text.",
+      "Deleting them needs an edit such as :%s/\\s\\+$//e.",
+      "No option here turns spaces into tabs.",
+      "Nothing is cut; the marks only make the spaces visible."
+     ],
+     "misconception": ":set list expected to clean the row"
+    },
+    {
+     "id": "DK.LIST.02",
+     "kind": "predict",
+     "prompt": "What does :set colorcolumn=8 do?",
+     "keys": ":set colorcolumn=8<CR>",
+     "choices": [
+      "paints screen column 8 as a ruler",
+      "cuts every row at column 8",
+      "moves the cursor to column 8",
+      "lights the column the cursor is in"
+     ],
+     "answer": 0,
+     "why": [
+      "It is a painted ruler; the text is untouched.",
+      "Options like this one only change the display.",
+      "Jumping to column 8 is 8|.",
+      "That is cursorcolumn, which follows the cursor."
+     ],
+     "misconception": "colorcolumn and cursorcolumn confused"
+    }
+   ]
+  },
+  {
+   "id": "DK.ZERO",
+   "family": "0 and ^",
+   "parser_families": [
+    "0",
+    "^"
+   ],
+   "front": "0 or ^: which one lands on the first glyph?",
+   "back": "0 jumps to column 1 of the row, even when it is a space. ^ jumps to the first glyph that is not a space.",
+   "anchor": "0 = column zero, the very edge. ^ = the first peak of ink.",
+   "shape": "0 = column 1 · ^ = the first glyph · $ = the end",
+   "example_keys": "0",
+   "contrasts": [
+    "DK.DOLLAR"
+   ],
+   "items": [
+    {
+     "id": "DK.ZERO.01",
+     "kind": "predict",
+     "prompt": "The row is two spaces, then /\\. The cursor is on the \\. Where do 0 and ^ each go?",
+     "rows": [
+      "  /\\"
+     ],
+     "cursor": [
+      1,
+      3
+     ],
+     "keys": "0",
+     "choices": [
+      "0 to the first space, ^ to the /",
+      "0 to the /, ^ to the first space",
+      "both to the /",
+      "0 to the /, ^ to the end of the row"
+     ],
+     "answer": 0,
+     "why": [
+      "0 is column 1 even when it is blank; ^ skips the spaces.",
+      "That swaps them: 0 never skips spaces.",
+      "Only ^ skips the leading spaces.",
+      "The end of the row is $."
+     ],
+     "misconception": "0 read as the first glyph"
+    }
+   ]
+  },
+  {
+   "id": "DK.BAR",
+   "family": "{N}| and virtualedit",
+   "parser_families": [
+    "[count]|",
+    ":set virtualedit",
+    "i{text}<Esc>"
+   ],
+   "front": "In 12|i|<Esc>, which | moves and which | is typed?",
+   "back": "The first | comes after a number in Normal mode: 12| jumps to column 12. After i you are typing, so the second | is a bar glyph. With :set virtualedit=all the cursor can stand in empty columns past the row end.",
+   "anchor": "{N}| = a fence post at column N.",
+   "shape": "{N}| = column N · i{text}<Esc> = type before the cursor",
+   "example_keys": "12|i|<Esc>",
+   "contrasts": [
+    "DK.ZERO"
+   ],
+   "items": [
+    {
+     "id": "DK.BAR.01",
+     "kind": "decode",
+     "prompt": "In 12|i|<Esc>, what are the two | keys?",
+     "keys": "12|i|<Esc>",
+     "choices": [
+      "the first jumps to column 12; the second is a typed bar",
+      "both are typed bars",
+      "both are jumps to a column",
+      "the first is a typed bar; the second jumps"
+     ],
+     "answer": 0,
+     "why": [
+      "In Normal mode 12| is a move; after i every key types text.",
+      "Before i you are in Normal mode, so 12| moves the cursor.",
+      "After i, keys type text until <Esc>.",
+      "The order decides the job: move first, then type."
+     ],
+     "misconception": "| read by its shape instead of by where it stands"
+    },
+    {
+     "id": "DK.BAR.02",
+     "kind": "predict",
+     "prompt": "A row has 3 cells. With virtualedit off, you type 9|. Where is the cursor?",
+     "rows": [
+      "abc"
+     ],
+     "cursor": [
+      1,
+      0
+     ],
+     "keys": "9|",
+     "choices": [
+      "on c, the last cell",
+      "in empty column 9",
+      "on a, because the move failed",
+      "on the next row"
+     ],
+     "answer": 0,
+     "why": [
+      "Without virtualedit the cursor stops at the last real cell.",
+      "Standing in empty columns needs :set virtualedit=all first.",
+      "The move still goes as far right as the row allows.",
+      "| never changes rows."
+     ],
+     "misconception": "empty columns expected to be reachable without virtualedit"
+    }
+   ]
+  }
+ ]
+}

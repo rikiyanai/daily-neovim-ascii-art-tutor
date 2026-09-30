@@ -74,3 +74,10 @@ promotion. Keep a strict method gate only on single-idea guided cards.
    M11.LS alternative wording), routes 28/28, 0 orphans; FL entry.
 Risks: 80×24 brief budget; deck ids keyed to parser family strings; warm-up
 friction; loose alternative regexes.
+
+## Operator decisions (chat, 2026-09-29 ~21:25)
+- Cards APPROVED, including the daily warm-up (≤3, skippable) and `--quiz`.
+- Build in parallel with the dashboard work.
+- Scope for this build: sections 1–3 and the runs in §2. Section 4 (method
+  tiers) is deferred: it edits `_post_feedback`, which the concurrent omp
+  session owns for the viewer / partial-credit work.

@@ -1,0 +1,49 @@
+  o/     Lv3 Pose Builder  ▕██████████░░▏ 70/80 XP  → Lv4 Frame Crafter  Beginner
+ /|      🔥 15 days ★ best ever  ■■■■■■■■■■■■■■  today 12/12 ✓  +7 new
+ / >     badges 9/21 · next ◆ +25 commands ▕╭──────────────────────────────────────────────────────────────────────────────────────────────────╮
+stills S0◐ S1▫ S2▫ S3▫ S4▫ S5▫ S6▫ S7▫   ani│ KEYS                                                                                             │
+▼ ◐ S0 Grid and overwrite             ▕█████│   j / k        move down / up          g / G   top / bottom                                      │
+├─ ▶ ✓ Fireworks radial loop ▕██████▏ 7/7   │   za           open or close a fold    zo / zc open / close                                      │w, meaningful undo/redo, and virtual-column
+└─ ▶ ◐ Missile fixed-width redraw ▕███░░░▏ 1│   zR / zM      open all / close all                                                              │
+▶ ▫ S1 Stroke runs                    ▕░░░░░│   Enter        open a module, command, or badge                                                  │
+▶ ▫ S2 Hand mirroring                 ▕░░░░░│   /            search · n / N next / previous match                                              │
+▶ ▫ S3 Block a still                  ▕░░░░░│   f            send feedback about this screen                                                   │
+▶ ▫ S4 Joint heights                  ▕░░░░░│   ?            this help · q quit (Esc closes a page)                                            │Esc>
+▶ ▫ S5 Variants and palette           ▕░░░░░│                                                                                                  │
+▶ ▫ S6 Layers and seams               ▕░░░░░│ MARKS                                                                                            │t]G · p
+▶ ▫ S7 Texture and ground             ▕░░░░░│   ✓ done  ◐ in progress  ◆ final check  ↻ coming back  ○ open  ▫ locked                          │
+▶ ▫ A0 Plan and key poses             ▕░░░░░│   🔥 streak (glows on a personal best) · ■ a day you practised                                   │ixed cell
+▶ ▫ A1 Extremes and copy-vary         ▕█████│ Esc / q / Enter closes                                                                           │ · r{char} · u · <C-r>
+▶ ▫ A2 In-betweens and onion skin     ▕░░░░░│                                                                                                  │sible row tails
+▶ ▫ A3 Coherent anchors               ▕░░░░░│                                                                                                  │rcolumn · :set colorcolumn ·
+▶ ▫ A4 Timing and holds               ▕░░░░░│                                                                                                  │
+▶ ▫ A5 Subtractive build              ▕░░░░░│                                                                                                  │ace visible with list
+▶ ▫ A6 Mirrored return                ▕░░░░░│                                                                                                  │ $ · x
+▶ ▫ A7 Playback polish                ▕░░░░░│                                                                                                  │rsorcolumn guide
+▶ ▫ P  Proportional Shift_JIS branch… ▕░░░░░│                                                                                                  │ount]G · 0 · x
+▶ TO REVISIT 4                              │                                                                                                  │ind a stray cell
+▶ COMMANDS LEARNED 19 +7 today              │                                                                                                  │unt]G · $ · x
+▶ BADGES 9/21                               │                                                                                                  │piece by piece
+                                            │                                                                                                  │
+                                            │                                                                                                  │ke: a branch
+                                            │                                                                                                  │ · l · r{char} · u
+                                            │                                                                                                  │+  ← next
+                                            │                                                                                                  │ :earlier
+                                            │                                                                                                  │through the undo tree
+                                            │                                                                                                  │
+                                            │                                                                                                  │
+                                            │                                                                                                  │ on a padded Chick pose
+                                            │                                                                                                  │on a SnowBunny half-blink
+                                            │                                                                                                  │
+                                            │                                                                                                  │
+                                            │                                                                                                  │lumn
+                                            │                                                                                                  │
+                                            │                                                                                                  │
+                                            │                                                                                                  │
+                                            │                                                                                                  │
+                                            │                                                                                                  │
+                                            │                                                                                                  │
+                                            ╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+j/k move  za fold  Enter open  / search  f feedback  ? help  q quit

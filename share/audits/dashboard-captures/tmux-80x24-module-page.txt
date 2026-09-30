@@ -1,0 +1,24 @@
+  o/     Lv3 Pose Builder  ▕██████████░░▏ 70/80 XP  → Lv4 Frame Crafter
+ /| ╭──────────────────────────────────────────────────────────────────────╮
+ / >│ Missile fixed-width redraw                                           │
+stil│ you practise: replace-mode redraw, meaningful undo/redo, and         │
+▼ ◐ │ virtual-column motion blur                                           │
+├─ ▶│ ▕████████░░░░░░░░▏ 10/20 lessons                                     │
+└─ ▶│                                                                      │
+▶ ▫ │ ✓ Foundation edit                                                    │
+▶ ▫ │     keys: 0 · f{char} · R{text}<Esc>                                 │
+▶ ▫ │ ✓ Develop the strip                                                  │
+▶ ▫ │     keys: gg · [count]yy · [count]G · p                              │
+▶ ▫ │ ✓ Read the motion                                                 ▁▁ │
+▶ ▫ │ ✓ Inspect undo and redo on one fixed cell                            │
+▶ ▫ │     keys: [count]G · 0 · f{char} · r{char} · u · <C-r>               │
+▶ ▫ │ ✓ Expose and clean only the invisible row tails                      │
+▶ ▫ │     keys: :set list · :set cursorcolumn · :set colorcolumn ·         │
+▶ ▫ │ :[range]s/old/new/e                                                  │
+▶ ▫ │ ✓ Make one invisible trailing space visible with list                │
+▶ ▫ │     keys: :set list · [count]G · $ · x                               │
+▶ ▫ │ ✓ Line up two copies with the cursorcolumn guide                     │
+▶ ▫ │     keys: :set cursorcolumn · [count]G · 0 · x                       │  ▄▄
+▶ ▫ ╰──────────────────────────────────────────────────────────────────────╯
+▶ ▫ P  Proportional Shift_JIS branch… ▕░░░░░░░░░░▏ 0/8
+j/k move  za fold  Enter open  / search  f feedback  ? help  q quit

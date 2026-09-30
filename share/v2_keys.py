@@ -1073,3 +1073,263 @@ def substitute_anatomy(keys):
     how_many = "every match on each line" if "g" in flags else "the first match on each line"
     english = "In plain English: %s, find %s and %s (%s)." % (where, finds, what, how_many)
     return rows, english
+
+
+# Memory plan §1 (2026-09-29): the VD-49 tree, generalised to Normal-mode
+# commands.  The chat quiz showed `3G` read as "three blocks", `2G$` as "down
+# two lines" and `3yy G p` read as only "yank three lines": the learner saw
+# the keys as one blob.  anatomy() draws every structural slot (count,
+# register, operator, motion, typed text) with its own label, then says it
+# in plain words and reduces it to a reusable SHAPE.
+ANATOMY_MAX_SLOTS = 10
+ANATOMY_MAX_CELLS = 78
+
+SHAPES = {
+    "[count]G": "{N}G = line N from the top · G alone = the last line",
+    "gg": "gg = the first line · G = the last line",
+    "f{char}": "f{char} = this row only · /text<CR> = the whole file",
+    "F{char}": "F{char} = back along this row only",
+    "t{char}": "t{char} = just before {char}, this row only",
+    "[count]yy": "[count] verb target: 3yy = yank 3 lines",
+    "yy": "[count] verb target: 3yy = yank 3 lines",
+    "[count]dd": "[count] verb target: 2dd = delete 2 lines",
+    "dd": "[count] verb target: 2dd = delete 2 lines",
+    "p": "p = put below · P = Put above",
+    "P": "p = put below · P = Put above",
+    "$": "$ on its own = the end of this row",
+    "0": "0 = column 1 of this row",
+    "^": "^ = the first glyph of this row",
+    "x": "x = delete one cell (the row gets shorter)",
+    "r{char}": "r{char} = replace one cell (the row keeps its width)",
+    "R{text}<Esc>": "R{text}<Esc> = type over cells until Esc",
+    "u": "u = one step back · <C-r> = redo it",
+    "<C-r>": "u = one step back · <C-r> = redo it",
+    "g-": "g- / g+ = back / forward in time, across undo branches",
+    "g+": "g- / g+ = back / forward in time, across undo branches",
+    "j": "{N}j = N lines down from where you are",
+    "[count]j": "{N}j = N lines down from where you are",
+    "k": "{N}k = N lines up from where you are",
+    "[count]k": "{N}k = N lines up from where you are",
+    "o{text}<Esc>": "o{text}<Esc> = a new line below · O = above",
+    "O{text}<Esc>": "o{text}<Esc> = a new line below · O = above",
+    "[count]|": "{N}| = column N of this row",
+    ";": "; = repeat the last f or t find on this row",
+    ".": ". = repeat the last change",
+    ":[range]t{dest}": ":{from},{to}t{dest} = copy those lines below line {dest}",
+    "/pattern": "/text<CR> = the next match anywhere in the file",
+}
+_SUB_SHAPE = ":{where}s/{find}/{replace}/{flags} · no {where} = this line only"
+_COUNT_WORDS = {"1": "one", "2": "two", "3": "three", "4": "four", "5": "five",
+                "6": "six", "7": "seven", "8": "eight", "9": "nine"}
+
+
+def _count_label(count, base):
+    word = _COUNT_WORDS.get(count, count)
+    if base in ("[count]G", "gg"):
+        return "%s = line %s, counted from the top" % (count, count)
+    if base == "[count]|":
+        return "%s = column %s" % (count, count)
+    if base in ("[count]yy", "[count]dd", "[count]cc", "[count]>>", "[count]<<"):
+        return "%s = %s lines" % (count, word)
+    if base in ("[count]j", "[count]k"):
+        return "%s = %s lines from where you are" % (count, word)
+    return "%s = do it %s times" % (count, word)
+
+
+_SLOT_WORDS = {"$": "$ = the end of this row", "0": "0 = column 1 of this row",
+               "^": "^ = the first glyph of this row",
+               "x": "x = delete the cell under the cursor (the row gets shorter)",
+               "u": "u = undo one change", "<C-r>": "<C-r> = redo (hold Ctrl, press r)"}
+
+
+def _normal_slots(chunk, meaning, family):
+    """[(offset, piece, label)] for one Normal-mode command."""
+    m = re.match(r'([1-9][0-9]*)?("[a-zA-Z0-9"+*])?(.*)$', chunk, re.S)
+    count, reg, rest = m.group(1) or "", m.group(2) or "", m.group(3)
+    base = family.replace('"{reg}', "")
+    slots, at = [], 0
+    if count:
+        slots.append((at, count, _count_label(count, base)))
+        at += len(count)
+    if reg:
+        slots.append((at, reg, "%s = use register %s" % (reg, reg[1])))
+        at += len(reg)
+    if not rest:
+        return slots
+    head = rest[0]
+    if rest in _SLOT_WORDS and not reg:
+        slots.append((at, rest, _SLOT_WORDS[rest]))
+    elif base == "[count]G":
+        slots.append((at, "G", "G = go to that line" if count else
+                      "G = the last line of the file (G alone)"))
+    elif base == "gg":
+        slots.append((at, "gg", "gg = go to that line" if count else
+                      "gg = the first line of the file"))
+    elif base in ("f{char}", "F{char}", "t{char}", "T{char}"):
+        word = {"f": "f = find forward on THIS ROW only",
+                "F": "F = find backward on THIS ROW only",
+                "t": "t = go to just before, THIS ROW only",
+                "T": "T = go back to just after, THIS ROW only"}[head]
+        slots.append((at, head, word))
+        slots.append((at + 1, rest[1:], "%s = the glyph to find" % rest[1:]))
+    elif base == "r{char}":
+        slots.append((at, "r", "r = replace the one cell under the cursor"))
+        slots.append((at + 1, rest[1:], "%s = the new glyph" % rest[1:]))
+    elif base.lstrip("[count]") in DOUBLED or base in DOUBLED:
+        two = rest[:2]
+        what = DOUBLED[two] if not count else DOUBLED[two].replace(
+            "the whole line", "whole lines")
+        slots.append((at, two, "%s = %s" % (two, what)))
+    elif head in OPERATORS and base.endswith("{motion}") and len(rest) > 1:
+        slots.append((at, head, "%s = %s" % (head, OPERATORS[head])))
+        motion = rest[1:]
+        slots.append((at + 1, motion, "%s = %s" % (
+            motion, MOTIONS.get(motion, "over " + motion))))
+    elif (head in INSERTS or head == "R") and rest.endswith("<Esc>") and len(rest) > 6:
+        text = rest[1:-5]
+        label = ("R = type over cells" if head == "R" else "%s = %s" % (head, INSERTS[head]))
+        slots.append((at, head, label))
+        slots.append((at + 1, text, "%s = the text you type" % _q(_show(text))))
+        slots.append((at + 1 + len(text), "<Esc>", "<Esc> = back to Normal mode"))
+    else:
+        slots.append((at, rest, "%s = %s" % (rest, meaning)))
+    return slots
+
+
+_OPTION_SHORT = {"list": "show invisible characters (display only)",
+                 "cursorcolumn": "light up the cursor's column",
+                 "colorcolumn": "paint a ruler column",
+                 "virtualedit": "let the cursor stand past the row end"}
+
+
+def _ex_label(chunk, meaning):
+    """A one-row label for a : command inside a longer Normal-mode string."""
+    text = chunk[1:-4] if chunk.endswith("<CR>") else chunk[1:]
+    sub = _SUB_RE.fullmatch(":" + text)
+    if sub:
+        rng, old, new, flags = sub.groups()
+        return "%s = %s: %s becomes %s%s" % (
+            chunk, _range_words(rng), _q(old), _q(new) if new else "nothing",
+            " (every match)" if "g" in flags else " (first match)")
+    option = re.fullmatch(r"set (no)?([a-z]+)(=.*)?", text)
+    if option:
+        name = OPTION_ALIASES.get(option.group(2), option.group(2))
+        if name in _OPTION_SHORT:
+            return "%s = %s%s" % (chunk, "turn off: " if option.group(1) else "",
+                                  _OPTION_SHORT[name])
+    return "%s = %s" % (chunk, meaning.replace(" (Enter runs it)", ""))
+
+
+def _plain_words(rows):
+    words, linewise = [], False
+    for chunk, meaning, family in rows:
+        base = family.replace('"{reg}', "")
+        count = re.match(r"[1-9][0-9]*", chunk)
+        count = count.group(0) if count else ""
+        if base == "[count]G":
+            words.append("go to line %s" % count if count else "go to the last line of the file")
+        elif base == "gg":
+            words.append("go to line %s" % count if count else "go to the first line")
+        elif base in ("[count]yy", "yy"):
+            words.append("copy %s lines starting at the cursor line" % count if count
+                         else "copy the cursor line")
+            linewise = True
+        elif base in ("[count]dd", "dd"):
+            words.append("delete %s" % ("%s lines" % count if count else "the cursor line"))
+            linewise = True
+        elif base == "p":
+            words.append("put the copy below the cursor line" if linewise
+                         else "put the copy after the cursor")
+        elif base == "P":
+            words.append("put the copy above the cursor line" if linewise
+                         else "put the copy before the cursor")
+        elif base == "f{char}":
+            words.append("move right along THIS ROW to the next %s" % _q(chunk[-1]))
+        elif base == "$":
+            words.append("go to the end of that row")
+        elif base == "x":
+            words.append("delete the cell under the cursor")
+        elif base == "r{char}":
+            words.append("turn the cell under the cursor into %s" % _q(chunk[-1]))
+        elif chunk.startswith(":set"):
+            words.append(_ex_label(chunk, meaning).split(" = ", 1)[1])
+        else:
+            words.append(meaning.replace(" (Enter runs it)", ""))
+    return "In plain words: %s." % ", then ".join(words)
+
+
+def _shape_line(rows):
+    shapes = []
+    for _chunk, _meaning, family in rows:
+        base = family.replace('"{reg}', "")
+        shape = (_SUB_SHAPE if base.startswith(":") and "s/old/new" in base
+                 else SHAPES.get(base) or SHAPES.get(base.replace("[count]", "")))
+        if shape and shape not in shapes:
+            shapes.append(shape)
+    return ("Shape: " + " · ".join(shapes)) if shapes else ""
+
+
+def _tree_rows(text, labels):
+    rows = [" " + text]
+    columns = [c for c, _t in labels]
+    for index in range(len(labels) - 1, -1, -1):
+        c, label = labels[index]
+        line = [" "] * c
+        for other in columns[:index]:
+            if other < c:
+                line[other] = "│"
+        rows.append(" " + "".join(line) + "└ " + label)
+    return rows
+
+
+def _wrap_hanging(text, width):
+    import textwrap
+    return textwrap.wrap(text, width=width, subsequent_indent="  ",
+                         break_on_hyphens=False) or [""]
+
+
+def anatomy(keys, width=None):
+    """Return the labelled tree, IN PLAIN WORDS and SHAPE lines, or None.
+
+    A pure `:s` command uses the VD-49 substitute tree.  Anything else is split
+    into Normal-mode slots.  More than ANATOMY_MAX_SLOTS slots, or a tree row
+    wider than the popup allows, returns None: the caller falls back to the
+    key-by-key list, never to a clipped row.
+    """
+    limit = min(ANATOMY_MAX_CELLS, width or ANATOMY_MAX_CELLS)
+    bare = keys[:-4] if keys.endswith("<CR>") else keys
+    rows = explain(keys)
+    if not rows:
+        return None
+    if len(rows) == 1 and bare.startswith(":") and _SUB_RE.fullmatch(bare):
+        tree, english = substitute_anatomy(keys)
+        plain = english.replace("In plain English:", "In plain words:")
+        shape = "Shape: " + _SUB_SHAPE
+    else:
+        labels, at, linewise = [], 0, False
+        for chunk, meaning, family in rows:
+            base = family.replace('"{reg}', "")
+            if chunk.startswith(":"):
+                labels.append((at, _ex_label(chunk, meaning)))
+            elif base in ("p", "P"):
+                where = ({"p": "below", "P": "above"}[base] + " the cursor line" if linewise
+                         else {"p": "after", "P": "before"}[base] + " the cursor")
+                labels.append((at, "%s = put the copy %s" % (base, where)))
+            else:
+                labels += [(at + offset, label)
+                           for offset, _piece, label in _normal_slots(chunk, meaning, family)]
+            linewise = linewise or base.replace("[count]", "") in ("yy", "dd", "Y")
+            at += len(chunk)
+        if len(labels) > ANATOMY_MAX_SLOTS:
+            return None
+        tree = _tree_rows(keys, labels)
+        plain = _plain_words(rows)
+        shape = _shape_line(rows)
+    if len(tree) - 1 > ANATOMY_MAX_SLOTS:
+        return None
+    if any(len(row) > limit for row in tree):
+        return None
+    out = list(tree) + _wrap_hanging(plain, limit)
+    if shape:
+        out += _wrap_hanging(shape, limit)
+    return out

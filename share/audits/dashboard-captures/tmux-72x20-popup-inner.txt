@@ -1,0 +1,20 @@
+  o/     Lv3 Pose Builder  ▕██████████░░▏ 70/80 XP  → Lv4 Frame Crafter
+ /|      🔥 15 days ★ best ever  ■■■■■■■■■■■■■■  today 12/12 ✓  +7 new
+ / >     badges 9/21 · next ◆ +25 commands ▕████████░░▏ 19/25 ✧
+stills ◐▫▫▫▫▫▫▫  animation ▫▫▫▫▫▫▫▫  side ▫
+▼ ◐ S0 Grid and overwrite          ▕██████░░░░▏ 17/27  ← you are here
+├─ ▶ ✓ Fireworks radial loop ▕██████▏ 7/7
+└─ ▶ ◐ Missile fixed-width redraw ▕███░░░▏ 10/20  ← now
+▶ ▫ S1 Stroke runs                    ▕░░░░░░░░░░▏ 0/9
+▶ ▫ S2 Hand mirroring                 ▕░░░░░░░░░░▏ 0/8
+▶ ▫ S3 Block a still                  ▕░░░░░░░░░░▏ 0/8
+▶ ▫ S4 Joint heights                  ▕░░░░░░░░░░▏ 0/7
+▶ ▫ S5 Variants and palette           ▕░░░░░░░░░░▏ 0/12
+▶ ▫ S6 Layers and seams               ▕░░░░░░░░░░▏ 0/8
+▶ ▫ S7 Texture and ground             ▕░░░░░░░░░░▏ 0/13
+▶ ▫ A0 Plan and key poses             ▕░░░░░░░░░░▏ 0/9                ▆▆
+▶ ▫ A1 Extremes and copy-vary         ▕█████████░▏ 6/7
+▶ ▫ A2 In-betweens and onion skin     ▕░░░░░░░░░░▏ 0/30
+▶ ▫ A3 Coherent anchors               ▕░░░░░░░░░░▏ 0/12
+▶ ▫ A4 Timing and holds               ▕░░░░░░░░░░▏ 0/32
+j/k move  za fold  Enter open  / search  f feedback  ? help  q quit

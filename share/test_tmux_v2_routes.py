@@ -198,6 +198,9 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             # VD-12: real data dir so the learner's LazyVim plugins load.
             "XDG_DATA_HOME": os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local" / "share")), "XDG_STATE_HOME": str(root / "state"),
             "EDITOR": "nvim", "TERM": "xterm-256color",
+            # The daily deck warm-up is exercised by test_deck.py; these routes
+            # start at the lesson itself.
+            "VIM_DAILY_NO_WARMUP": "1",
             "VIM_DAILY_TMUX_READY_SIGNAL": ready,
             "VIM_DAILY_TMUX_QUESTION_SIGNAL": question,
             "VIM_DAILY_TMUX_FEEDBACK_SIGNAL": feedback,

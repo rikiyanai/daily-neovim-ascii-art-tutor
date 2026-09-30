@@ -81,3 +81,20 @@ New tests: NO_COLOR has no `\x1b`; no progress/result row wider than
 columns-2 at 80×24; DO THIS/TARGET/RECIPE before the first `──` rule.
 Risks: fold plugins (nvim-ufo) overriding folds; regex false positives;
 card-level WHY/BUYS needs authoring.
+
+## Operator decisions (chat + share/demo_notes.json, 2026-09-29 ~21:25)
+- Go straight to an INTERACTIVE dashboard, built with a TUI library
+  (demo note lane3c: "i go with tui lib, need to feel pretty / gamified").
+  Options A (static flags) and B/C (Neovim fold buffer) are not the target.
+- Level tiers coloured: beginner no colour, intermediate bronze, advanced
+  gold/yellow, pro a "gemini" gradient; each level gets a colour ASCII avatar
+  (lane3a, lane3-badges). More badges. Every ✓ green; "+1" green; 🔥 next to
+  the streak, glowing on a personal best (lane3a).
+- Animated / pulsing / gradient effects wanted, combined (anima, animb, animd).
+- Post-completion animation viewer = first-class feature (chat). Owned by the
+  concurrent omp session (pane main:4.5) at the time of this decision, together
+  with the colour-role / partial-credit wrong-answer notes (lane2, lane2c).
+- Build order: parallel.
+- Open rights question: note "anima" says promote the local-only trophy art;
+  the repo is PUBLIC and several trophies are Stone Story / unknown-licence
+  art. Not promoted until the operator confirms rights.

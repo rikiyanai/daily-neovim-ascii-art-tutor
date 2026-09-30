@@ -1,0 +1,36 @@
+  o/     Lv3 Pose Builder  ▕██████████░░▏ 70/80 XP  → Lv4 Frame Crafter  Beginner
+ /|      🔥 15 days ★ best ever  ■■■■■■■■■■■■■■  today 12/12 ✓  +7 new
+ / >     badges 9/21 · next ◆ +25 commands ▕████████░░▏ 19/25 ✦·  learn 25 different commands
+stills S0◐ S1▫ S2▫ S3▫ S4▫ S5▫ S6▫ S7▫   animation A0▫ A1▫ A2▫ A3▫ A4▫ A5▫ A6▫ A7▫   side P▫
+▼ ◐ S0 Grid and overwrite             ▕██████░░░░▏ 17/27  ← you are here
+├─ ▶ ✓ Fireworks radial loop ▕██████▏ 7/7
+└─ ▼ ◐ Missile fixed-width redraw ▕███░░░▏ 10/20  ← now
+   ├─ ✓ Foundation edit
+   ├─ ✓ Develop the strip
+   ├─ ✓ Read the motion
+   ├─ ✓ Inspect undo and redo on one fixed cell
+   ├─ ✓ Expose and clean only the invisible row tails
+   ├─ ✓ Make one invisible trailing space visible with list
+   ├─ ✓ Line up two copies with the cursorcolumn guide
+   ├─ ✓ Use the colorcolumn ruler to find a stray cell
+   ├─ ✓ Read the end-anchored cleanup piece by piece
+   ├─ ✓ Undo, then make a different take: a branch
+   ├─ ○ Walk the history with g- and g+  ← next
+   ├─ ○ Go back one state in time with :earlier
+   ├─ ◐ Compare two Skully look takes through the undo tree
+   ├─ ○ Independent edit
+   ├─ ○ Compare editing methods
+   ├─ ○ Retrieve whitespace inspection on a padded Chick pose
+   ├─ ○ Retrieve undo-tree comparison on a SnowBunny half-blink
+   ├─ ○ Unseen transfer
+   ├─ ○ Diagnose the animation
+   └─ ○ Address an empty registered column
+▶ ▫ S1 Stroke runs                    ▕░░░░░░░░░░▏ 0/9
+▶ ▫ S2 Hand mirroring                 ▕░░░░░░░░░░▏ 0/8
+▶ ▫ S3 Block a still                  ▕░░░░░░░░░░▏ 0/8
+▶ ▫ S4 Joint heights                  ▕░░░░░░░░░░▏ 0/7
+▶ ▫ S5 Variants and palette           ▕░░░░░░░░░░▏ 0/12
+▶ ▫ S6 Layers and seams               ▕░░░░░░░░░░▏ 0/8
+▶ ▫ S7 Texture and ground             ▕░░░░░░░░░░▏ 0/13
+▶ ▫ A0 Plan and key poses             ▕░░░░░░░░░░▏ 0/9
+j/k move  za fold  Enter open  / search  f feedback  ? help  q quit

@@ -667,6 +667,10 @@ def project(cur, events):
         badges.append("corpus-reader")
     out["xp"] = 10 * len(passed) + 3 * len(earned_review_stages)
     out["badges"] = badges
+    # Memory plan 2026-09-29: deck boxes and the weak set. Folded here so the
+    # projection is rebuilt from the ledger; deck events add no XP.
+    out["deck"] = (_deck_module().fold(cur, events) if cur.get("deck")
+                   else {"items": {}, "weak": [], "weak_families": []})
     return out
 
 
@@ -1351,6 +1355,23 @@ def _lesson_context(cur, card):
 
 
 _KEYS_MODULE = None
+_DECK_MODULE = None
+# Families missed in the deck lately; run() sets it so the next lesson that
+# uses one shows a REMEMBER line (memory plan §2, resurfacing).
+DECK_WEAK = set()
+
+
+def _deck_module():
+    """Load share/deck.py (flashcards, spacing, warm-up) next to this file."""
+    global _DECK_MODULE
+    if _DECK_MODULE is None:
+        import importlib.util
+        path = Path(__file__).with_name("deck.py")
+        spec = importlib.util.spec_from_file_location("vim_daily_v2_deck", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        _DECK_MODULE = module
+    return _DECK_MODULE
 
 
 def _keys_module():
@@ -1528,7 +1549,7 @@ def _symbol_lines(card, cur, wrap):
     return lines, covered
 
 
-def _substitute_anatomy_lines(card, wrap, heading):
+def _substitute_anatomy_lines(card, wrap, heading, width=None):
     """VD-49: the operator's favourite chat explanation, folded into lessons.
 
     Any visible :s recipe is drawn as a labelled tree, then read back in plain
@@ -1537,7 +1558,10 @@ def _substitute_anatomy_lines(card, wrap, heading):
     K = _keys_module()
     anatomy = K.substitute_anatomy(card.get("expected", ""))
     if not anatomy:
-        return []
+        # Memory plan §1: Normal-mode recipes get the same tree (count,
+        # operator, motion ...). None when it would not fit: no clipped rows.
+        rows = K.anatomy(card.get("expected", ""), width) if width else None
+        return [heading] + rows if rows else []
     rows, english = anatomy
     lines = [heading]
     lines += rows
@@ -1564,12 +1588,14 @@ def _new_concept_alert(card, cur, width=None):
     # VD-48: the SYMBOLS block already says what / and \\ do, with a contrast.
     slash_note = [line for line, pair in zip(SLASH_NOTE, (("/", "separator"), ("\\", "special")))
                   if pair not in covered]
+    # Memory plan §2: a family missed in the deck lately gets a REMEMBER line.
+    remember = _deck_module().remember_lines(card, cur or {}, DECK_WEAK, wrap)
     if not new:
         # A reinforcement lesson reuses an earlier idea: remind, do not alert.
         lines = []
         if card.get("show_recipe"):
             lines += _substitute_anatomy_lines(card, wrap, "REMEMBER · HOW TO READ IT")
-        return lines + symbols
+        return remember + lines + symbols
     lines = ["★ NEW CONCEPT ALERT · %d new idea%s · %s" % (
         len(new), "" if len(new) == 1 else "s",
         "Ctrl-W W, then scroll to read all" if width and width <= 66 else "read before editing")]
@@ -1587,8 +1613,8 @@ def _new_concept_alert(card, cur, width=None):
         if example:
             lines += wrap("example: " + example, "     ")
     if card.get("show_recipe"):
-        lines += _substitute_anatomy_lines(card, wrap, "HOW TO READ IT")
-    return lines + symbols
+        lines += _substitute_anatomy_lines(card, wrap, "HOW TO READ IT", width)
+    return lines + remember + symbols
 
 
 def _key_teaching(card, width=None, cur=None):
@@ -3510,6 +3536,34 @@ class SessionLock:
 
 
 def _legacy_streak(state):
+    counts, active = activity_days(state)
+    today = _now().date()
+    anchor = today if today in active else today - dt.timedelta(days=1)
+    current, cursor = 0, anchor
+    while cursor in active:
+        current += 1
+        cursor -= dt.timedelta(days=1)
+    best = run = 0
+    previous = None
+    for day in sorted(active):
+        run = run + 1 if previous and (day - previous).days == 1 else 1
+        best = max(best, run)
+        previous = day
+    return current, best, sum(counts.values())
+
+
+def done_today(events):
+    """Lessons and reviews passed today; the daily-goal count used by run()."""
+    today = _now().date().isoformat()
+    return sum(1 for e in events if e.get("type") in ("card", "review")
+               and e.get("result") == "pass" and str(e.get("at", "")).startswith(today))
+
+
+def activity_days(state):
+    """({day: completions}, {days with any practice}) from the dated logs.
+
+    Shared by the streak line and the dashboard's 14-day strip (VD-58).
+    """
     counts = {}
     root = Path(state)
     active = set()
@@ -3528,19 +3582,7 @@ def _legacy_streak(state):
             counts[day] = count
         if count or attempted:
             active.add(day)
-    today = _now().date()
-    anchor = today if today in active else today - dt.timedelta(days=1)
-    current, cursor = 0, anchor
-    while cursor in active:
-        current += 1
-        cursor -= dt.timedelta(days=1)
-    best = run = 0
-    previous = None
-    for day in sorted(active):
-        run = run + 1 if previous and (day - previous).days == 1 else 1
-        best = max(best, run)
-        previous = day
-    return current, best, sum(counts.values())
+    return counts, active
 
 
 def _level(xp):
@@ -3739,6 +3781,48 @@ def print_tree(cur, progress, cfg=None, *, compact=False):
                         if nxt else "spaced review or course complete"))
 
 
+# VD-58: the interactive dashboard is a Textual app in a managed venv
+# (install.sh). The runtime itself stays stdlib-only: it launches the app as a
+# child process and falls back to the static print_tree when the venv, a
+# terminal, or colour-capable TERM is missing.
+DASHBOARD_UNAVAILABLE = 3  # dashboard_tui.py exit code: Textual not importable
+
+
+def dashboard_python():
+    venv = os.environ.get("VIM_DAILY_VENV") or os.path.join(
+        os.environ.get("XDG_DATA_HOME") or os.path.expanduser("~/.local/share"),
+        "vim-daily-venv")
+    python = os.path.join(venv, "bin", "python")
+    return python if os.access(python, os.X_OK) else None
+
+
+def open_dashboard(cfg, cur, progress):
+    """`--dashboard` / `--tree` in a terminal: the interactive journey view."""
+    sys_ = __import__("sys")
+    tty = sys_.stdin.isatty() and sys_.stdout.isatty()
+    reason = None
+    python = None
+    if not tty:
+        reason = "not a terminal"
+    elif os.environ.get("TERM", "") in ("", "dumb"):
+        reason = "TERM=dumb"
+    else:
+        python = dashboard_python()
+        if python is None:
+            reason = "Textual venv missing; run install.sh"
+    if python:
+        script = Path(__file__).resolve().with_name("dashboard_tui.py")
+        code = subprocess.call([python, str(script), "--state", str(cfg.state),
+                                "--share", str(cfg.share), "--target", str(cfg.target)])
+        if code != DASHBOARD_UNAVAILABLE:
+            return code
+        reason = "Textual is not importable by %s; run install.sh" % python
+    print_tree(cur, progress, cfg)
+    if tty:
+        print("(interactive dashboard unavailable: %s)" % reason)
+    return 0
+
+
 def export_progress(cur, progress):
     payload = dict(progress)
     payload["next_card"] = (next_card(cur, progress) or {}).get("id")
@@ -3817,6 +3901,20 @@ def run(cfg, argv, *, force=False):
     if mode == "--learned":
         print_learned(cur, progress)
         return 0
+    # Memory plan 2026-09-29: flashcard deck routes (share/deck.py).
+    if mode == "--deck":
+        return _deck_module().browse(cur, progress, argv[1] if len(argv) > 1 else None)
+    if mode == "--deck-miss":
+        return _deck_module().record_misses(__import__("sys").modules[__name__], cfg, cur,
+                                            progress, argv[1:])
+    if mode == "--quiz":
+        count = int(argv[1]) if len(argv) > 1 and argv[1].isdigit() else None
+        return _deck_module().run_quiz(__import__("sys").modules[__name__], cfg, cur, progress,
+                                       count or _deck_module().QUIZ_DEFAULT)
+    DECK_WEAK.clear()
+    DECK_WEAK.update(progress.get("deck", {}).get("weak_families", []))
+    if mode == "--dashboard" or (mode == "--tree" and "--static" not in argv[1:]):
+        return open_dashboard(cfg, cur, progress)
     if mode in ("--tree", "--status"):
         print_tree(cur, progress, cfg)
         return 0
@@ -3891,8 +3989,7 @@ def run(cfg, argv, *, force=False):
                 (os.environ.get("VIM_DAILY_SKIP") or os.environ.get("VIM_DAILY_ACTIVE")
                  or os.environ.get("NVIM"))):
             return 1 if mode == "--due-quiet" else 0
-        today = _now().date().isoformat()
-        done = sum(1 for e in events if e.get("type") in ("card", "review") and e.get("result") == "pass" and str(e.get("at", "")).startswith(today))
+        done = done_today(events)
         try:
             since = _now().timestamp() - os.stat(cfg.stamp).st_mtime
         except OSError:
@@ -3930,6 +4027,13 @@ def run(cfg, argv, *, force=False):
             return run_review(cfg, cur, progress, practice_review[0], practice_review[1])
         review_due_now = (False if cfg.practice else
                           should_run_review(events, review, candidate, explicit_force))
+        # Memory plan 2026-09-29: before the first lesson of the day, up to
+        # three deck items from the upcoming lesson's families (s skips).
+        if mode in ("run", "--force", "--if-due") and not cfg.practice:
+            upcoming = review[0] if review_due_now else (candidate or {}).get("id")
+            if _deck_module().maybe_warmup(__import__("sys").modules[__name__], cfg, cur,
+                                           progress, events, upcoming):
+                _clear_if_tty()
         if review_due_now:
             LAST_RUN_CARD_ID = review[0]
             LAST_RUN_KIND = "review"

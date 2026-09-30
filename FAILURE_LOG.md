@@ -5925,3 +5925,209 @@ These are the first items for the deck plan.
 **Not verified:** a headed run of M11.LS with the `:%s` alternative, and the
 reworded method-miss page on a real failed attempt. The wording is covered
 only by direct function output.
+
+## VD-58 · 2026-09-29 21:50 — interactive gamified dashboard (Textual) replaces the static tree in a terminal
+
+**Status:** IMPLEMENTED in the working tree (not committed); verified below.
+
+**Operator decisions** (`share/audits/DASHBOARD_UI_DESIGN_PROPOSAL_2026-09-29.md`
+"Operator decisions"; `share/demo_notes.json` lane3a, lane3c, lane3-badges,
+anima, animb, animd): use a TUI library ("need to feel pretty / gamified");
+colour-coded, collapsible stages with the current stage open; tier colours
+(beginner none, intermediate bronze, advanced gold, pro "gemini" gradient); a
+colour ASCII avatar per level; more non-farmable badges; every ✓ and "+N"
+green; 🔥 beside the streak, glowing on a personal best; combined pulse /
+gradient-sweep / sparkle effects.
+
+**Built:**
+- `share/dashboard_tui.py` — Textual 8.2.8 app. Reads only the v2 projection
+  (`load_curriculum`, `read_events`, `project`, `_level`, `_legacy_streak`,
+  `activity_days`, `done_today`, `learned_deck`, `_revisit_rows`,
+  `next_card`). Header: level avatar, tier-coloured title, XP bar to the next
+  title, 🔥 streak with best / 14-day strip / today-goal / green "+N new",
+  badge count and next-badge progress. One-row journey map. Tree: stages →
+  modules → lessons (✓ ◐ ◆ ↻ ○ ▫, bars), then TO REVISIT (plain words),
+  COMMANDS LEARNED (browse; Enter shows example and first lesson), BADGES.
+  Keys: j/k, g/G, za/zo/zc/zR/zM, Enter (module/command/badge page), / search
+  with n/N, f feedback (same `collect_feedback` store, `screen=dashboard`),
+  ? help, q quit. Side detail panel from 110 columns. `--preview-level N`
+  (display only) and `--screenshot PATH --size CxR` for review.
+- `share/dashboard_theme.py` — tiers, 14 original avatars (repo is public; no
+  third-party art), semantic colours, state glyphs, 21 badges as data (8
+  runtime + streak-keeper 7/14/30, +10/+25/+50 commands, safe-ranger,
+  branch-rescuer, clean-hands, review-keeper, full-day, cartographer,
+  transfer-adept), animation timing. Replaceable by a later style guide.
+- Animations (flame glow on a personal best, metal sweep / gemini gradient on
+  the title, sparkle near the next badge) are off under `NO_COLOR`,
+  `TERM=dumb`, `VIM_DAILY_ANIM=off`. `NO_COLOR` uses Textual's NoColor filter.
+- `share/v2_runtime.py` — `activity_days()` split out of `_legacy_streak`;
+  `done_today()` shared with `run()`; `dashboard_python()` /
+  `open_dashboard()`; `run()` dispatches `--dashboard`, and `--tree` in a
+  terminal. Non-tty, `TERM=dumb`, missing venv, or exit code 3 (Textual not
+  importable) print the old static `print_tree`. `--tree --static` and
+  `--status` stay text.
+- `bin/vim-daily-gate` — `--dashboard` in `v2_modes` and usage; `d = dashboard`
+  on the held post-lesson page (`hold_open`), returning to the same page.
+- `install.sh` + `share/requirements-dashboard.txt` — idempotent `uv venv` /
+  `uv pip install -r` into `${XDG_DATA_HOME:-$HOME/.local/share}/vim-daily-venv`
+  (pinned freeze). Installed on this machine for the tests.
+
+**Evidence (2026-09-29, this working tree):**
+- `python3 share/test_dashboard_tui.py` → all passed (re-runs itself with the
+  venv python): Pilot 80×24 j/k, za/zo/zc/zR/zM, Enter page, / search, ?
+  help, f feedback row, q quit, tree `virtual_size.width <= size.width`;
+  real-pty NO_COLOR run 0 colour SGR vs 18 in the control run; non-tty
+  `--tree`, `--dashboard`, `--tree --static` print the static tree.
+- `python3 share/test_v2.py` → exit 0.
+- `VIM_DAILY_TEST_COLUMNS=80 VIM_DAILY_TEST_ROWS=24 python3 share/test_tmux_v2.py` → exit 0.
+- `python3 share/test_tmux_v2_routes.py` → exit 0, 28 PASS. (An earlier run
+  the same evening failed at M3.06 on a `WARM-UP 1/3` prompt from the
+  concurrent deck work in `share/deck.py`; not a dashboard hunk.)
+- Headed tmux captures through `~/.local/bin/vim-daily-gate --dashboard`
+  (gate exit 0 each) in `share/audits/dashboard-captures/`: `tmux-80x24`,
+  `tmux-72x20-popup-inner` (the 90%×85% popup of an 80×24 client),
+  `tmux-100x36`, `tmux-188x49`, `tmux-188x49-help`, `tmux-80x24-module-page`,
+  `tmux-80x24-nocolor` (0 colour SGR; 16 in `tmux-80x24.ansi`),
+  `tmux-80x24-anim-frame1/2.ansi` (header differs: flame glow),
+  `tmux-80x24-hold-*.txt` (`d` on the held page opens the dashboard, `q`
+  returns to the same prompt). SVGs: `dashboard-80x24.svg` and
+  `dashboard-80x24-lv{3,4,8,12,14}.svg` (tier colours via `--preview-level`).
+
+**Remains:**
+- Not yet seen by the operator inside the real `prefix+V` popup; the popup
+  test suites do not press `d`.
+- The static `print_tree` still lists only the 8 runtime badges; the 13 new
+  badges exist only in the dashboard.
+- Level/tier boundaries (4 / 8 / 12) and avatars are first proposals for the
+  style-guide session to replace in `share/dashboard_theme.py`.
+- Textual start-up time inside the popup was not measured.
+
+## VD-59 · 2026-09-29 — lessons had no memory loop: flashcard deck, spaced review, daily warm-up and Normal-mode anatomy
+
+**Operator:** feedback 13:33 asked for memory anchors, spaced repetition across
+sessions, a flashcard deck and a syntax reminder line. The chat quiz of
+2026-09-29 showed eight misconceptions: `3G` read as "three blocks", `fo` as a
+whole-file search, `3yy G p` as only "yank three lines", no range on `:s` as
+every line, `%` placed after `s`, a count after `:s` read as a match count,
+`u` vs `g-`, and `2G$` / pattern `$` misread. The plan was approved in chat
+(~21:25) for §1-§3 and the runs in §2; §4 (method tiers) is deferred.
+Plan: `share/audits/MEMORY_SPACED_REVIEW_PLAN_2026-09-29.md`.
+
+**Built:**
+- `share/v2_keys.py` `anatomy(keys, width)`: the VD-49 `│ └` tree for
+  Normal-mode strings as well as `:s`. Each slot is labelled: count, register,
+  operator, motion, find glyph, typed text, `<Esc>`, and `:` commands. The tree
+  is followed by an "In plain words" sentence and a "Shape" line. It returns
+  None above 10 slots or 78 cells, so no row is ever clipped.
+  `_substitute_anatomy_lines` uses it for guided recipes in the NEW CONCEPT
+  ALERT when the recipe is not a pure `:s`.
+- `share/deck-v2.json`, authored by hand: 22 families and 34 items (predict,
+  decode, typed_keys). Each family has a front, back, anchor, shape, example
+  keys and contrasts, and every item names its misconception.
+  - The plan §3 items are all present: DK.G.01, DK.F.01, DK.YP.01, DK.S.01,
+    DK.S.02, DK.S.03, DK.U.01, DK.D.01, DK.D.02.
+  - The contrast pairs are linked: f vs /, {N}G vs {N}j, G vs gg, p vs P,
+    :s vs :4,6s vs :%s, g flag, x vs r, u vs g-, / vs \.
+  - Typed items carry trap answers. Each trap is run in scratch Neovim and
+    must miss the target; a trap's own "why" is shown when the learner types
+    it.
+- `share/deck.py` owns the rest:
+  - `build_deck` attaches the lesson ids that use each family.
+  - `validate_deck` is the generator gate. It checks required items, contrast
+    links, 3-4 distinct choices with one "why" each, no reused "why", and
+    typed samples reaching the target while traps miss it. It rejects banned
+    learner words (Ex, address, family id, card, module, lesson ids, DK.),
+    template phrases and "…". Every command used by M0/M11 must have a family.
+  - Leitner scheduling reuses `review_intervals_hours`. good promotes, hard
+    keeps the box, again drops to box 0 and is due now.
+  - `fold` produces `progress["deck"]` (items, weak, weak_families). A failed
+    question or review, or a `remediation_scheduled` event, makes that
+    lesson's families due.
+  - `--quiz [N]` picks weak items, then due, then new from met families.
+    `--deck [NAME]` browses; `--deck-miss ID…` records an outside miss.
+  - The warm-up gives at most 3 items from the upcoming lesson's families and
+    their contrasts, once per day, before the first lesson. `s` skips it, and
+    the skip is recorded as a `deck_warmup` event.
+  - `f` saves feedback with the item id on quiz and warm-up screens.
+- `share/gen_curriculum_v2.py` embeds `cur["deck"]`, and `validate()` runs
+  the deck gate. `share/curriculum-v2.json` was regenerated: only the `deck`
+  key changed (checked against HEAD).
+- Thin hooks in `share/v2_runtime.py`:
+  - `project()` adds `out["deck"]`. XP, passed lessons and the lesson stamp
+    are untouched; deck events use result right/wrong, never pass/fail.
+  - `run()` handles `--deck`, `--quiz`, `--deck-miss` and the warm-up call.
+  - `DECK_WEAK` feeds a "REMEMBER (missed in your deck)" line into the next
+    lesson alert that uses a weak family.
+- `bin/vim-daily-gate`: `--deck` and `--deck-miss` join v2_modes. `--quiz` or
+  `--quiz N` goes to the deck; `--quiz NAME` still opens the original
+  question banks. Usage text and `VIM_DAILY_NO_WARMUP` are documented.
+- `share/test_tmux_v2.py` and `share/test_tmux_v2_routes.py` set
+  `VIM_DAILY_NO_WARMUP=1`, because their seeded states would otherwise open
+  with the warm-up. `share/test_deck.py` covers the warm-up instead.
+
+**Evidence (all run after the last code change, 2026-09-29):**
+- `python3 share/test_deck.py`: exit 0, "PASS deck: 2169 checks", "PASS deck
+  headed at 80x24". With `VIM_DAILY_TEST_COLUMNS=100 VIM_DAILY_TEST_ROWS=36`:
+  exit 0, "PASS deck headed at 100x36". It covers:
+  - anatomy snapshots and the fallback to None;
+  - the deck gate, and its failure on bad text, an empty family or a missing
+    family;
+  - every question and result screen at 78×22 with no "…";
+  - Leitner steps, the fold, resurfacing, no XP from deck events, and pick
+    order;
+  - warm-up once per day and the one-key skip;
+  - `--deck-miss`, `f` feedback, and the REMEMBER hook.
+- `python3 share/test_v2.py`: exit 0 (226/226 lessons, 185/185 recipes). No
+  hard-coded count changed.
+- `python3 share/test_question_quality.py`: PASS on 406.
+  `python3 share/test_feedback.py`: PASS.
+- `python3 share/test_tmux_v2.py`: PASS at 80×24 and at 100×36.
+- `python3 share/test_tmux_v2_routes.py` at 80×24: exit 0, 28/28 routes PASS.
+- `pgrep -fl 'nvim --embed'`: none after the runs. One orphan from an early
+  test_deck run was killed by its temp-dir path, and test_deck now reaps its
+  own.
+- Headed 80×24 capture, warm-up (seeded through M11.01, `--force`):
+  ```
+  WARM-UP 1/3 before today's lesson · {N}G and G
+    The cursor is on line 5. You type 3G. Where does the cursor go?
+    ...
+    ▶ 5 │(__|__)
+    a) to line 3
+    b) to line 8, three lines further down
+    ...
+    answer (a-d) · f feedback · s skips the warm-up:
+  ```
+  After `s` the M11.02 lesson opened, and the ledger holds a
+  `deck_warmup`/`skipped` event.
+- Headed 80×24 capture, `--quiz 2` wrong then right:
+  ```
+  ✗ NOT QUITE
+    YOUR ANSWER: to line 8, three lines further down
+    RIGHT ANSWER: to line 3
+    WHY: Moving three lines down from here is 3j. G counts from the top of the
+      file.
+    COMMON MIX-UP: 3G read as a move relative to the cursor, or as 'three
+      blocks'
+   3G
+   │└ G = go to that line
+   └ 3 = line 3, counted from the top
+  ...
+  ✓ RIGHT
+    YOUR KEYS: 3Gr#
+  ```
+  The ledger recorded the grades again, good.
+
+**Not done / still open:**
+- Plan §4 method tiers (deferred by the operator).
+- The first-screen SHAPE line in the lesson brief (plan §1): the full diagram
+  is in the alert only. REMEMBER blocks on reinforcement cards still draw
+  only `:s`.
+- The operator's real ledger has no deck events. Recording the chat-quiz
+  misses is one command, not run here: `vim-daily-gate --deck-miss DK.G.01
+  DK.F.01 DK.YP.01 DK.S.01 DK.S.02 DK.S.03 DK.U.01 DK.D.01 DK.D.02`.
+- No tmux key binding opens `--quiz` in a popup. It runs in any terminal or
+  inside the lesson popup.
+- The deck covers M0/M11 plus contrasts (22 families). Later modules need
+  families as the learner reaches them; the coverage gate lists
+  `COVERAGE_MODULES` in `share/deck.py`.
+- The curriculum revision string was not bumped (still `2026-09-29.65`).

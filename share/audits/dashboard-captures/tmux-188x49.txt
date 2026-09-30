@@ -1,0 +1,49 @@
+  o/     Lv3 Pose Builder  ▕██████████░░▏ 70/80 XP  → Lv4 Frame Crafter  Beginner
+ /|      🔥 15 days ★ best ever  ■■■■■■■■■■■■■■  today 12/12 ✓  +7 new
+ / >     badges 9/21 · next ◆ +25 commands ▕████████░░▏ 19/25 ✦·  learn 25 different commands
+stills S0◐ S1▫ S2▫ S3▫ S4▫ S5▫ S6▫ S7▫   animation A0▫ A1▫ A2▫ A3▫ A4▫ A5▫ A6▫ A7▫   side P▫
+▼ ◐ S0 Grid and overwrite             ▕██████░░░░▏ 17/27  ← you are here                                      ▊ Missile fixed-width redraw
+├─ ▼ ✓ Fireworks radial loop ▕██████▏ 7/7                                                                     ▊ you practise: replace-mode redraw, meaningful undo/redo, and virtual-column
+│  ├─ ✓ Vim grammar primer                                                                                    ▊ motion blur
+│  ├─ ↻ Foundation edit                                                                                       ▊ ▕████████░░░░░░░░▏ 10/20 lessons
+│  ├─ ✓ Copy one complete frame with yy/p                                                                     ▊
+│  ├─ ✓ Open one missing row                                                                                  ▊ ✓ Foundation edit
+│  ├─ ✓ Address one row and substitute                                                                      ▆▆▊     keys: 0 · f{char} · R{text}<Esc>
+│  ├─ ✓ Addressed whole-frame copy                                                                            ▊ ✓ Develop the strip
+│  └─ ↻ Scope a substitute to the current line                                                                ▊     keys: gg · [count]yy · [count]G · p
+└─ ▼ ◐ Missile fixed-width redraw ▕███░░░▏ 10/20  ← now                                                       ▊ ✓ Read the motion
+   ├─ ✓ Foundation edit                                                                                       ▊ ✓ Inspect undo and redo on one fixed cell
+   ├─ ✓ Develop the strip                                                                                     ▊     keys: [count]G · 0 · f{char} · r{char} · u · <C-r>
+   ├─ ✓ Read the motion                                                                                       ▊ ✓ Expose and clean only the invisible row tails
+   ├─ ✓ Inspect undo and redo on one fixed cell                                                               ▊     keys: :set list · :set cursorcolumn · :set colorcolumn ·
+   ├─ ✓ Expose and clean only the invisible row tails                                                         ▊ :[range]s/old/new/e
+   ├─ ✓ Make one invisible trailing space visible with list                                                   ▊ ✓ Make one invisible trailing space visible with list
+   ├─ ✓ Line up two copies with the cursorcolumn guide                                                        ▊     keys: :set list · [count]G · $ · x
+   ├─ ✓ Use the colorcolumn ruler to find a stray cell                                                        ▊ ✓ Line up two copies with the cursorcolumn guide
+   ├─ ✓ Read the end-anchored cleanup piece by piece                                                          ▊     keys: :set cursorcolumn · [count]G · 0 · x
+   ├─ ✓ Undo, then make a different take: a branch                                                            ▊ ✓ Use the colorcolumn ruler to find a stray cell
+   ├─ ○ Walk the history with g- and g+  ← next                                                               ▊     keys: :set colorcolumn · [count]G · $ · x
+   ├─ ○ Go back one state in time with :earlier                                                               ▊ ✓ Read the end-anchored cleanup piece by piece
+   ├─ ◐ Compare two Skully look takes through the undo tree                                                   ▊     keys: :[range]s/old/new/e
+   ├─ ○ Independent edit                                                                                      ▊ ✓ Undo, then make a different take: a branch
+   ├─ ○ Compare editing methods                                                                               ▊     keys: [count]G · 0 · f{char} · l · r{char} · u
+   ├─ ○ Retrieve whitespace inspection on a padded Chick pose                                                 ▊ ○ Walk the history with g- and g+  ← next
+   ├─ ○ Retrieve undo-tree comparison on a SnowBunny half-blink                                               ▊ ○ Go back one state in time with :earlier
+   ├─ ○ Unseen transfer                                                                                       ▊ ◐ Compare two Skully look takes through the undo tree
+   ├─ ○ Diagnose the animation                                                                                ▊ ○ Independent edit
+   └─ ○ Address an empty registered column                                                                    ▊ ○ Compare editing methods
+▼ ▫ S1 Stroke runs                    ▕░░░░░░░░░░▏ 0/9                                                        ▊ ○ Retrieve whitespace inspection on a padded Chick pose
+└─ ▼ ▫ Acronian wing joint ▕░░░░░░▏ 0/9                                                                       ▊ ○ Retrieve undo-tree comparison on a SnowBunny half-blink
+   ├─ ▫ Foundation edit                                                                                       ▊ ○ Unseen transfer
+   ├─ ▫ Develop the strip                                                                                     ▊ ○ Diagnose the animation
+   ├─ ▫ Read the motion                                                                                       ▊ ○ Address an empty registered column
+   ├─ ▫ Delete one complete redundant frame                                                                   ▊
+   ├─ ▫ Independent edit
+   ├─ ▫ Compare editing methods
+   ├─ ▫ Unseen transfer
+   ├─ ▫ Diagnose the animation
+   └─ ▫ Module mastery check
+▼ ▫ S2 Hand mirroring                 ▕░░░░░░░░░░▏ 0/8
+└─ ▼ ▫ Mirror key-pose still ▕░░░░░░▏ 0/8
+   ├─ ▫ Foundation edit
+j/k move  za fold  Enter open  / search  f feedback  ? help  q quit

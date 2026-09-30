@@ -21,6 +21,19 @@ for f in vim-drill-popup.sh vim-drill-popup-force.sh vim-drill-hourly.sh; do
 done
 echo "linked: $bin/vim-daily-gate, $bin/vim-drill, $share, $tmuxdir/vim-drill-*.sh"
 
+# VD-58: the interactive dashboard (vim-daily-gate --dashboard / --tree) runs
+# Textual from a managed venv; Homebrew python is PEP-668 managed. Idempotent:
+# uv reuses the venv and only installs what the pinned file changes. Without
+# uv or the venv the gate falls back to the static text tree.
+venv="${XDG_DATA_HOME:-$HOME/.local/share}/vim-daily-venv"
+if command -v uv >/dev/null 2>&1; then
+  [ -x "$venv/bin/python" ] || uv venv --quiet "$venv"
+  uv pip install --quiet --python "$venv/bin/python" -r "$repo/share/requirements-dashboard.txt"
+  echo "dashboard venv: $venv"
+else
+  echo "uv not found: skipped the dashboard venv (static --tree still works)"
+fi
+
 # macOS: the hourly trigger. The two tmux triggers are event-driven and can stay
 # silent all day on one long-lived session; this one is the actual clock.
 if [ "$(uname -s)" = "Darwin" ] && [ "${VIM_DAILY_INSTALL_NO_LAUNCHD:-0}" != "1" ]; then

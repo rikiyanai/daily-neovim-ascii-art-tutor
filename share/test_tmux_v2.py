@@ -105,6 +105,9 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         "XDG_STATE_HOME": str(state),
         "EDITOR": "nvim",
         "TERM": "xterm-256color",
+        # The daily deck warm-up is exercised by test_deck.py; these routes
+        # start at the lesson itself.
+        "VIM_DAILY_NO_WARMUP": "1",
         "VIM_DAILY_TMUX_READY_SIGNAL": ready,
         "VIM_DAILY_TMUX_QUESTION_SIGNAL": question,
         "VIM_DAILY_TMUX_FEEDBACK_SIGNAL": feedback,

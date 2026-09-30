@@ -16,6 +16,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import stone_story_variants  # noqa: E402  (VD-29 art table beside this file)
+import deck as deck_module  # noqa: E402  (memory plan 2026-09-29: authored deck-v2.json)
 
 
 ROOT = Path(__file__).resolve().parent
@@ -6879,6 +6880,9 @@ def build():
         "verified_grammar_sequence": verified_sequence,
         "verified_command_review_coverage": command_reviews,
         "required_mastery_review_coverage": required_mastery_reviews,
+        # Memory plan 2026-09-29: the hand-authored flashcard deck, with the
+        # lessons that use each family attached for resurfacing and warm-ups.
+        "deck": deck_module.build_deck(cards, modules),
     }
 
 
@@ -7379,6 +7383,8 @@ def validate(cur):
         1 for card in cards if card.get("review_variants") or card["kind"] == "transfer")
     if len(cur.get("verified_review_coverage", [])) != expected_reviews:
         errors.append("verified review coverage must be derived only from source-linked changed art")
+    import v2_runtime  # the same scratch-Neovim effect check the popup uses
+    errors += deck_module.validate_deck(cur, typed_check=v2_runtime._safe_typed_effect)
     if errors:
         raise SystemExit("\n".join(errors))
 
