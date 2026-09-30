@@ -558,6 +558,17 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
              answer_letter, "Enter")
         if not (state / "vim-daily" / "last-prompt").exists():
             raise AssertionError("the submitted paired question did not record attempt evidence")
+        # VD-62: a pass opens the viewer on what the learner just made
+        # (a still plays as before -> yours); Enter continues to the debrief.
+        viewer_screen = capture_until(outer_socket, outer_pane, ["WATCH YOUR WORK"])
+        viewer_flat = " ".join(viewer_screen.split())
+        for text in ("WATCH YOUR WORK", "before → yours", "space pause", "Enter continue"):
+            if text not in viewer_flat:
+                raise AssertionError("post-pass viewer missing %r:\n%s" % (text, viewer_screen))
+        if "--show-capture" in sys.argv:
+            print("--- VIEWER pane=%s ---" % outer_pane)
+            print(viewer_screen.rstrip())
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
         try:
             tmux(inner_socket, "wait-for", "-L", feedback, timeout=20)
             tmux(inner_socket, "wait-for", "-U", feedback)
@@ -668,6 +679,17 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         tmux(inner_socket, "wait-for", "-L", ready)
         tmux(inner_socket, "wait-for", "-L", feedback)
         tmux(inner_socket, "wait-for", "-L", post)
+        # VD-62: `v` on the held page watches the passed work again, then
+        # returns to the same held prompt.
+        held_screen = capture_outer(outer_socket, outer_pane)
+        if "v = watch your work again" not in " ".join(held_screen.split()):
+            raise AssertionError("held page does not offer the viewer:\n" + held_screen)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "v", "Enter")
+        rewatch = capture_until(outer_socket, outer_pane, ["WATCH YOUR WORK"])
+        if "WATCH YOUR WORK" not in " ".join(rewatch.split()):
+            raise AssertionError("v did not reopen the viewer:\n" + rewatch)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        capture_until_absent(outer_socket, outer_pane, ["WATCH YOUR WORK"])
         tmux(outer_socket, "send-keys", "-t", outer_pane, "r", "Enter")
         try:
             tmux(inner_socket, "wait-for", "-L", ready, timeout=20)
@@ -680,6 +702,10 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             raise AssertionError("repeat control opened a different card:\n" + repeat_screen)
         tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", M0_FIRST["expected"])
         tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", ":wq")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
+        repeat_viewer = capture_until(outer_socket, outer_pane, ["WATCH YOUR WORK"], timeout=20)
+        if "WATCH YOUR WORK" not in " ".join(repeat_viewer.split()):
+            raise AssertionError("repeated pass did not open the viewer:\n" + repeat_viewer)
         tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
         try:
             tmux(inner_socket, "wait-for", "-L", feedback, timeout=20)

@@ -201,6 +201,8 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             # The daily deck warm-up is exercised by test_deck.py; these routes
             # start at the lesson itself.
             "VIM_DAILY_NO_WARMUP": "1",
+            # The post-pass viewer is exercised by test_tmux_v2.py and test_viewer.py.
+            "VIM_DAILY_VIEWER": "off",
             "VIM_DAILY_TMUX_READY_SIGNAL": ready,
             "VIM_DAILY_TMUX_QUESTION_SIGNAL": question,
             "VIM_DAILY_TMUX_FEEDBACK_SIGNAL": feedback,

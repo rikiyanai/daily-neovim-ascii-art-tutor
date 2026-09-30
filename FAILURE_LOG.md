@@ -6177,3 +6177,52 @@ Plan: `share/audits/MEMORY_SPACED_REVIEW_PLAN_2026-09-29.md`.
 - **Not changed:** the signature rows that were stripped at intake (jgs, pb,
   tre) are not restored into the lesson art; credit lives in metadata, README
   and the provenance register.
+
+## VD-62 · 2026-09-29 — post-completion animation viewer is a first-class feature
+
+- **Operator request (chat):** "the animation viewer after successful completion
+  should be first class feature" and, after VD-61, "proceed with animation
+  viewer". Before this, playback existed only on `module_check` passes: a
+  0.12 s/frame run of `preview_project` that the result page immediately
+  scrolled away; every other pass showed no animation at all.
+- **Built:** `share/viewer.py` (stdlib; alternate screen, cbreak keys):
+  `WATCH YOUR WORK` loops what the learner just saved. Multi-frame lessons play
+  their own frames (split by `frame_slices`, equal neighbours marked HOLD); a
+  one-frame still plays as `before → yours`. Changed cells light up green
+  (`d`), onion skin shows the previous frame dim (`o`), `space` pauses, `h/l`
+  (or arrows) step, `+/-` change speed, `p` switches to the whole project strip,
+  Enter continues. A filmstrip of all frames with the current one marked sits
+  under the frame when it fits. Non-terminal output prints one static
+  filmstrip; `VIM_DAILY_VIEWER=off` skips it; `VIM_DAILY_ANIM=off` shows the
+  static filmstrip; NO_COLOR drops colour.
+- **Wired:** `v2_runtime.watch_your_work()` runs after a fully passed edit
+  (after the paired after-questions, before `_complete`), on both the normal
+  and the recovered-target path. Module checks open on the project strip.
+  `--view [MODULE]` plays a module's strip (default: the latest passed module).
+  The held result page offers `v = watch your work again` only when there is
+  work to watch. `project_view()` finds a project saved under an older folder
+  name by its manifest `module_id` (the operator's M0 work lives in
+  `projects/spark-loop`, while M0's project id is now `fireworks-radial-loop`).
+- **Defects found while building:** the runtime was first loaded from
+  `~/.local/share/vim-daily/` without `share/` on `sys.path`, so `import viewer`
+  failed in the real gate (`--view` crashed; the headed popup test failed at
+  the viewer). Fixed by loading `viewer.py` by file path like `deck.py`.
+- **Evidence:**
+  - `python3 share/test_viewer.py` → PASS. Covers the model, and a real
+    pseudo-terminal run that plays, pauses, steps, turns the onion skin on,
+    and returns on Enter with the screen restored.
+  - `VIM_DAILY_TEST_COLUMNS=80 VIM_DAILY_TEST_ROWS=24 python3
+    share/test_tmux_v2.py` → PASS. It now asserts the viewer after the
+    after-question, `v` on the held page, and the viewer on a repeated pass.
+  - Headed 80x24 tmux run of `vim-daily-gate --view M0` on the operator's real
+    state: the 4-frame fireworks loop played with the filmstrip; pausing and
+    the onion skin worked; exit 0.
+  - `test_tmux_v2_routes.py` runs with `VIM_DAILY_VIEWER=off` (its 28 routes
+    are not about the viewer).
+- **Remaining:**
+  - `preview_project` (the automatic module-check playback) has the same
+    renamed-folder blind spot, not fixed here.
+  - No trophy or unlock animation plays in the viewer when a badge is earned.
+  - The dashboard's module page has no "watch" key yet.
+  - Colour is fixed ANSI and does not yet follow the style guide the operator
+    is revising (the gemini pink-purple palette note of 22:12).

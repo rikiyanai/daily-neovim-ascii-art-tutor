@@ -3259,6 +3259,7 @@ def run_edit(cfg, cur, progress, card):
                 cfg.post_rendered()
             cfg.hold_open()
             return 1
+        watch_your_work(cfg, cur, card, path)
         return _complete(cfg, cur, card, extra=recovery_extra, replay=recovery_replay)
     if current != _card_lines(card, card["start"]):
         print("Project checkpoint differs from the start required by %s:" % card["id"])
@@ -3347,6 +3348,7 @@ def run_edit(cfg, cur, progress, card):
                     cfg.post_rendered()
                 cfg.hold_open()
                 return 1
+            watch_your_work(cfg, cur, card, path)
             return _complete(cfg, cur, card, extra=extra,
                              replay=replay)
         failure_event = {"type": "card", "result": "fail", "card_id": card["id"],
@@ -3831,6 +3833,104 @@ def export_progress(cur, progress):
     print()
 
 
+LAST_VIEW = {"views": None}
+
+
+_VIEWER_MODULE = None
+
+
+def _viewer_module():
+    """Load share/viewer.py next to this file (the gate does not put share/ on sys.path)."""
+    global _VIEWER_MODULE
+    if _VIEWER_MODULE is None:
+        import importlib.util
+        path = Path(__file__).with_name("viewer.py")
+        spec = importlib.util.spec_from_file_location("vim_daily_viewer", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        _VIEWER_MODULE = module
+    return _VIEWER_MODULE
+
+
+def project_view(cfg, cur, module_id):
+    """The module's verified project strip as a viewer View, or None."""
+    V = _viewer_module()
+    module = next((m for m in cur["modules"] if m["id"] == module_id), None)
+    if not module or module.get("preview_mode") == "layers":
+        return None
+    base = _paths(cfg)["projects"] / module["project_id"]
+    if not (base / "manifest.json").exists():
+        # A project renamed after the learner saved work keeps its old folder;
+        # find it by the module id its manifest records.
+        for manifest_path in sorted(_paths(cfg)["projects"].glob("*/manifest.json")):
+            try:
+                if json.loads(manifest_path.read_text(encoding="utf-8")).get("module_id") == module_id:
+                    base = manifest_path.parent
+                    break
+            except (OSError, ValueError):
+                continue
+    try:
+        manifest = json.loads((base / "manifest.json").read_text(encoding="utf-8"))
+        lines = _read_lines(base / "strip.txt")
+    except (OSError, ValueError):
+        return None
+    card = next((c for c in cur["cards"] if c["id"] == manifest.get("current_card")), None)
+    frames = V.split_frames(lines, card.get("frame_slices") if card else None)
+    if not frames or len(frames) < 2:
+        return None
+    holds = {i: "hold" for i in range(1, len(frames)) if frames[i] == frames[i - 1]}
+    return V.View("%s · %s (whole project)" % (module_id, module.get("title", "")),
+                  frames, holds=holds, kind="project")
+
+
+def watch_your_work(cfg, cur, card, path):
+    """VD-62: after a pass, play what the learner just made (first-class viewer)."""
+    V = _viewer_module()
+    if not V.enabled():
+        return None
+    try:
+        rows = _read_lines(path)
+    except OSError:
+        return None
+    views = []
+    if card.get("kind") == "module_check":
+        views.append(project_view(cfg, cur, card["module_id"]))
+    views.append(V.lesson_view(card, rows))
+    if card.get("kind") != "module_check" and card.get("artifact") != "transfer":
+        views.append(project_view(cfg, cur, card["module_id"]))
+    views = [v for v in views if v]
+    if not views:
+        return None
+    LAST_VIEW["views"] = views
+    return V.play(views)
+
+
+def replay_last_view():
+    """`v` on the held result page: watch the last passed work again."""
+    views = LAST_VIEW.get("views")
+    if not views:
+        return None
+    return _viewer_module().play(views)
+
+
+def view_command(cfg, cur, progress, args):
+    """`--view [MODULE]`: play a module's project strip (default: latest module)."""
+    module_id = args[0] if args else None
+    if module_id is None:
+        passed = [row for row in read_events(cfg)
+                  if row.get("type") == "card" and row.get("result") == "pass"]
+        module_id = passed[-1].get("module_id") if passed else None
+    if module_id is None:
+        print("nothing to watch yet: pass a lesson first")
+        return 1
+    view = project_view(cfg, cur, module_id)
+    if view is None:
+        print("%s has no playable project strip yet" % module_id)
+        return 1
+    _viewer_module().play([view])
+    return 0
+
+
 def preview_project(cfg, cur, module_id, speed=0.35):
     module = next((m for m in cur["modules"] if m["id"] == module_id), None)
     if not module:
@@ -3886,6 +3986,7 @@ def run(cfg, argv, *, force=False):
     global LAST_RUN_CARD_ID, LAST_RUN_KIND
     LAST_RUN_CARD_ID = None
     LAST_RUN_KIND = None
+    LAST_VIEW["views"] = None
     cur = load_curriculum(cfg.share)
     events = read_events(cfg)
     progress = project(cur, events)
@@ -3898,6 +3999,8 @@ def run(cfg, argv, *, force=False):
     if mode == "--feedback":
         print_feedback(cfg.state)
         return 0
+    if mode == "--view":
+        return view_command(cfg, cur, progress, argv[1:])
     if mode == "--learned":
         print_learned(cur, progress)
         return 0
