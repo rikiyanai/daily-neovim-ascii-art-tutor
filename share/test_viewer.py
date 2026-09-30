@@ -119,4 +119,23 @@ with tempfile.TemporaryDirectory() as root:
                          capture_output=True, text=True, env=env, timeout=60,
                          stdin=subprocess.DEVNULL)
     assert "nothing to watch yet" in run.stdout, (run.stdout, run.stderr)
+# VD-63: the gallery replays every passed lesson from its own checkpoints,
+# even after later lessons overwrote the project strip.
+sys.path.insert(0, str(HERE))
+import v2_runtime as v2  # noqa: E402
+from types import SimpleNamespace  # noqa: E402
+with tempfile.TemporaryDirectory() as root:
+    cfg = SimpleNamespace(state=root)
+    card = cards["M0.05"]
+    ck = Path(root) / "projects" / "old-folder-name" / "checkpoints"
+    ck.mkdir(parents=True)
+    (ck / "M0.05-before.txt").write_text("\n".join(card["start"]) + "\n", encoding="utf-8")
+    (ck / "M0.05-after.txt").write_text("\n".join(card["target"]) + "\n", encoding="utf-8")
+    (ck / "M0.99-after.txt").write_text("x\n", encoding="utf-8")  # unknown lesson: ignored
+    progress = {"passed_cards": ["M0.05"]}
+    gallery = v2.completed_gallery(cfg, cur, progress)
+    assert [g["card_id"] for g in gallery] == ["M0.05"], gallery
+    assert gallery[0]["frames"] == len(card["frame_slices"]) and gallery[0]["kind"] == "lesson"
+    assert v2.completed_gallery(cfg, cur, {"passed_cards": []}) == []  # not passed: hidden
+print("ok gallery: passed lessons from checkpoints; unknown or unpassed lessons hidden")
 print("PASS viewer")

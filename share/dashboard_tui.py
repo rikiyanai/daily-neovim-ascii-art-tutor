@@ -196,6 +196,9 @@ def build_model(state, share, target=12, now=None):
         "next_card": nxt["id"] if nxt else None,
         "reviews_due": sum(1 for r in progress["reviews"].values() if V2._due(r.get("next_due"))),
     }
+    # VD-63: every passed lesson's saved work, playable from the dashboard.
+    model["gallery"] = V2.completed_gallery(cfg, cur, progress)
+    model["cfg"] = cfg
     model["badges"] = _badges(model)
     open_badges = [b for b in model["badges"] if not b["earned"] and b["need"]]
     model["next_badge"] = (max(open_badges, key=lambda b: (b["have"] / b["need"], -b["need"]))
@@ -433,6 +436,27 @@ def node_label(kind, data, width):
                              bar(data["have"], data["need"], 6), count,
                              (_clip_plain(data["desc"], max(4, width - len(data["name"])
                                                         - 12 - len(count))), S["meta"]))
+    if kind == "gallery_module":
+        module_id, title, count, playable = data
+        tail = " · whole project ▶" if playable else ""
+        return Text.assemble(("▦ ", S["ok"]), (module_id.ljust(4), "bold"),
+                             _clip_plain(title, max(6, width - 12 - len(tail) - 6)),
+                             (" %d" % count, S["ok"]), (tail, S["meta"]))
+    if kind == "gallery":
+        if data["frames"] > 1 and data["kind"] == "lesson":
+            what = "%d frames" % data["frames"]
+            glyph, style = "▶ ", S["ok"]
+        elif data["kind"] == "edit":
+            what = "before → yours"
+            glyph, style = "▶ ", S["ok"]
+        else:
+            what = "still"
+            glyph, style = "▫ ", S["meta"]
+        tail = " · " + what
+        return Text.assemble((glyph, style), (data["card_id"].ljust(7), "bold"),
+                             _clip_plain(data["title"].split(" · ", 1)[-1],
+                                         max(6, width - 9 - len(tail))),
+                             (tail, S["meta"]))
     if kind == "section":
         title, count, extra = data
         return Text.assemble((title, "bold"), " ", (str(count), S["ok"] if count else S["meta"]),
@@ -514,7 +538,8 @@ HELP = """KEYS
   j / k        move down / up          g / G   top / bottom
   za           open or close a fold    zo / zc open / close
   zR / zM      open all / close all
-  Enter        open a module, command, or badge
+  Enter        open a module, command, or badge; play an animation
+  w            watch the saved work under the cursor (lesson or module)
   /            search · n / N next / previous match
   f            send feedback about this screen
   ?            this help · q quit (Esc closes a page)
@@ -634,6 +659,7 @@ def make_app(model, *, state, animate=None, colour=None):
         BINDINGS = [Binding("q", "quit", "quit"),
                     Binding("question_mark", "help", "help"),
                     Binding("f", "feedback", "feedback"),
+                    Binding("w", "watch", "watch"),
                     Binding("slash", "search", "search"),
                     Binding("n", "next_match", show=False),
                     Binding("N", "previous_match", show=False)]
@@ -693,6 +719,20 @@ def make_app(model, *, state, animate=None, colour=None):
                         cursor = mnode
                     for card in module["cards"]:
                         mnode.add_leaf("", data=("card", card))
+            gallery = m.get("gallery", [])
+            section = tree.root.add("", data=("section", ("YOUR ANIMATIONS", len(gallery),
+                                                          "  Enter/w plays")))
+            by_module = {}
+            for item in gallery:
+                by_module.setdefault(item["module_id"], []).append(item)
+            for module_id, items in by_module.items():
+                module = next((mm for mm in m["cur"]["modules"] if mm["id"] == module_id), {})
+                playable = V2.project_view(m["cfg"], m["cur"], module_id) is not None
+                gnode = section.add("", data=("gallery_module",
+                                              (module_id, module.get("title", ""),
+                                               len(items), playable)), expand=False)
+                for item in items:
+                    gnode.add_leaf("", data=("gallery", item))
             section = tree.root.add("", data=("section", ("TO REVISIT", len(m["revisit"]), "")))
             for row in m["revisit"]:
                 section.add_leaf("", data=("revisit", row))
@@ -742,7 +782,7 @@ def make_app(model, *, state, animate=None, colour=None):
             for index, line in enumerate(lines, 1):
                 self.query_one("#line%d" % index, Static).update(line)
             self.query_one("#map", Static).update(journey_map(self.model, width))
-            keys = [("j/k", "move"), ("za", "fold"), ("Enter", "open"), ("/", "search"),
+            keys = [("j/k", "move"), ("za", "fold"), ("Enter", "open"), ("w", "watch"), ("/", "search"),
                     ("f", "feedback"), ("?", "help"), ("q", "quit")]
             text = Text()
             for key, word in keys:
@@ -808,6 +848,10 @@ def make_app(model, *, state, animate=None, colour=None):
                 self.push_screen(Page(command_detail(self.model, data)))
             elif kind == "badge":
                 self.push_screen(Page(badge_detail(self.model, data)))
+            elif kind == "gallery":
+                self.watch_item(data)
+            elif kind == "gallery_module":
+                node.toggle()
             else:
                 self.push_screen(Page(node_label(kind, data, 200)))
 
@@ -901,6 +945,47 @@ def make_app(model, *, state, animate=None, colour=None):
         # --- pages
         def action_help(self):
             self.push_screen(Page(Text(HELP)))
+
+        def watch_item(self, item):
+            """Play one lesson's saved work (p inside switches to the project)."""
+            project = V2.project_view(self.model["cfg"], self.model["cur"], item["module_id"])
+            views = [item["view"]] + ([project] if project else [])
+            with self.suspend():
+                V2._viewer_module().play(views)
+            self.refresh()
+
+        def action_watch(self):
+            """w: watch the work under the cursor (lesson, module, or project)."""
+            node = self.query_one(JourneyTree).cursor_node
+            if node is None or not node.data:
+                return
+            kind, data = node.data
+            gallery = self.model.get("gallery", [])
+            if kind == "gallery":
+                return self.watch_item(data)
+            module_id = card_id = None
+            if kind == "gallery_module":
+                module_id = data[0]
+            elif kind == "module":
+                module_id = data["id"]
+            elif kind == "card":
+                card_id = data["id"]
+            if card_id:
+                item = next((g for g in gallery if g["card_id"] == card_id), None)
+                if item:
+                    return self.watch_item(item)
+                self.notify("nothing saved to watch for %s yet" % card_id, timeout=3)
+                return
+            if module_id:
+                project = V2.project_view(self.model["cfg"], self.model["cur"], module_id)
+                items = [g["view"] for g in gallery if g["module_id"] == module_id]
+                views = ([project] if project else []) + items[-1:]
+                if not views:
+                    self.notify("nothing saved to watch in %s yet" % module_id, timeout=3)
+                    return
+                with self.suspend():
+                    V2._viewer_module().play(views)
+                self.refresh()
 
         def action_feedback(self):
             node = self.query_one(JourneyTree).cursor_node

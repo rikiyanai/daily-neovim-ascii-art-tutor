@@ -6226,3 +6226,29 @@ Plan: `share/audits/MEMORY_SPACED_REVIEW_PLAN_2026-09-29.md`.
   - The dashboard's module page has no "watch" key yet.
   - Colour is fixed ANSI and does not yet follow the style guide the operator
     is revising (the gemini pink-purple palette note of 22:12).
+
+## VD-63 · 2026-09-30 — the dashboard shows and plays completed animations
+
+- **Operator request (chat):** "the animation player is great, is it possible
+  to keep this, and make it so dashboard can show completed animations?"
+- **Built:** `v2_runtime.completed_gallery()` builds a playable View for every
+  passed lesson from the per-lesson checkpoints (`<card>-before.txt`,
+  `<card>-after.txt`) that every pass already writes. A later lesson that
+  overwrites the project strip therefore does not lose earlier work, and
+  renamed project folders still count. The dashboard has a **YOUR ANIMATIONS**
+  section grouped by module (`▦ M0 Fireworks radial loop 10 · whole project ▶`).
+  Each lesson row says `N frames`, `before → yours`, or `still`. Enter or `w`
+  plays it in the WATCH YOUR WORK viewer (Textual suspends, then resumes on the
+  same row). Inside the viewer, `p` switches to the whole project. `w` on a
+  journey module plays its project strip; `w` on a passed lesson plays that
+  lesson. `--view M0.05` (a lesson id) plays one lesson.
+- **Evidence:**
+  - `python3 share/test_viewer.py` → "ok gallery…", PASS.
+  - `python3 share/test_dashboard_tui.py` → all passed.
+  - Headed 80x24 run on the operator's real state: YOUR ANIMATIONS 21. `/M0.05`
+    then Enter played the 4-frame loop with the filmstrip and HOLD on frame 4;
+    Enter returned to the same dashboard row; `q` exited 0.
+- **Remaining:** no Pilot test drives Enter/`w` on a gallery row (Textual
+  `suspend()` under `run_test()` was not attempted). Items whose saved work
+  equals the start (whitespace-only edits: M11.WS, M11.LS, M11.TR) show as a
+  one-frame `still`.

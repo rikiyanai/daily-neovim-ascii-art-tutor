@@ -3905,6 +3905,38 @@ def watch_your_work(cfg, cur, card, path):
     return V.play(views)
 
 
+def completed_gallery(cfg, cur, progress):
+    """Every passed lesson's saved work as a playable View, in curriculum order.
+
+    Uses the per-lesson checkpoints (`<card>-before.txt`, `<card>-after.txt`)
+    that every pass already writes, so a later lesson overwriting the project
+    strip does not lose earlier animations."""
+    V = _viewer_module()
+    passed = set(progress.get("passed_cards", []))
+    order = {card["id"]: index for index, card in enumerate(cur["cards"])}
+    cards = {card["id"]: card for card in cur["cards"]}
+    found = {}
+    for after in _paths(cfg)["projects"].glob("*/checkpoints/*-after.txt"):
+        card_id = after.name[:-len("-after.txt")]
+        card = cards.get(card_id)
+        if card is None or card_id not in passed:
+            continue
+        try:
+            rows = _read_lines(after)
+            before_path = after.with_name(card_id + "-before.txt")
+            before = _read_lines(before_path) if before_path.exists() else None
+        except OSError:
+            continue
+        view = V.lesson_view(card, rows, before=before)
+        previous = found.get(card_id)
+        if previous is None or after.stat().st_mtime > previous["mtime"]:
+            found[card_id] = {"card_id": card_id, "module_id": card["module_id"],
+                              "title": card.get("title", ""), "view": view,
+                              "frames": len(view.frames), "kind": view.kind,
+                              "mtime": after.stat().st_mtime}
+    return sorted(found.values(), key=lambda row: order.get(row["card_id"], 0))
+
+
 def replay_last_view():
     """`v` on the held result page: watch the last passed work again."""
     views = LAST_VIEW.get("views")
@@ -3914,8 +3946,18 @@ def replay_last_view():
 
 
 def view_command(cfg, cur, progress, args):
-    """`--view [MODULE]`: play a module's project strip (default: latest module)."""
+    """`--view [MODULE|LESSON]`: play a module's project strip (default: latest
+    module) or one passed lesson's saved work."""
     module_id = args[0] if args else None
+    if module_id and any(card["id"] == module_id for card in cur["cards"]):
+        item = next((row for row in completed_gallery(cfg, cur, progress)
+                     if row["card_id"] == module_id), None)
+        if item is None:
+            print("%s has no saved work to watch yet" % module_id)
+            return 1
+        project = project_view(cfg, cur, item["module_id"])
+        _viewer_module().play([item["view"]] + ([project] if project else []))
+        return 0
     if module_id is None:
         passed = [row for row in read_events(cfg)
                   if row.get("type") == "card" and row.get("result") == "pass"]

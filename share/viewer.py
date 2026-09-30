@@ -72,14 +72,17 @@ def split_frames(rows, slices):
     return frames
 
 
-def lesson_view(card, rows):
-    """The strip the learner just saved, or BEFORE -> YOURS for a still."""
+def lesson_view(card, rows, before=None):
+    """The strip the learner just saved, or BEFORE -> YOURS for a still.
+
+    `before` is the learner's own saved starting file when it exists (the
+    lesson's `start` otherwise)."""
     frames = split_frames(rows, card.get("frame_slices"))
     title = "%s · %s" % (card["id"], card.get("title", ""))
     if frames and len(frames) > 1:
         holds = {i: "hold" for i in range(1, len(frames)) if frames[i] == frames[i - 1]}
         return View(title, frames, holds=holds)
-    start = [r.rstrip() for r in card.get("start", [])]
+    start = [r.rstrip() for r in (before if before else card.get("start", []))]
     if not start or start == [r.rstrip() for r in rows]:
         return View(title, [rows], labels=["yours"])
     return View(title, [start, rows], labels=["before", "yours"], kind="edit")
