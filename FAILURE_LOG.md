@@ -6131,3 +6131,31 @@ Plan: `share/audits/MEMORY_SPACED_REVIEW_PLAN_2026-09-29.md`.
   families as the learner reaches them; the coverage gate lists
   `COVERAGE_MODULES` in `share/deck.py`.
 - The curriculum revision string was not bumped (still `2026-09-29.65`).
+
+## VD-60 · 2026-09-29 — Stone Story trophy art promoted into the dashboard, with credit
+
+- **Operator decision (chat):** "I CONFIRM THE RIGHT, STONE SCRIPT PEOPLE USE
+  EVERYWHERE, JUST CITE THE AUTHOR/STONESTORY RPG JUST IN CASE". This answers
+  the rights hold recorded in the dashboard proposal's decisions section and the
+  `anima` demo note ("promote, they should not be local only").
+- **Built:** `share/dashboard_theme.py` `trophy_for(badge_id)` maps badges to
+  art: first-step Skully idle; transfer / transfer-adept firework radial F3/F4;
+  grid-author Snowman cheer; still-artist firework willow canopy; branch-rescuer
+  Pallas ghost; streak-keeper 7/14/30 Mine Walker boiler flame (MineManager
+  composite from `share/audits/stone-story-animation-audit/batch-0.md`); animator
+  the tutor's own bell. Stone Story frames are imported from
+  `share/stone_story_variants.py` (one copy). `share/dashboard_tui.py`
+  `badge_detail()`: Enter on a badge opens its page with progress, art (dim until
+  earned) and the credit line "Art: Stone Story RPG by Gabriel Santos (Martian
+  Rex, Inc.)".
+- **Records:** README Attribution rewritten (no longer says permission is
+  unverified); `STONE_STORY_LOCAL_PROVENANCE.md` publication status updated.
+  Not covered by the confirmation and still excluded: AAHub
+  `bakuhatsu-kemuri` rows and `share/art.json` unknown-licence art (cheer,
+  candle).
+- **Evidence:** `python3 share/test_dashboard_tui.py` → "ok trophy pages show art
+  and credit", "all passed". Headed 80x24 tmux: `/Streak keeper 7`, Enter, Enter
+  showed the badge page with "✓ earned", the 7-row flame and the credit line.
+- **Remaining:** no unlock banner/animation plays the trophy at the moment a
+  badge is earned (that belongs with the post-completion viewer work, owned by
+  the omp session); the static `--tree` still lists only the 8 runtime badges.

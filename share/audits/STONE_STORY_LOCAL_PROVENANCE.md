@@ -2,7 +2,13 @@
 
 **Recorded:** 2026-09-29 (America/New_York)
 **Scope:** local tutor evidence only
-**Publication:** blocked; do not push the 53 local commits that contain these excerpts
+**Publication (updated 2026-09-29, VD-60):** the operator confirmed rights for the
+Stone Story RPG excerpts ("StoneScript people use everywhere, just cite the
+author/Stone Story RPG"); they are published with credit to Gabriel Santos,
+Martian Rex, Inc. That confirmation names Stone Story only: the AAHub
+`bakuhatsu-kemuri` rows below and `share/art.json` pieces of unknown licence are
+not covered by it. The paragraph below is the original 2026-09-29 record.
+**Original status:** blocked; do not push the 53 local commits that contain these excerpts
 
 This register resolves the exact local files used by `share/stone_story_variants.py`
 and the source-backed `.06` transfers in `share/gen_curriculum_v2.py`. It does

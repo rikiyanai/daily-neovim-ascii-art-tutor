@@ -404,9 +404,13 @@ public repository. Back it up somewhere private if you care about the streak.
 
 The drill material is drawn from the ASCII-art tutorial page for **Stone Story
 RPG** by Gabriel Santos, Martian Rex, Inc. — `stonestoryrpg.com/ascii_tutorial.html`.
-Short excerpts are used here as practice material; the art is the author's, not
-mine, and its redistribution permission remains explicitly unverified. The full
-source page/plate files are not redistributed in this repo. The authoring method those excerpts illustrate is summarised, with
+Short excerpts, and frames from the game's StoneScript animation sheets
+(`share/stone_story_variants.py`), are used here as practice material and as
+badge trophy art in the dashboard. The art is Gabriel Santos's / Martian Rex,
+Inc.'s, not mine; each trophy page credits "Stone Story RPG by Gabriel Santos
+(Martian Rex, Inc.)". The full source page/plate/sheet files are not
+redistributed in this repo; the exact sheets used are listed in
+`share/audits/STONE_STORY_LOCAL_PROVENANCE.md`. The authoring method those excerpts illustrate is summarised, with
 per-rule citations, in the `ascii-art-authoring` skill.
 
 ## Licence

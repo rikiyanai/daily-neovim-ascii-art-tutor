@@ -39,6 +39,7 @@ except ImportError:
     sys.exit(0)
 
 import dashboard_tui as D  # noqa: E402
+import dashboard_theme as TH  # noqa: E402
 import v2_runtime as v2  # noqa: E402
 
 cur = v2.load_curriculum(str(HERE))
@@ -285,6 +286,19 @@ def main():
             assert out.returncode == 0, out.stderr
             assert "YOUR JOURNEY" in out.stdout, (args, out.stdout[:300])
         print("ok non-tty --tree / --dashboard / --tree --static print the static tree")
+    # VD-60: every trophy page shows its art and names who made it.
+    for badge in TH.BADGES:
+        trophy = TH.trophy_for(badge["id"])
+        if not trophy:
+            continue
+        for earned in (True, False):
+            row = dict(badge, have=0, need=badge.get("need", 1), earned=earned)
+            page = D.badge_detail(None, row).plain
+            assert trophy["art"][0].rstrip() in page, badge["id"]
+            assert trophy["credit"] in page, badge["id"]
+        if trophy["source"].startswith("official-"):
+            assert "Stone Story RPG" in trophy["credit"] and "Gabriel Santos" in trophy["credit"]
+    print("ok trophy pages show art and credit")
     print("test_dashboard_tui: all passed")
 
 

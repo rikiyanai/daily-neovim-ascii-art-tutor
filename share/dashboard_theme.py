@@ -3,8 +3,10 @@
 Everything a style guide may change lives here as plain values, so a later
 style pass can replace them without touching share/dashboard_tui.py.
 
-All avatar art in this file is original to this repository (the repository is
-public): small shapes drawn for the level ladder, no third-party art.
+All avatar art in this file is original to this repository: small shapes drawn
+for the level ladder. Badge TROPHIES reuse Stone Story RPG animation frames
+(Gabriel Santos, Martian Rex, Inc.); every one carries that credit on screen.
+The operator confirmed publication rights on 2026-09-29 (FAILURE_LOG VD-60).
 """
 
 # Level tiers. A level belongs to the last tier whose `from_level` it reaches.
@@ -145,3 +147,53 @@ ANIM = {
     "pulse_period": 1.2,   # streak flame glow on a personal best
     "sparkle_every": 4,    # sparkle frames per step on the next-badge line
 }
+
+
+# Badge trophies (VD-60): art shown on a badge's page. Stone Story frames are
+# imported from share/stone_story_variants.py so there is one copy of each;
+# `source` is the sheet in share/audits/STONE_STORY_LOCAL_PROVENANCE.md.
+STONE_STORY_CREDIT = "Art: Stone Story RPG by Gabriel Santos (Martian Rex, Inc.)"
+TUTOR_CREDIT = "Art: original to this tutor"
+
+
+def _stone(name):
+    import stone_story_variants as SV
+    return list(getattr(SV, name))
+
+
+# Mine Walker boiler flame, flame A (VV). Composite of the MineManager layers
+# as audited in share/audits/stone-story-animation-audit/batch-0.md.
+MINE_WALKER_FLAME = [
+    "   _,—-.___",
+    "  _\\     _ \\",
+    " | |)   (_) \\",
+    " |_/_//______|",
+    "  VV//  //",
+    "    \\\\  \\\\",
+    "    /|\\ /|\\",
+]
+
+_TROPHY_SPEC = {
+    "first-step": ("stone", "SKULLY_IDLE", "official-Pets/Skully res01"),
+    "transfer": ("stone", "FIREWORK_RADIAL_F3", "official-Cosmetics/Fireworks"),
+    "transfer-adept": ("stone", "FIREWORK_RADIAL_F4", "official-Cosmetics/Fireworks"),
+    "grid-author": ("stone", "SNOWMAN_CHEER_CROP", "official-Pets/Snowman"),
+    "still-artist": ("stone", "FIREWORK_CANOPY", "official-Cosmetics/Fireworks"),
+    "branch-rescuer": ("stone", "PALLAS_GHOST_LEFT_CALM", "official-Foes/PallasCrown"),
+    "streak-keeper-7": ("rows", MINE_WALKER_FLAME, "official-Cosmetics/MineManager"),
+    "streak-keeper-14": ("rows", MINE_WALKER_FLAME, "official-Cosmetics/MineManager"),
+    "streak-keeper-30": ("rows", MINE_WALKER_FLAME, "official-Cosmetics/MineManager"),
+    "animator": ("tutor", ["/--\\", "|oo|", "\\__/'"], "share/animation_lesson_pack.md bell"),
+}
+
+
+def trophy_for(badge_id):
+    """{art, credit, source} for a badge, or None when it has no trophy."""
+    spec = _TROPHY_SPEC.get(badge_id)
+    if not spec:
+        return None
+    kind, art, source = spec
+    if kind == "stone":
+        return {"art": _stone(art), "credit": STONE_STORY_CREDIT, "source": source}
+    credit = STONE_STORY_CREDIT if kind == "rows" else TUTOR_CREDIT
+    return {"art": list(art), "credit": credit, "source": source}

@@ -487,6 +487,29 @@ def command_detail(model, row):
     return out
 
 
+def badge_detail(model, row):
+    """Badge page: what it asks for, progress, and its trophy art with credit."""
+    from rich.text import Text
+    S = TH.STYLE
+    out = Text()
+    out.append(row["glyph"] + " " + row["name"] + "\n", style=S["ok"] if row["earned"] else "bold")
+    out.append(row["desc"] + "\n", style=S["meta"])
+    if row["earned"]:
+        out.append("✓ earned\n", style=S["ok"])
+    else:
+        out.append("%d/%d so far\n" % (row["have"], row["need"]))
+    trophy = TH.trophy_for(row["id"])
+    if trophy:
+        out.append("\n")
+        style = "" if row["earned"] else S["meta"]
+        for line in trophy["art"]:
+            out.append("  " + line + "\n", style=style)
+        if not row["earned"]:
+            out.append("  (full colour once earned)\n", style=S["meta"])
+        out.append("\n" + trophy["credit"] + "\n", style=S["meta"])
+    return out
+
+
 HELP = """KEYS
   j / k        move down / up          g / G   top / bottom
   za           open or close a fold    zo / zc open / close
@@ -783,6 +806,8 @@ def make_app(model, *, state, animate=None, colour=None):
                 self.push_screen(Page(module_detail(self.model, node.parent.data[1])))
             elif kind == "command":
                 self.push_screen(Page(command_detail(self.model, data)))
+            elif kind == "badge":
+                self.push_screen(Page(badge_detail(self.model, data)))
             else:
                 self.push_screen(Page(node_label(kind, data, 200)))
 
