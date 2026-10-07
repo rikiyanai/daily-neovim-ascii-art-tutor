@@ -6252,3 +6252,1196 @@ Plan: `share/audits/MEMORY_SPACED_REVIEW_PLAN_2026-09-29.md`.
   `suspend()` under `run_test()` was not attempted). Items whose saved work
   equals the start (whitespace-only edits: M11.WS, M11.LS, M11.TR) show as a
   one-frame `still`.
+
+## VD-64 · 2026-09-30 — full handoff backlog resumed with explicit ownership
+
+**Request:** complete the handoff backlog; do shared style work in parallel;
+read newly added notes; assess whether the Shift-JIS design is sufficient.
+
+**Ownership:** style/dashboard/avatars, curriculum/keys/questions, viewer
+rewards, and deck/tmux quiz are disjoint worker lanes. Codex root owns runtime,
+gate integration, this ledger, and final headed verification. Foreign
+`share/demo_notes.json` and `share/demo_ui_proposals.py` stay uncommitted and
+unmodified. No commit, push, GitHub feedback publication, or live skill
+installation is authorized by this work request.
+
+**New feedback read:** 2026-09-30 16:00 M0.01 result: "lesson has
+errors/mismatches". Added to the curriculum lane rather than treating the
+handoff's old green suite as fresh evidence.
+
+**Decision:** trophies and level-up moments play in the viewer only, with
+one skippable celebration capped at two seconds per completion. Textual
+lesson/result surfaces and GitHub feedback destination remain awaiting
+operator answers; avatar/Gemini visual acceptance also remains distinct
+from implementation.
+
+**Shift-JIS boundary:** installed Neovim's `iconv` successfully converts
+`⌒ヽ` from UTF-8 to `sjis`. Current M10 grades Unicode transcription and
+describes Saitamaar true-metric review, but no end-to-end proportional
+preview/acceptance workflow is wired in this tutor. Encoding support does
+not prove proportional layout. The existing terminal player is not that
+visual proof. Design assessment remains open, not claimed implemented.
+
+**Status:** work started; no final verification or completion claimed.
+
+## VD-65 · 2026-09-30 — one semantic palette and task-first lesson brief
+
+**Change:** shared `ui_style.py` drives dashboard, viewer, gate ANSI and
+Neovim highlight roles. NO_COLOR/TERM=dumb are respected. Brief status and
+DO THIS/TARGET/RECIPE precede repeated reference material in a closed MORE
+fold. Reminders are filtered to the current commands, M11.CUC describes
+Dracula rather than the unrelated missile, visible recipes receive SHAPE,
+and Normal-mode REMEMBER trees receive the actual available width.
+Compact choice prose and result breakdowns wrap rather than silently clip.
+Wrong command spans retain matching keys in green and differing keys in red;
+the substitution concept is colored by slot. Plain lesson art is unstyled.
+
+**Style lane:** shared badge descriptors/evaluator, more icons, best-streak
+flame animation and the specified twelve-stop pink-purple band; fifteen
+review-only original avatar candidates (three each for Lv3–Lv7). Current
+avatars are not replaced without selection. Gallery Enter/w has Pilot coverage.
+
+**Evidence so far:** parent `test_runtime_ui.py` passes including actual
+headless Neovim MORE-fold creation; `test_feedback.py`, `test_ui_style.py`
+and `test_viewer.py` pass after integration. Worker dashboard tests passed;
+parent fresh headed layout matrix remains required. No visual acceptance
+of the avatar candidates or palette is inferred from tests.
+
+## VD-66 · 2026-09-30 — viewer-only unlock hook and shared project lookup
+
+**Decision:** badge and level rewards share one skippable viewer celebration
+capped at two seconds total. Practice repeats do not trigger rewards.
+The viewer combines pulse/gradient/sparkle, restores terminal state and has
+static/no-color/disabled fallbacks with credits. Ordinary lesson art has no
+automatic diff/onion styling; diagnostics remain explicit opt-ins.
+
+**Change:** runtime snapshots earned badge identities before credit, compares
+them after rebuilding and invokes the viewer once. Static tree uses the same
+badge evaluator as the dashboard. Both automatic module-check preview and
+interactive project viewing resolve renamed folders by manifest module identity.
+Stone Story trophy loading works through a sibling filepath, not implicit sys.path.
+
+**Evidence:** `test_runtime_ui.py` verifies the runtime reward hook, two-second
+argument, practice suppression, shared static badges and old-folder preview;
+`test_viewer.py` verifies PTY skip, bounded time, restoration and raw art.
+Fresh full-suite/headed proof remains pending.
+
+## VD-67 · 2026-09-30 — method result and taught-method evidence are separate
+
+**Change:** a positively recognized declared alternative can satisfy a card's
+method gate only alongside the existing exact-artifact check. Empty or unknown
+key traces do not pass. Declared alternate use is retained on the event, and
+the taught command deck items become due again through append-only deck events.
+An exact result with an undeclared method reads yellow RESULT ✓ · METHOD ✗,
+not a red artifact mismatch. Recovery applies the same method rule.
+
+**Evidence so far:** focused runtime tests prove declared/undeclared/empty trace
+grading. Full edit/recovery/deck due integration still requires regression proof.
+No new alternatives were invented merely to relax a difficult lesson.
+
+## VD-68 · 2026-09-30 — Shift-JIS design assessment, not a rendering claim
+
+**Answer:** Vim and Neovim support Shift-JIS file conversion. Official multibyte
+help distinguishes `sjis`, `shift-jis`, and `cp932`; these are similar,
+not interchangeable. Installed Neovim iconv converted the local sample.
+
+**Assessment:** the current M10 text contract is sufficient for a Unicode
+transcription exercise, but not for claiming a complete proportional Shift-JIS
+art workflow. The inherited `sjis_corpus_findings.v1.json` already pins source
+dataset/hash and Saitamaar-Regular.ttf at 16px/17px line pitch with a font hash;
+those are specified, not missing. The remaining end-to-end contract must connect
+that corpus/font identity to actual rendering and attribution; select strict
+import/export encoding and failure handling; preserve spaces/glyphs without
+normalization; provide a real-metric preview before submission; and distinguish
+text equality from visual-join acceptance. Terminal
+cell alignment is not proof of proportional joins. Static art is sufficient;
+no proportional animation timing rules are inferred from the monospace skill.
+
+**Boundary:** no encoding conversion of learner files, new browser preview,
+or visual acceptance was silently introduced. Those require a concrete design
+choice beyond the inherited terminal exercises.
+
+## VD-69 · 2026-09-30 — course-wide deck and Prefix+Q quiz popup
+
+**Change:** authored deck coverage spans M0–M19 (79 groups, 91 items), with
+only pure horizontal/upward cursor-navigation omissions documented. The
+validation reads authored source independently of generated curriculum.
+Prefix+Q launches the quiz in a session-scoped popup; install.sh includes
+the launcher. No live user tmux configuration was sourced or installed.
+
+**Evidence:** worker full deck test passed 3320 checks; parent live sandbox
+`test_tmux_quiz_popup.py` passed at 80x24 after shared-style integration,
+capturing the real question and unchanged global tmux options. Final deck
+coverage must be rerun after the curriculum lane's regeneration.
+
+## VD-70 · 2026-09-30 — complete prose, local folds and compact target visibility
+
+**Defects reproduced:** inherited indentation folds hid TARGET/reminders
+when the brief changed to manual folding; long key explanations scrolled
+result headings away; the revised M19 six-row target lost its bottom rows
+at 80x24. One 80x24 full-route run also missed M7's second dot-repeat despite
+captured keys; the isolated same route passed, so that run is not green proof.
+
+**Corrections:** clear inherited folds before creating the local MORE fold.
+Keep full explanations in explicit `k` detail pages, budgeting actual wrapped
+rows; compact questions use authored short choices rather than clipped long
+choices. A larger compact brief plus a combined hidden-key TARGET/HINT line
+keeps all six M19 target rows visible without replacing personal lualine.
+ANSI roles derive from one semantic table; focused tests caught and corrected
+a literal escape-string regression immediately.
+
+**Evidence so far:** focused runtime/style tests pass; M19 headed transfer
+passes at 80x24,100x36,188x49; quiz popup passes. Earlier full 100x36/188x49
+route runs passed, but fresh full matrices after the last integration and
+curriculum mutation remain required. No full closure claimed from these checks.
+
+## VD-71 · 2026-09-30 — installed editor encoding round trips verified
+
+**Evidence:** `share/test_encoding_support.py` passed four strict byte round
+trips: Vim/Neovim × Shift-JIS/CP932, including full-width space, Japanese
+glyphs and half-width katakana. Unrepresentable emoji rejects strict export.
+This is file read/write evidence, not proportional-layout evidence. M10's
+Unicode equality and the true-metric preview/visual contract remain distinct.
+
+## VD-72 · 2026-09-30 — quiz popup reuses the mouse-restoration owner
+
+**Defect:** the new quiz launcher did not lease session mouse state, so
+inherited mouse=on could interfere with terminal drag selection. Its title
+also advertised q although the deck's actual stop command is s.
+
+**Change:** quiz delegates to the existing force-popup owner with a whitelisted
+--quiz mode. It restores the same session's inherited/local mouse state and
+never changes server-global options. The title now names s. No live config
+was sourced. Lessons without a flag keep the existing --force behavior.
+
+**Evidence:** fresh `test_tmux_quiz_popup.py` runs Prefix+Q against a sandbox
+with global mouse=on, sees the real quiz and local mouse=off, stops with s,
+then verifies removal of the local override/owner and unchanged global options.
+Shell syntax passes. No clipboard contents were mutated by this test.
+
+**Additional controls:** inherited mouse state and pre-existing local on/off
+overrides all pass the same real Prefix+Q popup/restoration test.
+
+## VD-73 · 2026-09-30 — reward credit batches and method lifecycle controls
+
+**Change:** a compact celebration rotates complete title/credit batches rather
+than truncating later rewards. Explicit viewer diff uses the shared ok role.
+Result/map/check marks use semantic colors; source prose and quiz headings wrap.
+
+**Evidence:** focused runtime tests include a 25-reward compact batch preserving
+every credit, wrapped detail entries across pages, and declared-method credit
+plus taught-command due events on both fresh and recovered artifact paths.
+Editor/key capture in those lifecycle controls is a fixture, not headed proof.
+The current M11.TR authored recipe passed headed at 80x24/100x36/188x49; the
+historical offset report remains unreproduced and no cause/fix is inferred.
+Final curriculum/full-route reruns still remain.
+
+## VD-74 · 2026-09-30 — integrate curriculum bridges without bypassing gates
+
+**Initial failures:** regeneration required new quiz coverage for :vsplit, :q,
+and :read #. After adding it, runtime validation found three hidden-command
+hint leaks. The fresh quality check also caught three before-question answer
+leaks and reused generic question halves. Full curriculum assertions exposed
+repeated fixtures, missing new review IDs and metadata/glyph distinctions.
+
+**Change:** added three authored deck groups; removed the hidden answers from
+hints and before-choice options; authored all 22 new paired question records
+instead of retaining source-only scaffold patches. The added practice uses
+distinct source phases/explicit registration offsets, texture glyphs, or
+numbered metadata. The g_ transfer now has real trailing alignment spaces.
+Preserved the unique-fixture, hidden-answer and glyph gates. The brief's MORE
+fold retains both its lesson title and the actual skill description.
+
+**Evidence so far:** revision 2026-09-30.66 regenerated as 20 modules,
+248 cards and 428 questions. All 428 question-quality checks pass; deck
+validation/headed 80x24 checks pass (3782 assertions). The fresh Textual Pilot,
+viewer/celebration pty, shared-style, feedback, encoding, runtime-UI,
+Stone Story provenance/variant and 46-drill tests pass. A prior dashboard
+cursor assertion did fail; its fresh rerun passed without a timing workaround.
+Full curriculum and final headed matrices are still in progress, not passes.
+
+## VD-75 · 2026-09-30 — repair fresh integration failures and preserve their controls
+
+**Initial failures:** the full primary replay found disconnected M10/M19
+project sequences, literal `<LT>` notation in a driver that did not decode it,
+and a M19 review that looked for a calm eye in the already-strained pose and
+changed unrelated contour rows. The line-0 review target omitted the copied
+source alteration. M4.REF left an unsaved scratch buffer behind, hanging an
+old unbounded replay; its fresh headed route then exposed recovery treating
+an unchanged initial drawing as a completed attempt. Required `:q` evidence
+was also stripped as though every quit were the final submission.
+
+**Changes:** supplied the later source poses at the first project checkpoint,
+kept every subsequent checkpoint continuous, and corrected the bounded copy
+destinations/ranges and authored questions. Virtual Replace uses literal `<`
+consistently; reviewed eye edits preserve all supplied contour rows. Reference
+cleanup wipes only its disposable buffer. Unchanged-art workflows open the
+editor, and exact required paths retain close-window evidence. All replay
+subprocesses have timeouts; viewer pty children have bounded completion.
+
+**Headed diagnosis:** at 80x24 the oversized brief left only two art rows.
+Opening Noice's command line moved the cursor from row 2 to row 1, so the
+captured correct `:s/-/=/g` failed with E486. A delay alone and a cursor-preserving
+view restore did not fix it. Reserving art/command-row space did: the same
+trace retained row 2 and produced the exact target. The compact comparison
+instruction and honest deletion-transfer prompts retain the full six-row
+target. Scrollable teaching tests read recipe and submit sections separately.
+
+**Other controls:** sixteen remaining first-border-only microcard review
+variants were replaced with explicitly original tutor material/identity
+studies, not mislabelled official source frames. Their acting glyphs and
+scope vary; the two line-0 plan variants preserve both copied occurrences.
+All 176 review recipes independently replayed in isolated Neovim without
+mismatch; the registered Stone Story variant suite now reports zero remaining
+border swaps. Fresh 428-question, deck, runtime-UI and viewer/celebration tests
+pass. M0.06, M19.06, M0.05 and the full viewer popup pass fresh at 80x24;
+M4.WIN/REF and M19.VRH direct headed routes pass. Full route matrices and the
+full curriculum suite remain pending; these are not yet final suite passes.
+
+**Cleanup:** terminated only this session's stale 22:00 full-suite process
+69988 and its scratch Neovim child 71819 after exact PID/parent/path readback.
+No learner data, files, global tmux option or live learner Neovim was removed.
+
+## VD-76 · 2026-09-30 — current canonical suite and compact Pallas readback
+
+**Failures retained:** the full suite reached semantic-method assertions and
+failed on the retired learner label "addressed copy". Later symbol-alert checks
+still expected their first introduction on hidden cards even though the new
+guided prerequisites now introduce those meanings first. Assertions now use
+the declared evidence-kind label and test the actual guided introduction plus
+non-NEW retrieval; command recognition and exact artifact gates are unchanged.
+One piped diagnostic printed a Python failure despite the pipeline's zero exit;
+fresh canonical reruns use pipefail and inspect the summary/exit together.
+
+**Compact correction:** fresh M19.01 and M19.VRH headed checks caught prose
+occupying the last target rows at 80x24. Short, specific task sentences now
+leave all six supplied target rows visible. The same authored commands and
+all fixed rails/contours remain the acceptance target.
+
+**Fresh evidence after regeneration:** canonical `test_v2.py` exits 0 with
+248/248 lessons and 207/207 primary edits, graph/questions/state checks,
+all transfer/compare/review replays. Question quality passes 428 questions.
+Runtime-UI, shared style, feedback, strict editor encoding, provenance,
+source variants, both animation-pack gates, 46 drills, setup, Textual Pilot,
+deck/headed 80x24 and viewer/celebration PTY suites pass. Automatic popup/viewer
+and Prefix+Q quiz checks pass at 80x24,100x36,188x49. M19.01/.02/.VRH and the
+five-row alternate M19.06 each pass directly at all three sizes. The full
+28-route matrices are still awaiting collection; not yet claimed green.
+
+**Cleanup:** after exact parent/command readback, terminated only this
+session's superseded unbounded viewer test PID 42672 and celebration child
+43400. The replacement bounded viewer PTY suite exits normally. Real learner
+processes and unrelated historical test processes remain untouched.
+
+**Acceptance boundary:** the user confirmed viewer-only celebrations up to
+two seconds. Avatar picks, Gemini visual acceptance, Textual lesson/result
+scope, feedback publication destination/auth and signature policy remain
+operator decisions, not silently accepted by passing tests. No commit/push
+or live tmux installation is included.
+
+## VD-77 · 2026-09-30 — final fresh headed matrices collected
+
+**Evidence:** after the last curriculum/compact-task edits, fresh
+`test_tmux_v2_routes.py` processes exit 0 at 80x24,100x36,188x49. Each includes
+eight primer/concept/retry/guided/retrieval/method/check/review routes and all
+twenty module transfers: 28 routes per size, 84 total. No earlier failed or
+pre-repair run is substituted for these results. Direct six-row Pallas
+guided/hidden checks and its five-row alternate transfer also pass at each
+size; automatic popup/viewer and Prefix+Q tests pass at each size.
+
+**Closeout:** approved 6A/6B implementation work is represented in the tree
+and passes the fresh canonical/registered/headed gates documented by VD-76
+and this entry. Section 6C choices/visual acceptance remain explicit in the
+handoff index. Encoding byte preservation is proved, not proportional SJIS
+layout. No commit, push, live configuration install, avatar selection,
+signature alteration or GitHub feedback publication was performed.
+
+## VD-78 · 2026-09-30 — automatic achievement playback includes spaced reviews
+
+**Clarification:** "in the viewer" names the rendering surface, not a manual
+launch requirement. Whenever a new level or achievement is earned, its viewer
+celebration opens automatically, is skippable, and lasts at most two seconds.
+
+**Gap found/repair:** lesson/concept/module-check completion already calls the
+reward viewer automatically. Spaced reviews award XP and badge progress but
+omitted that call. Their completion path now captures previous progress/badges
+before the attempt and invokes the same reward hook after a successful rebuild.
+Failures and practice remain non-celebrating; already-earned badges do not replay.
+Deck quizzes have no XP/achievement awards and are not given invented rewards.
+
+**Proof:** new completion-sink fixtures prove automatic First step playback,
+no duplicate badge replay, a spaced-review 79→82 XP level-up, a fifth distinct
+review earning Review keeper, and no failed-review playback. Each uses one
+two-second viewer batch without a manual viewer command. The first test seed
+reused an already-capped review stage and therefore earned no Review keeper;
+distinct review keys corrected that fixture, not the product's badge threshold.
+Fresh runtime-UI, viewer/skip/timing/restoration PTY and full curriculum suites
+pass. Automatic popup/viewer headed checks pass at 80x24,100x36,188x49.
+
+## VD-79 · 2026-10-01 — independent review of the VD-64…VD-78 batch: suite green, closeout overstated, new wording regression
+
+- **Request (operator, chat):** "review progress, make end to end handoff for
+  everything still missing".
+- **State:** HEAD `20d9c70`. The VD-64…78 work is uncommitted (27 modified, 9
+  new files). The network was offline, so there was no fetch.
+- **Re-run by Claude on this tree, all PASS:** test_v2 (248/248, 207/207),
+  question_quality (428), feedback, deck (+ headed 80x24), dashboard Pilot,
+  viewer, runtime_ui, ui_style, encoding_support, stone_story_variants,
+  provenance, drills 46, setup_check, both animation-pack gates. Headed 80x24:
+  test_tmux_v2, test_tmux_quiz_popup, test_tmux_v2_routes (28). No orphans.
+  The 100x36/188x49 matrices were not re-run (Codex claims, VD-77).
+- **New regression:** a regex in `gen_curriculum_v2.py` (~6759-6770) rewrites
+  "address" → "scope marker" and "ex" → "command-line" in learner text.
+  Verified in 4 card title/prompt/hint fields and 30 questions (M0.SR "scope
+  marker one row and substitute"; M11.VE "scope marker an empty registered
+  column"). The question-quality gate does not catch it.
+- **Closeout overstated (subagent source check, spot-verified):**
+  - M4.DIFF still raises ★NEW 3.
+  - M13.BE still raises ★NEW 2.
+  - Hidden M16.04 is ordered before guided M16.INC.
+  - M15.MAC3 is ordered before M15.MAC.
+  - 112 cards keep the generic hint template.
+  - `:[range]d` has no teach/example entry.
+  - The M15.08 variant keeps the `qq ... q` placeholder.
+- **M0.01 feedback (2026-09-30 16:00) only partly fixed:**
+  - Fixed: the recipe/gate mismatch (recipe row is now `j0`).
+  - Verified still open:
+    - the hint says "Start with 0" without `j`;
+    - the vocabulary cites `/pattern<CR>`.
+  - Reported by the subagent, not verified: the P01 boxes are ragged (8 vs 7
+    cells), and the first edit raises ★NEW 3.
+- **Handoff:** `share/audits/HANDOFF_CODEX_2026-09-30.md` §9 (supersedes the
+  §6/§8 status) lists every remaining item, the decisions needed, and the
+  order of work.
+
+## VD-80 · 2026-10-01 — execute handoff §9.3/§9.4 before the commit checkpoint
+
+- **Request:** The operator directed Codex to execute the supplied handoff.
+  The execution order remains §9.8. No commit or push is authorized.
+- **Source base:** HEAD `20d9c70`. Prior VD-64…VD-78 edits remain uncommitted.
+  `share/demo_notes.json` and `share/demo_ui_proposals.py` remain foreign,
+  untracked files. This execution does not edit them.
+- **Wording repair:** Remove the generator's `_LEARNER_REWRITES` table and
+  all recursive rewriting functions. Correct the authored strings in the
+  generator, question banks, changed-art variants and catalog directly.
+  `share/learner_text.py` inspects prose without modifying it. The question
+  gate scans stages, modules, cards, questions, review/retry prose, method
+  labels, key-teaching tables and symbol-role explanations. It rejects
+  `scope marker`, `an command-line`, `Ex` and address-word forms. Internal
+  parser role IDs and provenance are not prose-rewritten. Twelve rejection
+  controls and one plain-English positive control run with the gate.
+- **M0.01 repair:** The hint now states `j0` → `f*` → `ro`. Its authored
+  vocabulary contains only that path and the declared `jf*ro` alternative.
+  All P01 art-box interiors have eight cells. Navigation-only M0.L0 and
+  M0.F0 precede M0.01, so the three lessons each raise NEW 1 (`0`, `f{char}`,
+  `r{char}`). Both navigation cards retain the source art unchanged and
+  require their short captured method. Real Neovim checks assert final row
+  and display column. M0.01 accepts both declared paths; `ro` alone fails.
+  The alternate path executes against the exact target in the recipe suite.
+- **Rendered vocabulary:** The real brief now honors authored vocabulary.
+  A scoped authored shape removes the unused `/text<CR>` comparison from
+  M0.01. A changed drawing clears inherited primary vocabulary/shape before
+  applying its own fields, so Dracula reviews do not inherit Fireworks keys.
+- **Failed checks retained:** The expanded curriculum initially failed old
+  source-count, unique-art, manual-prerequisite and module-total fixtures.
+  The navigation cursor check used byte column instead of display column;
+  `virtcol('.')` corrected that test. A new method control initially used a
+  configuration fixture before its definition. Headed progress tests still
+  expected one prerequisite/10 XP instead of three/30 XP. After authored
+  vocabulary reached the brief, the headed test expected the old generic
+  sentence. A 100x36 capture sampled a partially redrawn viewer because its
+  wait checked only the title; it now waits for all asserted footer controls.
+  An 80x24 save probe sampled a temporarily missing path during `:w`; the
+  bounded read now waits for the asserted saved content. Missing/wrong-save
+  negative controls still fail. These are test repairs, not claims that the
+  operator's Neovim configuration was defective.
+- **Observed final headless evidence:** `test_v2` passes 250/250 lessons and
+  209/209 primary recipes, plus `jf*ro`. `test_question_quality` passes 430
+  questions. Feedback, dashboard Pilot, viewer, runtime_ui, ui_style,
+  encoding_support, Stone Story variants/provenance, drills (46/46),
+  setup_check and both animation-pack gates pass. `git diff --check` passes.
+- **Observed targeted headed evidence:** The automatic client-attached popup
+  passes at 80x24, 100x36 and 188x49 with the real user configuration. The
+  navigation labs and no-0 alternative passed the isolated 80x24 route test.
+- **Full headed matrix, collected final runtime:** PASS at 80x24, 100x36 and
+  188x49. Each chain exits 0 after the automatic popup, real Prefix+Q quiz,
+  deck/warm-up and 31/31 routes (28 existing routes plus two navigation labs
+  and `jf*ro`). That is 93 final route passes, not a sum of repeated runs.
+  Production hashes were re-read after collection and match the identities
+  below. Superseded runs also exited 0, but are not final-source evidence.
+  Final process-list readback found no matching test-owned tmux/Neovim or
+  `nvim --embed` processes. No unrelated process was stopped.
+- **Final production source identities (SHA-256):**
+  - curriculum: `07fd04527eb419c29cb21bbf102f54cdd0ab5c1566cf347d524c09ae2ef3ee55`
+  - generator: `e078e7aa04b6cf884564f636b4cc13747f85d7cfa2c527cc5abb26d3c6fd4d15`
+  - runtime: `fbd2c2b76f502331e20ed1ae8ac68eec405586306e95f003005411a22e593032`
+  - key renderer: `e3cccae78f942f6993de4160fe1d359d29a92ea27bad4ecebd0fc6b127718e32`
+- **Still open:** §9.5 partial backlog, §9.6 operator/visual decisions and
+  §9.7 proportional rendering. This entry does not close them. The matrix
+  checkpoint is complete. Ask the operator to authorize the commit before
+  step 5. HEAD remains `20d9c70`; the foreign demo-file hashes remain unchanged.
+
+## VD-81 · 2026-10-01 — authorized parallel course continuation and new feedback
+
+- **Request:** The operator authorized continuing the full handoff/course work
+  and explicitly requested parallel agents. This lifts the previous §9.5 pause;
+  commit/push and the foreign demo files remain outside the authorization.
+- **Inputs inspected:** The complete handoff, adversarial review R1–R4,
+  protected demo notes and the real feedback log. New 10-01 notes name art-row
+  rendering errors in M11.GM.P01, M11.ER.P01 and M11.06.P01. The 17:30 M0.SL
+  note requires correct-result/wrong-method acknowledgement, red/green key
+  comparison and teaching that matches the requested operation.
+- **Execution owners:** Parallel lanes own curriculum/keys/questions,
+  runtime/grading/editor receipts, viewer/UI/avatar candidates, and the JIS
+  backend. The root owns integration, generated curriculum, verification,
+  failure-log records and the final receipt. Existing unrelated edits and real
+  learner progress must be preserved.
+- **Acceptance owner:** `share/audits/COURSE_COMPLETION_LEDGER_2026-10-01.md`
+  lists C01–C25, their sources, evidence and open reasons. No implementation or
+  acceptance is claimed by dispatching a worker.
+- **Open design choices:** Proportional preview surface and Textual lesson/
+  result scope requested asynchronously. Avatar/Gemini operator acceptance,
+  tier cut-offs, signatures and GitHub target/auth remain explicit. No external
+  feedback is posted and no source art is silently normalized or discarded.
+- **Starting identity:** HEAD `20d9c70`; the previous implementation is still
+  uncommitted. New proof must follow the final integrated source.
+- **Collected partial lanes:** JIS backend and viewer/UI workers returned final
+  receipts. The root inspected their source. The backend's 14 strict-byte,
+  native-font, raster and stale-input tests passed again. The root added a
+  separate browser-display acknowledgement and tutor file-lifecycle adapter;
+  four connected protocol tests pass. HTML/JSON generation alone does not
+  establish display, and a browser callback is not human artistic acceptance.
+  The root strengthened mixed font-size/pitch rejection and stale display
+  rejection. Runtime integration and a real browser invocation remain pending.
+- **Coordination attempt:** A new bounded task to the completed JIS worker was
+  refused by the global 25-minute cadence hook. No worker was claimed active
+  from that refused call. The root continued integration in the returned files.
+  No coordination guard or global configuration was changed.
+- **Later decisions:** The operator selected Ghostty terminal rendering and
+  Textual lesson/result screens. Browser proof does not satisfy the terminal
+  requirement. The operator reaffirmed row-offset incorrectness and directed
+  the root to use saved notes rather than require screenshots.
+- **Latest notes:** All 17 saved feedback rows were read. The earlier snapshot
+  missed M11.02 at 17:54 and M0.L0/F0 at 17:57/17:58: operation-specific scope,
+  actual repeat, and a demonstrated motion rather than one static animation.
+  The completion ledger now carries C26–C30 without closing pending proof.
+- **Row cause:** The box renderer padded inner rows but retained old gaps
+  which compensated for unequal row widths. The root aligned the inter-box
+  gaps as separate columns and added saved-question controls. Final regression
+  is pending; passing the editor recipe never closed this layout report.
+- **Terminal partial proof:** Three native PNG byte/chunk, four-current-panel
+  and cancellation/unbound-acknowledgement fixtures passed. The editable art
+  remains text. Actual Ghostty/tmux display remains unproved. App inspection
+  was refused; no alternate control path or configuration change was attempted.
+- **Actual Neovim falsifier:** `python3 share/test_cursor_real.py` failed on
+  the normal M0.L0 `j0:wq` path in a clean, actual Neovim PTY. `:wq` closes
+  the art window; its `BufWinLeave` schedules `qa!` for the brief. At
+  `VimLeavePre`, the art window is invalid and the capture writes no receipt.
+  Mock receipts did not exercise this path. Navigation acceptance stays open.
+  Required repair: snapshot the final art cursor before invalidation, then
+  persist the identity-bound snapshot only at the actual exit boundary.
+- **Coordination refusal:** A concrete defect message to the active UI owner
+  was refused by the installed global 15-minute contact guard with 395 seconds
+  remaining. The worker was not treated as informed. No guard bypass or
+  overlapping receipt edit was performed.
+- **Exit-boundary contrast:** The same actual clean Neovim PTY passes
+  `j0:qa!`, binding row 2/display column 1, while ordinary `j0:wq` loses
+  the receipt. A separate wide-glyph control passes after switching focus
+  to the brief before `:qa!`: the art receipt reports byte column 7 and
+  display column 5. This isolates window-close lifetime from recipe syntax
+  and confirms that the repaired display-column lookup uses the art window.
+- **Independent native gates:** The connected M10 runtime control passes
+  again for current displayed exact text and denies credit for blank trailing
+  U+3000/U+0020 even when native pixel equality is true. Transcription and
+  pixel evidence are separate. Fixture ACKs are not actual Ghostty proof.
+- **Defect delivery:** After the installed contact window cleared, the
+  substantive ordinary-`:wq` finding and direct/wide positive contrast were
+  successfully delivered to the active UI owner. Source ownership remained
+  with that worker; the root did not edit the receipt block concurrently.
+- **Returned-source integration:** All four initial parallel lanes returned.
+  A second UI task returned the source-motion tab. The root found duplicated
+  visual evidence on older question records and identical guide/hidden start
+  art in several new pairs. The root restricted completion-bank evidence to
+  its owned question IDs and changed hidden materials and both review variants.
+  Operation-specific feedback replaced repeated distractor explanations.
+  The quality gate now passes 471 questions. Ten course tests execute the
+  17 new guided/hidden pairs and both hidden review variants in clean Neovim.
+  The disposition record now names executable paths for all 46 legacy IDs.
+- **Saved note 18:** The root directly read M11.GP feedback at 18:23 on 10-01.
+  It objects to transcript-sequence rejection and missing new animations.
+  The recorded GP lesson/question events are passes; the captured attempt
+  includes extra g-/g+ travel. That does not dismiss the wider grading report.
+  The root removed incidental primitive positioning from method evidence,
+  kept operator/Visual scope, and changed guided history contracts to their
+  named history operation. Navigation cards require 0 or f* plus the fresh
+  cursor goal, without the old exact-path/key-count limits. Artifact equality
+  remains required. Normal prefixes/arguments are atomic evidence events:
+  gg+ cannot pretend to be g+, and fX followed by r* cannot pretend to be f*.
+- **Truthful motion:** M0 and M11 expose credited source poses in a separate
+  Source motion tab. m opens it; space pauses; h/l step. Playback uses declared
+  0.35-second tutorial pacing, not an invented source FPS. Navigation overlays
+  and still studies are labeled not animation. Frog history studies are named
+  Frog, not Missile. Text remains the canonical editable artifact.
+- **Receipt repair verified:** The gate snapshots the art cursor before window
+  invalidation and refreshes it at actual exit while the art window still exists.
+  Seven actual clean Neovim PTY controls pass: ordinary wq and qa!, extra jjk0,
+  shell spoof denial, stale-correct-snapshot denial, f* acceptance, and fictitious
+  f* denial despite exact artwork and cursor. The separate wide control binds
+  byte column 7/display column 5 after switching to the brief.
+- **Textual integration findings:** Failed-result Repeat and lesson Close each
+  reached a second plain prompt. The runtime now returns those actions through
+  the launcher-owned route instead. Automatic-viewer-off previously discarded
+  the views needed by explicit Watch; it now suppresses only automatic playback.
+  The actual PTY harness observes after-refresh mounts, real Neovim and actual
+  dashboard subprocesses. Harness repairs include atomic observation JSON,
+  explicit TERM, reflected-module registration and correct class mount wrapping.
+  It does not mock grading, cursor receipts, dashboard widgets or progress.
+- **Current snapshot:** Revision 2026-10-01.68 contains 20 modules, 291 cards,
+  250 recipe-bearing edits, 61 concept/check surfaces and 148 review banks.
+  The three automatic client-attached popup tests pass again at 80x24, 100x36
+  and 188x49 with real user configuration. Full recipe suites, 31-route matrices
+  and the final actual Textual route run are pending collection. Actual Ghostty/
+  tmux native display, human join/contour approval and avatar/operator choices
+  remain open. No commit/push or real learner-state rewrite was performed.
+- **Operator addendum C31/C32:** The operator requires correct target plus
+  actually used taught commands to pass regardless of extra, reordered or
+  exploratory input. A worked recipe is not an exact sequence contract.
+  Correct target without the taught command must say TARGET CORRECT, paint
+  used commands green and the missing taught command red, and offer instant
+  Repeat. The root replaced ordered recipe matching with unordered atomic
+  command presence and removed key-count limits. Focused semantic negatives,
+  reordered positives, result-ledger checks and seven actual cursor controls
+  pass. Minimal focal-command classification and full integration remain open.
+  C32 requires a reached multi-frame result reward, not only a reference tab;
+  a separate UI lane owns that implementation and actual result-page proof.
+- **New full-replay falsifiers:** The authored M11.GM golden target is wrong:
+  its branch recipe ends at the abandoned ! take, not the declared dash take.
+  The clean M4 :vnew fixture also leaves an original window open after :wq.
+  A course lane owns the exact history target/question repair and legitimate
+  replay save/close correction. Neither failing run is counted as acceptance.
+- **Attempt-history boundary:** The operator reports M11.UT four untouched-art
+  target mismatches and M11.GP passing at 18:21. Those UT attempts do not prove
+  rejection of a correct result. The UT lesson's unrelated five-step method
+  demand remains a separate design defect to repair under C31.
+- **Collected actual UI evidence:** The pre-C31 actual Textual route suite
+  passes 80x24, 100x36 and 188x49 for lesson/source-motion/result, failed
+  Repeat, credited practice with unchanged events, Next, explicit Watch,
+  dashboard, saved feedback and Close. This does not prove the C32 reward.
+  Broad nested-tmux matrices stop at M10.06 before editor readiness because
+  their capture terminal cannot acknowledge native graphics. The default
+  full matrix retains that gate. An explicit --without-native-display run
+  scopes non-native route proof; it does not bypass production or establish
+  actual Ghostty display.
+- **Focal policy and actual C31 grades:** The source-checked policy covers 126
+  declared method cards and adapts selected variant operands without recipe
+  positioning or order. Root review corrected eight focal values and fourteen
+  changed-operation paths. Complete named-register operations stay bound;
+  quotes and Insert text are not command credit. Ten policy tests pass on .71.
+  Seven actual gate grades pass: early g+ gets GP credit; absent and Insert g+
+  get TARGET CORRECT/instant retry; alternate dw and comparison positioning
+  get credit; Visual u and ranged Visual :earlier do not pretend to be Normal
+  history commands. Used commands are green and missing focal commands red.
+  Extra keys and previously undone taught commands are allowed under C31.
+- **History redesign:** UT/UTH now keep the chosen three-row take first and
+  append the recovered abandoned take. Primary and both review recipes execute
+  correctly in actual clean Neovim. Only g-/g+ presence is required, not the
+  former five-step transcript. GM's target/question now describe the actual
+  abandoned ! branch rather than claiming the newer dash was selected.
+- **Corrected M4 diagnosis:** SIL, not DIFF's production edit, ended in an
+  unnamed reference scratch buffer. Save/close replay could hang with E32/E37.
+  SIL now closes that scratch with :bwipeout! and restores the art buffer.
+  Reference-window replay uses :update, :only, then :q. SIL/TRIM/SCB require
+  their actual taught commands even when target text is unchanged.
+- **Full review-bank repair:** After all 250 primary recipes passed, M3.Y0
+  review 0 failed because its yanked marked row must propagate to the put
+  destination. A full sweep found ten failing effects across Y0/TRIM/DDP/O/PAD.
+  The course owner corrected operation-specific targets, not the grader.
+  Revision .71 passes all 296 effects and source/generated equality. Root
+  independently reran that sweep and the ten policy tests.
+- **Actual first reward:** Empty isolated state, M0.P0's actual question grade
+  and the default successful result panel produce distinct Fireworks frame
+  rows at 80×24, 100×36 and 188×49. This is a reached reward, not a reference
+  tab, still caption, cursor overlay or seeded success. The ledger lists all
+  46 eligible cards and their frame counts. The actual Textual route suite
+  also passes reward timer, failed Repeat, credited practice, Next, Watch,
+  dashboard, saved feedback and Close at all three sizes.
+- **Actual Ghostty transport:** Ghostty 1.2.3 returned exact OK responses bound
+  to four production BEFORE/YOURS/TARGET/DIFF PNGs directly and through new
+  disposable tmux. Font/hash/native metrics, transcription, pixels and target
+  registration remain distinct. Live default passthrough is off and unchanged.
+  ACKs do not establish live-popup acceptance, a passing M10 grade or human
+  contour approval. No live global configuration changed.
+- **Final collection boundary:** Worker clean .71 passes 291 lessons and 250
+  primary recipes. Final root real-user-config recipe and non-native matrices
+  are pending collection. Python 3.14 required an explicit importlib.machinery
+  import in the legacy test; its actual replay is pending, not a passing receipt.
+  Protected demo hashes remain unchanged.
+- **Content gap is now an owned requirement:** Direct .71 projection confirms
+  195 single-frame cards, 45 two-frame, 25 three-frame, 17 four-frame, eight
+  five-frame and one six-frame card. M0's artifact maximum is five and M11's is
+  two. Live progress contains 31 passes (M0 15, M11 16), inspected read-only.
+  The old three-/four-frame source reward is not substantive new course art.
+  C33 now assigns complete original module sequences, learner-editable endcaps
+  and whole-module playback to disjoint owners. No completion is claimed yet.
+- **Fresh audit dispositions:** The root reproduced M14.01's false credit:
+  R followed by Escape and a later Insert-mode register paste was conflated
+  with a Replace-mode paste. Semantic events now distinguish Insert, Replace
+  and Virtual Replace. The proposed M18.05 Ex-positioning failure did not
+  reproduce on current source: :4/$r1/:8/$r1 is accepted. M19.05's actual mode
+  entry with a later target-writing command is allowed by C31's presence
+  policy; requiring the old exact literal payload would impose a recipe quota.
+  The historical mode_text helper wording now states that boundary. Actual
+  new controls are pending collection; source checks do not prove their pass.
+- **Reached reward proof expanded:** The actual first-result harness now
+  observes every rendered frame after refresh, compares each widget's exact
+  canonical rows, and observes terminal art output. The existing three-frame
+  M0.P0 reward passes a whole cycle at all three sizes. This still does not
+  close C33's new-content requirement.
+- **Final collection and rerun boundary:** The .71 real-user-config suite
+  passed all 291 lessons/250 primary recipes; legacy clean and real pass 46/46.
+  .71 non-native route matrices passed 100×36 and 188×49. A later 80×24 run
+  had a genuine M3.06 target mismatch, so it is not counted as all-pass. The
+  isolated M3.06 rerun passes; its cause is not established. The harness now
+  retains failed snapshot/keylog values in diagnostic output. The Textual
+  Pilot's initial-frame-zero assertion was timing-dependent; it now checks
+  current rows and the next observed tick instead of assuming no mount tick.
+- **Pane permission:** The operator explicitly authorized temporary native
+  preview passthrough on the tutor pane with exact restoration. Global tmux
+  settings remain forbidden. The native owner implements/tests that boundary.
+- **Operator correction: Japanese versus proportional layout:** Earlier agent
+  wording incorrectly implied Japanese or Shift_JIS art cannot render in a
+  terminal. Japanese input/rendering is supported. Shift_JIS is an encoding,
+  not a font-spacing rule. Exact Saitamaar advances are distinct from Neovim's
+  normal cell-grid placement. The actual local font at 16 px measures i/dot
+  3 px, U+0020 5 px, U+3000 11 px and full-width slash 16 px. Inline native-font
+  graphics preserve those advances inside Ghostty; this does not mean native
+  proportional editing in a Neovim buffer. The authoring document now names
+  this distinction explicitly. The operator requested logging and continuation.
+- **Eight-frame native transport collected:** Root inspected the returned
+  M10 playback harness and replaced its no-op timing callback with actual
+  timed holds. The root reran direct Ghostty and isolated normal tmux-pane
+  playback. Both acknowledged all eight canonical frames with bound text,
+  PNG and font hashes. Each actual hold lasted at least the authored 1/6 s.
+  The pane returned to inherited off; window and global options stayed off.
+  This proves transport and pacing, not a reached learner result or human
+  contour approval. The popup transport test still fails after exact pane
+  ownership is supplied. C33 and the native operator route remain open.
+- **Popup failure cause checked:** Installed tmux is 3.6a. Matching upstream
+  popup.c:735 initializes input with a NULL pane, and input.c:2430–2431 drops
+  DCS dispatch for that context before reading allow-passthrough. This matches
+  the actual ownership-validated popup timeout. Pane permission cannot fix
+  this popup parser path. The operator surface choice was requested; no tmux
+  upgrade, vendor patch or global-option change was made.
+- **Mode test corrected:** A stale grading test still labelled an actual
+  Replace-mode register paste as Insert-mode paste. Root changed that assertion
+  to Replace and added the Insert negative. The focused grading script and
+  seven adversarial controls pass. This preserves the actual M14 negative
+  control rather than reverting mode separation to satisfy an obsolete test.
+- **Endcap artifact boundary repaired before admission:** Initial integration
+  reused strip.txt for the complete new sequence, which would replace the
+  primary project's checkpoint before its later .08 task. Root now uses a
+  separate animation-study artifact and per-card manifest. A scoped fixture
+  proves that writing its manifest preserves the original strip and manifest.
+  Compact lesson targets expose all eight labelled plates instead of clipping
+  the strip horizontally. Still-module endcaps move to later animation stages.
+  Full generated/effect/scheduler admission remains pending content contracts.
+- **Native popup route implemented, real lesson proof pending:** Root routes a
+  selected native lesson to a temporary normal tmux window before taking a
+  session lock or recording an attempt. The gate accepts continuation and
+  uncredited-practice re-entry. Continuation keeps its daily-cap check instead
+  of becoming --force. Five fixtures pass for exact-server ownership, child
+  route preservation, launch refusal and no popup-side attempt/lock. Only the
+  newly created window gets remain-on-exit off; no parent/global option changes.
+  An independent worker owns actual Ghostty popup-to-window M10 grade proof.
+- **Native route proof tightened and independently rerun:** The returned
+  harness initially accepted a ready native receipt without requiring the
+  passing after-question or completion screen. Root now fixes answer display
+  order, requires the actual held PRACTICE COMPLETE screen, and checks that
+  uncredited practice creates no learner event. Root also keeps native-window
+  fallback result controls held until Close. The actual Ghostty-created
+  isolated server run passes real M10.01 edit, native confirmations, authored
+  after-question, completion, pane restoration and automatic window closure.
+  A private server start barrier now prevents setup failure from racing an
+  attempt. Six fixtures and one actual isolated exit-policy control pass.
+  M10.01 still has no .72 module metadata, so this run does not prove the new
+  eight-frame result reward or human contour acceptance.
+- **Native fallback reward omission found and repaired:** The production
+  post-lesson path called the result helper only when Textual was enabled.
+  Direct helper fixtures therefore passed while non-Textual native results
+  skipped playback. Root now calls the helper on both routes. A production
+  post-lesson fixture verifies completed native playback and failed-attempt
+  suppression. Result playback writes an attempt-bound reward receipt with
+  canonical text/PNG hashes, real ACKs, authored/elapsed holds and font metrics.
+  The native player uses one shared pixel canvas and origin across all frames;
+  equal code-point row widths alone do not establish proportional registration.
+  Nine focused runtime/playback fixtures pass. Actual final-course result
+  playback remains pending admission of the new animation metadata.
+- **Fresh .71 80-column route matrix collected:** All 30 selected non-native
+  headed routes pass at 80×24. The earlier isolated M3.06 failure's cause is
+  still unknown. This fresh pass does not certify pending .72 content or the
+  intentionally excluded native M10 route.
+- **C33 contracts admitted to generated .72, final matrix pending:** All 20
+  original module sequences now have eight registered plates and executable
+  bounded endcap edits. Root removed empty-history undo/redo, removed incidental
+  navigation from the taught-method requirement, declared only actual repeated
+  poses as holds, and propagated local refinements across their held copies.
+  The actual clean-Neovim catalogue gate passes all 20 endcap recipes. The
+  generator emits 311 cards and 491 questions. Semantic question repair and
+  final production-route tests remain open; these counts are not course closure.
+- **Column-12 guide defect found during review admission:** M11.COL claimed
+  virtual editing was enabled, but its recipe did not enable it. M11.INS's old
+  target matched a clamped end-of-row insertion rather than column 12. Root
+  makes both setups explicit, pads only the empty insertion tail, and adds a
+  final display-column goal to COL. Actual exit receipts now use the art-window
+  virtual cursor position, including its offset past physical row end. Spaced
+  review applies cursor goals too. Root integrated 52 manually authored review
+  studies; their isolated clean-Neovim exact-target tests pass. Actual virtual
+  cursor controls and all 296 generated review effects are still running.
+- **Native Textual timeout remains under investigation:** Root changed the
+  managed-runtime re-entry guard to compare environment prefixes rather than
+  executable aliases. An isolated symlinked-environment regression passes.
+  The earlier Ghostty route timed out; its cause is not established by this
+  fixture. The fresh actual eight-frame result-route run remains pending.
+- **Actual .72 route results collected:** The first M0.P0 reward plays all
+  eight canonical frames from empty isolated progress at 80×24, 100×36 and
+  188×49. The complete Textual lesson/result/control route passes at all three
+  sizes. Actual Ghostty M10.01 practice passes with Textual enabled and disabled,
+  including before/after native diffs, passing grade, eight acknowledged reward
+  frames and exact pane-setting restoration. These runs add no real learner
+  credit. Ten actual cursor controls pass, including virtual column 12 through
+  :wq and denial of the same final cursor without the taught 12| operation.
+- **C33 remains open on a real endcap failure:** M0.REWARD passes clean-Neovim
+  recipe execution but the headed personal-config route places its final star
+  at column 13 instead of column 7 at 100×36 and 188×49. Its logged recipe is
+  complete. At 80×24 it reaches the after-question but the required domain
+  labels are not both visible. The cause is not established. Artifact equality
+  remains strict; these failures are not reclassified as passes.
+- **Independent content audit found four additional contradictions:** M0's
+  declared centred core drifts left in three poses. M18's question incorrectly
+  calls its translating directional rail fixed. M19's rebound ground moves
+  from row 7 to row 6. M7's question calls six held-copy refinements one change.
+  Root directly inspected these source rows. Content repair and fresh tests
+  remain required before C33 closure.
+
+## VD-82 · 2026-10-02 — higher-priority source-art and retroactive-animation intake
+
+- **Intake:** Root read handoff §12 in full. The operator's C33 rejects invented
+  `!` takes inside credited Stone Story art. C34 requires substantive module
+  animation, retroactive M0/M11 playback from existing progress, and a gallery.
+  Earlier VD-81 animation references called that work C33. The completion ledger
+  now assigns animation to C34 and adds the authoritative C33 provenance task.
+- **Ownership:** Parallel workers own source-faithful history lessons and
+  retroactive startup/gallery selection. Root owns integration, evidence and
+  docs. No commit/push, global configuration change or real learner-state write
+  is authorized. Actual saved M11 project files must not be rewritten.
+- **Real endcap cause and repair:** Personal-config Snacks smooth-scroll saved
+  and restored the previous cursor column while the recipe moved down rows.
+  Actual paced key traces showed `0` completing at column 7 instead of 1, then
+  `6l` reaching 13. The gate now disables Snacks scroll only in tutor buffers.
+  Actual M0.REWARD gate routes pass at 80×24, 100×36 and 188×49 after this repair.
+- **Question repair:** Endcap questions show two changed-frame samples, wrap
+  prose independently of aligned art rows, and retain all eight plates in the
+  clipboard source. The actual three-size M0.REWARD routes and a 20-module
+  compact question-layout gate pass. The repair does not alter canonical rows.
+- **Content repair:** The M0 core stays at column 8. M19's rebound ground stays
+  on row 7. M18 now describes a translating and turning rail. M7 describes six
+  held-copy refinements. Root reran semantic and clean-endcap gates successfully.
+- **Open acceptance:** C33 still requires source-frame/original provenance
+  enforcement, including denial of `(_!,o)`. C34 still requires actual startup
+  and gallery playback from a copy of operator progress at all three sizes.
+  Pending baseline matrices are not final-source completion evidence.
+- **Operator reaffirmation / C35:** The operator supplied the seven-failure
+  history and rejected another workaround requiring `r!`. Root retained C33
+  and added the operator's requested C35 reference. The latest actual M11.UT
+  fail event lacks curriculum_revision; installed bin/share are repo symlinks.
+  The runtime already loads the curriculum once into memory per gate run, so
+  file changes do not prove that an existing attempt's target changed. The
+  generator previously wrote the live JSON directly. Root now refuses publish
+  while the actual operator session owns its lock, replaces JSON atomically
+  between lessons, and binds future attempt events to the loaded revision and
+  canonical contract SHA-256. Existing events and learner projects are unchanged.
+- **Collected baseline evidence:** All 19 non-native endcap routes pass at
+  80×24, 100×36 and 188×49 through the actual personal-config gate. The .72
+  full real-config suite passes 311 lessons and 270 primary recipes. These runs
+  predate C33/C35 history replacement and C34 catch-up integration; they do not
+  close those requirements. Three earlier matrix invocations used the unknown
+  `--skip-native` argument. Two consequently reached unsupported M10 transport;
+  the third lost the first brief row at editor readiness. Correct exclusion
+  uses `--without-native-display`. The gate winbar now names the card even if
+  a personal window handler temporarily scrolls its first row off screen.
+- **Publication/event controls:** Three isolated regressions pass: active
+  operator-session publication is refused without touching JSON or lock;
+  a missing lock refuses publication without creating learner state; future
+  failure events retain the bound revision and canonical contract identity.
+  Grading-completion and runtime-UI regressions pass after the event change.
+- **Attempt identity reached the actual gate:** All nine actual C31 grade
+  controls pass and assert a non-null revision plus canonical contract hash on
+  success and failure. Each future edit also saves the exact loaded card and
+  BEFORE rows beside its unique attempt keylog; event fields link that snapshot
+  and its SHA-256. Four isolated publication/identity/snapshot tests pass.
+  A native-popup fixture initially lacked revision in its mocked curriculum;
+  adding the valid fixture identity restores all eight routing tests. This is
+  not permission to relabel the operator's historical unversioned failures.
+- **Native endcap remains open:** Actual M10.REWARD personal-config Ghostty
+  practice failed artifact equality despite a complete keylog. The first
+  generalized native harness did not wait for the gate's personal-config
+  editor-ready signal. Root added that existing readiness boundary and started
+  a fresh real run. That harness change does not establish the failure's cause
+  or a passing grade; the pending run must be collected and inspected.
+- **Retroactive catch-up reached actual copied progress:** Root independently
+  reran six retroactive reward controls. Actual gate launches at 80×24, 100×36
+  and 188×49 show all eight canonical M0 and M11 plates from a copy of operator
+  progress. The hourly `--if-due` route also passes at 80×24. The test observes
+  automatic motion before stepping and verifies canonical rows, not frame
+  counters alone. It adds no passes and hashes every real learner-state file
+  before and after. Startup includes manual/hourly entry points; gallery includes
+  every passed endcap. Captions now say authored original, not learner output.
+- **Native harness confirmation race:** The readiness-corrected M10.REWARD
+  run still timed out at BEFORE CREDIT. Its screen capture included the previous
+  confirmation prompt in scrollback while new panels were transmitting. Root
+  now requires the confirmation after the latest BEFORE CREDIT heading before
+  sending Enter. A new actual Ghostty run is pending. This observed harness
+  race is not a claim that the native endcap passes.
+- **Publication guard review:** An isolated XDG state setting must not hide
+  the standard operator's active session while the generator publishes the
+  installed repo JSON. Root holds every existing configured/standard lock
+  during publication. A fifth isolated control denies that case and preserves
+  the JSON and both lock files. All five publication/identity controls pass.
+- **Rejected saved art remains separate:** New source-history cards use a
+  card-contract-keyed study directory instead of the old shared strip. Their
+  review artifacts and checkpoints are separate too. The gallery searches
+  nested checkpoint directories. A sixth isolated control creates rejected old
+  art and its checkpoint, then prepares the corrected study; both old files
+  remain byte-identical. Actual new-history grading is still pending source
+  integration. No real M11 saved file was rewritten.
+- **Independent provenance spot-check:** Root read the local Skully manifest
+  and idle/look/blink raw sheets, Frog open/eye-overlay sheets, TowerDefense
+  missile frame block, Chick hatch block and SnowBunny idle/blink sheets.
+  Source-table rows agree with transparent-cell conversion, blank-row crops
+  and declared overlays. This checks the source inputs; it does not certify
+  the worker's pending recipe/intermediate validator.
+- **First C33 source integration (.73):** The worker returned source manifests,
+  card/review/diagram checks and source-only Skully history takes. Root reran
+  all ten returned checks successfully and validated/published .73 through the
+  actual session guard between lessons: 311 cards, 491 questions. C31 actual
+  fixtures now target the revised Frog/Skully/missile art without invented `!`
+  edits. Fresh clean/user and three-size history routes are running.
+- **Adversarial provenance failure remains open:** UTH's manifest admitted
+  tutor-added `[n-]` palette annotations as source poses, although the raw
+  SnowBunny res01/res03 sheets contain no such label. Root's new literal-source
+  negative fails on this. Twelve other checks pass, including actual Neovim
+  states after every visible history recipe step and rejection of an invented
+  intermediate restored before the final target. The worker owns a source-only
+  idle/blink strip rebuild. No C33 closure is claimed for .73.
+- **Actual native endcap succeeded:** The corrected real Ghostty
+  M10.REWARD personal-config practice run passes its authored edit, native
+  before/after confirmations, after-question, held Textual result and eight
+  timed positive frame acknowledgements. Its receipt is bound to .72, not the
+  new source revision. The owned window closes and pane/global settings are
+  restored. This is actual uncredited-practice/native result proof, not human
+  contour approval or learner mastery. Final-source M10.06 three-size runs
+  remain pending.
+- **Collected .73 proof and failures:** Clean and personal-config broad suites
+  each pass 311 lessons and 270 recipes. Actual Ghostty M10.06 personal-config
+  Textual practice passes at 80×24, 100×36 and 188×49, with native four-panel
+  confirmations, eight timed reward ACKs and restored pane/global settings.
+  The history popup sweep passes BR/GM/GP/ER/UB/UG/UE at all three sizes, then
+  fails UT: its recovered block contains the partial `(_O,=)` pose. Separate
+  paced eye replacements create separate undo changes; headless replay did not
+  expose that boundary. The C31 fixture also stops after its first pass because
+  it searches only the old shallow checkpoint path. Its subsequent review
+  suite passes, but that final exit does not make the C31 fixture green.
+- **Source-only repair and integration (.75):** UTH no longer admits palette
+  pseudo-frames. Primary and reviews use only complete SnowBunny idle/blink
+  strips. BR/UT now author the entire look eye pair with one substitute, making
+  that source pose one undo state under paced input. Diagram rails are padded
+  independently of source text; their validator removes only display-margin
+  ASCII spaces. Four obsolete course assertions required invented art or an
+  old six-row layout; replacements require real complete source frames and
+  diverse recovered poses. Eleven course controls now pass. The seven
+  publication/preservation controls and seven adversarial controls also pass.
+  The generator refused the first atomic substitute spelling because its deck
+  family lacked the no-flag form; the same one-match substitute now carries
+  the already-taught `g` flag. .75 is validated and published between lessons.
+  Fresh actual history grades remain required; no final closure is claimed yet.
+- **Collected .75 proof:** All nine rebuilt history cards pass actual popup
+  grading at 80×24, 100×36 and 188×49. Actual C31 controls pass target-correct
+  with taught keys, and distinguish target-correct/method-missing attempts,
+  including taught text typed in the wrong mode. The actual Ghostty
+  M10.REWARD personal-config Textual route passes at all three sizes. Each
+  receipt records four native panels, eight timed positive reward ACKs,
+  visible practice completion, window cleanup and restored pane/global options.
+  These receipts are bound to .75, not the subsequent UR correction.
+- **Corrected test configuration claim:** Both earlier `.73 --real` broad
+  runs used personal Neovim configuration. Setting the surrounding test
+  environment clean does not select `-u NONE`; only omitting `--real` does.
+  The earlier clean-config label is withdrawn. A genuine no-flag clean run
+  was started separately and must be collected before claiming that proof.
+  Its collected `.75` result now passes 311 lessons and 270 primary recipes
+  with `config=none`.
+- **Additional literal-source defect (M11.UR):** The undo/redo bridge's
+  target changed SnowBunny's nose to `!`, outside the nine-card source audit.
+  Root replaced that target with the real complete res01/res03 idle/blink
+  transition. Both reviews now use complete changed-art SnowBunny strips.
+  Every declared and observed recipe-step state is source backed. The first
+  single-pose review failed the changed-art difference gate; its replacement
+  uses a complete two-pose strip rather than weakening that gate. All thirteen
+  source-history tests pass for the expanded ten-card scope, and `.76` builds
+  and validates. `.76` is not yet published; ongoing `.75` proof is not relabelled.
+- **Guarded .76 publication:** Root collected the remaining `.75` 57
+  non-native endcaps, 90 non-native matrix routes, actual Textual routes and
+  six copied-progress catch-up controls, all passing. Root then published `.76`
+  between sessions and verified exact source/generated equality. Fourteen
+  expanded history tests pass, including rejection of the invented SnowBunny
+  nose. Final `.76` interactive runs are pending and kept separate.
+- **Test invocation correction:** A root command named a nonexistent
+  adversarial filename. The corrected script then failed under Bash's system
+  Python because fontTools was absent. Its expanded assertion exposed that
+  dependency refusal rather than hiding it behind a missing `gate` key.
+  Running the same seven controls in the existing managed tutor environment
+  passes. No dependency or global setting was installed or changed. A separate
+  browser helper was mistakenly included in a noninteractive test loop; it
+  expects manual input and exits at EOF. It is not an automated passing test
+  or required proof for the selected Ghostty surface.
+- **Launch-lock gap found and repaired:** `run()` loaded its curriculum and
+  displayed retroactive rewards before acquiring the session lock. Root does
+  not infer that this caused the operator's older revision, but the source
+  allowed publication during that interactive phase. Interactive launches now
+  acquire the lock before loading the curriculum and hold it through catch-up,
+  editor, question and result screens. A native popup selector releases its
+  lock before launching the child; the child acquires its own lock before load.
+  The new negative control denies publication at curriculum load and catch-up,
+  then permits it after launch exit. All eight publication, nine routing, six
+  copied-progress catch-up, seven managed-environment adversarial and eleven
+  course controls pass. The old no-selector-lock assertion was replaced with
+  release-before-child/no-attempt checks. Post-repair interactive proof remains
+  required; earlier `.76` jobs loaded the pre-repair runtime.
+- **Endcap gate actually invoked:** An animation test file had only pytest
+  functions and a `.72` snapshot assertion. Executing it as a script did not
+  run its tests. Root updated the exact `.76` snapshot and invoked pytest:
+  all ten expansion/question/lesson-pack/authored-review controls pass.
+- **Actual saved-offset reproduction:** M11.TR and M11.LS now pass the actual
+  paired-question viewport checks at 80×24, 100×36 and 188×49. The six runs
+  compare border columns on the visible terminal rows, not screenshots or
+  scrollback. Two initial harness assertions assumed the wrong compact margin
+  and outer-height threshold; the harness now uses the popup's 85-percent inner
+  height and the renderer's compact threshold. Those failures did not establish
+  a product row-offset defect.
+- **Changed-art review defects:** M4.BD, M6.DDP and M8.PAD still repeated their
+  primary artwork in the first review. M4.BD also used a three-column Visual
+  selection while describing a two-column defect. A worker owns these three
+  source groups and their paired questions. Installed .76 remains frozen until
+  integration and guarded publication.
+- **Independent launch-lock audit:** Eight publication, nine native-route and
+  six catch-up controls pass on the launch-lock repair. The independent audit
+  nevertheless found missing-lock creation exposure in publication, unlocked
+  deck-writing routes, and no child-acquisition acknowledgement on native
+  handoff. These are open repair items, not a completed C35 guarantee.
+- **Collected post-launch-lock .76 integration:** The genuine clean and
+  personal-config runs each pass 311 lessons and 270 primary recipes. All ten
+  source-history cards pass actual routes at three sizes. Nine actual C31
+  controls, 90 non-native matrix routes, 57 non-native endcaps, the actual
+  Textual route/first eight-frame reward, six copied-progress catch-up controls,
+  ten cursor controls and 296 review effects pass. Source hashes are runtime
+  `af7014a0ccb5803e6e959d757164f4a82bdb86b2756e33adb7e5b77aff237b27`
+  and installed JSON `2859b1d7876b2ef142c4fe7497e0f208921e7f055316f35c3a25b6e3bc43a4fc`.
+  The native job exited nonzero in its output-only jq projection because it
+  addressed a nonexistent receipt field. Its consumed output cannot serve as
+  a retained passing receipt. A fresh actual native run remains required.
+- **Missing-lock and deck-write repairs:** Publication now refuses if any
+  required lock is absent instead of skipping it. Non-TTY `--deck-miss` and
+  `--quiz` acquire the launch lock before loading the curriculum. Ten publication
+  controls and nine native-routing controls pass. Native handoff acknowledgement
+  remains open. The coordination hook refused a completed-agent follow-up under
+  its global cadence; root performed these two independent repairs and did not
+  bypass that guard.
+- **.77 changed-art integration:** M4.BD now deletes exactly two columns and
+  preserves both outer contours. M4.BD/M6.DDP/M8.PAD first reviews use genuinely
+  different labelled original studies; paired command choices are synchronized.
+  Four worker controls pass. Root clarified the block lesson's aligned-row
+  wording and added a repeated-build negative control. The generated method
+  coverage text now describes C31 unordered semantic presence instead of
+  claiming ordered paths or key limits. .77 was published through the session
+  guard after all earlier actual jobs were terminal.
+- **Repeated-build alias defect:** A combined history/endcap suite initially
+  failed source/generated parity even though separate fresh processes matched.
+  Two builds in one process reproduced mutable authored transfer metadata.
+  Root deep-copied module definitions and nested Stone Story variant records;
+  a local fixture mutation can no longer affect subsequent builds. All 29
+  combined history/endcap/question/authored-review/new-review controls now pass,
+  including installed .77 parity. The source correction did not relabel old
+  receipts or change the correctly generated first-build curriculum contract.
+- **Test host boundary correction:** The managed runtime has no pytest module.
+  Its unittest scripts pass; pytest-only controls use the existing Homebrew
+  Python. Importing the Textual script into Homebrew pytest reexecutes that
+  script under the managed Python and exits the collection, so the earlier
+  silent aggregate command is not a suite receipt. The proper isolated pytest
+  run above reports 29 controls, and Textual remains exercised by its direct
+  script and actual tutor-route harness. No dependency installation occurred.
+- **Source-motion test sampling:** The direct Textual Pilot initially sampled
+  the source-motion timer after a full loop and saw the same modulo frame index
+  at 100×36. Root changed that assertion to observe the first actual timed tick,
+  as the result-reward test already does. The PASS marker now prints only after
+  successful execution. The direct three-size Pilot passes. This fixture
+  correction is not a new animation-content claim; actual .76 result-page
+  playback remains separately recorded.
+- **Native handoff acknowledgement:** The native child now holds its session
+  lock before curriculum load and returns a one-shot nonce-bound load receipt
+  to the parent. The parent waits before reporting a successful launch and
+  closes only its owned window on timeout or invalid acknowledgement. Twelve
+  worker controls pass, including actual isolated tmux housekeeping. Root
+  found that a failed child send still continued toward a lesson; it now raises
+  before artifact creation or grading. Thirteen routing, ten publication, six
+  catch-up, seven adversarial and the runtime UI controls pass. Fresh actual
+  Ghostty and full .77 runtime routes remain pending; fixture passing is not
+  operator contour approval.
+- **Actual operator .77 identity:** Read-only event inspection sees a new
+  M11.UT attempt at 03:16 on 10-02, with `.77`, contract hash and exact card/
+  BEFORE snapshot. It is `target-mismatch`, not method-order rejection. The
+  operator's real progress/events hashes changed with this attempt. Root does
+  not claim those files remain equal to older pre-attempt hashes, and performed
+  no live progress or artifact rewrite. Feedback still ends at saved GP note 18.
+- **Collected .77 actual routes:** Ninety non-native matrix routes, 57 non-native
+  endcaps, 30 source-history routes, six saved-offset question viewports, nine
+  C31 grades, ten cursor controls, three Textual routes, three first-reward
+  routes and six copied-progress catch-up controls pass. Six actual Ghostty
+  M10.06/M10.REWARD routes pass at all three sizes, with four native panels,
+  eight timed frames, held practice completion, owned-window closure and restored
+  parent/global options. These runs used runtime hash
+  `8ab7ade1fa43ce3406096a8fa4240c3bf79b393511517a35d27e94feba9e23ae`
+  and .77 JSON hash `f1097d008bb47d01623a992f2389e4e323cb1169dae928ac21c0cf4736cbf39e`.
+- **C25 remains red:** The focused changed-card route passes M4.BD, M4.BDH and
+  M6.DDP at 80×24, then rejects M6.DDPH as method-missing despite an exact saved
+  target. Actual personal-config `-w` bytes decode to `ggggdddpZZ`, while the
+  driver sent `ggddpZZ`. The parser consumes the last `dp` as an operator-motion
+  command and misses the taught put. Clean literal `ggggdddp` does not produce
+  the target, so accepting `dp` as `p` would launder invalid evidence. Physical
+  versus mapped input capture needs repair before final integration closes.
+- **Typed-input repair:** A fresh nonce/path-bound receipt now records Neovim
+  `on_key` typed bytes and actual modes at exit. Hex transport avoids invalid
+  UTF-8 from internal key names. WhichKey's real `feedkeys(..., "mit", ...)`
+  marks its replay as typed, so a naive pre-mapping listener alone still fails.
+  The actual failing receipt has `n:d, no:d, no:d, n:p`. Normal native `ddd`
+  instead starts a third `d` in Normal mode. Only consecutive repeated doubled
+  operator endings inside the same pending operator are collapsed. Normal,
+  Insert, count and compound-motion input is not deduplicated. Temporary
+  native-prefix overrides did not fix this case and were removed. Fresh actual
+  M6.DDPH at 80×24 now passes. Clean/personal receipt controls and nine actual
+  C31 positive/wrong-mode/absent-method grades pass. New three-size final routes
+  and the independent grading re-audit are running against this repair.
+- **Independent mode-boundary findings:** The typed-input re-audit reproduced
+  a P1 bypass through actual grading: `:1m2<CR>:startinsert<CR>ddp<Esc>u:wq<CR>`
+  creates M6.DDPH's target via Ex, types literal Insert text and undoes it.
+  The receipt records Insert mode, but the reader drops those modes and
+  re-infers Normal commands. A second P2 control shows missing typed schema
+  falls back to contaminated scriptout despite a valid outer cursor receipt.
+  The grading owner is repairing both boundaries. C25 remains open.
+- **Collected pre-mode-repair snapshot:** Eighteen changed-card routes, six
+  actual Ghostty runs, actual Textual/first-reward routes, ten cursor controls,
+  clean/personal 311-card effects and 296 review effects pass at runtime
+  `3487a4115b12709636f36f160d371d058416ed977afddb1ae818277d22dbe794`.
+  The broad route batch stops after M9.06 at editor readiness. It is not a
+  passing matrix. The older diagnostic trace still shows the original M6.DDPH
+  rejection; it is retained as red evidence, not a current repaired receipt.
+- **Broad harness scope correction:** The failed batch omitted
+  `--without-native-display`. It therefore tried M10.06 inside a nested capture
+  terminal that cannot acknowledge Ghostty graphics. The dedicated actual
+  Ghostty batch passed this card at all three sizes. The final broad route
+  invocation must explicitly exclude native display and pair that exclusion
+  with fresh dedicated Ghostty receipts; no product native gate is disabled.
+- **Mode-repair stage and replace regression:** The independent grader repair
+  preserves recorded modes and requires typed receipts for fresh production
+  Neovim attempts. Its eleven actual C31 controls passed, including denial of
+  the Ex/Insert exploit. Root then tightened unknown-mode attribution and
+  distinguished Virtual Replace. That change rejects legitimate M18.05
+  `4G$r1G$r1` despite an exact target. Five pure controls pass but do not prove
+  this actual replace path. Root is capturing the actual argument modes before
+  repairing the boundary. C25 remains open; no final repaired-runtime claim
+  is made from the earlier snapshot.
+- **Actual replace repair and frozen recheck:** The reproduced receipt is
+  `r:n, 1:R`. Neovim uses `R` while consuming this Normal `r` literal. Root
+  now retains replacement/digraph arguments only when the preceding witnessed
+  command owns them. Unowned Replace payload, actual Insert transitions and
+  unattributed command/terminal modes cannot donate Normal commands. All eleven
+  actual C31 grades, clean/personal typed-receipt controls and five focused mode
+  controls pass. Runtime SHA-256 is
+  `750e3ec0b760bad782192d96dcbdab7741b81320069d6c08ad7e3204ded93631`;
+  gate SHA-256 is `e015fa2206fff9533132ff1af518d5d18fd48f26c25c064bc1bd46bb86527659`.
+  Corrected broad routes, changed-card routes, native routes and independent
+  review are running on this frozen runtime. Terminal results already collected
+  include 27 pytest controls plus 20 subtests, eight animation-bank/expansion
+  controls, 13 native-routing, 10 publication, 11 policy, seven adversarial,
+  eight module-runtime, 491-question quality and direct Textual controls.
+  Strict JIS backend/lifecycle/terminal suites pass 15/5/9 controls. Eleven
+  course controls, including clean Neovim effects, and avatar/style gates pass.
+  Pending actual-route operations are not reported as passing.
+- **Collected frozen-stage remainder:** Runtime `750e3ec0` passes all eighteen
+  changed-card routes, six actual Ghostty routes, actual Textual/first-reward,
+  six catch-up and ten cursor controls. Clean/personal 311-card/270-effect and
+  296-review effects pass. The corrected broad invocation fails at M3.06:
+  per-byte Visual mode resets discard the genuine register argument. The
+  independent read-only audit reproduces Visual `g+` credited as Normal `g+`,
+  boolean cursor coordinates accepted as integers, and a list-valued receipt
+  crashing its reader. Root retains Visual argument state, scopes selected
+  commands separately and rejects non-object/non-positive/exact-noninteger
+  receipts. New actual Visual-history and register-copy cases are added. This
+  is another bounded repair stage; the failed matrix is not relabelled green.
+- **Cold recovery evidence boundary:** Root inspected the separate cold-start
+  target-recovery branch. It still replayed raw scriptout with no typed receipt.
+  New attempt contracts now retain the owning cursor nonce. Recovery loads
+  typed modes only when card, BEFORE rows and nonce match that original
+  contract; production Neovim recovery without this ownership fails closed.
+  Old artifacts remain checkpointed and are not relabelled as current evidence.
+  All thirteen actual C31 controls pass, including genuine Visual-register
+  transfer and denial of Visual history. Each actual control also validates
+  recovery of its original bound receipt. The new pure recovery test initially
+  omitted its target fixture and raised KeyError; the fixture is corrected.
+- **Trimmed-block-copy regression:** The broader C31 policy sweep rejects
+  M15.ZP/ZPH because `zy` is a Visual-only command fragment in the authored
+  focal list. The new general Visual scoping changed its evidence spelling,
+  while the standalone taught fragment still parses as Normal `zy`. A complete
+  sweep reproduces four affected primary/review entries. The mode/receipt
+  focused suite passes 38 controls plus 20 subtests, but the policy suite is
+  red. Root will retain the pending frozen matrix evidence before adjusting
+  only Visual-yank termination and taught-fragment interpretation. A requested
+  independent follow-up was refused by the global cadence hook; no agent is
+  claimed running for that refused request and no alternate contact was used.
+- **Collected b8 stage and trimmed-block fix:** Frozen `b8c8a5e0` passes
+  90 non-native, 30 source-history, 57 non-native-endcap, six saved-offset,
+  eighteen changed-card, six actual Ghostty and three-size Textual/first-reward
+  routes. Clean broad effects stop at the ZP policy assertion; that suite is
+  not certified. Root now terminates Visual selection after `zy` and interprets
+  the standalone taught fragment with explicit block context. A typed Normal
+  `zy` after cancelling selection is denied. Eight mode/type/recovery controls
+  and all eleven policy controls pass. Runtime is now
+  `d27b95b1876a71cc06076f9eb9aff82611605344c886f307a701d5e509c8e5c7`.
+  The independent final review was dispatched successfully after the cadence
+  gate. All earlier receipts retain their executed-source hashes.
+- **Final scoped grading review:** The independent read-only agent reviewed
+  runtime `d27b95b1` and found no remaining high-confidence false accept or
+  false reject in its mode, receipt and recovery scope. Actual C31 coverage is
+  fourteen controls, including genuine block `zy`/`zp` and Visual `g+` denial.
+  This is not exhaustive Vim interpretation or full-course certification.
+  Root added a ninth focused integration fixture for production cold recovery:
+  owned Normal commands pass; owned Insert commands and unbound scriptout do
+  not. Its initial placement split an existing test body and raised NameError;
+  root restored that body and all nine focused tests pass. This fixture does
+  not constitute an actual learner attempt. Final matrix collection remains
+  pending on the frozen runtime; no failed earlier stage is relabelled.
+- **Final frozen collection, 2026-10-02 10:10 UTC:** Runtime `d27b95b1`, gate
+  `e015fa22` and curriculum `.77` remain unchanged. All jobs exited 0: 90
+  non-native, 30 source-history, 57 non-native-endcap, six saved-offset and
+  24 changed-card routes; six actual Ghostty M10.06/M10.REWARD runs; actual
+  three-size Textual/first-M0.P0 reward, six catch-up and ten cursor controls.
+  Both clean and personal broad runs pass 311 cards/270 primary effects.
+  Two review tests cover 296 changed-art effects. Fourteen actual C31 controls
+  and the scoped independent re-review pass. Fresh mode/native/publication/
+  adversarial pytest collection passes 39 tests and three subtests. A later
+  source-focused pytest invocation incorrectly collected the CLI-only quality
+  script, which interpreted `-q` as a filename and failed before any test ran.
+  Root reran the three pytest-compatible files: 20 pass. The standalone quality
+  gate passes all 491 questions. Repeated build/installed equality passes,
+  including all 311 whole-module rewards. Protected foreign hashes match.
+  Ledger C25 closes for this exact engineering snapshot. Human preferences,
+  public source-art publication permission and arbitrary hard-kill resilience
+  are not certified. No commit, push or real learner-state seeding occurred.

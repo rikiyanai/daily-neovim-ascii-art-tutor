@@ -15,8 +15,9 @@ mkdir -p "$bin" "$tmuxdir" "$(dirname "$share")"
 ln -sfn "$repo/bin/vim-daily-gate" "$bin/vim-daily-gate"
 ln -sfn "$repo/bin/vim-drill"      "$bin/vim-drill"
 ln -sfn "$repo/bin/vim-daily-setup-check" "$bin/vim-daily-setup-check"
+ln -sfn "$repo/bin/vim-daily-sjis" "$bin/vim-daily-sjis"
 ln -sfn "$repo/share"              "$share"
-for f in vim-drill-popup.sh vim-drill-popup-force.sh vim-drill-hourly.sh; do
+for f in vim-drill-popup.sh vim-drill-popup-force.sh vim-drill-hourly.sh vim-drill-quiz.sh; do
   ln -sfn "$repo/tmux/$f" "$tmuxdir/$f"
 done
 echo "linked: $bin/vim-daily-gate, $bin/vim-drill, $share, $tmuxdir/vim-drill-*.sh"
@@ -29,6 +30,7 @@ venv="${XDG_DATA_HOME:-$HOME/.local/share}/vim-daily-venv"
 if command -v uv >/dev/null 2>&1; then
   [ -x "$venv/bin/python" ] || uv venv --quiet "$venv"
   uv pip install --quiet --python "$venv/bin/python" -r "$repo/share/requirements-dashboard.txt"
+  uv pip install --quiet --python "$venv/bin/python" -r "$repo/share/requirements-native-preview.txt"
   echo "dashboard venv: $venv"
 else
   echo "uv not found: skipped the dashboard venv (static --tree still works)"

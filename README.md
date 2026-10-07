@@ -98,13 +98,13 @@ copy the previous frame, then change only the cells that move.
 
 ## What is in it
 
-- **215 project cards** across twenty project modules and sixteen prerequisite-gated
-  main stages: 174 recipe-bearing Neovim edits and 61 conceptual/check surfaces
+- **291 project cards** across twenty project modules and sixteen prerequisite-gated
+  main stages: 250 recipe-bearing Neovim edits and 61 conceptual/check surfaces
   (module checks contain both, so those counts overlap).
-- **20 method-contrast cards** and **70 changed-art review banks**; every primary
+- **20 method-contrast cards** and **148 changed-art review banks**; every primary
   edit path is
   replayed through Neovim by the v2 suite.
-- **395 manually authored paired conceptual items** spanning visual reading,
+- **471 manually authored paired conceptual items** spanning visual reading,
   command/output prediction, diagnosis, method comparison, transfer reasoning,
   and coherence checks. Every item requires both an animation/authoring reading
   and a Neovim edit-scope or command decision. Choices are shuffled and carry
@@ -172,7 +172,7 @@ never edits the Neovim config or installs plugins on the learner's behalf.
 ```
 vim-drill                    run a drill now
 vim-drill --card M0.01       run a module's first unfinished card (choose an open branch)
-vim-drill --list             all 215 project cards and completion marks
+vim-drill --list             all 291 project cards and completion marks
 vim-drill --tree             stage/module progress and the next action
 vim-drill --status           the tree plus reviews, streak, and totals
 vim-drill --project M0       print M0's persistent strip
@@ -248,9 +248,39 @@ card catalog are in `share/CURRICULUM_V2_SPEC.md` and
 `share/CURRICULUM_V2_CARD_CATALOG.md`.
 
 The [legacy curriculum disposition](share/LEGACY_CURRICULUM_DISPOSITION.md)
-maps all 46 stable v1 drill IDs to an explicit `adapted`, `partial`, or
-`retained-only` status. It is intentionally separate from the broader v2
-module map so a nearby card cannot be mistaken for command parity.
+maps all 46 stable v1 drill IDs to executable v2 paths. The former sixteen
+partial/retained-only gaps now have guided studies and hidden changed-art
+retrieval. This is command parity, not learner mastery or animation for every
+operation: text-label and still studies are explicitly identified.
+
+Textual covers the lesson, held feedback/result and dashboard surfaces. M0 and
+M11 briefs expose credited source poses with `m` (Source motion), space
+(pause/play), and `h`/`l` (step). These reference poses stay separate from the
+editable study. Navigation-only cards show start/goal cursor overlays over
+unchanged artwork; they are not presented as animations. Repeat retains the
+same lesson and completed lessons repeat as practice without another award.
+Incidental positioning keys do not have to match the example recipe. The
+taught operation, its operator/Visual scope, and exact target still must pass.
+Correct target plus actual taught commands used anywhere passes; extra,
+reordered and exploratory keys are allowed. A correct target without the
+taught command gets TARGET CORRECT, used commands green, missing commands red
+and instant retry. UT/UTH now preserve two complete history takes rather than
+demand a five-step routine for a one-cell target.
+
+Each module has a labelled original eight-frame reward. Successful M0/M11
+results play the complete module sequence in the default feedback panel,
+starting at M0.P0. Credited source poses remain a separate reference lane.
+Space pauses playback; h/l step. Existing M0/M11 study evidence also exposes
+read-only catch-up playback on normal CLI, manual popup and hourly launches,
+and in the gallery. It creates no synthetic passes. Actual M0.P0 grading
+and copied-operator-progress catch-up were verified at 80×24, 100×36 and
+188×49 without changing real learner state.
+
+Curriculum publication is atomic and refuses to run during an active operator
+lesson. Future attempts record the loaded revision and contract hash, plus an
+exact card/BEFORE snapshot beside their unique keylog. Revised source-history
+studies use separate contract-keyed files and checkpoints; rejected old strips
+remain untouched. Historical unversioned events are not retroactively relabelled.
 
 The optional M10 branch turns the aggregate evidence in
 `share/sjis_corpus_findings.v1.json`: 435 proportional Shift_JIS combinations,
@@ -260,12 +290,31 @@ impact hold, and settle. Neovim checks exact transcription; it does **not** clai
 a terminal cell view proves proportional alignment. Shape judgment remains a
 Saitamaar 16 px true-advance operation.
 
+The [proportional authoring workflow](share/PROPORTIONAL_AUTHORING.md) documents
+strict import/export with explicit codecs and a native-font terminal preview
+for Ghostty. The optional browser preview is selected explicitly.
+M10 editing now requires a displayed preview bound to the current artifact,
+font and target before transcription credit is awarded. Text equality, native
+pixel comparison and target registration remain separate results. Human
+artistic approval is not inferred from any automated result.
+The native terminal flow currently previews before editing and before credit;
+it is not a live proportional Neovim buffer. Actual Ghostty 1.2.3 acknowledged
+all four production PNGs directly and through an isolated tmux server.
+The operator's live default tmux passthrough remains off and unchanged; that
+live popup path and human contour approval remain separate acceptance items.
+No screenshot is required
+to read or reproduce saved learner feedback.
+Use `vim-daily-sjis --help` or `vim-daily-gate --sjis --help` for the standalone
+tools. The original font remains operator-local and is not redistributed.
+
 Run the complete v2 gate after changes:
 
 ```sh
 share/gen_curriculum_v2.py
 share/test_v2.py
 share/test_v2.py --real
+python3 share/test_review_effects.py
+python3 share/test_method_policy.py
 share/test_tmux_v2.py --show-capture
 VIM_DAILY_TEST_COLUMNS=100 VIM_DAILY_TEST_ROWS=36 share/test_tmux_v2.py
 VIM_DAILY_TEST_COLUMNS=80 VIM_DAILY_TEST_ROWS=24 share/test_tmux_v2.py
@@ -274,10 +323,19 @@ VIM_DAILY_TEST_COLUMNS=100 VIM_DAILY_TEST_ROWS=36 share/test_tmux_v2_routes.py
 VIM_DAILY_TEST_COLUMNS=80 VIM_DAILY_TEST_ROWS=24 share/test_tmux_v2_routes.py
 ```
 
-The v2 suite validates the S0-S7/A0-A7 stage chain, optional P branch, 215 cards, 395
+The default route matrix includes M10 native display and needs actual graphics
+acknowledgements. Add `--without-native-display` only to measure non-native
+routes in a capture terminal; it reports M10.06 UNVERIFIED and does not disable
+the production display gate. Actual native transport is exercised separately
+with the managed Python runtime and `share/test_sjis_ghostty_real.py`, then
+`--tmux`. `share/test_c31_real.py` drives actual method-only grading controls.
+`share/test_textual_routes_real.py --first-reward` verifies the first reached
+reward from empty isolated state. These tests never overwrite real progress.
+
+The v2 suite validates the S0-S7/A0-A7 stage chain, optional P branch, 291 cards, 471
 complete questions, the complete 46-ID disposition table, one representative
 legacy-to-v2 surface-job comparison, persistent start→target continuity,
-review state, every one of the 174 primary edit recipes, and both executable
+review state, every one of the 250 primary edit recipes, and both executable
 paths on all twenty comparison cards in clean Neovim, plus every changed-art
 review bank. It also checks all edit briefs for required teaching sections and answer
 leakage. Unequal frame heights block
@@ -302,8 +360,9 @@ adds the tutor statusline/F1 UI. Retrieval cards show TARGET plus an action
 hint while hiding only the exact keys, and results retain the two-column
 keystroke ledger. Revision `.38` gives every card one stage owner and makes
 stage advancement depend on both card completion and the stage's required
-spaced reviews. P unlocks after S5 but never blocks S6. The clean suite passes
-215/215 cards and 174/174 primary recipes. The base headed popup path shows the
+spaced reviews. P unlocks after S5 but never blocks S6. The earlier `.38` clean receipt
+covered 215/215 cards and 174/174 primary recipes. Current-source acceptance is
+recorded in `share/audits/COURSE_COMPLETION_LEDGER_2026-10-01.md`. The base headed popup path shows the
 new stage rendering at 80x24, 100x36, and 188x49; the full post-M2 route matrix
 and real-config suite remain separate acceptance evidence.
 The stage mechanism is live, but older S-stage content is still being manually
