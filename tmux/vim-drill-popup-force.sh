@@ -1,10 +1,19 @@
 #!/usr/bin/env bash
-# Prefix+V: run a vim drill on demand in a popup, ignoring cap and cooldown.
+# Prefix+V: run a lesson; Prefix+Q reuses this mouse-safe popup with --quiz.
 set -uo pipefail
+mode="${1:---force}"
+case "$mode" in --force|--quiz) ;; *) exit 2 ;; esac
+title=" vim drill · drag selects · Cmd-C copies · questions: y copies all "
+if [ "$mode" = --quiz ]; then
+  title=" vim quiz · drag selects · Cmd-C copies · s stops "
+fi
 gate="$HOME/.local/bin/vim-daily-gate"
 [ -x "$gate" ] || exit 0
 session="$(tmux display-message -p '#S' 2>/dev/null)"
 [ -n "$session" ] || exit 0
+popup_pane="$(tmux display-message -p -t "$session" '#{pane_id}' 2>/dev/null)"
+popup_tmux="$(tmux display-message -p -t "$session" '#{socket_path},#{pid},#{session_id}' 2>/dev/null)"
+[ -n "$popup_pane" ] && [ -n "$popup_tmux" ] || exit 1
 # See vim-drill-popup.sh: serialize ownership and heal a killed prior owner.
 owner="$(tmux show-options -qv -t "$session" @vim_daily_mouse_owner 2>/dev/null)"
 if [ -n "$owner" ]; then
@@ -45,4 +54,4 @@ else
 fi
 tmux set-option -q -t "$session" @vim_daily_mouse_owner "$$"
 tmux set-option -q -t "$session" mouse off
-tmux display-popup -e VIM_DAILY_POPUP=1 -t "$session" -E -w 90% -h 85% -T " vim drill · drag selects · Cmd-C copies · questions: y copies all " "$gate --force"
+tmux display-popup -e VIM_DAILY_POPUP=1 -e "TMUX=$popup_tmux" -e "TMUX_PANE=$popup_pane" -t "$session" -E -w 90% -h 85% -T "$title" "$gate $mode"

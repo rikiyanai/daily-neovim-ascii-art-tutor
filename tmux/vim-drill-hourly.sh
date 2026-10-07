@@ -62,6 +62,9 @@ else
 fi
 tmux set-option -q -t "$session" @vim_daily_mouse_owner "$$"
 tmux set-option -q -t "$session" mouse off
-tmux display-popup -e VIM_DAILY_POPUP=1 -t "$session" -E -w 90% -h 85% \
+popup_pane="$(tmux display-message -p -t "$session" '#{pane_id}' 2>/dev/null)"
+popup_tmux="$(tmux display-message -p -t "$session" '#{socket_path},#{pid},#{session_id}' 2>/dev/null)"
+[ -n "$popup_pane" ] && [ -n "$popup_tmux" ] || exit 1
+tmux display-popup -e VIM_DAILY_POPUP=1 -e "TMUX=$popup_tmux" -e "TMUX_PANE=$popup_pane" -t "$session" -E -w 90% -h 85% \
   -T " vim drill · drag selects · Cmd-C copies · questions: y copies all " \
   "$gate --if-due"

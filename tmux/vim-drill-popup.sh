@@ -13,6 +13,9 @@ gate="$HOME/.local/bin/vim-daily-gate"
 [ -x "$gate" ] || exit 0
 session="$(tmux display-message -p '#S' 2>/dev/null)"
 [ -n "$session" ] || exit 0
+popup_pane="$(tmux display-message -p -t "$session" '#{pane_id}' 2>/dev/null)"
+popup_tmux="$(tmux display-message -p -t "$session" '#{socket_path},#{pid},#{session_id}' 2>/dev/null)"
+[ -n "$popup_pane" ] && [ -n "$popup_tmux" ] || exit 1
 
 # Keep the global option and key tables untouched (VD-31/VD-33). The owner and
 # base markers prevent overlapping launchers from restoring each other's
@@ -60,6 +63,6 @@ else
 fi
 tmux set-option -q -t "$session" @vim_daily_mouse_owner "$$"
 tmux set-option -q -t "$session" mouse off
-tmux display-popup -e VIM_DAILY_POPUP=1 -t "$session" -E -w 90% -h 85% \
+tmux display-popup -e VIM_DAILY_POPUP=1 -e "TMUX=$popup_tmux" -e "TMUX_PANE=$popup_pane" -t "$session" -E -w 90% -h 85% \
   -T " vim drill · drag selects · Cmd-C copies · questions: y copies all " \
   "$gate --if-due"
