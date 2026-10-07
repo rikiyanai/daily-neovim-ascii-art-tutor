@@ -29,8 +29,9 @@ Usage
   vim-daily-gate --view [MODULE] watch a module's animation strip (default: latest)
   vim-daily-gate --project M0    print the persistent strip for one module
   vim-daily-gate --preview M0    play/inspect the verified module strip
+  vim-daily-gate --sjis ...      strict proportional-art tools (import/export/preview)
   vim-daily-gate --drill N|ID    run a specific drill
-  vim-daily-gate --list          list the 88 project cards
+  vim-daily-gate --list          list the current project cards
   vim-daily-gate --legacy-list   list the original 46 recipe drills
   vim-daily-gate --due-quiet     exit 0 if a drill is due, 1 if not, no output
   vim-daily-gate --status        progress, streak and per-skill mastery
@@ -53,6 +54,7 @@ Environment
   VIM_DAILY_CURRICULUM_V2   path to an alternate curriculum-v2.json
   VIM_DAILY_CLEAN=1         opt into isolated Neovim with fallback tutor UI
   VIM_DAILY_USE_USER_CONFIG=0 opt out of the personal config (same as clean)
+  VIM_DAILY_TEXTUAL=0        use the stdlib held-screen fallback instead
 """
 
 import datetime as dt
@@ -80,10 +82,23 @@ EDITOR = os.environ.get("EDITOR", "nvim")
 
 MARKER = ">>>>>>>>>>  edit below this line, nothing above it  <<<<<<<<<<"
 
-BOLD, DIM, OFF = "\033[1m", "\033[2m", "\033[0m"
-GREEN, RED, YELLOW = "\033[32m", "\033[31m", "\033[33m"
-if not sys.stdout.isatty():
-    BOLD = DIM = OFF = GREEN = RED = YELLOW = ""
+_style_path = Path(SHARE) / "ui_style.py"
+if not _style_path.is_file():
+    _style_path = Path(__file__).resolve().parent.parent / "share" / "ui_style.py"
+_style_spec = importlib.util.spec_from_file_location("vim_daily_gate_style", _style_path)
+UI_STYLE = importlib.util.module_from_spec(_style_spec)
+_style_spec.loader.exec_module(UI_STYLE)
+_style_enabled = sys.stdout.isatty() and UI_STYLE.colour_enabled()
+BOLD, DIM = (UI_STYLE.ansi(role, enabled=_style_enabled) for role in ("heading", "meta"))
+OFF = UI_STYLE.RESET if _style_enabled else ""
+GREEN, RED, YELLOW = (UI_STYLE.ansi(role, enabled=_style_enabled)
+                      for role in ("ok", "fail", "warn"))
+
+
+def _gate_paint(text, role):
+    """Paint static legacy labels through the shared no-colour contract."""
+    enabled = sys.stdout.isatty() and UI_STYLE.colour_enabled()
+    return UI_STYLE.ansi(role, enabled=enabled) + str(text) + (UI_STYLE.RESET if enabled else "")
 
 
 # =========================================================================
@@ -221,11 +236,11 @@ def keystroke_table(typed, expected, width=34):
     for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
         mine, theirs = "".join(a[i1:i2]), "".join(b[j1:j2])
         if tag == "equal":
-            rows.append((mine, theirs, "ok", DIM))
+            rows.append((mine, theirs, "ok", GREEN))
         elif tag == "replace":
             rows.append((mine, theirs, "not this", RED))
         elif tag == "delete":
-            rows.append((mine, "", "extra", YELLOW))
+            rows.append((mine, "", "extra", RED))
         else:
             rows.append(("", theirs, "you skipped this", RED))
     lines = ["  %-*s  %-*s  %s" % (width, "YOU TYPED", width, "THE RECIPE ASKS FOR", ""),
@@ -233,8 +248,9 @@ def keystroke_table(typed, expected, width=34):
     shown = 0
     for mine, theirs, note, colour in rows:
         while mine or theirs or note:
-            lines.append("  %s%-*s  %-*s  %s%s" % (
-                colour, width, mine[:width], width, theirs[:width], note, OFF))
+            lines.append("  %s%-*s%s  %s%-*s%s  %s%s%s" % (
+                colour, width, mine[:width], OFF,
+                GREEN, width, theirs[:width], OFF, colour, note, OFF))
             mine, theirs, note = mine[width:], theirs[width:], ""
             shown += 1
             if shown > 40:
@@ -658,11 +674,27 @@ BRIEF_HIGHLIGHT_LUA = (
     r"if hw and vim.api.nvim_win_is_valid(hw) then "
     r"local function hl(name,src) local ok,h=pcall(vim.api.nvim_get_hl,0,{name=src,link=false});"
     r"vim.api.nvim_set_hl(0,name,{fg=(ok and h and h.fg) or nil,bold=true}) end;"
-    r"hl('VimDailyHeading','Title');hl('VimDailyAlert','DiagnosticWarn');hl('VimDailyKey','String');"
+    r"if vim.env.NO_COLOR==nil and vim.env.TERM~='dumb' then "
+    + "local roles={" + ",".join("[%s]=%s" % (json.dumps(name), json.dumps(style))
+                                  for name, style in {
+        "VimDailyHeading": UI_STYLE.STYLE["heading"],
+        "VimDailyAlert": UI_STYLE.STYLE["new"],
+        "VimDailyKey": UI_STYLE.STYLE["key"],
+        "VimDailyOk": UI_STYLE.STYLE["ok"],
+        "VimDailyErr": UI_STYLE.STYLE["fail"],
+        "VimDailyMeta": UI_STYLE.STYLE["meta"],
+    }.items()) + "};"
+    r"for name,style in pairs(roles) do vim.api.nvim_set_hl(0,name,{fg=style:match('#%x%x%x%x%x%x'),bold=style:find('bold')~=nil}) end;"
     r"vim.fn.matchadd('VimDailyHeading',[[^\u[[:upper:]/×,]\+\( [[:upper:]/×,]\+\)*]],10,-1,{window=hw});"
     r"vim.fn.matchadd('VimDailyAlert',[[^\(★\|REMEMBER\).*]],11,-1,{window=hw});"
     r"vim.fn.matchadd('VimDailyKey',[[^  \d\+\. \zs\S\+\( \S\+\)\?]],11,-1,{window=hw});"
+    r"vim.fn.matchadd('VimDailyOk',[[✓\|+\d\+]],12,-1,{window=hw});"
+    r"vim.fn.matchadd('VimDailyErr',[[✗]],12,-1,{window=hw});end;"
     r"vim.wo[hw].breakindent=true;vim.wo[hw].breakindentopt='shift:2';"
+    r"vim.api.nvim_win_call(hw,function() local ls=vim.api.nvim_buf_get_lines(0,0,-1,false);"
+    r"for i,line in ipairs(ls) do if line:match('^── MORE') then "
+    r"vim.wo.foldmethod='manual';vim.cmd('normal! zE');vim.wo.foldenable=true;vim.wo.foldlevel=0;"
+    "vim.wo.foldtext=\"getline(v:foldstart)\";vim.cmd(i..','..#ls..'fold');break end end end);"
     r"end"
 )
 
@@ -774,16 +806,21 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
                 "vim.keymap.set({'n','x','o'},k,k,{buffer=artb,noremap=true,silent=true}) end;"
                 "local function vd_plain() for _,w in ipairs(vim.api.nvim_list_wins()) do "
                 "local b=vim.api.nvim_win_get_buf(w);vim.wo[w].list=false;"
+                # Snacks smooth scrolling restores a saved cursor column
+                # while its animation finishes. A learner's next 0 can land
+                # before that restore and be silently undone on a long strip.
+                # Its documented per-buffer filter leaves other buffers alone.
+                "vim.b[b].snacks_scroll=false;"
                 "vim.b[b].snacks_indent=false;vim.b[b].miniindentscope_disable=true;"
                 "if b==artb then vim.bo[b].autoindent=false;vim.bo[b].smartindent=false;"
                 "vim.bo[b].cindent=false;vim.bo[b].indentexpr='' end;"
                 "pcall(function() vim.b[b].indent_blankline_enabled=false end) end;"
                 "pcall(function() require('snacks').indent.disable() end) end;"
                 "local function vd_top() for _,w in ipairs(vim.api.nvim_list_wins()) do "
-                "if vim.api.nvim_win_get_config(w).relative=='' then "
-                "local c=vim.api.nvim_win_get_cursor(w)[1];"
+                "if vim.api.nvim_win_get_config(w).relative=='' and w==vim.g.vim_daily_brief_win then "
+                "local pos=vim.api.nvim_win_get_cursor(w);local c=pos[1];"
                 "if c<=vim.api.nvim_win_get_height(w) then vim.api.nvim_win_call(w,function() "
-                "vim.fn.winrestview({topline=1}) end) end end end end;"
+                "vim.fn.winrestview({topline=1});vim.api.nvim_win_set_cursor(w,pos) end) end end end end;"
                 "vd_plain();vim.defer_fn(vd_plain,200);vim.defer_fn(vd_plain,600);"
                 "vim.defer_fn(vd_top,250);vim.defer_fn(vd_top,700);"
                 "vim.api.nvim_create_autocmd({'BufWinEnter','WinEnter'},{callback=vd_plain});"
@@ -800,12 +837,57 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
                 "do local aw=vim.api.nvim_get_current_win();local done=false;"
                 "local function place() if done then return end;done=true;vim.defer_fn(function() "
                 "if vim.api.nvim_win_is_valid(aw) then vim.api.nvim_win_set_cursor(aw,{%d,0});"
-                "vim.api.nvim_win_call(aw,function() vim.cmd('normal! '..%s) end) end end,100) end;"
+                "vim.api.nvim_win_call(aw,function() vim.cmd('normal! '..%s) end) end;"
+                "vim.g.vim_daily_input_active=true end,100) end;"
                 "if vim.g.did_very_lazy then place() elseif package.loaded['lazy'] then "
                 "vim.api.nvim_create_autocmd('User',{pattern='VeryLazy',once=true,callback=place}) "
                 "else place() end end"
             ) % (start_line, json.dumps(cursor))
             cmd.append("+lua " + cursor_lua)
+        # Navigation-only cards have no artifact mutation to prove that the
+        # learner really operated in the art buffer.  Capture the art-window
+        # cursor at the actual exit boundary.  The runtime supplies a fresh
+        # attempt token and receipt path, and rejects receipts that do not
+        # bind both values and the submitted buffer path.
+        cursor_receipt_lua = (
+            "do local receipt=vim.env.VIM_DAILY_CURSOR_RECEIPT;"
+            "local attempt=vim.env.VIM_DAILY_CURSOR_ATTEMPT;"
+            "if receipt and attempt then local sent=false;local snapshot=nil;local input={};"
+            # -w includes keys replayed by lazy mappings and startup normal!
+            # commands. Keep the pre-mapping typed input separately, bound to
+            # the same nonce and art path as the cursor receipt.
+            "vim.g.vim_daily_input_active=false;"
+            + ("" if use_user_config else
+               "vim.api.nvim_create_autocmd('VimEnter',{once=true,callback=function() vim.g.vim_daily_input_active=true end});") +
+            "vim.on_key(function(key,typed) if vim.g.vim_daily_input_active and typed and typed~='' then "
+            "local bytes={};for i=1,#typed do bytes[#bytes+1]=string.format('%02x',typed:byte(i)) end;"
+            "input[#input+1]={typed_hex=table.concat(bytes),mode=vim.fn.mode(1)} end end,"
+            "vim.api.nvim_create_namespace('vim-daily-typed-input'));"
+            # A brief BufWinLeave can schedule `qa!` before VimLeavePre.  Take
+            # an in-memory snapshot while the art window is still valid, but
+            # persist only at VimLeavePre so the receipt keeps its actual-exit
+            # event and existing nonce/path checks remain authoritative.
+            "local function snapshot_cursor()"
+            "local aw=vim.g.vim_daily_art_win;"
+            "if not aw or not vim.api.nvim_win_is_valid(aw) then return end;"
+            "local ab=vim.api.nvim_win_get_buf(aw);"
+            "if not vim.api.nvim_buf_is_valid(ab) then return end;"
+            "local name=vim.api.nvim_buf_get_name(ab);"
+            "if name=='' then return end;"
+            "local pos=vim.api.nvim_win_get_cursor(aw);local row=pos[1];"
+            "local col=pos[2]+1;local display=vim.api.nvim_win_call(aw,function() return vim.fn.virtcol('.') end);"
+            "local full=vim.fn.fnamemodify(name,':p');"
+            "snapshot={artifact=full,buffer_path=full,buffer_id=ab,window_id=aw,"
+            "cursor={row=row,column=col},display_column=display} end;"
+            "local function persist() if sent then return end;sent=true;"
+            "snapshot_cursor();if not snapshot then return end;"
+            "snapshot.schema='vim-daily/cursor-receipt@1';snapshot.attempt=attempt;"
+            "snapshot.event='VimLeavePre';snapshot.input_schema='vim-daily/typed-input@1';"
+            "snapshot.input=input;vim.fn.writefile({vim.json.encode(snapshot)},receipt) end;"
+            "vim.api.nvim_create_autocmd({'BufWinLeave','WinLeave'},{callback=snapshot_cursor});"
+            "vim.api.nvim_create_autocmd('VimLeavePre',{once=true,callback=persist}) end end"
+        )
+        cmd.append("+lua " + cursor_receipt_lua)
         if brief:
             # VD-09: keep instructions in a separate read-only buffer. The art
             # stays current, so gg/G, counts, ranges, and :t/:m address art only.
@@ -813,11 +895,11 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
                 "local ls=vim.fn.readfile(%s);local aw=vim.api.nvim_get_current_win();"
                 "local ab=vim.api.nvim_get_current_buf();"
                 "local wide=vim.o.columns>=120;"
-                # At 80x24 the personal tabline, both winbars, lualine, and the
-                # command row consume enough screen rows that a six-row pose
-                # lost its final TARGET row.  Give the compact brief one more
-                # row while leaving the art window usable and scrollable.
-                "local mh=(vim.o.lines<28) and math.max(11,math.floor(vim.o.lines*0.65)+1) or math.max(8,math.floor(vim.o.lines*0.55));"
+                # Reserve room for the art and the command row. If an 80x24
+                # brief consumes the whole screen, opening Noice's command
+                # line shrinks the art to one row and moves its cursor.
+                # The complete target stays scrollable in the brief.
+                "local mh=(vim.o.lines<28) and math.max(8,math.min(14,vim.o.lines-7)) or math.max(8,math.floor(vim.o.lines*0.55));"
                 "if wide then local mw=math.min(84,math.max(58,math.floor(vim.o.columns*0.48)));"
                 "vim.cmd('topleft '..mw..'vnew') else "
                 "vim.cmd('aboveleft '..math.min(math.max(#ls+2,8),mh)..'new') end;"
@@ -827,7 +909,8 @@ def run_editor(path, start_line, cursor, keylog, brief=None, task=None, hint=Non
                 "vim.wo[hw].number=false;vim.wo[hw].relativenumber=false;vim.wo[hw].signcolumn='no';"
                 "vim.wo[hw].foldcolumn='0';if wide then vim.wo[hw].winfixwidth=true else vim.wo[hw].winfixheight=true end;"
                 "vim.wo[hw].wrap=true;vim.wo[hw].linebreak=true;"
-                "vim.wo[hw].winbar=' TASK · TARGET · HINT · CTRL-W W SWITCHES PANE ';"
+                "local cid=(ls[1] or ''):match('PROGRESS%%s+(%%S+)');"
+                "vim.wo[hw].winbar=' TASK '..(cid or '')..' · TARGET · HINT · CTRL-W W SWITCHES PANE ';"
                 "vim.g.vim_daily_brief_win=hw;vim.g.vim_daily_art_win=aw;"
                 "vim.api.nvim_set_current_win(aw);vim.wo[aw].wrap=false;"
                 "vim.api.nvim_create_autocmd('BufWinLeave',{buffer=ab,once=true,callback=function()"
@@ -903,10 +986,15 @@ def seconds_since_prompt():
 
 def progress_banner(counts, done_today):
     cur, best, days, total = streaks(counts)
-    flame = "\U0001F525" if cur >= 3 else ""
+    # The dashboard always shows the flame beside a live streak.  It reserves
+    # the high-score emphasis for a personal best, so the static banner uses
+    # the same rule and remains plain under NO_COLOR/TERM=dumb.
+    flame = "\U0001F525" if cur else ""
+    flame_text = _gate_paint(flame, "warn") if flame and cur >= best else flame
     bits = ["%s%d/%d today%s" % (BOLD, done_today, TARGET, OFF),
-            ("streak %s%d day%s%s %s" % (BOLD, cur, "" if cur == 1 else "s", OFF, flame)).rstrip(),
-            "best %d" % best,
+            ("streak %s%d day%s%s %s" % (BOLD, cur, "" if cur == 1 else "s", OFF,
+                                            flame_text)).rstrip(),
+            (_gate_paint("★ best ever", "warn") if cur and cur >= best else "best %d" % best),
             "%d drill%s all time" % (total, "" if total == 1 else "s")]
     return "  ·  ".join(bits)
 
@@ -938,10 +1026,22 @@ def hold_open():
     and vanish. The retry prompt already blocks; these are the exits that do not.
     """
     global _NEXT_REQUESTED, _RETRY_REQUESTED
-    if not os.environ.get("VIM_DAILY_POPUP"):
+    if not (os.environ.get("VIM_DAILY_POPUP") or os.environ.get("VIM_DAILY_NATIVE_WINDOW")):
         return
 
     v2_mod = _V2_RUNTIME.get("module")
+    # Textual result pages already handled feedback/dashboard/watch inside the
+    # mounted app.  Consume only the launcher-owned repeat/next/close route so
+    # practice credit and scheduling remain in this loop.
+    textual_route = getattr(v2_mod, "TEXTUAL_ROUTE", None) if v2_mod else None
+    if v2_mod is not None and textual_route is not None:
+        v2_mod.TEXTUAL_ROUTE = None
+        if _OFFER_NEXT and textual_route in ("next", "n"):
+            _NEXT_REQUESTED = True
+        elif _OFFER_NEXT and textual_route in ("repeat", "r"):
+            _RETRY_REQUESTED = True
+        return
+
     can_watch = bool(v2_mod is not None and getattr(v2_mod, "LAST_VIEW", {}).get("views"))
     watch = "  ·  v = watch your work again" if can_watch else ""
     prompt = ("\n%sEnter = close  ·  r = repeat this lesson  ·  n = next lesson\n"
@@ -1010,15 +1110,20 @@ def signal_question_rendered(_question, _order):
 
 def post_page_break():
     """Keep replay/teaching feedback visible before replacing it with progress."""
-    if not os.environ.get("VIM_DAILY_POPUP"):
+    if not (os.environ.get("VIM_DAILY_POPUP") or os.environ.get("VIM_DAILY_NATIVE_WINDOW")):
         return
     while True:
         try:
             # The preceding renderer already ends with a newline. An additional
             # blank row scrolls the result headline off an 80x24 popup.
-            answer = input("%sEnter = skill-tree progress  ·  f = feedback%s " % (DIM, OFF))
+            answer = input("%sEnter = skill-tree progress · k = key details · f = feedback%s " % (DIM, OFF))
         except (EOFError, KeyboardInterrupt):
             return
+        if answer.strip().lower() in ("k", "keys"):
+            runtime = _V2_RUNTIME.get("module")
+            if runtime:
+                runtime.show_feedback_details()
+            continue
         if answer.strip().lower() in ("f", "feedback"):
             _collect_feedback("result")
             continue
@@ -1122,20 +1227,27 @@ def is_due(done_today):
 
 
 def main(argv):
-    os.makedirs(STATE, exist_ok=True)
     mode = argv[0] if argv else "run"
+    if mode == "--sjis":
+        helper = Path(__file__).resolve().parent / "vim-daily-sjis"
+        os.execv(str(helper), [str(helper), *argv[1:]])
+    os.makedirs(STATE, exist_ok=True)
 
     # VD-09: V2 is the normal hourly route. The original 46 exact-recipe drills stay
     # available through --drill and --legacy-* while existing progress remains
     # untouched in progress.json and the dated logs.
     v2_modes = {"run", "--force", "--if-due", "--due-quiet", "--status", "--tree", "--dashboard", "--view", "--feedback", "--learned",
                 "--list", "--export-progress", "--card", "--project", "--preview",
-                "--deck", "--deck-miss"}
+                "--deck", "--deck-miss", "--continue", "--practice-card", "--practice-review"}
     # Memory plan 2026-09-29: `--quiz` or `--quiz N` drills the flashcard deck;
     # `--quiz NAME` still opens the original concept question bank.
     if mode == "--quiz" and (len(argv) < 2 or argv[1].isdigit()):
         v2_modes.add("--quiz")
     if mode in v2_modes:
+        managed = Path(os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local/share"))) / "vim-daily-venv/bin/python"
+        if (managed.is_file() and Path(sys.prefix).resolve() != managed.parent.parent.resolve()
+                and os.environ.get("VIM_DAILY_USE_MANAGED_RUNTIME", "1") != "0"):
+            os.execv(str(managed), [str(managed), str(Path(__file__).resolve()), *argv])
         v2 = load_v2_runtime()
         _V2_RUNTIME["module"] = v2
         v2_share = SHARE
@@ -1153,12 +1265,13 @@ def main(argv):
             question_rendered=signal_question_rendered)
         _V2_RUNTIME["cfg"] = cfg  # VD-58: `d` on the held page opens the dashboard
         global _OFFER_NEXT, _NEXT_REQUESTED, _RETRY_REQUESTED
-        _OFFER_NEXT = mode in ("run", "--force", "--if-due")
+        _OFFER_NEXT = mode in ("run", "--force", "--if-due", "--continue",
+                               "--practice-card", "--practice-review")
         result = v2.run(cfg, argv, force=(mode == "--force"))
         # VD-13 defect 6: "n" at the closing prompt starts the next due lesson
         # in the same popup. It is the learner's explicit request, so it uses
         # the on-demand (--force) route, like prefix+V; Enter still closes.
-        practice_run = False
+        practice_run = mode in ("--practice-card", "--practice-review")
         while _OFFER_NEXT and (_NEXT_REQUESTED or _RETRY_REQUESTED) and result is not None:
             retry = _RETRY_REQUESTED
             _NEXT_REQUESTED = False

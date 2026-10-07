@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Strict proportional-art tools; use the managed runtime when installed."""
+import os
+from pathlib import Path
+import sys
+
+data = Path(os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local/share")))
+managed = data / "vim-daily-venv/bin/python"
+if managed.is_file() and Path(sys.executable).absolute() != managed.absolute():
+    os.execv(str(managed), [str(managed), str(Path(__file__).resolve()), *sys.argv[1:]])
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "share"))
+from sjis_tutor import main
+
+raise SystemExit(main())
