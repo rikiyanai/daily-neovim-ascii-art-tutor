@@ -410,7 +410,7 @@
     "animation_prompt": "The loop includes a distinct return midpoint and a complete seam candidate.\n\n  \\ → | → / → | → \\ ",
     "animation_answer": "Use a bounded moving-row redraw and copy a complete three-row seam frame.",
     "neovim_prompt": "Compare C versus d$/A/r and one full-frame copy method.",
-    "neovim_answer": "C is narrower than d$ plus A/r; the seam can be copied by addressed :t or counted 3yy/p, but one method should be used.",
+    "neovim_answer": "C is narrower than d$ plus A/r; the seam can be copied by :t with an explicit range or counted 3yy/p, but one method should be used.",
     "choices": [
       "ANIMATION: Return midpoint has two vertical strokes; seam is a whole first frame. | NEOVIM: C is bounded, d$+A/r is broader, and :t or 3yy/p copies three seam rows.",
       "ANIMATION: Seam is only a pivot row. | NEOVIM: d$+A/r and :t are identical one-cell operations.",
@@ -436,12 +436,12 @@
     "compact_prompt": "ANIMATION\nInsert missile frame 2 between frames 1 and 4.\n\n  │< / / |:.│\n       ↓ copy + vary\n  │< / / |:'│\n  │< / / |::.│\n\nNEOVIM\nWhy copy rows 1-3 before `5G$r'`?",
     "animation_prompt": "The missing missile in-between preserves the complete hull and changes only the exhaust endpoint.",
     "animation_answer": "Insert all three rows of frame 1 as a scaffold, then advance the copied exhaust from dot to apostrophe.",
-    "neovim_prompt": "Decode addressed frame copy followed by a one-cell row-5 replacement.",
+    "neovim_prompt": "Decode copy of a complete frame range followed by a one-cell row-5 replacement.",
     "neovim_answer": ":1,3t3 copies the complete first frame after row 3; 5G$r' reaches the copied exhaust row's final cell and overwrites only its endpoint.",
     "choices": [
       "ANIMATION: A complete hull frame is inserted and only its exhaust endpoint advances to apostrophe. | NEOVIM: `:1,3t3` copies the three-row frame, then `5G$r'` overwrites one cell in the copy.",
       "ANIMATION: Only the exhaust row is copied; hull rows are shared between frames. | NEOVIM: `:2t3` is equivalent to a complete frame copy.",
-      "ANIMATION: Frame 1 is moved into the middle and disappears from the start. | NEOVIM: Ex `t` relocates its addressed source range.",
+      "ANIMATION: Frame 1 is moved into the middle and disappears from the start. | NEOVIM: `:t` relocates its explicit source range.",
       "ANIMATION: Every exhaust dot becomes apostrophe, including frame 4. | NEOVIM: `r'` replaces all matching cells after `$`."
     ],
     "compact_choices": [
@@ -454,7 +454,7 @@
     "feedback": [
       "Correct: whole-frame copy preserves the registered hull, then one replacement creates the source-authored in-between.",
       "A missile frame is three rows. Copying only row 2 detaches the exhaust from its hull.",
-      "The Ex t command copies and leaves its source in place; m would relocate it.",
+      "The :t command copies and leaves its source in place; m would relocate it.",
       "r overwrites one cursor cell. It does not search later frames for matching dots."
     ]
   },
@@ -922,7 +922,7 @@
     "compact_prompt": "ANIMATION\nRepeat the complete incomplete frame as a hold.\n\n     BEFORE       AFTER\n  I │ /-\\ │   I │ /-\\ │\n  C │ /==\\│   H │ /-\\ │\n               C │ /==\\│\n\nNEOVIM\nWhat should be copied?",
     "animation_prompt": "The anticipation hold repeats a complete five-row incomplete build before the finished pose.\n\n  incomplete → identical hold → completion",
     "animation_answer": "Duplicate the complete incomplete frame because the repeat has an anticipation timing role.",
-    "neovim_prompt": "Use the taught addressed frame copy.",
+    "neovim_prompt": "Use the taught copy of a complete frame range.",
     "neovim_answer": ":1,5t5<CR> copies the complete five-line frame after itself; it does not copy a partial row.",
     "choices": [
       "ANIMATION: A complete incomplete frame repeats as an anticipation hold before completion. | NEOVIM: :1,5t5<CR> copies all five frame rows after the original.",
@@ -949,7 +949,7 @@
     "compact_prompt": "ANIMATION\nThe completed frame is duplicated without a timing reason.\n\n  H │ /-\\ │\n  C │ /==\\│\n  D │ /==\\│ ← inspect\n\nNEOVIM\nWhat should diagnosis inspect?",
     "animation_prompt": "The first repeated incomplete frame is a hold; the trailing completed duplicate is not justified.\n\n  intentional hold: before completion\n  accidental duplicate: after settle",
     "animation_answer": "Distinguish a repeated frame by its timing role, not by buffer equality alone.",
-    "neovim_prompt": "Use the learned addressed copy scope to identify the candidate.",
+    "neovim_prompt": "Use the learned copy with an explicit range scope to identify the candidate.",
     "neovim_answer": ":16,20t$ copies the complete settle frame to the end; later diagnosis can remove it if no timing role exists.",
     "choices": [
       "ANIMATION: The anticipation hold is purposeful, but the final duplicate is unjustified. | NEOVIM: :16,20t$ copied a complete settle frame after the strip for review.",
@@ -1193,7 +1193,7 @@
     "animation_prompt": "The five-row incomplete frame is duplicated as a purposeful hold.\n\n  frame 1: incomplete\n  frame 2: same incomplete\n  frame 3: complete",
     "animation_answer": "Duplicate the complete incomplete frame before completion.",
     "neovim_prompt": "Decode :1,5t5<CR>.",
-    "neovim_answer": ":1,5 addresses five frame rows, t5 copies them after line 5, and <CR> executes the copy.",
+    "neovim_answer": ":1,5 selects five frame rows, t5 copies them after line 5, and <CR> executes the copy.",
     "choices": [
       "ANIMATION: A complete incomplete frame repeats as an anticipation hold. | NEOVIM: :1,5t5<CR> copies all five rows after the original.",
       "ANIMATION: Only the apex row repeats. | NEOVIM: :1,1t1 copies one row and supplies the rest implicitly.",
@@ -1208,10 +1208,10 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the addressed range owns the complete five-row hold.",
+      "Correct: the explicit range owns the complete five-row hold.",
       "A one-row fragment is not a complete timed frame.",
       "The target adds a hold before completion; moving the original reverses the strip.",
-      "Ex copy preserves the original; t does not delete it."
+      ":copy preserves the original; t does not delete it."
     ]
   },
   "M7.02.P01": {
@@ -1381,7 +1381,7 @@
     "compact_prompt": "ANIMATION\nHarmonize one band across every frame.\n\n  F1 │ /---\\ │ → │ /===\\ │\n  F2 │ /---\\ │ → │ /===\\ │\n  F3 │ /---\\ │ → │ /===\\ │\n\nNEOVIM\nCompare one accepted method.",
     "animation_prompt": "The same three-cell material band is harmonized in every frame while all five-row frame boundaries remain.\n\n  /---\\ → /===\\ across frames",
     "animation_answer": "Apply one exact material-pattern pass without changing frame structure or timing duplicates.",
-    "neovim_prompt": "Compare an exact Ex substitute with Visual macro/global-normal alternatives.",
+    "neovim_prompt": "Compare an exact :s command with Visual macro/global-normal alternatives.",
     "neovim_answer": "The exact range substitute is concise when the pattern is unique; a Visual macro or exact :global normal pass can be equally bounded. Choose one method and inspect.",
     "choices": [
       "ANIMATION: All homologous bands become === while complete frames stay intact. | NEOVIM: An exact :s range, a Visual macro, or exact :global normal can work; use one bounded method and inspect.",
@@ -1436,7 +1436,7 @@
     "animation_prompt": "The anticipation hold remains; only the final complete duplicate is removed.\n\n  keep: H → B → C\n  remove: final C duplicate",
     "animation_answer": "Delete one complete trailing five-row frame and preserve the earlier timing hold.",
     "neovim_prompt": "State the reusable frame-level scope without naming an unshown key path.",
-    "neovim_answer": "Address the final frame's first row and delete exactly its five lines; do not delete the earlier hold or completion.",
+    "neovim_answer": "Reach the final frame's first row and delete exactly its five lines; do not delete the earlier hold or completion.",
     "choices": [
       "ANIMATION: Hold, build, and completion stay; only trailing duplicate leaves. | NEOVIM: Delete one whole five-row frame at the end.",
       "ANIMATION: Remove the anticipation hold and keep both completed frames. | NEOVIM: Delete the first five-row duplicate.",
@@ -1517,17 +1517,17 @@
     "animation_prompt": "The new block keeps all three pose rows and T08; its F01 label becomes F03.\n\n  BEFORE                 AFTER\n  plate F01 + F02        plate F01 + F02 + F03\n  each block: o /|\\ / \\",
     "animation_answer": "Copy all five lines as one plate, then advance only the copied F label by two.",
     "neovim_prompt": "Describe the taught bounded operation without relying on a redraw.",
-    "neovim_answer": "Use an addressed five-line copy to append the block, then use counted CTRL-A on its F01 digits so they become F03; leave T08 and art intact.",
+    "neovim_answer": "Use a copy of an explicit five-line range to append the block, then use counted CTRL-A on its F01 digits so they become F03; leave T08 and art intact.",
     "choices": [
       "ANIMATION: Append one complete five-line plate and make its label F03; prior blocks stay unchanged. | NEOVIM: Copy the five-line range, then count CTRL-A by two on the copied F01 number.",
       "ANIMATION: Append only the three art rows and invent F03 later. | NEOVIM: Yank three lines, then use CTRL-A on the T08 digits.",
-      "ANIMATION: Reorder the first two blocks and leave no third block. | NEOVIM: Use an addressed move rather than a copy.",
+      "ANIMATION: Reorder the first two blocks and leave no third block. | NEOVIM: Use a move with an explicit range rather than a copy.",
       "ANIMATION: Append a plate but alter every T08 line to T10. | NEOVIM: Apply CTRL-A to all numeric fields in the file."
     ],
     "compact_choices": [
       "A: append whole plate; F01→F03 · V: copy 5 lines, count CTRL-A",
       "A: append art rows only · V: copy 3, edit T08",
-      "A: reorder first blocks · V: addressed move",
+      "A: reorder first blocks · V: move with an explicit range",
       "A: append but T08→T10 · V: increment every number"
     ],
     "correct_choice": 0,
@@ -1559,8 +1559,8 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: both methods move one complete owned range; their difference is explicit addressing versus cursor selection.",
-      ":m moves the addressed range; it does not duplicate it, and linewise delete/put can move lines.",
+      "Correct: both methods move one complete owned range; their difference is explicit line selectioning versus cursor selection.",
+      ":m moves the explicit range; it does not duplicate it, and linewise delete/put can move lines.",
       "The visible art order changes, not merely the labels; renumbering cannot reorder plates.",
       "A five-line plate includes T08, so a three-row move would split the plan."
     ]
@@ -1759,13 +1759,13 @@
     "compact_prompt": "ANIMATION\nMove all three A rows after all three B rows.\n\n  1 │ A │\n  2 │aaa│\n  3 │---│\n  4 │ B │\n  5 │bbb│\n  6 │---│\n  AFTER: B / bbb / --- / A / aaa / ---\n\nNEOVIM\nWhich range is the object?",
     "animation_prompt": "A's three rows stay together while their position changes.\n\n  BEFORE       AFTER\n  │ A │        │ B │\n  │aaa│        │bbb│\n  │---│        │---│\n  │ B │        │ A │\n  │bbb│        │aaa│\n  │---│        │---│",
     "animation_answer": "Move the complete A block after the complete B block.",
-    "neovim_prompt": "Decode the addressed Ex move taught in this bridge.",
-    "neovim_answer": ":1,3m$<CR> addresses A's three lines, moves them after the last line, and executes the command.",
+    "neovim_prompt": "Decode the :move command with an explicit range taught in this bridge.",
+    "neovim_answer": ":1,3m$<CR> selects A's three lines, moves them after the last line, and executes the command.",
     "choices": [
-      "ANIMATION: A stays a three-row block and moves below B. | NEOVIM: :1,3m$<CR> addresses rows 1–3 and moves them after the final line.",
+      "ANIMATION: A stays a three-row block and moves below B. | NEOVIM: :1,3m$<CR> selects rows 1–3 and moves them after the final line.",
       "ANIMATION: Only A's title row moves below B. | NEOVIM: :1m$ copies one row and leaves the rest in place.",
       "ANIMATION: A is duplicated below B while the original remains above. | NEOVIM: :1,3t$ is the move command.",
-      "ANIMATION: The rows inside A reverse while A remains above B. | NEOVIM: :1,3m$ sorts the addressed range in place."
+      "ANIMATION: The rows inside A reverse while A remains above B. | NEOVIM: :1,3m$ sorts the explicit range in place."
     ],
     "compact_choices": [
       "A: whole A after B · V: :1,3m$",
@@ -1778,7 +1778,7 @@
       "Correct: the range and destination express exactly one complete-block move.",
       "A's identity includes all three rows; moving only its title splits the object.",
       ":t copies; :m moves. The target has no duplicate A above B.",
-      "The rows keep their internal order; addressed move changes location, not ordering."
+      "The rows keep their internal order; move with an explicit range changes location, not ordering."
     ]
   },
   "M16.05.P01": {
@@ -1786,8 +1786,8 @@
     "compact_prompt": "ANIMATION\nOrder changes F01,F02,F03 → F02,F01,F03; plates remain five lines.\n\n  1 │ F01 KEY │\n  2 │ T08 FPS │\n  3 │ F02 KEY │\n  4 │ T08 FPS │\n\nNEOVIM\nWhich approach keeps the block boundary explicit?",
     "animation_prompt": "Only the order of complete five-line plates changes.\n\n  BEFORE: F01 | F02 | F03\n  AFTER:  F02 | F01 | F03",
     "animation_answer": "Reorder complete plates, never split their art, F label, or T line.",
-    "neovim_prompt": "Compare addressed move with linewise delete/put by their scope.",
-    "neovim_answer": "The addressed range move is explicit; a linewise delete followed by put can match it only when the selection owns all five lines.",
+    "neovim_prompt": "Compare move with an explicit range with linewise delete/put by their scope.",
+    "neovim_answer": "The explicit range move is explicit; a linewise delete followed by put can match it only when the selection owns all five lines.",
     "choices": [
       "ANIMATION: F02 moves before F01 and every five-line plate remains intact. | NEOVIM: :m names the exact range; linewise delete/put is equivalent only with a five-line selection.",
       "ANIMATION: F02's F label moves before F01 while its art stays behind. | NEOVIM: Select only the label line for the safest reorder.",
@@ -1809,7 +1809,7 @@
     ]
   },
   "M16.06.P01": {
-    "prompt": "ANIMATION\nThese are consecutive FrogBog lily-pad frames. The number drawn inside the pad advances from 1 to 2; the rim, sides, and lower texture remain registered.\n\n  BEFORE         AFTER\n  │    _│         │    _│\n  │ ,'   `.│      │ ,'   `.│\n  │/    1  \\│  →  │/    2  \\│\n  │\\       /│     │\\       /│\n  │ \\/|..-'│      │ \\/|..-'│\n\nNEOVIM\nWhich command addresses the numbered art row, finds the visible 1, and increments only that numeric token?",
+    "prompt": "ANIMATION\nThese are consecutive FrogBog lily-pad frames. The number drawn inside the pad advances from 1 to 2; the rim, sides, and lower texture remain registered.\n\n  BEFORE         AFTER\n  │    _│         │    _│\n  │ ,'   `.│      │ ,'   `.│\n  │/    1  \\│  →  │/    2  \\│\n  │\\       /│     │\\       /│\n  │ \\/|..-'│      │ \\/|..-'│\n\nNEOVIM\nWhich command reaches the numbered art row, finds the visible 1, and increments only that numeric token?",
     "compact_prompt": "ANIMATION\nAdvance the number inside this FrogBog pad; preserve its contour.\n\n  │/    1  \\│ → │/    2  \\│\n\nNEOVIM\nChoose the scoped increment.",
     "animation_prompt": "FrogBog pad frame 1 advances to frame 2 while every nonnumeric art cell stays fixed.",
     "animation_answer": "Change only the embedded 1 to 2; preserve the complete five-row lily-pad silhouette.",
@@ -1817,7 +1817,7 @@
     "neovim_answer": "3G selects the third row, 0 starts at its left edge, f1 lands on the drawn number, and Ctrl-a increments only that numeric token.",
     "choices": [
       "ANIMATION: The complete pad moves one cell right. | NEOVIM: `3G0f1<C-a>` inserts a cell before the number.",
-      "ANIMATION: Only the drawn 1 becomes 2; the pad contour stays registered. | NEOVIM: `3G0f1<C-a>` addresses row 3, finds 1, and increments that token in place.",
+      "ANIMATION: Only the drawn 1 becomes 2; the pad contour stays registered. | NEOVIM: `3G0f1<C-a>` selects row 3, finds 1, and increments that token in place.",
       "ANIMATION: The bottom texture changes from dots to dashes. | NEOVIM: Ctrl-a advances punctuation to its next glyph.",
       "ANIMATION: A second pad is appended below the first. | NEOVIM: Ctrl-a duplicates the current five-line object."
     ],
@@ -2133,7 +2133,7 @@
     ]
   },
   "M3.Q10": {
-    "prompt": "ANIMATION\nA later pose has an eye but its feet and baseline were omitted, so the body no longer registers with earlier poses.\n\n  EARLIER       LATER\n  1 │  /\\   │   │  /\\   │\n  2 │ (o)   │   │ (O)   │\n  3 │ /|\\   │   │ /|\\   │\n  4 │  |    │   │       │\n  5 │ / \\   │   │       │\n  6 │/___\\  │   │       │\n\nNEOVIM\nWhat repair addresses the actual risk?",
+    "prompt": "ANIMATION\nA later pose has an eye but its feet and baseline were omitted, so the body no longer registers with earlier poses.\n\n  EARLIER       LATER\n  1 │  /\\   │   │  /\\   │\n  2 │ (o)   │   │ (O)   │\n  3 │ /|\\   │   │ /|\\   │\n  4 │  |    │   │       │\n  5 │ / \\   │   │       │\n  6 │/___\\  │   │       │\n\nNEOVIM\nWhat repair removes the actual risk?",
     "compact_prompt": "ANIMATION\nThe later eye floats above missing body rows.\n\n  EARLIER       LATER\n  │  /\\   │     │  /\\   │\n  │ (o)   │     │ (O)   │\n  │ /|\\   │     │ /|\\   │\n  │ / \\   │     │       │\n  │/___\\  │     │       │\n\nNEOVIM\nRepair the complete pose before varying its eye.",
     "animation_prompt": "The repaired later pose regains its torso, feet, and baseline before its O eye is judged.\n\n  EARLIER: six registered rows\n  LATER:   same six rows, then a local eye change",
     "animation_answer": "Restore the complete six-row pose so the acting eye is compared on registered anatomy.",
@@ -2273,7 +2273,7 @@
     "animation_prompt": "The target adds a complete six-line P3 without changing P1 or P2.\n\n  P1 (o) → P2 (O) → P3 (o)",
     "animation_answer": "Append one complete six-row pose and preserve the existing strip.",
     "neovim_prompt": "Compare the two taught full-pose copy methods; execute only one.",
-    "neovim_answer": "Counted 6yy/p and addressed :1,6t$ both copy the full primary pose; do not perform both in the same attempt.",
+    "neovim_answer": "Counted 6yy/p and explicit-range :1,6t$ both copy the full primary pose; do not perform both in the same attempt.",
     "choices": [
       "ANIMATION: P3 is a complete six-row copy and P1/P2 remain. | NEOVIM: Use either 6yy/p or :1,6t$; both have the required scope, but choose one.",
       "ANIMATION: P3 is only an eye row. | NEOVIM: Use yy/p on row 2 because the body is implied.",
@@ -2381,7 +2381,7 @@
     "animation_prompt": "The final pose alone gets the settle accent; all three six-row bodies remain complete.\n\n  P1 eye o\n  P2 eye O\n  P3 eye ·",
     "animation_answer": "Apply a one-cell middle-dot replacement only to the final pose.",
     "neovim_prompt": "State the reusable grammar without naming an unshown key path.",
-    "neovim_answer": "Address the final pose's eye row directly and use the taught one-cell replacement plus digraph; do not touch earlier poses or stable rows.",
+    "neovim_answer": "Reach the final pose's eye row directly and use the taught one-cell replacement plus digraph; do not touch earlier poses or stable rows.",
     "choices": [
       "ANIMATION: Final eye o→· only; all earlier eyes and six-row bodies stay. | NEOVIM: Use a direct final-row landmark and bounded digraph replacement.",
       "ANIMATION: Every eye becomes · for a uniform strip. | NEOVIM: Apply the replacement to all matching eyes.",

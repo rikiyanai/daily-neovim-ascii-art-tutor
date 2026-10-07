@@ -81,7 +81,7 @@
     ]
   },
   "M13.GH.P01": {
-    "prompt": "ANIMATION\nA Chick peep frame has trailing registration spaces. Only the final beak glyph closes from < to -.\n\n  BEFORE       AFTER\n  │  __O<   │  │  __O-   │\n  │`{/ ;    │  │`{/ ;    │\n  │  ^^     │  │  ^^     │\n\nNEOVIM\nWhich hidden path addresses the visible endpoint rather than the padded row end?",
+    "prompt": "ANIMATION\nA Chick peep frame has trailing registration spaces. Only the final beak glyph closes from < to -.\n\n  BEFORE       AFTER\n  │  __O<   │  │  __O-   │\n  │`{/ ;    │  │`{/ ;    │\n  │  ^^     │  │  ^^     │\n\nNEOVIM\nWhich hidden path reaches the visible endpoint rather than the padded row end?",
     "compact_prompt": "ANIMATION\nOnly the beak endpoint closes.\n\n  │__O<   │ → │__O-   │\n\nNEOVIM\nWhich motion ignores the padding?",
     "animation_prompt": "ANIMATION\nThe final visible beak cell closes while every other pose cell remains fixed.\n\n  │  __O<   │ → │  __O-   │",
     "animation_answer": "The last visible beak glyph changes from < to -.",
@@ -99,12 +99,12 @@
       "A: dash appended · V: A",
       "A: beak endpoint only · V: g_ then r-"
     ],
-    "correct_choice": 3,
+    "correct_choice": 0,
     "feedback": [
       "The alignment spaces remain part of the registered row; deleting them is not the target.",
       "The eye is unchanged. The acting cell is the last visible glyph.",
       "Appending would place the dash after invisible padding and would not replace the beak.",
-      "Correct: g_ addresses the visible endpoint independently of the amount of trailing padding."
+      "Correct: g_ reaches the visible endpoint independently of the amount of trailing padding."
     ]
   },
   "M4.BI.P01": {
@@ -167,7 +167,7 @@
     "animation_prompt": "ANIMATION\nOne registered column is replaced through the full missile frame.",
     "animation_answer": "Only the three cells at display column 3 become |; row widths stay fixed.",
     "neovim_prompt": "NEOVIM\nDecode `gg3|<C-v>2jc|<Esc>`.",
-    "neovim_answer": "3| addresses the column, Ctrl-v through 2j selects its three cells, and c| changes the block in place.",
+    "neovim_answer": "3| reaches the column, Ctrl-v through 2j selects its three cells, and c| changes the block in place.",
     "choices": [
       "ANIMATION: A new column is inserted and the missile widens. | NEOVIM: c in a block always shifts later cells right.",
       "ANIMATION: The third row is deleted. | NEOVIM: c is linewise after Ctrl-v.",
@@ -220,7 +220,7 @@
     "compact_prompt": "ANIMATION\nThe same three axis cells are refined |→!.\n\n  │  |___/│ → │  !___/│\n  │< | /  │ → │< ! /  │\n  │  |¯¯¯\\│ → │  !¯¯¯\\│\n\nNEOVIM\nWhat does gv restore?",
     "animation_prompt": "ANIMATION\nThe same onion-skin axis is refined without reconstructing its geometry.",
     "animation_answer": "The three previously selected axis cells change together from | to !.",
-    "neovim_prompt": "NEOVIM\nDecode the `gv` in `...c|<Esc>gvr!`.",
+    "neovim_prompt": "NEOVIM\nDecode the `gv` after the selected block is changed to `!` and Escape returns to Normal.",
     "neovim_answer": "gv restores the previous Visual Block selection; r! then replaces those same cells.",
     "choices": [
       "ANIMATION: The final axis moves to another column. | NEOVIM: gv finds the next matching glyph.",
@@ -540,22 +540,22 @@
     ]
   },
   "M11.UT.P01": {
-    "prompt": "ANIMATION\nSkully's left eye has two authored takes. ! is an exaggerated reaction; O is the chosen look. After choosing O, you still revisit the abandoned ! take before returning to the look for submission.\n\n  START       BRANCH A     CHOSEN B\n  │(_o,o)│ → │(_!,o)│ ↔ │(_O,o)│\n  │  `\"´│   │  `\"´│   │  `\"´│\n\nNEOVIM\nHow do u, g-/g+, and :earlier differ when comparing these animation takes?",
-    "compact_prompt": "ANIMATION\nAuthor ! and O eye takes; inspect ! again; finish on O.\n\n  │(_o,o)│ → │(_!,o)│ ↔ │(_O,o)│\n\nNEOVIM\nWhich keys create and travel the branch?",
+    "prompt": "ANIMATION\nSkully's source frames form two real takes. The idle source frame is abandoned; the look source frame is chosen.\n\n  START       BRANCH A     CHOSEN B\n  │     ,--. │ → │     ,--. │ ↔ │     ,--. │\n  │    (_=,=)│   │    (_o,o)│   │    (_O,o)│\n  │      `\"´ │   │      `\"´ │   │      `\"´ │\n\nNEOVIM\nHow do u, g-/g+, and :earlier differ when comparing these animation takes?",
+    "compact_prompt": "ANIMATION\nAuthor source idle and look takes; inspect idle again; finish on look.\n\n  │     ,--. │ → │     ,--. │ ↔ │     ,--. │\n  │    (_=,=)│   │    (_o,o)│   │    (_O,o)│\n  │      `\"´ │   │      `\"´ │   │      `\"´ │\n\nNEOVIM\nWhich keys create and travel the branch?",
     "animation_prompt": "ANIMATION\nAn alternate Skully eye take remains in history while the chosen look pose is submitted.",
-    "animation_answer": "The exaggerated ! take remains visitable, but the final saved left eye is the chosen O.",
+    "animation_answer": "The source idle take remains visitable, but the final saved left eye is the chosen O look.",
     "neovim_prompt": "NEOVIM\nExplain undo branching and chronological history travel.",
-    "neovim_answer": "u returns before the first take so the O-eye edit creates a branch; g- and g+ move through changes chronologically, while :earlier 1 revisits the preceding authored state.",
+    "neovim_answer": "u returns before the source idle take so the O-eye edit creates a branch; g- and g+ move through changes chronologically, while :earlier 1 revisits the preceding authored state.",
     "choices": [
-      "ANIMATION: The ! take remains inspectable and the final saved left eye is O. | NEOVIM: u enables a branch; g-/g+ and :earlier travel authored states chronologically.",
-      "ANIMATION: Both ! and O appear in the final eye cell. | NEOVIM: g+ merges two branches into one glyph.",
-      "ANIMATION: The abandoned ! take is permanently deleted. | NEOVIM: u erases it from the undo tree before the O eye is authored.",
+      "ANIMATION: The source idle take remains inspectable and the final saved left eye is O. | NEOVIM: u enables a branch; g-/g+ and :earlier travel authored states chronologically.",
+      "ANIMATION: Both source takes appear in the final eye cell. | NEOVIM: g+ merges two branches into one glyph.",
+      "ANIMATION: The abandoned source take is permanently deleted. | NEOVIM: u erases it from the undo tree before the O eye is authored.",
       "ANIMATION: The original lowercase-o eye must be submitted. | NEOVIM: :earlier always discards every newer state with no return path."
     ],
     "compact_choices": [
-      "A: inspect !; save O · V: branch + history travel",
-      "A: save ! and O · V: g+ merges glyphs",
-      "A: ! erased · V: u deletes history",
+      "A: inspect idle; save O · V: branch + history travel",
+      "A: save both source takes · V: g+ merges glyphs",
+      "A: source take erased · V: u deletes history",
       "A: save original · V: earlier is irreversible"
     ],
     "correct_choice": 0,
@@ -567,27 +567,27 @@
     ]
   },
   "M11.UTH.P01": {
-    "prompt": "ANIMATION\nOn an unfamiliar SnowBunny pose, ! is an exaggerated left-eye take and - is the chosen half-blink. The task must visit the abandoned ! state and still finish on -.\n\n  START       ALT TAKE     CHOSEN TAKE\n  │ ( n.n)│ → │ ( !.n)│ ↔ │ ( -.n)│\n  │o(,`_\"_)│ │o(,`_\"_)│ │o(,`_\"_)│\n\nNEOVIM\nWhich history model keeps both authored takes available while allowing the chosen half-blink to be saved?",
-    "compact_prompt": "ANIMATION\nCompare ! and - left-eye takes; finish on -.\n\n  │( n.n)│ → │( !.n)│ ↔ │( -.n)│\n\nNEOVIM\nWhich model is an undo branch?",
+    "prompt": "ANIMATION\nOn an unfamiliar SnowBunny pose, the idle and blink states are both registered source frames. The task visits idle and still finishes on blink.\n\n  START       ALT TAKE     CHOSEN TAKE\n  │   (\\(\\ │   │   (\\(\\ │   │   (\\(\\ │\n  │  ( -.-)│ → │  ( n.n)│ ↔ │  ( -.-)│\n  │o(,`_\"_)│   │o(,`_\"_)│   │o(,`_\"_)│\n\nNEOVIM\nWhich history model keeps both source takes available while allowing the chosen blink to be saved?",
+    "compact_prompt": "ANIMATION\nCompare source idle and blink takes; finish on blink.\n\n  │   (\\(\\ │ → │   (\\(\\ │ ↔ │   (\\(\\ │\n  │  ( -.-)│   │  ( n.n)│   │  ( -.-)│\n  │o(,`_\"_)│   │o(,`_\"_)│   │o(,`_\"_)│\n\nNEOVIM\nWhich model is an undo branch?",
     "animation_prompt": "ANIMATION\nUndo-tree take comparison is applied to a different complete pose.",
-    "animation_answer": "The alternate eye remains in history, but the final visible left eye is the half-blink dash.",
+    "animation_answer": "The idle source frame remains in history, but the final visible left eye is the blink dash.",
     "neovim_prompt": "NEOVIM\nChoose the route that branches after undo and travels older/newer states before save.",
-    "neovim_answer": "Author the alternate, undo, author the chosen sibling, use g-/g+ and :earlier to inspect history, then return to the chosen newer state.",
+    "neovim_answer": "Author the idle source frame, undo, author the blink sibling, use g-/g+ and :earlier to inspect history, then return to the chosen newer state.",
     "choices": [
-      "ANIMATION: Save the exaggerated ! eye. | NEOVIM: stop immediately after travelling to the older branch.",
+      "ANIMATION: Save the idle source eye. | NEOVIM: stop immediately after travelling to the older branch.",
       "ANIMATION: Delete the SnowBunny pose and retype it. | NEOVIM: undo history cannot retain sibling takes.",
-      "ANIMATION: Keep the alternate take visitable but save the - half-blink. | NEOVIM: undo before authoring the sibling, travel with g-/g+ and :earlier, then return to the chosen newer state.",
+      "ANIMATION: Keep the idle source take visitable but save the blink. | NEOVIM: undo before authoring the sibling, travel with g-/g+ and :earlier, then return to the chosen newer state.",
       "ANIMATION: Display both eye takes in adjacent cells. | NEOVIM: g- duplicates the older glyph beside the current one."
     ],
     "compact_choices": [
-      "A: save ! · V: stop on old branch",
+      "A: save idle source · V: stop on old branch",
       "A: retype pose · V: no sibling history",
-      "A: inspect !; save - · V: branch + travel + return",
+      "A: inspect idle; save blink · V: branch + travel + return",
       "A: show both eye takes · V: g- duplicates"
     ],
     "correct_choice": 2,
     "feedback": [
-      "The alternate is for comparison; the target and final saved take use the closed dash.",
+      "The idle source is for comparison; the target and final saved take use the blink dash.",
       "Undo branching exists specifically so a sibling variant need not erase or require retyping the complete pose.",
       "Correct: the method separates authoring alternatives from the final selection and proves the learner can navigate both.",
       "History commands replace the current buffer state; they do not insert a second glyph into the row."
@@ -656,7 +656,7 @@
     "neovim_answer": "gg4| reaches display column 4, Ctrl-v then 2j selects that column through three rows, and r: replaces exactly those cells.",
     "choices": [
       "ANIMATION: The whole ornament shifts one column. | NEOVIM: Ctrl-v inserts a new column before every row.",
-      "ANIMATION: Only the three low joint cells become centred colons. | NEOVIM: `4|` addresses the column, the block spans three rows, and `r:` overwrites it in place.",
+      "ANIMATION: Only the three low joint cells become centred colons. | NEOVIM: `4|` reaches the column, the block spans three rows, and `r:` overwrites it in place.",
       "ANIMATION: Every dot in the file becomes a colon. | NEOVIM: a Visual Block selection means global substitution.",
       "ANIMATION: The slashes are mirrored around the joints. | NEOVIM: `2j` reverses two rows before replacement."
     ],
@@ -679,7 +679,7 @@
     "compact_prompt": "ANIMATION\nThe same three joints go dot → apostrophe trial → colon final.\n\n  │|< .>|│ → │|< '>|│ → │|< :>|│\n  │|[ .]|│   │|[ ']|│   │|[ :]|│\n  │|{ .}|│   │|{ '}|│   │|{ :}|│\n\nNEOVIM\nWhat does gv restore?",
     "animation_prompt": "ANIMATION\nA high-joint trial is compared with the centred final choice on one non-playing sample sheet.",
     "animation_answer": "The apostrophe trial is rejected; the same three cells finish as colons while all delimiters remain fixed.",
-    "neovim_prompt": "NEOVIM\nExplain `...r'gvr:` after the three-cell block has been selected.",
+    "neovim_prompt": "NEOVIM\nExplain `r'` followed by `gvr:` after the three-cell block has been selected.",
     "neovim_answer": "r' applies the trial to the selected cells, gv restores that exact previous Visual selection, and r: refines the same cells.",
     "choices": [
       "ANIMATION: The apostrophe and colon takes are both appended. | NEOVIM: `gv` duplicates the previous selection below the file.",
@@ -730,7 +730,7 @@
   },
   "M5.S6C.P01": {
     "prompt": "ANIMATION\nBefore layers can move independently, this still composite must read back-to-front. The cloud uses `.:`, the roof uses `/\\_`, and the ground uses `_`. One cloud colon falsely touches the roof; the AFTER drawing removes only that background cell.\n\n  BEFORE       AFTER\n  │| .::::. |│   │| .::::. |│\n  │| .:::/\\ |│ → │| .:: /\\ |│\n  │|    /__\\|│   │|    /__\\|│\n  │|___/____|│   │|___/____|│\n\nNEOVIM\nWhy does `2G0f/hr ` preserve both layer order and registration?",
-    "compact_prompt": "ANIMATION\nOne cloud cell is erased where background falsely joins the foreground roof.\n\n  │| .:::/\\ |│ → │| .:: /\\ |│\n  │|    /__\\|│   │|    /__\\|│\n  │|___/____|│   │|___/____|│\n\nNEOVIM\nWhat does f/ then h then r-space address?",
+    "compact_prompt": "ANIMATION\nOne cloud cell is erased where background falsely joins the foreground roof.\n\n  │| .:::/\\ |│ → │| .:: /\\ |│\n  │|    /__\\|│   │|    /__\\|│\n  │|___/____|│   │|___/____|│\n\nNEOVIM\nWhich cell does f/ then h then r-space change?",
     "animation_prompt": "ANIMATION\nA readable back-to-front seam is established before either layer is allowed to move.",
     "animation_answer": "Only the final background colon becomes negative space; roof and ground materials remain intact and registered.",
     "neovim_prompt": "NEOVIM\nDecode `2G0f/hr ` on the touching cloud-and-roof row.",
@@ -779,7 +779,7 @@
       "ASCII hyphen-minus and em dash are distinct glyphs; the literal hyphen pattern does not match the inner spokes.",
       "An omitted range means the current row, not zero rows; g reaches both matching hyphens there.",
       "Correct: the two glyph classes stay distinct, so the bounded substitute changes only the outer rays after the core edit.",
-      "Here g means every match in the addressed row. It never adds vertical scope."
+      "Here g means every match in the selected row. It never adds vertical scope."
     ]
   },
   "M1.06.V2.P01": {
@@ -868,12 +868,12 @@
     "compact_prompt": "ANIMATION\nMirror the complete straining Pallas ghost; keep `(> <)` and both rails.\n\n|   \\ ‾ `-´|  →  |`-´ ‾ /   |\n|    '/    |      |    \\'    |\n\nNEOVIM\nWhat does row-local C own?",
     "animation_prompt": "ANIMATION\nThe complete straining pose changes sides while its expression stays the same. Curves, accent, tail, and gaps must remain coherent.",
     "animation_answer": "Author the six source-right rows deliberately, preserve `(> <)`, and keep both rails registered.",
-    "neovim_prompt": "NEOVIM\nExplain the six `0C...<Esc>` rewrites.",
+    "neovim_prompt": "NEOVIM\nExplain the six bounded `0C` row overwrites, each followed by the supplied row text and `<Esc>`.",
     "neovim_answer": "Each 0C replaces one complete row suffix, Escape bounds that rewrite, and j advances to the next fixed-width row.",
     "choices": [
       "ANIMATION: Move only the exclamation tail; leave the body left-facing. | NEOVIM: one `r` redraws the complete ghost.",
       "ANIMATION: Mirror every row but change `(> <)` into `(< >)`. | NEOVIM: C chooses the mirrored face automatically.",
-      "ANIMATION: Hand-author all six right-side rows while preserving `(> <)` and both rails. | NEOVIM: each bounded `0C...<Esc>` rewrites one row, then j advances.",
+      "ANIMATION: Hand-author all six right-side rows while preserving `(> <)` and both rails. | NEOVIM: each bounded `0C` pass writes one supplied row, then `<Esc>` returns to Normal before j advances.",
       "ANIMATION: Insert the right ghost after the left ghost. | NEOVIM: C inserts cells and moves the right rail."
     ],
     "compact_choices": [
@@ -891,30 +891,31 @@
     ]
   },
   "M19.06.V2.P01": {
-    "prompt": "ANIMATION\nHand-mirror the complete alternate Acronian downstroke. Judge each accent, slash, interior gap, and feather edge; keep all five rows and both fixed rails registered.\n\nSTART\n|   /‾‾‾‾‾‾‾`. |\n|  /   `      \\|\n| /`_____     ||\n| \\/     `. ` ||\n|          `.,/|\n\nTARGET\n| .´‾‾‾‾‾‾‾\\   |\n|/      ´   \\  |\n||     _____´\\ |\n|| ´ .´     \\/ |\n|\\,.´          |\n\nNEOVIM\nWhich method permits a glyph-aware full-row redraw while preserving both rails?",
-    "compact_prompt": "ANIMATION\nMirror the complete Acronian downstroke; rails stay fixed.\n\n| \\/     `. ` ||\n|| ´ .´     \\/ |\n\nNEOVIM\nWhy use bounded gR rows?",
-    "animation_prompt": "ANIMATION\nThe target is the source-authored opposite wing, not a reversed string. All five directional rows and their spacing are judged by eye.",
-    "animation_answer": "Author the five right-wing rows explicitly and preserve both fixed rails.",
-    "neovim_prompt": "NEOVIM\nExplain the five `0gR...<Esc>` passes.",
-    "neovim_answer": "0 begins at the left rail, gR overwrites display cells with the authored row, Escape bounds the pass, and j advances to the next row.",
+    "source_ref": "official-Cosmetics/AcronianGuardian res07 left downstroke to res11 right downstroke; Neovim help :delete",
+    "prompt": "ANIMATION\nThe supplied alternate Acronian pair already contains the official right downstroke. Remove only the five-row left downstroke; keep the right wing, rails, accents, and spacing registered.\n\nSTART\n|   /‾‾‾‾‾‾‾`. |\n|  /   `      \\|\n| /`_____     ||\n| \\/     `. ` ||\n|          `.,/|\n| .´‾‾‾‾‾‾‾\\   |\n|/      ´   \\  |\n||     _____´\\ |\n|| ´ .´     \\/ |\n|\\,.´          |\n\nTARGET\n| .´‾‾‾‾‾‾‾\\   |\n|/      ´   \\  |\n||     _____´\\ |\n|| ´ .´     \\/ |\n|\\,.´          |\n\nNEOVIM\nWhich bounded command removes only the supplied left downstroke?",
+    "compact_prompt": "ANIMATION\nKeep the official right downstroke and remove the supplied left five-row pose.\n\n|   /‾‾‾‾‾‾‾`. |\n| .´‾‾‾‾‾‾‾\\   |\n\nNEOVIM\nWhich bounded deletion preserves the rails?",
+    "animation_prompt": "ANIMATION\nThe source pair resolves to the official right downstroke: only the supplied left five-row pose disappears, while every right-wing cell and rail remains.",
+    "animation_answer": "Delete the left five-row pose and retain the complete right source pose.",
+    "neovim_prompt": "NEOVIM\nExplain the bounded `:1,5d<CR>` deletion.",
+    "neovim_answer": "The range selects only the first five supplied rows, d removes that pose, and the right five-row source remains unchanged.",
     "choices": [
-      "ANIMATION: Insert the right wing beside the left wing. | NEOVIM: gR shifts old cells to preserve them.",
-      "ANIMATION: Reverse each source row mechanically. | NEOVIM: gR automatically reverses bytes and slash direction.",
-      "ANIMATION: Change only the final comma and period. | NEOVIM: one r command redraws all five rows.",
-      "ANIMATION: Hand-author all five target rows while preserving both rails. | NEOVIM: each bounded `0gR...<Esc>` pass overwrites one complete display row."
+      "ANIMATION: Delete the supplied left pose and keep the complete right source. | NEOVIM: `:1,5d<CR>` removes only the first five rows.",
+      "ANIMATION: Reverse the right pose mechanically. | NEOVIM: `:1,5d<CR>` rewrites glyph directions in place.",
+      "ANIMATION: Remove one final punctuation cell. | NEOVIM: `r` deletes a complete five-row pose.",
+      "ANIMATION: Redraw the right pose by hand. | NEOVIM: `gR` is required even though the right source rows are supplied."
     ],
     "compact_choices": [
-      "A: insert second wing · V: gR shifts cells",
-      "A: byte reverse · V: gR auto-reverses",
-      "A: punctuation only · V: one r redraws rows",
-      "A: author five rows · V: bounded gR per row"
+      "A: delete left pose · V: :1,5d<CR>",
+      "A: reverse right pose · V: deletion rewrites glyphs",
+      "A: one punctuation cell · V: r deletes rows",
+      "A: redraw right pose · V: gR despite supplied rows"
     ],
-    "correct_choice": 3,
+    "correct_choice": 0,
     "feedback": [
-      "Virtual Replace overwrites display cells; it does not insert a second wing or shift the rail.",
-      "gR is an editing mode, not a reversal algorithm. The learner must choose every slash, accent, and gap.",
-      "The target changes every row's direction and spacing, not only the final punctuation.",
-      "Correct: full-row authored targets handle the non-mechanical mirror, and fixed rails expose any width drift."
+      "Correct: the first five supplied rows are the left pose, so :1,5d<CR> removes only those rows and preserves the right source.",
+      "Deletion removes rows; it cannot reverse the right pose's glyph directions.",
+      "One r replacement cannot remove five complete rows while preserving their rails.",
+      "The target already supplies the right pose. Redrawing it with gR would add unnecessary typing and risk spacing drift."
     ]
   },
   "M14.06.V2.P01": {
@@ -976,7 +977,7 @@
     "compact_prompt": "ANIMATION\nAdvance the later FrogBog pad from 2 to 3; preserve its contour.\n\n  │/    2  \\│ → │/    3  \\│\n\nNEOVIM\nDecode `3G0f2<C-a>`.",
     "animation_prompt": "ANIMATION\nThe later FrogBog pad advances one embedded frame number while all nonnumeric glyphs remain fixed.",
     "animation_answer": "The drawn 2 becomes 3; the complete five-row lily-pad silhouette remains byte-for-byte unchanged.",
-    "neovim_prompt": "NEOVIM\nExplain the row address, character motion, and numeric operator in `3G0f2<C-a>`.",
+    "neovim_prompt": "NEOVIM\nExplain the row number, character motion, and numeric operator in `3G0f2<C-a>`.",
     "neovim_answer": "3G selects the numbered third row, 0 returns to its first column, f2 lands on the visible 2, and Ctrl-a increments that token to 3.",
     "choices": [
       "ANIMATION: Every digit-like mark in the pad advances. | NEOVIM: one Ctrl-a changes all numbers in the buffer.",
@@ -987,14 +988,14 @@
     "compact_choices": [
       "A: every number advances · V: Ctrl-a changes whole buffer",
       "A: append pad 3 · V: Ctrl-a duplicates paragraph",
-      "A: 2→3 only · V: address token, increment in place",
+      "A: 2→3 only · V: find token, increment in place",
       "A: outline widens · V: number generates silhouette"
     ],
     "correct_choice": 2,
     "feedback": [
       "Ctrl-a changes one numeric token at or after the cursor, not every number or number-like mark in the buffer.",
       "Ctrl-a edits in place. It neither yanks rows nor creates a second five-line pad.",
-      "Correct: the address and motion isolate the embedded 2, then Ctrl-a advances only that token while registration holds.",
+      "Correct: the row jump and motion isolate the embedded 2, then Ctrl-a advances only that token while registration holds.",
       "A numeric edit cannot invent surrounding animation art; every contour cell must already be authored and remains fixed here."
     ]
   },
@@ -1007,7 +1008,7 @@
     "neovim_answer": "3G selects the baseline row, 0 reaches its first cell, and r¯ replaces only the acute accent without entering Replace mode or shifting the row.",
     "choices": [
       "ANIMATION: The entire four-glyph baseline becomes macrons. | NEOVIM: r¯ repeats through end of line.",
-      "ANIMATION: Only the first baseline accent settles; the rest of Snail is registered. | NEOVIM: `3G0` addresses that cell and `r¯` overwrites exactly one glyph.",
+      "ANIMATION: Only the first baseline accent settles; the rest of Snail is registered. | NEOVIM: `3G0` reaches that cell and `r¯` overwrites exactly one glyph.",
       "ANIMATION: Snail moves left by one cell as it settles. | NEOVIM: 0 deletes the first cell before r inserts a macron.",
       "ANIMATION: A new flat-baseline frame is appended below. | NEOVIM: 3G copies three rows before r edits them."
     ],
@@ -1049,11 +1050,11 @@
       "Correct: both directions use the visible dash as their landmark, and r^ preserves all column positions.",
       "t- is a current-line motion to one named glyph. It neither continues after the replacement nor targets the comma.",
       "Till motions move only the cursor; the two r commands overwrite without moving any face text.",
-      "T is backward motion, not undo. The left caret remains while the cursor addresses the right dash."
+      "T is backward motion, not undo. The left caret remains while the cursor movement the right dash."
     ]
   },
   "M13.06.V2.P01": {
-    "prompt": "ANIMATION\nThis radial firework crop has three separated nodes above its fixed spoke and burst rows. Author an outer-node pulse: change the first and third dots to `!`, but keep the centre colon and both structural rows unchanged.\n\n  BEFORE        AFTER\n  │   . : .│     │   ! : !│\n  │   .\\¡/. │  →  │   .\\¡/. │\n  │  •-—*—-•│    │  •-—*—-•│\n\nNEOVIM\nHow does `0Er!2Er!` address the two outer WORD ends without touching the centre node?",
+    "prompt": "ANIMATION\nThis radial firework crop has three separated nodes above its fixed spoke and burst rows. Author an outer-node pulse: change the first and third dots to `!`, but keep the centre colon and both structural rows unchanged.\n\n  BEFORE        AFTER\n  │   . : .│     │   ! : !│\n  │   .\\¡/. │  →  │   .\\¡/. │\n  │  •-—*—-•│    │  •-—*—-•│\n\nNEOVIM\nHow does `0Er!2Er!` reach the two outer WORD ends without touching the centre node?",
     "compact_prompt": "ANIMATION\nPulse only the two outer radial nodes.\n\n  │   . : .│ → │   ! : !│\n\nNEOVIM\nDecode `0Er!2Er!`.",
     "animation_prompt": "ANIMATION\nThe learner-authored radial pulse changes two outer source nodes while the centre and complete lower structure remain fixed.",
     "animation_answer": "The first and third dots become exclamation marks; the centre colon, spoke row, and burst row do not change.",
@@ -1089,7 +1090,7 @@
     "choices": [
       "ANIMATION: A new `>` is inserted after the old backslash. | NEOVIM: r preserves the old glyph and widens the hem row.",
       "ANIMATION: Both foot glyphs become `>`. | NEOVIM: $ selects the full suffix from the planted bar onward.",
-      "ANIMATION: Only the row-end foot changes from backslash to `>`; the planted bar and pose stay fixed. | NEOVIM: `3G$` addresses that final cell and `r>` overwrites it.",
+      "ANIMATION: Only the row-end foot changes from backslash to `>`; the planted bar and pose stay fixed. | NEOVIM: `3G$` reaches that final cell and `r>` overwrites it.",
       "ANIMATION: The cape row is mirrored with the foot. | NEOVIM: 3G selects the first three rows as a block."
     ],
     "compact_choices": [
@@ -1116,7 +1117,7 @@
     "choices": [
       "ANIMATION: The crown and body move down together. | NEOVIM: j moves the edited row's text rather than the cursor.",
       "ANIMATION: Only the skirt changes; both body anchors remain. | NEOVIM: $x deletes the entire body row.",
-      "ANIMATION: Both body anchors disappear and the skirt flares while the crown stays fixed. | NEOVIM: row 2 uses a one-cell blank replacement plus end deletion, then `j0R…<Esc>` overwrites row 3 in place.",
+      "ANIMATION: Both body anchors disappear and the skirt flares while the crown stays fixed. | NEOVIM: row 2 uses a one-cell blank replacement plus end deletion, then `j0R` writes the supplied row 3 text in place before Escape.",
       "ANIMATION: The old hover is copied below as a hold. | NEOVIM: R duplicates the current line before typing."
     ],
     "compact_choices": [
@@ -1143,7 +1144,7 @@
     "choices": [
       "ANIMATION: Retype the complete first row and accept spacing drift. | NEOVIM: `f?` selects the whole shoulder for replacement.",
       "ANIMATION: Widen the body with the shoulder. | NEOVIM: `rヽ` inserts a glyph before `?`.",
-      "ANIMATION: Only `?` becomes `ヽ`; the complete puff stays registered. | NEOVIM: `0f?` addresses the visible defect and `rヽ` overwrites that one glyph.",
+      "ANIMATION: Only `?` becomes `ヽ`; the complete puff stays registered. | NEOVIM: `0f?` finds the visible defect and `rヽ` overwrites that one glyph.",
       "ANIMATION: Change the lower `ノ` and ﾐ wisp too. | NEOVIM: one r repeats automatically on later rows."
     ],
     "compact_choices": [
@@ -1157,7 +1158,7 @@
       "f is a motion to one character, not a row selection; the complete shoulder need not be retyped.",
       "r overwrites one existing glyph. It does not insert or widen the body.",
       "Correct: the placeholder is a stable landmark and the one-cell replacement preserves every neighbour.",
-      "A single r command stops after overwriting the addressed shoulder glyph; the lower contour and wisp are untouched."
+      "A single r command stops after overwriting the selected shoulder glyph; the lower contour and wisp are untouched."
     ]
   },
   "M5.06.V2.P01": {
@@ -1182,21 +1183,21 @@
     "correct_choice": 1,
     "feedback": [
       "f is a motion to one character; it does not select or delete the complete final row.",
-      "Correct: the command addresses one visible defect and preserves the mask's fixed-width registration.",
+      "Correct: the command finds one visible defect and preserves the mask's fixed-width registration.",
       "r-space overwrites one existing cell. It does not insert a column or shift the layer.",
       "r affects only the cursor cell; it does not search for bars on other rows."
     ]
   },
   "M6.06.V2.P01": {
-    "prompt": "ANIMATION\nThe next FrogBog pair is also reversed: lily-pad frame 3 appears before frame 2. The target moves the complete five-row pad 3 after pad 2; contours and number labels are not redrawn.\n\n  BEFORE         AFTER\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    3  \\│      │/    2  \\│\n  │\\       /│  →   │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    2  \\│      │/    3  \\│\n  │\\       /│      │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n\nNEOVIM\nWhich Ex grammar moves the whole first frame instead of changing only its number?",
+    "prompt": "ANIMATION\nThe next FrogBog pair is also reversed: lily-pad frame 3 appears before frame 2. The target moves the complete five-row pad 3 after pad 2; contours and number labels are not redrawn.\n\n  BEFORE         AFTER\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    3  \\│      │/    2  \\│\n  │\\       /│  →   │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    2  \\│      │/    3  \\│\n  │\\       /│      │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n\nNEOVIM\nWhich : command syntax moves the whole first frame instead of changing only its number?",
     "compact_prompt": "ANIMATION\nReorder full pads from 3→2 to 2→3.\n\n  │/    3  \\│     │/    2  \\│\n       ↓ move      ↓\n  │/    2  \\│     │/    3  \\│\n\nNEOVIM\nDecode `:1,5m$`.",
     "animation_prompt": "ANIMATION\nThe source-authored FrogBog order is restored while both complete pad contours are preserved.",
     "animation_answer": "The complete pad-2 frame precedes the complete pad-3 frame; neither is duplicated or split.",
     "neovim_prompt": "NEOVIM\nDecode the range, command, and destination in `:1,5m$`.",
     "neovim_answer": "1,5 is the complete first-pose range, m moves that range, and $ names the last-line destination, so the former second pose becomes first.",
     "choices": [
-      "ANIMATION: Only digits 3 and 2 exchange while the pad contours stay in their old temporal positions. | NEOVIM: `1,5` addresses two characters rather than five lines.",
-      "ANIMATION: A third pad 3 is appended as a hold. | NEOVIM: m copies the addressed rows and leaves the source intact.",
+      "ANIMATION: Only digits 3 and 2 exchange while the pad contours stay in their old temporal positions. | NEOVIM: `1,5` selects two characters rather than five lines.",
+      "ANIMATION: A third pad 3 is appended as a hold. | NEOVIM: m copies the selected rows and leaves the source intact.",
       "ANIMATION: Complete pad 2 precedes complete pad 3 with no duplicate. | NEOVIM: `1,5` owns the first full frame, m moves it, and `$` places it after the former last row.",
       "ANIMATION: Pad 3 disappears from the strip. | NEOVIM: `$` is a discard destination."
     ],
@@ -1208,7 +1209,7 @@
     ],
     "correct_choice": 2,
     "feedback": [
-      "In Ex command position, 1,5 is a line range. It keeps each numbered centre attached to the four other pad rows.",
+      "In : command position, 1,5 is a line range. It keeps each numbered centre attached to the four other pad rows.",
       "The move command removes the source range from its old position; `t` would copy it.",
       "Correct: the line range is the pad-frame boundary, and moving it after the last line restores 2→3 without duplication.",
       "The dollar sign names the current last line as a destination; it does not throw rows away."
@@ -1277,9 +1278,9 @@
     "neovim_answer": ":1,3t3 inserts all three uncracked-egg rows; 5G0f:2l reaches the centred interior blank, R; overwrites it, and Escape stops Replace mode before the next cell.",
     "choices": [
       "ANIMATION: Only the semicolon row is inserted between two complete eggs. | NEOVIM: copying line 2 alone preserves frame registration.",
-      "ANIMATION: The uncracked source egg moves away from the first position. | NEOVIM: Ex `t` deletes its source after placing the range.",
+      "ANIMATION: The uncracked source egg moves away from the first position. | NEOVIM: `:t` deletes its source after placing the range.",
       "ANIMATION: The later `·;,:` egg is overwritten to become less cracked. | NEOVIM: `:1,3t3` replaces existing rows 4-6 rather than inserting new rows.",
-      "ANIMATION: A complete uncracked egg is inserted as the scaffold, then one copied interior cell becomes `;`. | NEOVIM: the addressed three-row copy preserves the frame before `5G0f:2lR;<Esc>` writes one bounded crack cell."
+      "ANIMATION: A complete uncracked egg is inserted as the scaffold, then one copied interior cell becomes `;`. | NEOVIM: the explicit three-row copy preserves the frame before `5G0f:2lR;<Esc>` writes one bounded crack cell."
     ],
     "compact_choices": [
       "A: middle row only · V: one line is a frame",
@@ -1290,7 +1291,7 @@
     "correct_choice": 3,
     "feedback": [
       "The roof, middle, and base together define the registered egg frame; a lone middle row is detached art.",
-      "The Ex t command copies its source range; m would move it.",
+      "The :t command copies its source range; m would move it.",
       "The copy is inserted after row 3, pushing the later egg down while preserving it unchanged.",
       "Correct: full-frame scope establishes continuity, and the one-cell overwrite creates the first crack without shifting the shell."
     ]
@@ -1350,7 +1351,7 @@
     ]
   },
   "M17.GNH.P01": {
-    "prompt": "ANIMATION\nTwo held missile poses share identical hulls. Advance the final exhaust puff from . to ' in both poses while every non-exhaust row stays byte-for-byte fixed.\n\n  BEFORE             AFTER\n  │  ____/│          │  ____/│\n  │< / / |:.│        │< / / |:'│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\│\n  │  ____/│          │  ____/│\n  │< / / |:.│        │< / / |:'│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\│\n\nNEOVIM\nWhich Ex command selects only rows containing the exhaust colon and runs one bounded Normal edit on each?",
+    "prompt": "ANIMATION\nTwo held missile poses share identical hulls. Advance the final exhaust puff from . to ' in both poses while every non-exhaust row stays byte-for-byte fixed.\n\n  BEFORE             AFTER\n  │  ____/│          │  ____/│\n  │< / / |:.│        │< / / |:'│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\│\n  │  ____/│          │  ____/│\n  │< / / |:.│        │< / / |:'│\n  │  ¯¯¯¯\\│          │  ¯¯¯¯\\│\n\nNEOVIM\nWhich : command selects only rows containing the exhaust colon and runs one bounded Normal edit on each?",
     "compact_prompt": "ANIMATION\nAdvance both exhaust rows; preserve both hulls.\n\n  │|:.│ → │|:'│\n  │|:.│ → │|:'│\n\nNEOVIM\nWhich :g pattern owns only those rows?",
     "animation_prompt": "ANIMATION\nBoth held exhaust puffs advance together while every hull row remains coherent.",
     "animation_answer": "Only the two rows containing exhaust colons change, and each changes one final puff cell.",
@@ -1373,7 +1374,7 @@
       "In a substitute pattern, bare dot is a wildcard; this would consume unrelated hull cells rather than one exhaust endpoint.",
       "A single search and replacement reaches one occurrence and does not express the two-row coherence rule.",
       "Correct: the global pattern owns the acting rows, and the Normal payload owns one cell within each selected row.",
-      "Ex t copies lines and does not perform the required in-place puff change."
+      ":t copies lines and does not perform the required in-place puff change."
     ]
   },
   "M18.EXPRH.P01": {
@@ -1382,7 +1383,7 @@
     "animation_prompt": "ANIMATION\nThe complete Frog pose remains literal while only its trailing validation metadata changes.",
     "animation_answer": "Every art row stays identical; the final CHECK digit becomes the leading CHECK digit.",
     "neovim_prompt": "NEOVIM\nChoose the row-bounded expression replacement that reads line 1.",
-    "neovim_answer": ":5s/0/\\=getline(1)[-1:]/<CR> addresses the final row, replaces its zero, and evaluates the last character of line 1 as the replacement.",
+    "neovim_answer": ":5s/0/\\=getline(1)[-1:]/<CR> selects the final row, replaces its zero, and evaluates the last character of line 1 as the replacement.",
     "choices": [
       "ANIMATION: Rebuild the Frog from line 1. | NEOVIM: `:%s/.*/\\=getline(1)/` safely copies metadata into every row.",
       "ANIMATION: Keep every Frog cell and change only the final CHECK digit. | NEOVIM: `:5s/0/\\=getline(1)[-1:]/<CR>` evaluates the leading digit only on row 5.",
@@ -1398,7 +1399,7 @@
     "correct_choice": 1,
     "feedback": [
       "A whole-file expression would replace the authored pose rows; validation metadata is the only permitted target.",
-      "Correct: the address confines substitution to the trailing CHECK row, and the expression reads one metadata character from line 1.",
+      "Correct: the selected row confines substitution to the trailing CHECK row, and the expression reads one metadata character from line 1.",
       "Software reversal is not hand-authored mirroring, and this expression reads metadata rather than art geometry.",
       "Whole-file scope can change embedded art digits and also destroys the intended leading CHECK value."
     ]
@@ -1512,76 +1513,76 @@
     ]
   },
   "M11.UB.P01": {
-    "prompt": "ANIMATION\nTwo takes for the next egg crack: an exaggerated ! and the chosen , crack. The , take is submitted.\n\n  START          ! TAKE         CHOSEN\n  │:·; :│        │:·;!:│        │:·;,:│\n\nNEOVIM\nAfter r! then u, what does r, create?",
-    "compact_prompt": "ANIMATION\n! crack, undone, then the , crack.\n\n  │:·;!:│ → u → │:·;,:│\n\nNEOVIM\nWhat does r, after u create?",
+    "prompt": "ANIMATION\nThree registered Chick hatch frames make two real takes: frame 3 is abandoned and frame 4 is chosen.\n\n  START          FRAME 3        FRAME 4\n  │      ,-. │      │      ,-. │      │      ,-. │\n  │     : ; :│      │     :·; :│      │     :·;,:│\n  │     '._.'│      │     '._.'│      │     '._.'│\n\nNEOVIM\nAfter the frame-3 take is undone, what does the frame-4 edit create?",
+    "compact_prompt": "ANIMATION\nChick frame 3, undone, then frame 4.\n\n  │      ,-. │ → u → │      ,-. │\n  │     :·; :│      │     :·;,:│\n  │     '._.'│      │     '._.'│\n\nNEOVIM\nWhat does the new source-frame edit create?",
     "animation_prompt": "ANIMATION\nOne crack cell is tried two ways; the chosen , crack is kept.",
-    "animation_answer": "The final egg has the , crack; the ! take is not in the file.",
+    "animation_answer": "The final egg has the frame-4 comma crack; the frame-3 source take remains only in history.",
     "neovim_prompt": "NEOVIM\nExplain u followed by a new change.",
-    "neovim_answer": "u steps back before the ! take; r, is a new change from there, so it starts a second branch and the ! take stays in the undo history.",
+    "neovim_answer": "u steps back before the frame-3 source take; the frame-4 edit is a new change from there, so it starts a second branch and the older source take stays in undo history.",
     "choices": [
-      "ANIMATION: The , crack is kept; the ! take is only in history. | NEOVIM: u steps back; r, then starts a new branch, and the ! take is kept, not destroyed.",
-      "ANIMATION: Both cracks appear in the egg. | NEOVIM: u keeps the ! and r, adds a , beside it.",
-      "ANIMATION: The ! take is gone forever. | NEOVIM: a change after u erases the older take from history.",
+      "ANIMATION: The frame-4 crack is kept; the frame-3 source take is only in history. | NEOVIM: u steps back; the new frame-4 edit starts a branch, and the older source take is kept.",
+      "ANIMATION: Both cracks appear in the egg. | NEOVIM: u keeps the older source frame and the new edit adds a second branch.",
+      "ANIMATION: The frame-3 source take is gone forever. | NEOVIM: a change after u erases the older take from history.",
       "ANIMATION: The egg returns to one crack. | NEOVIM: r, is undone automatically by u."
     ],
     "compact_choices": [
-      "A: , kept, ! in history · V: new branch",
+      "A: frame 4 kept, frame 3 in history · V: new branch",
       "A: both in egg · V: adds beside",
-      "A: ! gone forever · V: history erased",
+      "A: frame 3 gone forever · V: history erased",
       "A: one crack · V: r, undone"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: undo followed by a new edit makes a branch. The ! take still exists in the undo tree.",
+      "Correct: undo followed by a new edit makes a branch. The frame-3 source take still exists in the undo tree.",
       "r replaces one cell; there is only one crack cell here, so only one take is ever in the egg.",
       "Vim's undo tree keeps the abandoned branch. The next step shows how to visit it with g-.",
       "u came BEFORE r, so the , take is the newest state and it stays."
     ]
   },
   "M11.UG.P01": {
-    "prompt": "ANIMATION\nAfter the ! take and the chosen - take on the frog's right eye, history is walked back to the ! and forward again.\n\n  │     ,O-│ → g- → │     ,O!│ → g+ → │     ,O-│\n\nNEOVIM\nWhat do g- and g+ do?",
-    "compact_prompt": "ANIMATION\n- take → g- → ! take → g+ → - take.\n\n  │,O-│ ↔ │,O!│\n\nNEOVIM\nWhat do g- and g+ do?",
+    "prompt": "ANIMATION\nAfter the source half-blink take and the chosen shut-eye take on the frog's right eye, history is walked back to the half-blink and forward again.\n\n  HALF-BLINK                 SHUT-EYE\n  │     ,=- │ → g- → │     ,=- │ → g+ → │     ,-- │\n  │  (\\/ .-)│      │  (\\/ .-)│      │  (\\/ .-)│\n  │  ´ ·-\\´\\│      │  ´ ·-\\´\\│      │  ´ ·-\\´\\│\n\nNEOVIM\nWhat do g- and g+ do?",
+    "compact_prompt": "ANIMATION\nShut-eye take → g- → source half-blink take → g+ → shut-eye take.\n\n  │     ,=- │ ↔ │     ,-- │\n  │  (\\/ .-)│   │  (\\/ .-)│\n  │  ´ ·-\\´\\│   │  ´ ·-\\´\\│\n\nNEOVIM\nWhat do g- and g+ do?",
     "animation_prompt": "ANIMATION\nThe abandoned take is inspected, then the chosen take is restored for submission.",
-    "animation_answer": "The frog ends with the - eye after visiting the ! take.",
+    "animation_answer": "The frog ends with the shut-eye frame after visiting the source half-blink frame.",
     "neovim_prompt": "NEOVIM\nExplain g- and g+.",
-    "neovim_answer": "g- steps back through every state in time order, including the abandoned ! branch; g+ steps forward again.",
+    "neovim_answer": "g- steps back through every state in time order, including the abandoned source half-blink branch; g+ steps forward again.",
     "choices": [
-      "ANIMATION: Visit the abandoned ! take, then return to -. | NEOVIM: g- steps back in time through every state, even other branches; g+ steps forward.",
-      "ANIMATION: The ! take becomes the submitted eye. | NEOVIM: g- makes the older take permanent.",
-      "ANIMATION: Both eyes flip between ! and -. | NEOVIM: g- and g+ swap the two eye cells.",
-      "ANIMATION: Nothing can reach the ! take any more. | NEOVIM: g- is the same as u and stays on this branch."
+      "ANIMATION: Visit the source half-blink take, then return to shut-eye. | NEOVIM: g- steps back in time through every state, even other branches; g+ steps forward.",
+      "ANIMATION: The half-blink take becomes the submitted eye. | NEOVIM: g- makes the older take permanent.",
+      "ANIMATION: Both eyes flip between half-blink and shut-eye. | NEOVIM: g- and g+ swap the two eye cells.",
+      "ANIMATION: Nothing can reach the half-blink take any more. | NEOVIM: g- is the same as u and stays on this branch."
     ],
     "compact_choices": [
-      "A: visit ! then - · V: time order, any branch",
-      "A: ! submitted · V: g- permanent",
+      "A: visit half-blink then shut-eye · V: time order, any branch",
+      "A: half-blink submitted · V: g- permanent",
       "A: eyes flip · V: swaps cells",
-      "A: ! unreachable · V: g- = u"
+      "A: half-blink unreachable · V: g- = u"
     ],
     "correct_choice": 0,
     "feedback": [
       "Correct: u/Ctrl-r follow one branch; g-/g+ follow time, so they reach the abandoned take too.",
       "g+ comes last, so the frog is back on the newest state, the - eye.",
       "g- and g+ move between whole states of the file; they do not edit cells.",
-      "That is exactly the difference: u stays on the branch, g- walks time and reaches the ! take."
+      "That is exactly the difference: u stays on the branch, g- walks time and reaches the half-blink take."
     ]
   },
   "M11.UE.P01": {
-    "prompt": "ANIMATION\nThe same history walk on the missile exhaust, using a command instead of g-.\n\n  │< / / |:'│ → :earlier 1 → │< / / |:!│ → g+ → │< / / |:'│\n\nNEOVIM\nWhat does :earlier 1 do?",
-    "compact_prompt": "ANIMATION\n' puff → :earlier 1 → ! puff → g+ → ' puff.\n\n  │|:'│ ↔ │|:!│\n\nNEOVIM\nWhat does :earlier 1 do?",
+    "prompt": "ANIMATION\nThe same history walk on the missile exhaust, using a command instead of g-.\n\n  FRAME 3                     FRAME 1                     FRAME 3\n  │  ____/   │ → :earlier 1 → │  ____/   │ → g+ → │  ____/   │\n  │< / / |::'│                │< / / |:. │                │< / / |::'│\n  │  ¯¯¯¯\\   │                │  ¯¯¯¯\\   │                │  ¯¯¯¯\\   │\n\nNEOVIM\nWhat does :earlier 1 do?",
+    "compact_prompt": "ANIMATION\nFrame 3 exhaust → :earlier 1 → source frame 1 exhaust → g+ → frame 3 exhaust.\n\n  │  ____/   │ ↔ │  ____/   │\n  │< / / |::'│   │< / / |:. │\n  │  ¯¯¯¯\\   │   │  ¯¯¯¯\\   │\n\nNEOVIM\nWhat does :earlier 1 do?",
     "animation_prompt": "ANIMATION\nThe older take is revisited by command, then the chosen take is restored.",
-    "animation_answer": "The missile ends with the ' puff.",
+    "animation_answer": "The missile ends with the source frame-3 exhaust.",
     "neovim_prompt": "NEOVIM\nExplain :earlier 1.",
     "neovim_answer": ":earlier 1 goes one state back in time, the same step as g-; g+ returns to the newest state.",
     "choices": [
-      "ANIMATION: Revisit the older take, then return to '. | NEOVIM: :earlier 1 goes one state back in time, like g-; g+ comes forward again.",
+      "ANIMATION: Revisit source frame 1, then return to frame 3. | NEOVIM: :earlier 1 goes one state back in time, like g-; g+ comes forward again.",
       "ANIMATION: The missile moves up one line. | NEOVIM: :earlier 1 moves the cursor up one line.",
-      "ANIMATION: The ' take is deleted. | NEOVIM: :earlier 1 discards the newest state.",
+      "ANIMATION: The frame-3 take is deleted. | NEOVIM: :earlier 1 discards the newest state.",
       "ANIMATION: The missile reloads from disk. | NEOVIM: :earlier 1 re-reads the saved file."
     ],
     "compact_choices": [
-      "A: revisit then ' · V: one state back",
+      "A: revisit frame 1 then frame 3 · V: one state back",
       "A: up one line · V: cursor move",
-      "A: ' deleted · V: discards newest",
+      "A: frame 3 deleted · V: discards newest",
       "A: reload · V: re-reads file"
     ],
     "correct_choice": 0,

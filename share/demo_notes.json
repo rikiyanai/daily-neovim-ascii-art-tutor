@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "notes": {
+    "lane2": [
+      {
+        "ts": "2026-09-29T21:11:21-04:00",
+        "text": "this is fine, but its bareminimum"
+      }
+    ],
+    "lane2c": [
+      {
+        "ts": "2026-09-29T21:13:32-04:00",
+        "text": "yes but the example shows how some keys were correct while others were not, and so red should be the incorrect ones further, the concept also needs color coding"
+      }
+    ],
+    "lane3a": [
+      {
+        "ts": "2026-09-29T21:17:19-04:00",
+        "text": "plus one should be green, for levels, we can use colors , so beg levels have no color, intermediate brozne, advanced gold/yellow, pro is a gemini gradient .[Aas i said, this should be a style guide, this all the checkmarks should be green, i think theres supposed to be a fire emojii next to streak, and if im on a high score , its hould glow"
+      }
+    ],
+    "lane3c": [
+      {
+        "ts": "2026-09-29T21:18:47-04:00",
+        "text": "what? also i go with tui lib, need to feel pretty / gamified"
+      }
+    ],
+    "lane3-badges": [
+      {
+        "ts": "2026-09-29T21:20:24-04:00",
+        "text": "yes, need more badges. also forgot to add for level ladder: yes need to discuss, each needs color ascii art icon/avatar"
+      }
+    ],
+    "anima": [
+      {
+        "ts": "2026-09-29T21:21:33-04:00",
+        "text": "they can be animated and the gemini color scheme is nice, need to exepriement with more gradients also ffor the previous badges, yes promote they shouuld not be local only"
+      }
+    ],
+    "animb": [
+      {
+        "ts": "2026-09-29T21:22:00-04:00",
+        "text": "yes also add color and more animation types"
+      }
+    ],
+    "animd": [
+      {
+        "ts": "2026-09-29T21:23:07-04:00",
+        "text": "yes to basically all, with color coded and combined anims like pulsing ofc"
+      }
+    ],
+    "style": [
+      {
+        "ts": "2026-09-29T22:12:43-04:00",
+        "text": "GEMINI IS A PALLETE NAME ,ITS LIKE A PINK PURPLE ISH LOOK. SEE THE Y9-2 GRADIENT. ALSO, ALL THE AVATARS FOR LV3 TO LV7 ARE A S S . PROPSOE MULTIPLE AVATARS FOR EACH"
+      }
+    ]
+  }
+}

@@ -242,6 +242,8 @@ def _explain_ex(text):
                   else "; first match on each line only")
         if "e" in flags:
             text_ += "; e = no error when a line has no match"
+        if new.startswith("\\=getline("):
+            text_ += "; \\= evaluates the replacement as Vimscript: getline(1) returns line 1 text and [-1:] takes its final character; this validates metadata rather than generating art"
         family_flags = "".join(flag for flag in "ge" if flag in flags)
         return text_, ":%ss/old/new/%s" % (fam_rng, family_flags)
     if name in ("t", "co", "copy", "m", "move"):
@@ -260,7 +262,7 @@ def _explain_ex(text):
                 ":%snormal {keys}" % fam_rng)
     if name == "set":
         option = rest.strip()
-        base = re.split(r"[=!&?]", option, 1)[0]
+        base = re.split(r"[=!&?]", option, maxsplit=1)[0]
         base = OPTION_ALIASES.get(base, base)
         note = OPTION_NOTES.get(base)
         if note is None:
@@ -515,6 +517,30 @@ def families(keys):
     """De-duplicated generalised command forms used by a key string."""
     seen = []
     for _chunk, meaning, family in explain(keys):
+        # The deck predates a few deliberately explicit completion drills.
+        # Keep their command explanations precise, while projecting their
+        # parser families onto the closest already-authored deck family.  The
+        # projection is only for deck coverage; ``explain`` still reports the
+        # exact grammar used by the lesson.
+        aliases = {
+            "a{text}<Esc>": "i{text}<Esc>",
+            "A{text}<Esc>": "C{text}<Esc>",
+            "c{motion}": "C{text}<Esc>",
+            "ca{object}": "ci{object}",
+            "yy": "[count]yy",
+            "m": "gg",
+            "Visual d": "V",
+            "~": "r{char}",
+            "g~": "r{char}",
+            "J": "j",
+            "O{text}<Esc>": "o{text}<Esc>",
+        }
+        if family == "d{motion}":
+            if "d2W" in keys:
+                family = "[count]W"
+            elif "dw" in keys or "de" in keys:
+                family = "da{object}"
+        family = aliases.get(family, family)
         if family not in [f for f, _m in seen]:
             seen.append((family, meaning))
     return seen
@@ -534,6 +560,7 @@ FAMILY_TEACH = {
     ":set shiftwidth": ":set shiftwidth={N}  choose how far >> and << shift a row",
     ":[range]s/old/new/e": ":{range}s/pattern//e  delete what the pattern matches (/ separates the parts; \\ starts a special piece like \\s); e = no error on lines with no match",
     ":[range]s/old/new/ge": ":{range}s/pattern/new/ge  every match on each line; e = no error when a line has none",
+    ":[range]d": ":{range}d  delete every complete line in the selected range; the range is inclusive",
     "j": "j k h l  move down / up / left / right one cell",
     "k": "j k h l  move down / up / left / right one cell",
     "h": "j k h l  move down / up / left / right one cell",
@@ -638,7 +665,7 @@ GRAMMAR = ("VIM GRAMMAR  [count] verb target: 3yy = 3 x yank line · d$ = delete
 
 
 def teach_lines(keys):
-    """One line per command family a recipe needs, without revealing the recipe."""
+    """One line per command kind a recipe needs, without revealing the recipe."""
     lines = []
     for family, meaning in families(keys):
         base = family.replace('"{reg}', "")
@@ -658,7 +685,7 @@ def explain_lines(keys, width=None):
     return ["%-*s = %s" % (pad, chunk, meaning) for chunk, meaning, _f in rows]
 
 
-# VD-13: a worked example on neutral text for each command family, shown the
+# VD-13: a worked example on neutral text for each command kind, shown the
 # first time a hidden-recipe lesson needs a family that no earlier lesson showed.
 EXAMPLES = {
     "r<C-k>{a}{b}": "on `a:c` with the cursor on ':', r Ctrl-k .M makes it `a·c`",
@@ -674,6 +701,7 @@ EXAMPLES = {
     ":set shiftwidth": ":set shiftwidth=1 then >> moves a row right by exactly one cell",
     ":[range]s/old/new/e": "on `ab   ` and `cd`: :%s/\\s\\+$//e makes `ab` and leaves `cd` (no error for it)",
     ":[range]s/old/new/ge": ":%s/-/=/ge changes every - in the file and stays quiet on lines without one",
+    ":[range]d": "on a 6-line file: :2,3d removes complete lines 2 and 3, leaving lines 1 and 4-6",
     "f{char}": "on `ab-cd-ef` with the cursor on a: f- lands on the first '-'; ; lands on the next '-'",
     "t{char}": "on `ab-cd` with the cursor on a: t- stops on 'b', just before the '-'",
     "F{char}": "on `ab-cd` with the cursor on d: F- jumps back onto the '-'",
@@ -735,7 +763,7 @@ def example_for(family):
     return EXAMPLES.get(base) or EXAMPLES.get(base.replace("[count]", ""))
 
 
-# VD-48: the same glyph does different jobs.  `$` is a line address in
+# VD-48: the same glyph does different jobs.  `$` is a line selector in
 # :1,3t$, the end-of-row motion in 2G$ and an end anchor in :%s/\s\+$//e;
 # `\` is a glyph in `/!\`, a special-piece prefix in \s.  The learner asked
 # "what is the concept diff between / and \ ... i thought \ was an escape
@@ -749,10 +777,10 @@ SYMBOL_ROLES = {
     ("<Space>", "key"): ("<Space> = press the space bar", "space bar"),
     ("<BS>", "key"): ("<BS> = press Backspace", "Backspace"),
     (":", "cmdline"): (": in Normal mode opens the command line at the bottom of the screen "
-                       "(Vim calls these Ex commands); type the command there, <CR> runs it, "
+                       "(Vim calls these : commands); type the command there, <CR> runs it, "
                        "<Esc> cancels", "command line"),
     ("$", "motion"): ("$ on its own = jump to the end of the row (a motion)", "end of row (2G$)"),
-    ("$", "address"): ("$ in a line address = the last line of the file "
+    ("$", "address"): ("$ in a line selector = the last line of the file "
                        "(:1,3t$ = copy after the last line)", "last line (:1,3t$)"),
     ("$", "anchor"): ("$ at the end of a pattern = match only at the end of the row",
                       "row end in a pattern (\\s\\+$)"),
@@ -763,7 +791,7 @@ SYMBOL_ROLES = {
     (".", "dot"): (". in Normal mode = repeat your last change", "repeat last change"),
     (".", "any"): (". inside a pattern = any one character (\\. = a real dot)",
                    "any character in a pattern"),
-    (".", "address"): (". in a line address = the current line", "current line"),
+    (".", "address"): (". in a line selector = the current line", "current line"),
     (".", "glyph"): (". after f, t, r or in typed text = just a dot glyph", "a dot glyph (f.)"),
     ("^", "motion"): ("^ on its own = jump to the first glyph of the row", "first glyph"),
     ("^", "anchor"): ("^ at the start of a pattern = match only at the start of the row",
@@ -775,9 +803,9 @@ SYMBOL_ROLES = {
     ("0", "motion"): ("0 on its own = jump to column 1", "column 1 (0)"),
     ("0", "count"): ("0 after another digit = part of the number (10G = line ten, "
                      "not 1 then 0)", "part of a number (10G)"),
-    ("0", "address"): ("0 as a line address = before line 1 (:m0 = move to the top)",
+    ("0", "address"): ("0 as a line selector = before line 1 (:m0 = move to the top)",
                        "before line 1 (:m0)"),
-    (",", "range"): ("a,b in a line address = lines a through b (:4,6 = lines 4-6)",
+    (",", "range"): ("a,b in a line selector = lines a through b (:4,6 = lines 4-6)",
                      "from,to lines (:4,6)"),
     (",", "motion"): (", on its own = repeat the last f/t find backwards", "find backwards"),
     ("/", "search"): ("/ in Normal mode = search: type the text, <CR> jumps to it",
@@ -974,6 +1002,16 @@ FAMILY_TEACH.update({
     ":diffoff": ":diffoff  leave diff mode in the current window",
     ":bwipeout!": ":bwipeout!  remove this buffer and its window (! = even if unsaved)",
     ":bwipeout": ":bwipeout  remove this buffer and its window",
+    ":q": ":q  close the current disposable window without saving",
+    ":diffthis": ":diffthis  join the current window to the diff comparison",
+    "<C-w>{x}": "<C-w>{x}  send a window command to the following key (p moves focus to the other split)",
+    "[count]@{reg}": "[count]@{reg}  replay the named macro register count times; the count belongs to @, not to the macro body",
+    "[count]<C-a>": "[count]<C-a>  add the count to the number under the cursor in place",
+    "[count]W": "[count]W  cross that many space-separated WORD starts",
+    "[count]E": "[count]E  land on the end of that many space-separated WORDs",
+    "[count]B": "[count]B  move back across that many space-separated WORD starts",
+    "[count]j": "[count]j  move down that many rows without changing art",
+    "[count]l": "[count]l  move right that many columns without changing art",
 })
 EXAMPLES.update({
     "0": "on `  ab` with the cursor on b: 0 lands on the first space (column 1)",
@@ -1000,6 +1038,20 @@ EXAMPLES.update({
     ":set scrollbind": "with two windows side by side, :set scrollbind in both keeps rows level",
     ":diffoff!": "after :diffthis in two windows, :diffoff! clears the diff colours in both",
     ":bwipeout!": "in the scratch window, :bwipeout! closes it and throws its text away",
+    ":q": ":q in a disposable split closes that window without writing the scratch art",
+    ":diffthis": ":diffthis in two windows joins the current one to the comparison",
+    "<C-w>{x}": "with two windows, Ctrl-w p moves focus to the other split",
+    "[count]@{reg}": "after recording q to change `:` to `.`, j3@q applies that same macro to the next three rows",
+    "[count]<C-a>": "on `FRAME 01`, f0 then 2<C-a> changes the number to `03` without retyping the label",
+    "[count]W": "on `aa bb cc`, 2W lands at the start of `cc`",
+    "[count]E": "on `aa bb cc`, E lands on the final `a` of the first WORD",
+    "[count]B": "on `aa bb cc` at `cc`, B lands on the start of `bb`",
+    "[count]j": "on four rows, 2j moves from row 1 to row 3",
+    "[count]l": "on `abcd`, 2l moves from a to c",
+    "h": "on `ab`, with the cursor on b, h lands on a",
+    "j": "on three rows, j moves from row 1 to row 2",
+    "k": "on three rows, k moves from row 2 to row 1",
+    "l": "on `ab`, with the cursor on a, l lands on b",
 })
 
 
@@ -1288,7 +1340,7 @@ def _wrap_hanging(text, width):
                          break_on_hyphens=False) or [""]
 
 
-def anatomy(keys, width=None):
+def anatomy(keys, width=None, *, shape=None):
     """Return the labelled tree, IN PLAIN WORDS and SHAPE lines, or None.
 
     A pure `:s` command uses the VD-49 substitute tree.  Anything else is split
@@ -1296,6 +1348,7 @@ def anatomy(keys, width=None):
     wider than the popup allows, returns None: the caller falls back to the
     key-by-key list, never to a clipped row.
     """
+    authored_shape = shape
     limit = min(ANATOMY_MAX_CELLS, width or ANATOMY_MAX_CELLS)
     bare = keys[:-4] if keys.endswith("<CR>") else keys
     rows = explain(keys)
@@ -1330,6 +1383,8 @@ def anatomy(keys, width=None):
     if any(len(row) > limit for row in tree):
         return None
     out = list(tree) + _wrap_hanging(plain, limit)
+    if authored_shape:
+        shape = "Shape: " + authored_shape
     if shape:
         out += _wrap_hanging(shape, limit)
     return out

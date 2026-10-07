@@ -27,7 +27,7 @@
     ]
   },
   "M6.Q02": {
-    "prompt": "ANIMATION\nA subtractive build starts from a complete approved pyramid so later poses can omit units deliberately.\n\n    COMPLETE        SCAFFOLD\n  1 │    ^    │    │    ^    │\n  2 │   /_\\   │    │   /_\\   │\n  3 │  /---\\  │    │  /---\\  │\n  4 │ /-----\\ │    │ /-----\\ │\n  5 │/-------\\│    │/-------\\│\n\nNEOVIM\nWhich addressed copy includes every row of the source frame?",
+    "prompt": "ANIMATION\nA subtractive build starts from a complete approved pyramid so later poses can omit units deliberately.\n\n    COMPLETE        SCAFFOLD\n  1 │    ^    │    │    ^    │\n  2 │   /_\\   │    │   /_\\   │\n  3 │  /---\\  │    │  /---\\  │\n  4 │ /-----\\ │    │ /-----\\ │\n  5 │/-------\\│    │/-------\\│\n\nNEOVIM\nWhich copy with an explicit range includes every row of the source frame?",
     "compact_prompt": "ANIMATION\nCopy the complete pose before subtracting.\n\n    FRAME\n    │    ^    │\n    │   /_\\   │\n    │  /---\\  │\n    │ /-----\\ │\n    │/-------\\│\n\nNEOVIM\nWhich range copies all five rows?",
     "animation_prompt": "The complete pose is the scaffold; later omissions are authored on a copy, not by damaging the approved keyframe.\n\n    COMPLETE        COPY\n  1 │    ^    │    │    ^    │\n  2 │   /_\\   │    │   /_\\   │\n  3 │  /---\\  │    │  /---\\  │\n  4 │ /-----\\ │    │ /-----\\ │\n  5 │/-------\\│    │/-------\\│",
     "animation_answer": "Preserve one complete five-row keyframe and subtract from its duplicate.",
@@ -108,10 +108,10 @@
     ]
   },
   "M6.Q05": {
-    "prompt": "ANIMATION\nWhen the five-row pose is already approved, an addressed copy and a counted yank can preserve the same complete scaffold.\n\n    SOURCE RANGE          COPY\n  1 │    ^    │          6 │    ^    │\n  2 │   /_\\   │          7 │   /_\\   │\n  3 │  /---\\  │          8 │  /---\\  │\n  4 │ /-----\\ │          9 │ /-----\\ │\n  5 │/-------\\│         10 │/-------\\│\n\nNEOVIM\nIf the cursor may be outside row 1, which option explains why the addressed copy is safer?",
+    "prompt": "ANIMATION\nWhen the five-row pose is already approved, a copy with an explicit range and a counted yank can preserve the same complete scaffold.\n\n    SOURCE RANGE          COPY\n  1 │    ^    │          6 │    ^    │\n  2 │   /_\\   │          7 │   /_\\   │\n  3 │  /---\\  │          8 │  /---\\  │\n  4 │ /-----\\ │          9 │ /-----\\ │\n  5 │/-------\\│         10 │/-------\\│\n\nNEOVIM\nIf the cursor may be outside row 1, which option explains why the copy with an explicit range is safer?",
     "compact_prompt": "ANIMATION\nBoth paths preserve a complete five-row scaffold.\n\n    SOURCE       COPY\n      ^            ^\n     /_\\          /_\\\n    /---\\        /---\\\n   /-----\\      /-----\\\n  /-------\\    /-------\\\n\nNEOVIM\nCompare their scope.",
     "animation_prompt": "The complete frame stays intact before any later subtractive variation; the method choice is about expressing the block boundary.\n\n    SOURCE RANGE          COPY\n  1 │    ^    │          6 │    ^    │\n  2 │   /_\\   │          7 │   /_\\   │\n  3 │  /---\\  │          8 │  /---\\  │\n  4 │ /-----\\ │          9 │ /-----\\ │\n  5 │/-------\\│         10 │/-------\\│",
-    "animation_answer": "Both methods can preserve the complete five-row pose; the addressed form makes its source range explicit.",
+    "animation_answer": "Both methods can preserve the complete five-row pose; the explicit-range form makes its source range explicit.",
     "neovim_prompt": "Compare :1,5t$ with 5yyGp on this exact frame.",
     "neovim_answer": ":1,5t$ names rows 1–5 directly; 5yyGp uses the cursor and a count to copy five lines.",
     "choices": [
@@ -128,7 +128,7 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the addressed range makes the five-line boundary visible and explicit.",
+      "Correct: the explicit range makes the five-line boundary visible and explicit.",
       "A counted yank can work, but it starts at the cursor; it does not ignore the cursor's row.",
       "Three rows omit the base and cannot be the complete Pyramid frame.",
       "m moves the source instead of preserving an approved copy."
@@ -189,7 +189,7 @@
     ]
   },
   "M6.Q08": {
-    "prompt": "ANIMATION\nReverse authoring is useful when the desired playback grows from a simple pose into a finished pyramid.\n\n    REDUCED          FINISHED\n    │         │      │    ^    │\n    │         │      │   /_\\   │\n    │  /---\\  │      │  /---\\  │\n    │ /-----\\ │      │ /-----\\ │\n    │/-------\\│      │/-------\\│\n\nNEOVIM\nWhat check prevents a missing padding row before an Ex move?",
+    "prompt": "ANIMATION\nReverse authoring is useful when the desired playback grows from a simple pose into a finished pyramid.\n\n    REDUCED          FINISHED\n    │         │      │    ^    │\n    │         │      │   /_\\   │\n    │  /---\\  │      │  /---\\  │\n    │ /-----\\ │      │ /-----\\ │\n    │/-------\\│      │/-------\\│\n\nNEOVIM\nWhat check prevents a missing padding row before a :move command?",
     "compact_prompt": "ANIMATION\nAuthor the finished pose, then omit units for earlier frames.\n\n    REDUCED      FINISHED\n      blank          ^\n      /---\\        /_\\\n     /-----\\      /---\\\n\nNEOVIM\nWhat must be checked before moving?",
     "animation_prompt": "Starting at the finished form lets each earlier frame remove one bounded unit while playback reverses those removals into growth.\n\n    REDUCED          FINISHED\n    │         │      │    ^    │\n    │         │      │   /_\\   │\n    │  /---\\  │      │  /---\\  │\n    │ /-----\\ │      │ /-----\\ │\n    │/-------\\│      │/-------\\│",
     "animation_answer": "Build backward from the complete pose, then play the bounded reductions forward as additions.",
@@ -274,7 +274,7 @@
     "compact_prompt": "ANIMATION\nOnly the apex marker changed.\n\n    │ . │ → │ ^ │\n    │/_\\│   │/_\\│\n    │---│   │---│\n\nNEOVIM\nName the scope.",
     "animation_prompt": "The complete key pose keeps all five rows and its base while the apex marker changes.\n\n    BEFORE        AFTER\n  1 │    .    │   │    ^    │\n  2 │   /_\\   │   │   /_\\   │\n  3 │  /---\\  │   │  /---\\  │\n  4 │ /-----\\ │   │ /-----\\ │\n  5 │/-------\\│   │/-------\\│",
     "animation_answer": "A one-cell apex replacement completes the keyframe without shifting its registration.",
-    "neovim_prompt": "Recall the command family used for that one-cell change.",
+    "neovim_prompt": "Recall the command kind used for that one-cell change.",
     "neovim_answer": "r followed by ^ overwrites the apex cell in Normal mode.",
     "choices": [
       "ANIMATION: Complete five-row keyframe; one apex cell changed. | NEOVIM: r^ overwrites the apex in place.",
@@ -298,10 +298,10 @@
   },
   "M6.02.P01": {
     "prompt": "ANIMATION\nThe complete five-row pose now appears twice: the second copy is the subtractive scaffold.\n\n    BEFORE        AFTER\n  1 │    ^    │   │    ^    │\n  2 │   /_\\   │   │   /_\\   │\n  3 │  /---\\  │   │  /---\\  │\n  4 │ /-----\\ │   │ /-----\\ │\n  5 │/-------\\│   │/-------\\│\n  6 │         │   │    ^    │\n  7 │         │   │   /_\\   │\n  8 │         │   │  /---\\  │\n  9 │         │   │ /-----\\ │\n 10 │         │   │/-------\\│\n\nNEOVIM\nWhich grammar describes the copy command?",
-    "compact_prompt": "ANIMATION\nOne complete five-row frame became two.\n\n    │ ^ │    │ ^ │\n    │/_\\│    │/_\\│\n    │---│    │---│\n    │___│    │___│\n    │___│    │___│\n\nNEOVIM\nDecode the addressed copy.",
+    "compact_prompt": "ANIMATION\nOne complete five-row frame became two.\n\n    │ ^ │    │ ^ │\n    │/_\\│    │/_\\│\n    │---│    │---│\n    │___│    │___│\n    │___│    │___│\n\nNEOVIM\nDecode the copy with an explicit range.",
     "animation_prompt": "The source remains available and a second equal-height frame is appended for later subtraction.\n\n    BEFORE        AFTER\n  1 │    ^    │   │    ^    │\n  2 │   /_\\   │   │   /_\\   │\n  3 │  /---\\  │   │  /---\\  │\n  4 │ /-----\\ │   │ /-----\\ │\n  5 │/-------\\│   │/-------\\│\n  6 │         │   │    ^    │\n  7 │         │   │   /_\\   │\n  8 │         │   │  /---\\  │\n  9 │         │   │ /-----\\ │\n 10 │         │   │/-------\\│",
     "animation_answer": "Duplicate the whole approved pose before removing units from the copy.",
-    "neovim_prompt": "Break the Ex sentence into source, operation, destination, and execution.",
+    "neovim_prompt": "Break the : command into source, operation, destination, and execution.",
     "neovim_answer": ":1,5t$<CR> means copy rows 1–5 after the last line, then execute.",
     "choices": [
       "ANIMATION: Append a complete equal-height scaffold. | NEOVIM: :1,5t$<CR> is range + copy + last-line destination + Enter.",
@@ -381,19 +381,19 @@
     "prompt": "ANIMATION\nTwo accepted methods reach the same three-frame strip, and both preserve complete five-row poses.\n\n    FRAME 1        FRAME 2        FRAME 3\n    │    ^    │    │         │    │         │\n    │   /_\\   │    │   /_\\   │    │         │\n    │  /---\\  │    │  /---\\  │    │  /---\\  │\n    │ /-----\\ │    │ /-----\\ │    │ /-----\\ │\n    │/-------\\│    │/-------\\│    │/-------\\│\n\nNEOVIM\nWhat tradeoff is being compared?",
     "compact_prompt": "ANIMATION\nBoth methods preserve full five-row frames.\n\n    ^       blank       blank\n   /_\\      /_\\        blank\n  /---\\    /---\\       /---\\\n\nNEOVIM\nCompare their scope.",
     "animation_prompt": "The result is three equal-height frames: a finished pose, a reduced pose, and a further reduced pose.\n\n    FRAME 1        FRAME 2        FRAME 3\n    │    ^    │    │         │    │         │\n    │   /_\\   │    │   /_\\   │    │         │\n    │  /---\\  │    │  /---\\  │    │  /---\\  │\n    │ /-----\\ │    │ /-----\\ │    │ /-----\\ │\n    │/-------\\│    │/-------\\│    │/-------\\│",
-    "animation_answer": "Counted yank/put and addressed copy/clear are two routes to the same registered subtractive strip.",
+    "animation_answer": "Counted yank/put and copy with an explicit range/clear are two routes to the same registered subtractive strip.",
     "neovim_prompt": "Compare cursor dependence and range scope, not just the final pixels.",
     "neovim_answer": "Both methods copy a complete five-row block and use D to clear content; deleting a row would break registration.",
     "choices": [
-      "ANIMATION: The methods produce equal-height subtractive frames. | NEOVIM: counted yank depends on cursor position; addressed copy names the range, but both need a row-local clear.",
+      "ANIMATION: The methods produce equal-height subtractive frames. | NEOVIM: counted yank depends on cursor position; copy with an explicit range names the range, but both need a row-local clear.",
       "ANIMATION: One method intentionally shortens frames. | NEOVIM: dd is safer than D because blank rows are expendable.",
-      "ANIMATION: The methods create different animation results. | NEOVIM: only addressed copy can preserve the base.",
+      "ANIMATION: The methods create different animation results. | NEOVIM: only copy with an explicit range can preserve the base.",
       "ANIMATION: Both methods are unsafe because copying cannot preserve blank rows. | NEOVIM: redraw every frame from scratch."
     ],
     "compact_choices": [
-      "A: same equal-height strip · V: yank cursor-dependent; Ex range explicit",
+      "A: same equal-height strip · V: yank cursor-dependent; : command range explicit",
       "A: one shortens frames · V: dd safer",
-      "A: different results · V: only Ex preserves base",
+      "A: different results · V: only :copy preserves base",
       "A: both unsafe · V: redraw all"
     ],
     "correct_choice": 0,
@@ -409,7 +409,7 @@
     "compact_prompt": "ANIMATION\nThe two complete builds swap order.\n\n    o-build      O-build\n       ↓            ↑\n    O-build      o-build\n\nNEOVIM\nName source, move, destination.",
     "animation_prompt": "The same two complete frames remain intact; only their order changes.\n\n    BEFORE          AFTER\n    │ /---\\ │       │ /===\\ │\n    │|  o  |│       │|  O  |│\n    │ \\---/ │       │ \\===/ │\n    │ /===\\ │       │ /---\\ │\n    │|  O  |│       │|  o  |│\n    │ \\===/ │       │ \\---/ │",
     "animation_answer": "Move the first three-line frame after the second without duplicating it.",
-    "neovim_prompt": "Decode the bounded Ex move.",
+    "neovim_prompt": "Decode the bounded :move.",
     "neovim_answer": ":1,3m$<CR> means source rows 1–3, move command m, destination after the last row, then Enter.",
     "choices": [
       "ANIMATION: Swap whole three-row frames and preserve both bodies. | NEOVIM: :1,3m$<CR> is range + move + destination + execution.",
@@ -432,11 +432,11 @@
     ]
   },
   "M6.06.P01": {
-    "prompt": "ANIMATION\nThe FrogBog lily-pad frames are filed as 2 then 1. Playback must read 1 then 2, and each number must travel with its complete five-row pad contour.\n\n  BEFORE         AFTER\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    2  \\│      │/    1  \\│\n  │\\       /│  →   │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    1  \\│      │/    2  \\│\n  │\\       /│      │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n\nNEOVIM\nWhich addressed command reorders one complete pad without copying it?",
+    "prompt": "ANIMATION\nThe FrogBog lily-pad frames are filed as 2 then 1. Playback must read 1 then 2, and each number must travel with its complete five-row pad contour.\n\n  BEFORE         AFTER\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    2  \\│      │/    1  \\│\n  │\\       /│  →   │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n  │    _│          │    _│\n  │ ,'   `.│       │ ,'   `.│\n  │/    1  \\│      │/    2  \\│\n  │\\       /│      │\\       /│\n  │ \\/|..-'│       │ \\/|..-'│\n\nNEOVIM\nWhich command with an explicit range reorders one complete pad without copying it?",
     "compact_prompt": "ANIMATION\nReorder complete five-row pads from 2→1 to 1→2.\n\n  │/    2  \\│     │/    1  \\│\n       ↓ move      ↓\n  │/    1  \\│     │/    2  \\│\n\nNEOVIM\nWhy `:1,5m$`?",
     "animation_prompt": "Both five-row FrogBog pads remain intact; only their playback order changes from 2,1 to 1,2.",
     "animation_answer": "Move the complete pad-2 block after the complete pad-1 block.",
-    "neovim_prompt": "Use an addressed range that covers exactly one complete frame.",
+    "neovim_prompt": "Use an explicit range that covers exactly one complete frame.",
     "neovim_answer": ":1,5m$<CR> moves the first five lines after the second block.",
     "choices": [
       "ANIMATION: Pad 1 precedes pad 2 and each five-row contour remains intact. | NEOVIM: `:1,5m$<CR>` moves the complete first pad after the current last line.",
@@ -453,20 +453,20 @@
     "correct_choice": 0,
     "feedback": [
       "Correct: the five-line range is the frame boundary, and moving it after the last line reverses the two-pad order without duplication.",
-      "The target contains two pads, not three. Ex t copies, while m removes the source range from its old position.",
+      "The target contains two pads, not three. :t copies, while m removes the source range from its old position.",
       "The numbered centre identifies the frame but does not own its contour; changing digits would falsify rather than reorder the source frames.",
       "The dollar sign is the last-line destination. The moved pad remains present after it."
     ]
   },
   "M6.08.P01": {
-    "prompt": "ANIMATION\nThe final sequence must reorder complete equal-height frames so playback builds from the reduced pose to the finished pose.\n\n    BEFORE          TARGET\n    │    ^    │     │         │\n    │   /_\\   │     │         │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │         │\n    │   /_\\   │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │    ^    │\n    │         │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n\nNEOVIM\nWhich grammar piece completes an addressed Ex command?",
-    "compact_prompt": "ANIMATION\nTARGET reads reduced → shoulder → finished, with five rows each.\n\n    blank      /_\\       ^\n    /---\\     /---\\    /---\\\n    /-----\\   /-----\\  /-----\\\n\nNEOVIM\nWhat executes the Ex sentence?",
+    "prompt": "ANIMATION\nThe final sequence must reorder complete equal-height frames so playback builds from the reduced pose to the finished pose.\n\n    BEFORE          TARGET\n    │    ^    │     │         │\n    │   /_\\   │     │         │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │         │\n    │   /_\\   │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │    ^    │\n    │         │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n\nNEOVIM\nWhich grammar piece completes a : command with an explicit range?",
+    "compact_prompt": "ANIMATION\nTARGET reads reduced → shoulder → finished, with five rows each.\n\n    blank      /_\\       ^\n    /---\\     /---\\    /---\\\n    /-----\\   /-----\\  /-----\\\n\nNEOVIM\nWhat executes the : command?",
     "animation_prompt": "The check is about whole-frame order and equal bounds, not redrawing or deleting rows.\n\n    BEFORE          TARGET\n    │    ^    │     │         │\n    │   /_\\   │     │         │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │         │\n    │   /_\\   │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│\n    │         │     │    ^    │\n    │         │     │   /_\\   │\n    │  /---\\  │     │  /---\\  │\n    │ /-----\\ │     │ /-----\\ │\n    │/-------\\│     │/-------\\│",
     "animation_answer": "Reorder complete five-row frames to show a readable bottom-up build.",
     "neovim_prompt": "Recall the final execution key in the range-command grammar.",
-    "neovim_answer": "Press <CR> after the addressed :move or :copy sentence to execute it.",
+    "neovim_answer": "Press <CR> after the :move command with an explicit range or :copy sentence to execute it.",
     "choices": [
-      "ANIMATION: Reorder whole equal-height frames into reduced-to-finished playback. | NEOVIM: an Ex range command is executed with <CR>.",
+      "ANIMATION: Reorder whole equal-height frames into reduced-to-finished playback. | NEOVIM: a : command range command is executed with <CR>.",
       "ANIMATION: Delete blank padding and let rows compact. | NEOVIM: the missing grammar piece is dd.",
       "ANIMATION: Reverse every frame's bytes to mirror it. | NEOVIM: the missing grammar piece is a global substitute.",
       "ANIMATION: Leave the frames in authoring order. | NEOVIM: no execution key is required."
@@ -479,10 +479,10 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the task preserves five-row frames and the Ex sentence needs Enter to run.",
+      "Correct: the task preserves five-row frames and the : command needs Enter to run.",
       "Padding is part of each frame and must not be deleted.",
       "This task reorders complete frames; byte reversal is unrelated.",
-      "An Ex command is not applied until it is submitted with <CR>."
+      "A : command is not applied until it is submitted with <CR>."
     ]
   },
   "M18.Q01": {
@@ -571,7 +571,7 @@
     "compact_prompt": "ANIMATION\nThe overshoot carries the actor one cell past return.\n\n    return       overshoot\n    ....<---o    ...<---o.\n    ......|\\.    .....|\\..\n    ...../.\\.    ..../.\\..\n\nNEOVIM\nKeep the offset aligned.",
     "animation_prompt": "The overshoot is a short momentum accent: one extra cell in the same direction before the pose turns back.\n\n    RETURN          OVERSHOOT\n    │|....<---o|│   │|...<---o.|│\n    │|......|\\.|│   │|.....|\\..|│\n    │|...../.\\.|│   │|..../.\\..|│",
     "animation_answer": "Offset the complete return pose one cell, keeping actor, arm, and legs aligned.",
-    "neovim_prompt": "Use row-addressed full overwrites for the copied block.",
+    "neovim_prompt": "Use full overwrites on named rows for the copied block.",
     "neovim_answer": "Start each body row and C-write its one-cell-overshoot spelling so all three rows share the offset.",
     "choices": [
       "ANIMATION: Add one aligned cell of momentum beyond return. | NEOVIM: overwrite each body row at its new offset.",
@@ -680,9 +680,9 @@
     "animation_prompt": "The loop is coherent because its reused frames are complete, inspected extremes with a declared turnaround hold.\n\n    RETURN          OVERSHOOT\n    │|....<---o|│   │|...<---o.|│\n    │|......|\\.|│   │|.....|\\..|│\n    │|...../.\\.|│   │|..../.\\..|│",
     "animation_answer": "Reuse only approved complete ranges and preserve the intentional hold in their declared order.",
     "neovim_prompt": "Choose the range-level reuse path.",
-    "neovim_answer": "Addressed :t copies complete four-line frames; it does not reverse or synthesize their bytes.",
+    "neovim_answer": ":t with an explicit range copies complete four-line frames; it does not reverse or synthesize their bytes.",
     "choices": [
-      "ANIMATION: Reuse inspected complete extremes around a declared hold. | NEOVIM: use addressed :t on complete four-line ranges.",
+      "ANIMATION: Reuse inspected complete extremes around a declared hold. | NEOVIM: use :t with an explicit range on complete four-line ranges.",
       "ANIMATION: Reuse any row that looks similar. | NEOVIM: copy only the actor rows.",
       "ANIMATION: Reverse the original bytes at runtime. | NEOVIM: a global reverse expression is safest.",
       "ANIMATION: Remove CHECK before copying so metadata cannot matter. | NEOVIM: delete validation rows."
@@ -760,7 +760,7 @@
     "compact_prompt": "ANIMATION\nThe whole 4-line mirrored block is authored.\n\n    o--->....   ....<---o\n    ./|......   ......|\\.\n    ./ .\\.....  ...../. .\n    CHECK=0    CHECK=0\n\nNEOVIM\nName the bounded edit.",
     "animation_prompt": "Every art row is explicitly mirrored while the validation line remains present.\n\n    BEFORE          AFTER\n    │|o--->....|│   │|....<---o|│\n    │|./|......|│   │|......|\\.|│\n    │|./.\\.....|│   │|...../.\\.|│\n    │CHECK=0    │   │CHECK=0    │",
     "animation_answer": "Hand-author the three directional rows; keep the CHECK line at 0 until validation.",
-    "neovim_prompt": "Recall the command family used for each complete row.",
+    "neovim_prompt": "Recall the command kind used for each complete row.",
     "neovim_answer": "C overwrites a complete row in place, with movement between rows.",
     "choices": [
       "ANIMATION: Full directional mirror with CHECK retained. | NEOVIM: C overwrote each art row in place.",
@@ -838,13 +838,13 @@
   },
   "M18.EXPR.P01": {
     "prompt": "ANIMATION\nThe art row is already hand-authored; only CHECK changes from 0 to 1.\n\n    BEFORE          AFTER\n    │|  o  |    │   │|  o  |    │\n    │CHECK=0    │   │CHECK=1    │\n\nNEOVIM\nWhich explanation keeps an expression limited to validation metadata?",
-    "compact_prompt": "ANIMATION\nArt stays fixed; one CHECK digit changes.\n\n    |  o  |     |  o  |\n    CHECK=0  →  CHECK=1\n\nNEOVIM\nChoose metadata-only scope.",
+    "compact_prompt": "ANIMATION\nArt stays fixed; one CHECK digit changes.\n\n    |  o  |     |  o  |\n    CHECK=0  →  CHECK=1\n\nNEOVIM\nWhat do getline(1) and [-1:] mean?",
     "animation_prompt": "The CHECK marker is the only changed cell; the art line is untouched.\n\n    BEFORE          AFTER\n    │|  o  |    │   │|  o  |    │\n    │CHECK=0    │   │CHECK=1    │",
     "animation_answer": "Use the expression as a check on existing art, never as an art-row generator.",
-    "neovim_prompt": "What does the validation-only substitution read and change?",
-    "neovim_answer": "It targets the 0 on CHECK and may read an existing row with getline(); it does not synthesize art.",
+    "neovim_prompt": "In `:3s/0/\\=getline(1)[-1:]/<CR>`, what do getline(1), [-1:], and \\= each mean?",
+    "neovim_answer": "getline(1) returns line 1 text, [-1:] takes its final character, and \\= evaluates that expression as the replacement; only CHECK row 3 changes and no art is generated.",
     "choices": [
-      "ANIMATION: Only CHECK metadata changes; the art is already authored. | NEOVIM: scoped expression replaces CHECK's 0 after reading an existing row.",
+      "ANIMATION: Only CHECK metadata changes; the art is already authored. | NEOVIM: getline(1) returns line 1, [-1:] takes its final character, and \\= evaluates that replacement on CHECK row 3.",
       "ANIMATION: Expression creates the art row from CHECK. | NEOVIM: getline() builds a new frame.",
       "ANIMATION: All matching zeros in the file change. | NEOVIM: :%s/0/1/g changes every zero, not only CHECK's.",
       "ANIMATION: Delete the art once it validates. | NEOVIM: dd removes the tested row."
@@ -891,30 +891,31 @@
     ]
   },
   "M18.06.P01": {
-    "prompt": "ANIMATION\nPallas's calm ghost moves from the left side of the fixed frame to its source-authored right-side pose. Mirror the accent, face placement, body curves, tail wisp, and empty space together; keep both rails fixed.\n\nSTART\n|    .-.   |\n|   (- -)  |\n|   \\ ‾ `-´|\n|    ) /   |\n|    |/    |\n|    '     |\n\nTARGET\n|   .-.    |\n|  (- -)   |\n|`-´ ‾ /   |\n|   \\ (    |\n|    \\|    |\n|     '    |\n\nNEOVIM\nWhich method treats this as six deliberately authored rows rather than a byte reversal?",
-    "compact_prompt": "ANIMATION\nMirror the complete calm Pallas ghost; rails stay fixed.\n\n|   \\ ‾ `-´|  →  |`-´ ‾ /   |\n|    |/    |      |    \\|    |\n\nNEOVIM\nWhich bounded row rewrite preserves the frame?",
-    "animation_prompt": "ANIMATION\nThe target is Pallas's complete source-authored right ghost. The face stays calm while curves, accent, tail, and gaps exchange sides coherently.",
-    "animation_answer": "Author all six right-side rows explicitly and keep the two rails in their original columns.",
-    "neovim_prompt": "NEOVIM\nWhat does one `0C...<Esc>` pass own, and why is it repeated once per row?",
-    "neovim_answer": "0 starts at the left rail, C replaces that row's suffix with the authored target, and Escape bounds the change before moving to the next row.",
+    "source_ref": "official-Games/TowerDefense res18 missile frame 3 to frame 4; Neovim help g_, r",
+    "prompt": "ANIMATION\nThe supplied missile pair changes only its final visible exhaust glyph from apostrophe to dot; the hull, slashes, rails, and alignment spaces remain fixed.\n\nSTART\n  ____/\n< / / |::'\n  ¯¯¯¯\\\n\nTARGET\n  ____/\n< / / |::.\n  ¯¯¯¯\\\n\nNEOVIM\nWhich bounded edit changes the final visible exhaust cell without touching trailing spaces?",
+    "compact_prompt": "ANIMATION\nMissile exhaust: final visible apostrophe becomes dot; hull stays fixed.\n\n│< / / |::'│ → │< / / |::.│\nNEOVIM\nWhich visible-landmark replacement is bounded?",
+    "animation_prompt": "ANIMATION\nOnly the missile's final visible exhaust glyph changes; every hull stroke and trailing alignment space remains.",
+    "animation_answer": "Replace the final visible apostrophe with a dot and preserve the supplied hull.",
+    "neovim_prompt": "NEOVIM\nExplain `2Gg_r.` on the supplied three-row missile.",
+    "neovim_answer": "2G reaches the exhaust row, g_ lands on its final visible glyph while skipping trailing spaces, and r. replaces that one cell.",
     "choices": [
-      "ANIMATION: Move only the face; leave the body and tail left-facing. | NEOVIM: one `r` command redraws the six-row ghost.",
-      "ANIMATION: Hand-author the complete right ghost, including curves, accent, tail, and gaps. | NEOVIM: six bounded `0C...<Esc>` passes replace one complete row at a time.",
-      "ANIMATION: Reverse every byte and accept unchanged slash identities. | NEOVIM: C automatically mirrors the text after the cursor.",
-      "ANIMATION: Insert a second ghost beside the first. | NEOVIM: C inserts the target and shifts the right rail."
+      "ANIMATION: Change only the final exhaust glyph; the hull stays fixed. | NEOVIM: `2Gg_r.` lands on the final visible cell and replaces it.",
+      "ANIMATION: Redraw the whole missile. | NEOVIM: `C` retypes the complete row and risks changing its spaces.",
+      "ANIMATION: Reverse the hull bytes. | NEOVIM: a filter is needed to change the final glyph.",
+      "ANIMATION: Insert another exhaust cell. | NEOVIM: `r.` shifts the trailing spaces right."
     ],
     "compact_choices": [
-      "A: face only · V: one r redraws rows",
-      "A: complete authored mirror · V: C per row",
-      "A: byte reverse · V: C auto-mirrors",
-      "A: insert second ghost · V: C shifts rail"
+      "A: exhaust cell only · V: 2Gg_r.",
+      "A: redraw missile · V: C retypes row",
+      "A: reverse hull · V: filter changes glyph",
+      "A: insert exhaust · V: r shifts spaces"
     ],
-    "correct_choice": 1,
+    "correct_choice": 0,
     "feedback": [
-      "The face is only one part of the pose; the body curves, accent, tail, and whitespace also exchange sides.",
-      "Correct: each row is deliberately authored, while Escape prevents one rewrite from spilling into the next row.",
-      "C changes text to what the learner types. It neither reverses bytes nor chooses the correct directional glyphs.",
-      "C replaces the row suffix; it does not insert a second pose or move the fixed right rail."
+      "Correct: g_ lands on the final visible glyph, so r. changes exactly the exhaust cell and leaves trailing spaces alone.",
+      "A complete C redraw is broader than the one-cell source change and can disturb alignment spaces.",
+      "The target changes one visible exhaust glyph; no hull reversal is part of the transfer.",
+      "r replaces one cell in place; it does not insert a new cell or shift the row."
     ]
   },
   "M18.08.P01": {
@@ -922,7 +923,7 @@
     "compact_prompt": "ANIMATION\nFour approved blocks form return→overshoot hold→return.\n\n    F1          F2          F2          F1\n    │<---o│     │<---o.│    │<---o.│    │<---o│\n    │CHECK=1│   │CHECK=1│   │CHECK=1│   │CHECK=1│\n\nNEOVIM\nChoose the reusable command grammar.",
     "animation_prompt": "The final strip preserves complete validated blocks and a deliberate turnaround hold; no byte reversal is needed.\n\n    F1              F2              F3              F4\n    │|....<---o|│   │|...<---o.|│   │|...<---o.|│   │|....<---o|│\n    │|......|\\.|│   │|.....|\\..|│   │|.....|\\..|│   │|......|\\.|│\n    │|...../.\\.|│   │|..../.\\..|│   │|..../.\\..|│   │|...../.\\.|│\n    │CHECK=1    │   │CHECK=1    │   │CHECK=1    │   │CHECK=1    │",
     "animation_answer": "Reuse approved complete ranges in an explicit forward-and-reverse timing order.",
-    "neovim_prompt": "Recall the addressed copy grammar used to append approved ranges.",
+    "neovim_prompt": "Recall the copy with an explicit range grammar used to append approved ranges.",
     "neovim_answer": "A source range, t/copy command, destination $, and <CR> append each complete block.",
     "choices": [
       "ANIMATION: Complete validated frames show return, held overshoot, then return. | NEOVIM: use source range + :t + destination + <CR> for each block.",
@@ -1164,7 +1165,7 @@
     "prompt": "ANIMATION\nA global slash replacement would hit raised arms, legs, and other diagonals with different meanings.\n\n    WALK STRIP\n    │  o\\     │   │  o\\     │   │ \\o      │\n    │ /|      │   │ /|\\     │   │  |\\     │\n    │  |      │   │  |      │   │  |      │\n    │ / \\     │   │  |\\     │   │ /|      │\n    │/_  \\    │   │ /  \\_   │   │/  _\\    │\n\nNEOVIM\nWhich local path changes one raised arm only?",
     "compact_prompt": "ANIMATION\nSlash glyphs have different roles in the walk.\n\n    arms: / or \\\n    legs: / and \\\n    contours: also / and \\\n\nNEOVIM\nUse local search/replace.",
     "animation_prompt": "The same slash character participates in multiple landmarks, so broad material replacement would corrupt the cycle.\n\n    WALK STRIP\n    │  o\\     │   │  o\\     │   │ \\o      │\n    │ /|      │   │ /|\\     │   │  |\\     │\n    │  |      │   │  |      │   │  |      │\n    │ / \\     │   │  |\\     │   │ /|      │\n    │/_  \\    │   │ /  \\_   │   │/  _\\    │",
-    "animation_answer": "Address the intended arm landmark in one pose and leave leg diagonals untouched.",
+    "animation_answer": "Reach the intended arm landmark in one pose and leave leg diagonals untouched.",
     "neovim_prompt": "Choose a local landmark plus one-cell replacement.",
     "neovim_answer": "Find the raised arm in its pose, verify the column, and use r on that cell; do not substitute globally.",
     "choices": [
@@ -1485,11 +1486,11 @@
     ]
   },
   "M9.Q05": {
-    "prompt": "ANIMATION\nCopy-then-vary is safer when the high and squash poses share rails and ground.\n\n    HIGH          SQUASH\n    │  o  │       │ === │\n    │     │       │     │\n    │_____│       │_____│\n\nNEOVIM\nWhich addressed copy preserves those registration rows automatically?",
+    "prompt": "ANIMATION\nCopy-then-vary is safer when the high and squash poses share rails and ground.\n\n    HIGH          SQUASH\n    │  o  │       │ === │\n    │     │       │     │\n    │_____│       │_____│\n\nNEOVIM\nWhich copy with an explicit range preserves those registration rows automatically?",
     "compact_prompt": "ANIMATION\nReuse shared rails; vary only acting cells.\n\n    | o |       |===|\n    |   |       |   |\n    |___|       |___|\n\nNEOVIM\nChoose the range copy.",
     "animation_prompt": "The shared three-row shell is a stable scaffold; only the subject and intended squash row need variation.\n\n    HIGH          SQUASH\n    │  o  │       │ === │\n    │     │       │     │\n    │_____│       │_____│",
     "animation_answer": "Copy the complete frame and vary the acting cells instead of rebuilding rails and ground.",
-    "neovim_prompt": "Choose the addressed copy that inserts the high frame into the temporal gap.",
+    "neovim_prompt": "Choose the copy with an explicit range that inserts the high frame into the temporal gap.",
     "neovim_answer": ":1,3t3 copies lines 1–3 after line 3, preserving every shell row.",
     "choices": [
       "ANIMATION: Copy-then-vary is safe when rails and ground are shared. | NEOVIM: :1,3t3 inserts a complete three-line scaffold.",
@@ -1625,7 +1626,7 @@
     "animation_prompt": "Every bounce pose needs the same three-row shell so subject height can be compared against a fixed ground.\n\n    INCOMPLETE       COMPLETE\n    │  o  │          │  o  │\n                     │     │\n                     │_____│",
     "animation_answer": "Keep subject, spacing row, and ground together as one three-row frame.",
     "neovim_prompt": "Choose the whole-frame copy bound.",
-    "neovim_answer": "Use 3yy for a three-line frame or a three-line Ex range such as :1,3t.",
+    "neovim_answer": "Use 3yy for a three-line frame or a three-line : command range such as :1,3t.",
     "choices": [
       "ANIMATION: One row omits rails and ground; every pose needs three rows. | NEOVIM: use 3yy or a three-line :t range.",
       "ANIMATION: A subject row is a complete pose. | NEOVIM: yy is always enough.",
@@ -1732,7 +1733,7 @@
     "compact_prompt": "ANIMATION\nInsert falling o between high and squash.\n\n    BEFORE         AFTER\n    │ o │ │===│    │ o │ │ o │ │===│\n    │   │ │   │ →  │   │ │ o │ │   │\n    │___│ │___│    │___│ │___│ │___│\n\nNEOVIM\nChoose the complete-frame copy.",
     "animation_prompt": "The new midpoint is a complete three-row frame; both extremes and their ground rows remain visible.\n\n    BEFORE          AFTER\n    │  o  │         │  o  │\n    │     │         │     │\n    │_____│         │_____│\n    │     │         │     │\n    │ === │         │  o  │\n    │_____│         │_____│\n    │          │    │     │\n    │          │    │ === │\n    │          │    │_____│",
     "animation_answer": "Copy the complete high frame into the gap, then vary only its acting rows to make falling.",
-    "neovim_prompt": "Use an addressed three-line copy rather than piecemeal row insertion.",
+    "neovim_prompt": "Use a copy of an explicit three-line range rather than piecemeal row insertion.",
     "neovim_answer": ":1,3t3 copies lines 1–3 after line 3; then bounded edits move the subject down.",
     "choices": [
       "ANIMATION: Insert a complete falling frame between extremes. | NEOVIM: :1,3t3 copies all three high rows before variation.",
@@ -1759,11 +1760,11 @@
     "compact_prompt": "ANIMATION\nFold Boo's skirt inward; keep crown and body fixed.\n\n  │-´   `-│ → │ /   \\│\n\nNEOVIM\nWhat does `3G0C /   \\<Esc>` own?",
     "animation_prompt": "Boo hover frame 3 becomes frame 4 by folding only the bottom contour inward.",
     "animation_answer": "The flared -´ and `- ends become an inward slash and backslash; the upper two rows do not change.",
-    "neovim_prompt": "Decode the row address and change-to-end operation in `3G0C /   \\<Esc>`.",
+    "neovim_prompt": "Decode the row number and change-to-end operation in `3G0C /   \\<Esc>`.",
     "neovim_answer": "3G0 selects the start of row 3; C replaces only that row's old contour through end of line, and Escape returns to Normal mode.",
     "choices": [
       "ANIMATION: The whole ghost shifts right for the squash. | NEOVIM: C inserts a new row before row 3.",
-      "ANIMATION: Only the lower flare folds inward; crown and body remain registered. | NEOVIM: `3G0` addresses row 3 and `C…<Esc>` replaces that row through end of line.",
+      "ANIMATION: Only the lower flare folds inward; crown and body remain registered. | NEOVIM: `3G0` scopes row 3 and `C` writes the supplied row text through end of line before `<Esc>`.",
       "ANIMATION: A hold frame is appended after the hover. | NEOVIM: 3G selects three rows and C copies them.",
       "ANIMATION: Both body sides are erased with the flare. | NEOVIM: C changes every row below the cursor."
     ],
@@ -1776,7 +1777,7 @@
     "correct_choice": 1,
     "feedback": [
       "No position shift occurs: the upper rows are byte-for-byte stable between the source frames.",
-      "Correct: the frame change is a complete rewrite of one acting contour row, bounded by the absolute row address.",
+      "Correct: the frame change is a complete rewrite of one acting contour row, bounded by the absolute row number.",
       "3G is an absolute jump to line 3, not a count that selects three rows, and no frame is appended.",
       "Normal-mode C changes from the cursor to the end of its current line only."
     ]

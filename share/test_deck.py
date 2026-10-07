@@ -24,7 +24,12 @@ import v2_keys as K  # noqa: E402
 import v2_runtime as rt  # noqa: E402
 import deck  # noqa: E402
 
+# Keep this test independent of generated curriculum output.  The generator
+# attaches card_ids to a fresh copy of the authored source; a stale or partial
+# curriculum deck must not make the deck gate appear healthy.
 CUR = json.loads((HERE / "curriculum-v2.json").read_text(encoding="utf-8"))
+DECK_SOURCE = json.loads((HERE / "deck-v2.json").read_text(encoding="utf-8"))
+CUR["deck"] = deck.build_deck(CUR["cards"], CUR["modules"], source=HERE / "deck-v2.json")
 CARDS = {card["id"]: card for card in CUR["cards"]}
 COLUMNS = int(os.environ.get("VIM_DAILY_TEST_COLUMNS", "80"))
 ROWS = int(os.environ.get("VIM_DAILY_TEST_ROWS", "24"))
@@ -127,6 +132,16 @@ check(drawn >= 40, "expected most guided recipes to get a diagram, got %d" % dra
 # 2. The authored deck ships only through the generator gate.
 errors = deck.validate_deck(CUR, typed_check=rt._safe_typed_effect)
 check(not errors, "deck validation failed:\n" + "\n".join(errors))
+source_families = {fam for family in DECK_SOURCE["families"]
+                   for fam in family.get("parser_families", [])}
+used_families = {fam for module in CUR["modules"] if module["id"] in deck.COVERAGE_MODULES
+                 for cid in module["card_ids"]
+                 for fam, _meaning in K.families(CARDS[cid].get("expected") or "")}
+check(not (used_families - source_families - deck.COVERAGE_EXEMPT),
+      "authored source misses course families: %s" %
+      sorted(used_families - source_families - deck.COVERAGE_EXEMPT))
+check(all(family.get("card_ids") for family in CUR["deck"]["families"]),
+      "build_deck must attach at least one lesson to every authored family")
 index = deck.item_index(CUR)
 for required in deck.REQUIRED_ITEMS:
     check(required in index, "missing misconception item %s" % required)

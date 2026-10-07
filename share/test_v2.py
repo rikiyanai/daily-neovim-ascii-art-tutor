@@ -103,10 +103,10 @@ for legacy_id, drill in legacy_drills.items():
     assert payload["paradigm"] == concept["paradigm"]
 
 assert len(cur["modules"]) == 20
-assert len(cur["cards"]) == 226
-assert len(cur["questions"]) == 406
-assert len({card["title"] for card in cur["cards"]}) == 226
-assert len({card["prompt"] for card in cur["cards"]}) == 226
+assert len(cur["cards"]) == 311
+assert len(cur["questions"]) == 491
+assert len({card["title"] for card in cur["cards"]}) == 311
+assert len({card["prompt"] for card in cur["cards"]}) == 311
 card_by_id = {card["id"]: card for card in cur["cards"]}
 question_by_id = {question["id"]: question for question in cur["questions"]}
 transfer_cards = [card for card in cur["cards"] if card["kind"] == "transfer"]
@@ -124,10 +124,25 @@ def card_lines(card, lines):
     return [line.rstrip() for line in lines]
 
 
+def replay_submit(keys):
+    """Save the art, then close every disposable comparison window.
+
+    The onion-diff recipe opens a second window.  A final ``:wq`` can close
+    only the modified comparison buffer and leave the original window alive,
+    making the clean-Neovim replay wait for input.  ``:update`` saves the
+    learner artifact first; ``:only`` removes the already-disposable peer;
+    ``:q`` then closes the saved artifact.  Keep the normal single-window
+    submit unchanged, and keep the caller's bounded timeout as the guard.
+    """
+    if ":vnew<CR>" in keys:
+        return ":update<CR>:only<CR>:q<CR>"
+    return ":wq<CR>"
+
+
 mc_questions = [question for question in cur["questions"]
                 if question["form"] == "multiple_choice"]
 assert {question["form"] for question in cur["questions"]} == {"multiple_choice"}
-assert len(mc_questions) == len(cur["questions"]) == 406
+assert len(mc_questions) == len(cur["questions"]) == 491
 assert not any(
     phrase in question["prompt"]
     for question in cur["questions"]
@@ -193,23 +208,23 @@ for card in cur["cards"]:
             normalized_key_family(family)
             for family, _meaning in v2_keys.families(card["expected"]))
 assert [card["id"] for card in cur["cards"] if card["module_id"] == "M0"] == [
-    "M0.P0", "M0.01", "M0.YP", "M0.O", "M0.SR", "M0.02", "M0.03", "M0.04",
-    "M0.T", "M0.05", "M0.SL", "M0.06", "M0.07", "M0.08"]
+    "M0.P0", "M0.L0", "M0.F0", "M0.01", "M0.YP", "M0.O", "M0.SR", "M0.02", "M0.03", "M0.04",
+    "M0.T", "M0.DG", "M0.DGH", "M0.05", "M0.SL", "M0.06", "M0.07", "M0.REWARD", "M0.08"]
 m0_edits = [card for card in cur["cards"]
-            if card["module_id"] == "M0" and card.get("expected")]
-assert len(m0_edits) == 11
+            if card["module_id"] == "M0" and card.get("expected") and card["kind"] != "module_reward"]
+assert len(m0_edits) == 15
 assert all(card.get("source", "").startswith("official-Cosmetics/Fireworks")
            for card in m0_edits)
 assert not any("\\|/" in line or "/|\\" in line
                for card in m0_edits
                for line in card.get("start", []) + card.get("target", []))
 m1_edits = [card for card in cur["cards"]
-            if card["module_id"] == "M1" and card.get("expected")]
+            if card["module_id"] == "M1" and card.get("expected") and card["kind"] != "module_reward"]
 assert len(m1_edits) == 7
 assert all(card.get("source", "").startswith("official-Cosmetics/AcronianGuardian")
            for card in m1_edits)
 m1_questions = [question for question in cur["questions"]
-                if question["module_id"] == "M1"]
+                if question["module_id"] == "M1" and ".REWARD." not in question["id"]]
 assert len(m1_questions) == 18
 assert all(question["prompt"].count("\n") >= 4 and "│" in question["compact_prompt"]
            for question in m1_questions)
@@ -217,24 +232,46 @@ assert not any(token in json.dumps(question, ensure_ascii=False)
                for question in m1_questions
                for token in ("o_.-", " /---\\", "three-row contour", "V2j"))
 m19_edits = [card for card in cur["cards"]
-             if card["module_id"] == "M19" and card.get("expected")]
-assert len(m19_edits) == 6
+             if card["module_id"] == "M19" and card.get("expected") and card["kind"] != "module_reward"]
+assert len(m19_edits) == 7
 assert all(card.get("source", "").startswith(("official-Foes/PallasCrown",
                                                    "official-Cosmetics/AcronianGuardian"))
            for card in m19_edits)
 m19_questions = [question for question in cur["questions"]
-                 if question["module_id"] == "M19"]
-assert len(m19_questions) == 17
+                 if question["module_id"] == "M19" and ".REWARD." not in question["id"]]
+assert len(m19_questions) == 18
 assert all(question["prompt"].count("\n") >= 4
            and ("|" in question["compact_prompt"] or "│" in question["compact_prompt"])
            for question in m19_questions)
 assert not any(token in json.dumps(question, ensure_ascii=False)
                for question in m19_questions
                for token in ("<--/|", "/___\\", "arrowhead"))
+assert card_by_id["M0.DG"]["grammar_stage"] == "guided"
+assert card_by_id["M0.DGH"]["grammar_stage"] == "guided"
+all_card_ids = [card["id"] for card in cur["cards"]]
+assert all_card_ids.index("M0.DGH") < all_card_ids.index("M1.01")
+assert card_by_id["M10.02"]["source"].startswith("sjis_corpus_findings.v1.json")
+assert card_by_id["M10.04"]["source"].startswith("sjis_corpus_findings.v1.json")
+assert "Saitamaar" in next(module for module in cur["modules"]
+                           if module["id"] == "M10")["transcription_boundary"]
+assert card_by_id["M16.INC"]["expected"].endswith("2<C-a>")
+assert card_by_id["M16.INCH"]["grammar_stage"] == "hidden"
+assert card_by_id["M18.EXPR"]["vimscript_meaning"]["getline(1)"] == \
+       "return the complete text of line 1"
+assert card_by_id["M18.06"]["expected"] == "2Gg_r."
+assert card_by_id["M19.06"]["expected"] == "gg6dd"
+assert card_by_id["M19.06"]["variants"][1]["expected"] == ":1,5d<CR>"
+learner_card_text = " ".join(
+    str(card_by_id[card_id].get(field, ""))
+    for card_id in card_by_id
+    for field in ("title", "prompt", "hint", "recipe", "lesson_benefit",
+                  "key_vocabulary", "roadmap_contract", "master_habits"))
+assert not re.search(r"\b(?:Ex|address(?:ed|es)?|internalid|family|card|module|curriculum)\b",
+                     learner_card_text, re.IGNORECASE)
 primary_edits = [card for card in cur["cards"] if card.get("expected")]
 assert sum(str(card.get("source", "")).startswith(("official-", "aahub-"))
-           for card in primary_edits) == 80
-assert sum(not card.get("source") for card in primary_edits) == 102
+           for card in primary_edits) == 95
+assert sum(not card.get("source") for card in primary_edits) == 126
 # The beginner must perform each concrete prerequisite visibly before the old
 # combined card or any hidden retrieval can demand it.  M0.O is intentionally
 # one open-line action, not a second-frame typing test.
@@ -282,7 +319,7 @@ assert all("ANIMATION" in q["compact_prompt"] and "NEOVIM" in q["compact_prompt"
 assert all(q["type"] == "output_prediction" and len(q["choices"]) == 4
            for q in cur["questions"] if q["id"].endswith("Q09"))
 assert len({q["animation_prompt"].split("\n\n", 1)[0].casefold()
-            for q in mc_questions}) == len(mc_questions) == 406
+            for q in mc_questions}) == len(mc_questions) == 491
 def contains_ascii_visual(value):
     if "│" in value:
         return True
@@ -365,7 +402,13 @@ early_concept_questions = {
 }
 assert not (future_before_guidance & early_concept_questions)
 assert all("roadmap_contract" in c and "catalog_contract" not in c for c in cur["cards"])
-edit_signatures = [(tuple(c["start"]), tuple(c["target"]))
+navigation = [c for c in cur["cards"] if c.get("navigation_only")]
+assert {c["id"] for c in navigation} == {"M0.L0", "M0.F0"}
+assert all(c["start"] == c["target"] and c.get("cursor_goal")
+           and c.get("method_requirement") for c in navigation)
+edit_signatures = [(tuple(c["start"]), tuple(c["target"]),
+                    c.get("expected"),
+                    tuple(sorted(c.get("cursor_goal", {}).items())))
                    for c in cur["cards"] if c.get("start")]
 assert len(edit_signatures) == len(set(edit_signatures))
 animation_roles = {c.get("animation", {}).get("role") for c in cur["cards"]}
@@ -433,7 +476,7 @@ assert {family: review_card_for_family[family] for family in {
     "block-append", "global-normal", "ex-move", "repeat",
     "expression-substitute",
 }} == {
-    "normal-open-line": "M8.04",
+    "normal-open-line": "M8.OH",
     "operator-motion-object": "M3.04",
     "digraph": "M3.08",
     "visual-characterwise": "M7.04",
@@ -462,14 +505,18 @@ extension_mastery_ids = {
     "M13.04", "M13.WH", "M13.GH",
     "M14.04", "M14.08", "M14.DAPH", "M14.PH",
     "M15.04", "M15.08", "M15.ZPH", "M15.BAH",
-    "M16.04", "M16.08",
+    "M16.04", "M16.08", "M16.INCH",
     "M17.08", "M17.GNH",
     "M18.04", "M18.08", "M18.EXPRH",
     "M3.04", "M3.08", "M3.GAH",
     "M4.08", "M4.BIH", "M4.BCH", "M4.GVH", "M4.DIFFH",
-    "M5.S6C", "M6.04", "M7.04", "M8.04",
+    "M5.S6C", "M6.04", "M7.04", "M8.04", "M19.VRH",
+    "M2.DWH", "M2.DEH", "M2.D2WH", "M3.CWH", "M3.CAH",
+    "M3.Y0H", "M3.MARKH", "M3.VDH", "M4.BDH", "M6.JH",
+    "M6.DDPH", "M7.TCH", "M7.GTCH", "M8.OH", "M8.PADH",
+    "M15.APPH", "M15.APPAH",
 }
-assert len(required_reviews) == len(cur["modules"]) + len(extension_mastery_ids) == 56
+assert len(required_reviews) == len(cur["modules"]) + len(extension_mastery_ids) == 75
 assert {row["source_card_id"] for row in required_reviews} == {
     "%s.06" % module["id"] for module in cur["modules"]} | extension_mastery_ids
 assert all(row["changed_art_variants"] >= 2 and row["keys_hidden"] is True
@@ -493,7 +540,6 @@ mastery_extension_contract = {
     "M15.ZPH": ("trimmed-block-copy", "gg0<C-v>2j6|zy4G2|zp"),
     "M11.WSH": ("whitespace-column-audit", ":set list<CR>:set cursorcolumn<CR>:set colorcolumn=7<CR>:%s/\\s\\+$//e<CR>"),
     "M4.DIFFH": ("onion-diff-view", ":vnew<CR>:silent 0read #<CR>ggdd:diffthis<CR>:set scrollbind<CR><C-w>p:diffthis<CR>:set scrollbind<CR>gg0f<r-:diffoff!<CR><C-w>p:bwipeout!<CR>"),
-    "M11.UTH": ("undo-tree-travel", "2G0fnr!ur-g-g+:earlier 1<CR>g+"),
     "M14.PH": ("put-before", "ggyapgg}jP"),
     "M15.BAH": ("block-append", "4G0<C-v>2j$A|<Esc>"),
     "M17.GNH": ("global-normal", ":g/:/normal! 0f.r'<CR>"),
@@ -506,6 +552,26 @@ for card_id, (family, expected) in mastery_extension_contract.items():
     assert card["method_requirement"]["exact_any_of"] == [expected]
     assert len(card["review_variants"]) == 2
     assert all(variant["method_requirement"]["exact_any_of"] == [variant["expected"]]
+               and variant["source"].startswith("official-")
+               for variant in card["review_variants"])
+    paired = [question for question in mc_questions if question["card_id"] == card_id]
+    assert len(paired) == 1 and paired[0]["authorship"] == "manual"
+
+# History retrieval cards declare the smallest taught command set.  The
+# recipe remains a runnable golden path, but extra/reordered exploratory keys
+# are accepted when the exact target and these operations are both present.
+history_mastery_contract = {
+    "M11.UTH": ("undo-tree-travel", ["g-", "g+"]),
+}
+for card_id, (family, taught) in history_mastery_contract.items():
+    card = card_by_id[card_id]
+    assert card["show_recipe"] is False and card["required_before_mastery"] is True
+    assert family in card["grammar_families"]
+    assert card["method_requirement"]["all_of"] == taught
+    assert "exact_any_of" not in card["method_requirement"]
+    assert len(card["review_variants"]) == 2
+    assert all(variant["method_requirement"]["all_of"] == taught
+               and "exact_any_of" not in variant["method_requirement"]
                and variant["source"].startswith("official-")
                for variant in card["review_variants"])
     paired = [question for question in mc_questions if question["card_id"] == card_id]
@@ -986,10 +1052,9 @@ with tempfile.TemporaryDirectory() as tmp:
     with contextlib.redirect_stdout(output):
         assert v2.run(cfg, ["--card", "M11.01"]) == 1
     assert "complete M0.P0 first" in output.getvalue()
-    v2.append_event(cfg, {"type": "card", "result": "pass", "card_id": "M0.P0",
-                          "module_id": "M0"})
-    v2.append_event(cfg, {"type": "card", "result": "pass", "card_id": "M0.01",
-                          "module_id": "M0"})
+    for card_id in ("M0.P0", "M0.L0", "M0.F0", "M0.01"):
+        v2.append_event(cfg, {"type": "card", "result": "pass", "card_id": card_id,
+                              "module_id": "M0"})
     output = io.StringIO()
     with contextlib.redirect_stdout(output):
         assert v2.run(cfg, ["--card", "M0.01"]) == 1
@@ -1076,35 +1141,41 @@ with tempfile.TemporaryDirectory() as tmp:
 
     def finish_visible_lesson(path, start_line, cursor, keylog, brief, task, hint):
         text = Path(brief).read_text(encoding="utf-8")
-        assert "NEOVIM × ASCII ANIMATION" in text
-        assert first["title"] in text and first["prompt"] in text
-        assert "DO THIS" in text
-        assert "TARGET" in text and "COMMAND RECIPE" in text
-        assert "PROGRESS  S0 0/27 available  ·  M0 0/14" in text and "XP 0" in text
-        assert "WHY THIS EXISTS" in text
-        assert first_module["meaning"] in text
-        assert first_module["principle"] in text
-        assert first_module["defect"] in text
-        assert "WHAT THIS LESSON BUYS YOU" in text and first["lesson_benefit"] in text
+        compact_text = " ".join(text.split())
+        assert first["title"] in compact_text
+        assert "DO THIS" in compact_text and "TARGET" in text and "RECIPE" in compact_text
+        progress_line = next(line for line in text.splitlines()
+                             if line.startswith("PROGRESS"))
+        assert first["id"] in progress_line and first["module_id"] in progress_line
+        assert ("▕" in progress_line or "█" in progress_line)
+        assert re.search(r"(?:Lv|LEVEL)\s*\d+", progress_line)
+        assert "SHAPE" in compact_text
+        assert "MORE" in compact_text and compact_text.index("MORE") < compact_text.index("WHY THIS EXISTS")
+        assert "WHY THIS EXISTS" in compact_text
+        assert " ".join(first_module["meaning"].split()) in compact_text
+        assert " ".join(first_module["principle"].split()) in compact_text
+        assert " ".join(first_module["defect"].split()) in compact_text
+        assert "WHAT THIS LESSON BUYS YOU" in compact_text
         assert "KEYS WORTH KEEPING" in text
         replace_legacy = legacy_payloads["replace-char"]
-        assert all(line in text for line in replace_legacy["keys"])
-        assert "LEGACY LESSON SOURCES" in text and replace_legacy["source"] in text
-        assert "LEGACY VIM CONCEPT" in text
-        assert " ".join(replace_legacy["paradigm"].split()) in " ".join(text.split())
-        assert "WHERE THIS METHOD COMES FROM" in text and first["source_ref"] in text
-        assert "READING THE RECIPE" in text and "<C-k>.M middle-dot digraph" in text
-        assert "SUBMIT / STUCK" in text and ":q! exits without submission" in text
+        assert "LEGACY SOURCE" in compact_text and replace_legacy["source"] in compact_text
+        assert "WHERE THIS METHOD COMES FROM" in compact_text
+        assert " ".join(first["source_ref"].split()) in compact_text
+        assert "READING THE RECIPE" in compact_text
+        assert "SUBMIT / STUCK" in compact_text and ":q! exits without submission" in compact_text
         assert task == first["prompt"] and hint == first["hint"]
         assert start_line == 1
         script = Path(keylog)
         script.parent.mkdir(parents=True, exist_ok=True)
-        script.write_bytes(to_bytes(first["expected"] + ":wq<CR>"))
-        cmd = ["nvim"]
+        script.write_bytes(to_bytes(first["expected"] + replay_submit(first["expected"])))
+        # Effect replay has no attached terminal. Headless mode avoids a TUI
+        # hit-enter prompt on legitimate window cleanup; real attached routes
+        # are proved separately by the popup/Textual PTY suites.
+        cmd = ["nvim", "--headless"]
         if not use_real:
             cmd += ["-u", "NONE", "-i", "NONE"]
         cmd += ["+%d" % start_line, "+normal! " + cursor, "-s", str(script), str(path)]
-        result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
         assert result.returncode == 0
 
     cfg = v2.RuntimeConfig(state=tmp, share=str(HERE), editor="nvim", max_tries=3,
@@ -1129,7 +1200,7 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "Streak extended to 1 day." in rendered
     assert "best 1" in rendered and "1 drill all time" in rendered
     assert "SKILL TREE / MODULE PROGRESS" in rendered
-    assert "M0  Fireworks radial loop" in rendered and "1/14" in rendered
+    assert "M0  Fireworks radial loop" in rendered and "1/19" in rendered
     assert "XP: 10" in rendered and "today: 1/12 lessons" in rendered
     assert "next: M0.P0" in rendered
     assert v2.project(cur, v2.read_events(cfg))["passed_cards"] == ["M0.01"]
@@ -1158,9 +1229,9 @@ with tempfile.TemporaryDirectory() as tmp:
         assert legacy_job in legacy_text, legacy_job
         assert v2_job in v2_text, (legacy_job, v2_job)
     assert legacy_drill["buys"] in legacy_text
-    assert first["lesson_benefit"] in v2_text
+    normalized_v2_text = " ".join(v2_text.split())
     assert " ".join(legacy_drill["source"].split()) in " ".join(legacy_text.split())
-    assert first["source_ref"] in v2_text
+    assert " ".join(first["source_ref"].split()) in normalized_v2_text
 
     disposition = (HERE / "LEGACY_CURRICULUM_DISPOSITION.md").read_text(
         encoding="utf-8")
@@ -1174,6 +1245,7 @@ with tempfile.TemporaryDirectory() as tmp:
     assert set(mapped_ids) == set(legacy_ids)
     card_ids = {card["id"] for card in cur["cards"]}
     assert all(card_id in card_ids for _legacy_id, _status, card_id in rows)
+    assert all(status == "adapted" for _legacy_id, status, _card_id in rows)
 
     failed_replay = {
         "type": "edit", "table": ["  YOU TYPED", "  THE RECIPE ASKS FOR"],
@@ -1193,7 +1265,7 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "YOURS (what you saved)" in failed_text and "TARGET (what it should be)" in failed_text
     assert any(line.startswith("✗") and " │ " in line for line in failed_text.splitlines())
     assert "first difference at column" in failed_text
-    assert "DO THIS" in failed_text and "then redo:" in failed_text
+    assert "DO THIS" in failed_text and "then retry the task shown in the lesson brief" in failed_text
     streak_now, _best, all_time = v2._legacy_streak(cfg.state)
     assert streak_now >= 1, "a failed attempt must keep today's streak"
     assert v2._legacy_today(cfg.state) == today_before + 1, "attempts count toward daily practice"
@@ -1260,7 +1332,7 @@ with tempfile.TemporaryDirectory() as tmp:
     with contextlib.redirect_stdout(output):
         v2.print_tree(cur, v2.project(cur, []), cfg=cfg, compact=True)
     tree = output.getvalue()
-    assert "<B>streak: 3 days 🔥 · best 3 · all-time 3</B>" in tree
+    assert "<B>streak: 3 days 🔥 · ★ best ever · all-time 3</B>" in tree
 
 # A failed editor attempt is archived but cannot poison the next session's
 # starting artifact.  Comparison cards additionally require captured method
@@ -1283,7 +1355,7 @@ with tempfile.TemporaryDirectory() as tmp:
     rows = v2.read_events(cfg)
     assert rows[-1]["reason"] == "missing-method-evidence"
     assert "METHOD CHECK" in output.getvalue()
-    assert "saved project matches the exact target" in output.getvalue()
+    assert "TARGET CORRECT" in output.getvalue()
     assert "saved project did not match" not in output.getvalue()
 
 with tempfile.TemporaryDirectory() as tmp:
@@ -1368,18 +1440,24 @@ with tempfile.TemporaryDirectory() as tmp:
 
 failures = []
 edit_cards = [c for c in cur["cards"] if c.get("expected")]
-for card in edit_cards:
+# The explicitly declared no-0 alternative must execute, not just pass a
+# string-membership check. Keep it separate from the primary recipe count.
+m001_alt = dict(card_by_id["M0.01"], id="M0.01.alt", expected="jf*ro")
+for card in edit_cards + [m001_alt]:
     with tempfile.TemporaryDirectory() as tmp:
         art = Path(tmp) / "strip.txt"
         art.write_text("\n".join(card["start"]) + "\n", encoding="utf-8")
         script = Path(tmp) / "keys.bin"
-        script.write_bytes(to_bytes(card["expected"] + ":wq<CR>"))
-        cmd = ["nvim"]
+        cursor_check = ""
+        if goal := card.get("cursor_goal"):
+            cursor_check = ":if line('.') != %d || virtcol('.') != %d | cquit | endif<CR>" % (goal["row"], goal["column"])
+        script.write_bytes(to_bytes(card["expected"] + cursor_check + replay_submit(card["expected"])))
+        cmd = ["nvim", "--headless"]
         if not use_real:
             cmd += ["-u", "NONE", "-i", "NONE"]
         cmd += ["+set noautoindent nosmartindent nocindent indentexpr=", "+1",
                 "+normal! " + card.get("cursor", "^"), "-s", str(script), str(art)]
-        result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
         got = card_lines(card, art.read_text(encoding="utf-8").splitlines())
         want = card_lines(card, card["target"])
         ok = result.returncode == 0 and got == want
@@ -1387,6 +1465,27 @@ for card in edit_cards:
         if not ok:
             print("     got=%r want=%r return=%d" % (got, want, result.returncode))
             failures.append(card["id"])
+
+from types import SimpleNamespace
+first_method_cfg = SimpleNamespace(tokenize=tokenize)
+for cid in ("M0.L0", "M0.F0"):
+    nav = card_by_id[cid]
+    for submit in (":wq<CR>", "ZZ"):
+        assert v2._required_method_error(
+            first_method_cfg, nav, {"actual_tokens": tokenize(nav["expected"] + submit)}) is None
+    for wrong in ("", "j"):
+        assert v2._required_method_error(
+            first_method_cfg, nav, {"actual_tokens": tokenize(wrong + "ZZ")}), (cid, wrong)
+    for extra in ("h", "j"):
+        assert v2._required_method_error(first_method_cfg, nav, {
+            "actual_tokens": tokenize(nav["expected"] + extra + "ZZ")}) is None
+        # Method presence does not excuse a wrong final cursor. Its actual
+        # receipt gate and stale-correct negative are test_cursor_real.py.
+for keys in ("j0f*ro", "jf*ro"):
+    assert v2._required_method_error(
+        first_method_cfg, card_by_id["M0.01"], {"actual_tokens": tokenize(keys + "ZZ")}) is None
+assert v2._required_method_error(
+    first_method_cfg, card_by_id["M0.01"], {"actual_tokens": tokenize("roZZ")})
 
 # Every edit brief exposes DO THIS, TARGET, and an action hint. Independent and
 # comparison cards preserve only the key-sequence retrieval boundary.
@@ -1399,22 +1498,34 @@ with tempfile.TemporaryDirectory() as tmp:
     for card in [c for c in cur["cards"] if c.get("expected")]:
         cid = card["id"]
         text = v2._write_session_lesson(cfg, cur, progress, card).read_text(encoding="utf-8")
-        for heading in ("DO THIS", "PROGRESS", "WHY THIS EXISTS", "WHAT THIS LESSON BUYS YOU",
-                        "KEYS WORTH KEEPING", "WHERE THIS METHOD COMES FROM",
-                        "READING THE RECIPE", "SUBMIT / STUCK"):
+        for heading in ("DO THIS", "PROGRESS", "TARGET", "MORE", "WHY THIS EXISTS",
+                        "WHAT THIS LESSON BUYS YOU", "KEYS WORTH KEEPING",
+                        "WHERE THIS METHOD COMES FROM", "READING THE RECIPE",
+                        "SUBMIT / STUCK"):
             assert heading in text, (cid, heading)
-        assert card["lesson_benefit"] in text and card["source_ref"] in text
-        assert "TARGET\n" in text, cid
+        normalized_text = " ".join(text.split())
+        assert " ".join(card["source_ref"].split()) in normalized_text
+        if cid == "M0.01":
+            assert "/pattern" not in text and "/text<CR>" not in text
+            assert "jf*ro also works" in normalized_text
+            assert "★ NEW 1:" in text and "★ NEW 3:" not in text
+            assert all(" ".join(row.split()) in normalized_text
+                       for row in card["key_vocabulary"])
+        assert "TARGET" in text, cid
         assert all("│" + row in text for row in card["target"]), cid
         if card.get("show_recipe", card.get("show_target", False)):
-            assert "COMMAND RECIPE" in text and "TARGET\n" in text
+            assert any(line.strip() in ("RECIPE", "COMMAND RECIPE")
+                       for line in text.splitlines()) and "TARGET" in text
+            if v2._recipe_shape(card):
+                assert "SHAPE" in normalized_text
             assert all(keys in text for keys, _why in card["recipe"]), cid
         else:
-            assert "COMMAND RECIPE" not in text and "HINT\n" in text
+            assert not any(line.strip() in ("RECIPE", "COMMAND RECIPE")
+                           for line in text.splitlines()) and "HINT" in normalized_text
             displayed_hint = card["hint"]
             if "choose the smallest normal-mode operation" in displayed_hint:
                 displayed_hint = "use the commands explained under HOW THE KEYS YOU NEED WORK"
-            assert displayed_hint in text, cid
+            assert " ".join(displayed_hint.split()) in normalized_text, cid
             assert card["expected"] not in text, (cid, card["expected"])
             for method in card.get("method_alternatives", []):
                 assert method["keys"] not in text, (cid, method["keys"])
@@ -1426,13 +1537,13 @@ for card in [c for c in cur["cards"] if c["kind"] == "compare_methods"]:
             art = Path(tmp) / "compare.txt"
             art.write_text("\n".join(card["start"]) + "\n", encoding="utf-8")
             script = Path(tmp) / "keys.bin"
-            script.write_bytes(to_bytes(method["keys"] + ":wq<CR>"))
+            script.write_bytes(to_bytes(method["keys"] + replay_submit(method["keys"])))
             cmd = ["nvim"]
             if not use_real:
                 cmd += ["-u", "NONE", "-i", "NONE"]
             cmd += ["+set noautoindent nosmartindent nocindent indentexpr=", "+1",
                     "+normal! " + card.get("cursor", "^"), "-s", str(script), str(art)]
-            result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
             got = card_lines(card, art.read_text(encoding="utf-8").splitlines())
             want = card_lines(card, card["target"])
             assert result.returncode == 0 and got == want, (card["id"], method, got, want)
@@ -1452,12 +1563,12 @@ for card in [c for c in cur["cards"] if c["kind"] == "transfer"]:
             art = Path(tmp) / "transfer.txt"
             art.write_text("\n".join(variant["start"]) + "\n", encoding="utf-8")
             script = Path(tmp) / "keys.bin"
-            script.write_bytes(to_bytes(variant["expected"] + ":wq<CR>"))
+            script.write_bytes(to_bytes(variant["expected"] + replay_submit(variant["expected"])))
             result = subprocess.run(
                 ["nvim", "-u", "NONE", "-i", "NONE",
                  "+set noautoindent nosmartindent nocindent indentexpr=", "+1",
                  "+normal! " + variant.get("cursor", "^"), "-s", str(script), str(art)],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
             assert result.returncode == 0
             assert art.read_text(encoding="utf-8").splitlines() == variant["target"], (
                 card["id"], variant)
@@ -1479,12 +1590,12 @@ for source in review_sources:
             art = Path(tmp) / "review.txt"
             art.write_text("\n".join(review_card["start"]) + "\n", encoding="utf-8")
             script = Path(tmp) / "keys.bin"
-            script.write_bytes(to_bytes(review_card["expected"] + ":wq<CR>"))
+            script.write_bytes(to_bytes(review_card["expected"] + replay_submit(review_card["expected"])))
             result = subprocess.run(
                 ["nvim", "-u", "NONE", "-i", "NONE",
                  "+set noautoindent nosmartindent nocindent indentexpr=", "+1",
                  "+normal! " + review_card.get("cursor", "^"), "-s", str(script), str(art)],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=20)
             got = card_lines(review_card, art.read_text(encoding="utf-8").splitlines())
             assert result.returncode == 0 and got == card_lines(review_card, review_card["target"]), (
                 source_id, stage, got, review_card["target"])
@@ -1498,18 +1609,22 @@ for source in review_sources:
 # every supported save/quit form while the exact target remains the main gate.
 method_cfg = type("Cfg", (), {"tokenize": staticmethod(tokenize)})()
 m005 = next(c for c in cur["cards"] if c["id"] == "M0.05")
+copy_label = next(method["label"] for method in m005["method_alternatives"]
+                  if method["evidence"]["kind"] == "ex_copy")
+yank_label = next(method["label"] for method in m005["method_alternatives"]
+                  if method["evidence"]["kind"] == "linewise_yank_put")
 assert v2._method_family(method_cfg, m005, {
     "actual_tokens": tokenize("jj:7,9tt<BS>$<CR>:w<CR>:q<CR>"),
-}) == "addressed copy"
+}) == copy_label
 assert v2._method_family(method_cfg, m005, {
     "actual_tokens": tokenize("7G3yyGkGp:wq<CR>"),
-}) == "counted yank and put"
+}) == yank_label
 assert v2._method_family(method_cfg, m005, {
     "actual_tokens": tokenize("7GV2jyGkGpZZ"),
-}) == "counted yank and put"
+}) == yank_label
 assert v2._method_family(method_cfg, m005, {
     "actual_tokens": tokenize(":7,9copy$<CR>:x<CR>"),
-}) == "addressed copy"
+}) == copy_label
 m1905 = next(c for c in cur["cards"] if c["id"] == "M19.05")
 assert {method["evidence"]["kind"] for method in
         m1905["method_alternatives"]} == {"mode_text"}
@@ -1540,8 +1655,8 @@ with tempfile.TemporaryDirectory() as tmp:
     assert second_keylog.name == "keys-M0.05-attempt-0002.log"
     assert v2._latest_attempt_keylog(key_dir, "keys-M0.05") == second_keylog
 for sequence, family in (
-        ("jj:7,9tt<BS>$<CR>:w<CR>:q<CR>", "addressed copy"),
-        ("7G3yyGkGp:wq<CR>", "counted yank and put")):
+        ("jj:7,9tt<BS>$<CR>:w<CR>:q<CR>", copy_label),
+        ("7G3yyGkGp:wq<CR>", yank_label)):
     with tempfile.TemporaryDirectory() as tmp:
         def finish_compare(path, _start, _cursor, keylog, *_rest):
             Path(path).write_text("\n".join(m005["target"]) + "\n", encoding="utf-8")
@@ -1567,7 +1682,9 @@ for sequence, family in (
 
 # Required command paths tolerate harmless navigation, undo/correction, and
 # mapping-prefix replay while exact target equality remains the result gate.
-# Omitting a required token still fails. Cards without their own source-linked
+# Never using a taught command still misses method credit. Removing an
+# arbitrary last recipe token is not a C31 negative control: it may be an
+# incidental Esc or payload, not the new operation. Cards without their own source-linked
 # bank are not silently mapped to the module transfer and therefore are absent
 # from review coverage.
 for source in [c for c in cur["cards"] if c.get("method_requirement")
@@ -1581,7 +1698,7 @@ for source in [c for c in cur["cards"] if c.get("method_requirement")
     if exact:
         replay = {"actual_tokens": tokenize("u" + exact[0])}
         assert v2._required_method_error(method_cfg, source, replay) is None, source["id"]
-        missing = tokenize(exact[0])[:-1]
+        missing = []
         assert v2._required_method_error(
             method_cfg, source, {"actual_tokens": missing}), source["id"]
 m306 = next(c for c in cur["cards"] if c["id"] == "M3.06")
@@ -1824,16 +1941,30 @@ def _alert_text(cid):
     return " ".join(" ".join(v2._new_concept_alert(card_by_id[cid], cur, width=66)).split())
 
 
-assert "HOW TO READ A RECIPE" in _alert_text("M0.01") and "<CR> = press Enter" in _alert_text("M0.01")
+assert "HOW TO READ A RECIPE" in _alert_text("M0.L0") and "<CR> = press Enter" in _alert_text("M0.L0")
+assert "HOW TO READ A RECIPE" not in _alert_text("M0.01")
+for cid, expected_new in (("M0.L0", "0"), ("M0.F0", "f{char}"), ("M0.01", "r{char}")):
+    assert [family for family, _meaning in v2._new_concepts(card_by_id[cid], cur)] == [expected_new]
+    assert "★ NEW 1:" in v2._new_concept_banner(card_by_id[cid], cur)
+assert "j0" in card_by_id["M0.01"]["hint"]
+assert not any("/pattern" in line for line in card_by_id["M0.01"]["key_vocabulary"])
+assert card_by_id["M0.01"]["method_requirement"]["exact_any_of"] == ["j0f*ro", "jf*ro"]
+for field in ("prompt", "animation_prompt"):
+    for line in question_by_id["M0.01.P01"][field].splitlines():
+        if "│" in line:
+            assert all(len(cell) == 8 for cell in line.split("│")[1::2]), line
 assert "HOW TO READ A RECIPE" not in _alert_text("M0.YP")
-assert "$ in a line address = the last line" in _alert_text("M0.T")
+assert "$ in a line selector = the last line" in _alert_text("M0.T")
 assert "$ on its own = jump to the end of the row" in _alert_text("M11.LS")
 assert "last line (:1,3t$) (in M0.T)" in _alert_text("M11.LS")
 assert "\\ inside a pattern = the next letter is special" in _alert_text("M11.TR")
 assert "a backslash glyph (/!\\) (in M0.O)" in _alert_text("M11.TR")
-assert "| = a bar glyph (this lesson)" in _alert_text("M11.VE")
-assert "@ right after :s or :g = the divider" in _alert_text("M11.05")
-assert "0 as a line address = before line 1" in _alert_text("M16.05")
+assert "| = a bar glyph (in M11.INS)" in _alert_text("M11.VE")
+assert "| after i, a, r, f or in a pattern = just a bar glyph" in _alert_text("M11.VE")
+assert "@ right after :s or :g = the divider" in _alert_text("M11.AT")
+assert "★ NEW @" not in _alert_text("M11.05")
+assert "0 as a line selector = before line 1" in _alert_text("M16.ZERO")
+assert "★ NEW 0 as a line selector" not in _alert_text("M16.05")
 assert _alert_text("M11.UR").count("u undo; Ctrl-r redo") == 1
 assert "$ = last line" in (v2._new_concept_banner(card_by_id["M0.T"], cur) or "")
 for _cid in ("M0.SR", "M11.UR", "M4.DIFF"):

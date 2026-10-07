@@ -1,0 +1,542 @@
+{
+  "M0.REWARD.P01": {
+    "prompt": "ANIMATION\nThe radial core stays centred while rays grow and particles move outward.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit refines the nominated core and particle marks without shifting the expanding rays?",
+    "compact_prompt": "ANIMATION: The radial core stays centred while rays grow and particles move outward.\n{{COMPACT_EVIDENCE}}\nNEOVIM: local replacements; keep the plate rows.",
+    "choices": [
+      "ANIMATION: keep the burst trajectory while refining its core and particle accents. | NEOVIM: replace the nominated cells in place.",
+      "ANIMATION: widen each ray by inserting a new column. | NEOVIM: insert beside the core and let later rays shift.",
+      "ANIMATION: collapse the expanding particle poses into one flash. | NEOVIM: delete motion rows before replacing the core.",
+      "ANIMATION: brighten every ray star with the core. | NEOVIM: replace the burst's landmarks together."
+    ],
+    "compact_choices": [
+      "A: core and particles refine · V: replace named cells",
+      "A: widen rays · V: insert a column",
+      "A: collapse particles · V: delete motion rows",
+      "A: all stars brighten · V: replace all burst marks"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "The target refines two core cells and two particle cells; it does not freeze the expanding rays.",
+      "An inserted column makes the later rays drift, so the radial read is lost.",
+      "The expanding poses carry the particle beat; deleting them removes the growth read.",
+      "The target names two core cells and two particle cells, not every star in the burst."
+    ],
+    "animation_prompt": "The radial core stays centred while rays grow and particles move outward.",
+    "animation_answer": "Keep the full burst trajectory and refine only the two nominated core and two particle cells.",
+    "neovim_prompt": "Which edit refines the nominated core and particle marks without shifting the expanding rays?",
+    "neovim_answer": "The target refines two core cells and two particle cells; it does not freeze the expanding rays."
+  },
+  "M1.REWARD.P01": {
+    "prompt": "ANIMATION\nAcronian wing joint: compare closed wings, the opening sweep, the colon joint, and the hand-mirrored return.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit changes the joint while the body axis stays fixed?",
+    "compact_prompt": "ANIMATION: wing opening and colon joint.\n{{COMPACT_EVIDENCE}}\nNEOVIM: edit the joint; preserve the body axis.",
+    "choices": [
+      "ANIMATION: hold the body axis while the wing tip and joint change together. | NEOVIM: land on the joint and replace one glyph in place.",
+      "ANIMATION: slide the whole wing left to fake a mirror. | NEOVIM: insert spaces before the wing and shift its axis.",
+      "ANIMATION: treat the colon joint as a new character instead of a pose. | NEOVIM: open a line and leave the joint untouched.",
+      "ANIMATION: make both wings change on the same beat. | NEOVIM: replace every colon in the file."
+    ],
+    "compact_choices": [
+      "A: axis fixed, joint acts · V: one-cell replace",
+      "A: wing slides · V: insert spaces",
+      "A: joint ignored · V: open line",
+      "A: both wings sync · V: replace every colon"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: a local replacement lets the wing move while the body axis remains the anchor.",
+      "Sliding the wing changes the axis rather than mirroring its joint.",
+      "The colon is the acting joint; opening a line does not author its pose.",
+      "The two sides are intentionally timed and only the named joint is in scope."
+    ],
+    "animation_prompt": "A stable body axis makes the wing endpoint and its joint timing readable.",
+    "animation_answer": "The complete wing returns by hand-mirroring the joint, not by translating the axis.",
+    "neovim_prompt": "How should the joint glyph be edited?",
+    "neovim_answer": "Use a landmark motion followed by one in-place replacement."
+  },
+  "M2.REWARD.P01": {
+    "prompt": "ANIMATION\nFace focus: follow the whole-body nod, changing support, eye focus, blink-squash, and return.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit preserves each six-row body while changing the nominated cells?",
+    "compact_prompt": "ANIMATION: whole-body nod, support, eye, blink.\n{{COMPACT_EVIDENCE}}\nNEOVIM: preserve body rows while editing cells.",
+    "choices": [
+      "ANIMATION: keep each body frame complete as support, eye focus, and blink-squash change. | NEOVIM: search the nominated cell and replace it in place.",
+      "ANIMATION: redraw the whole face for every support change. | NEOVIM: change the entire six-row face each time.",
+      "ANIMATION: remove the quiet nod poses. | NEOVIM: delete their six-row frames before the blink.",
+      "ANIMATION: move the eye anchor between frames. | NEOVIM: use j alone and leave the body unchanged."
+    ],
+    "compact_choices": [
+      "A: body complete, eye/support act · V: find + replace",
+      "A: whole face redraws · V: change six rows",
+      "A: nod poses removed · V: delete six-row frames",
+      "A: eye anchor moves · V: j only"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: each six-row body remains intact while the nominated eye/support cells change.",
+      "Redrawing the whole body hides the separate support and eye decisions.",
+      "The quiet nod poses establish the body transition and should remain in the strip.",
+      "j moves the cursor but does not make the nominated cell edit."
+    ],
+    "animation_prompt": "The face body changes support and expression together, then returns to its starting nod.",
+    "animation_answer": "Read the eye, support, lean, and blink-squash as coordinated whole-body poses.",
+    "neovim_prompt": "What is the safe scope for the blink edit?",
+    "neovim_answer": "Find each nominated cell and replace it without inserting or deleting frame rows."
+  },
+  "M3.REWARD.P01": {
+    "prompt": "ANIMATION\nThe complete travelling body preserves its support through lean, foot movement, and eye changes.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nThe complete pose strip is already supplied. Which edit refines it without adding or removing rows?",
+    "compact_prompt": "ANIMATION: The complete travelling body preserves its support through lean, foot movement, and eye changes.\n{{COMPACT_EVIDENCE}}\nNEOVIM: local replacements; keep the plate rows.",
+    "choices": [
+      "ANIMATION: preserve the travelling body and its support through lean and settle. | NEOVIM: replace only the nominated eye, limb, and foot cells.",
+      "ANIMATION: copy only the eye and let the feet reflow. | NEOVIM: insert rows until the silhouette looks similar.",
+      "ANIMATION: make the head, body, and settle eyes change together. | NEOVIM: replace every copied eye at once.",
+      "ANIMATION: discard the settle because the first pose is enough. | NEOVIM: move to the next line without copying."
+    ],
+    "compact_choices": [
+      "A: complete poses remain · V: replace nominated cells",
+      "A: eye only · V: insert rows",
+      "A: all eyes change · V: substitute matches",
+      "A: settle discarded · V: move only"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "The supplied strip already contains all poses. Four replacements refine two eyes, one foot and one limb; no extra copy is needed.",
+      "An eye-only copy cannot preserve the acting body's support and feet.",
+      "Other eyes are outside this pose's named feature.",
+      "The settle completes the motion read; removing it would lose a supplied pose."
+    ],
+    "animation_prompt": "The complete travelling body preserves its support through lean, foot movement, and eye changes.",
+    "animation_answer": "Keep every complete pose and refine only the nominated eye, limb, and foot cells.",
+    "neovim_prompt": "The complete pose strip is already supplied. Which edit refines it without adding or removing rows?",
+    "neovim_answer": "The supplied strip already contains all poses. Four replacements refine two eyes, one foot and one limb; no extra copy is needed."
+  },
+  "M4.REWARD.P01": {
+    "prompt": "ANIMATION\nThe pivot position stays fixed while its first glyph and selected prop strokes are refined.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit preserves the rotation centre's position while matching the visible glyph refinements?",
+    "compact_prompt": "ANIMATION: The pivot position stays fixed while its first glyph and selected prop strokes are refined.\n{{COMPACT_EVIDENCE}}\nNEOVIM: local replacements; keep the plate rows.",
+    "choices": [
+      "ANIMATION: keep the pivot coordinate fixed through the prop arc. | NEOVIM: replace the nominated pivot and prop glyphs without shifting cells.",
+      "ANIMATION: move the plus with the prop on every frame. | NEOVIM: insert a column before each extreme.",
+      "ANIMATION: drop the vertical midpoint. | NEOVIM: delete the middle row as duplicate.",
+      "ANIMATION: rotate the pivot and both prop extremes together. | NEOVIM: rewrite every slash around the pivot."
+    ],
+    "compact_choices": [
+      "A: pivot position fixed · V: replace nominated glyphs",
+      "A: pivot follows prop · V: insert columns",
+      "A: midpoint dropped · V: delete row",
+      "A: scene marks rotate · V: replace all slashes"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "The first pivot glyph changes from + to *, but its position does not move. Selected prop strokes change in place.",
+      "A moving pivot changes the centre of rotation instead of animating the prop.",
+      "The midpoint is the readable transition between the two extremes.",
+      "Unrelated slash changes obscure the prop's local arc."
+    ],
+    "animation_prompt": "The pivot position stays fixed while its first glyph and selected prop strokes are refined.",
+    "animation_answer": "Keep the pivot coordinate and all frame boundaries; the target changes its first + to * and selected prop strokes.",
+    "neovim_prompt": "Which edit preserves the rotation centre's position while matching the visible glyph refinements?",
+    "neovim_answer": "The first pivot glyph changes from + to *, but its position does not move. Selected prop strokes change in place."
+  },
+  "M5.REWARD.P01": {
+    "prompt": "ANIMATION\nThe foreground blade crosses a textured background; the existing negative-space seam remains readable.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit refines the supplied scene while preserving its existing negative-space seam?",
+    "compact_prompt": "ANIMATION: The foreground blade crosses a textured background; the existing negative-space seam remains readable.\n{{COMPACT_EVIDENCE}}\nNEOVIM: local replacements; keep the plate rows.",
+    "choices": [
+      "ANIMATION: keep the blade crossing and existing seam readable. | NEOVIM: replace only the nominated blade, contact and background marks.",
+      "ANIMATION: flatten blade and texture into one silhouette. | NEOVIM: delete the background rows before moving the blade.",
+      "ANIMATION: repaint all texture around the blade. | NEOVIM: substitute every background mark.",
+      "ANIMATION: omit contact because it is visually busy. | NEOVIM: move to the next frame without repairing the seam."
+    ],
+    "compact_choices": [
+      "A: crossing and seam remain · V: local replacements",
+      "A: layers flatten · V: delete background rows",
+      "A: texture repaints · V: substitute all marks",
+      "A: contact omitted · V: skip seam repair"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Four local replacements refine the supplied scene. The target does not erase a seam cell or remove background rows.",
+      "Flattening removes the depth relationship the scene is teaching.",
+      "A full repaint changes material that the blade did not cover.",
+      "The contact seam explains the crossing and cannot be skipped."
+    ],
+    "animation_prompt": "The foreground blade crosses a textured background; the existing negative-space seam remains readable.",
+    "animation_answer": "Preserve the existing seam and frame boundaries while refining the nominated blade, contact and background marks.",
+    "neovim_prompt": "Which edit refines the supplied scene while preserving its existing negative-space seam?",
+    "neovim_answer": "Four local replacements refine the supplied scene. The target does not erase a seam cell or remove background rows."
+  },
+  "M6.REWARD.P01": {
+    "prompt": "ANIMATION\nPyramid build: compare the six-row finished, subtractive, base-only, and playback poses. Which endcap edit changes four accent cells while keeping every row present?\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit changes those accents without deleting the subtractive frames?",
+    "compact_prompt": "ANIMATION: six-row pyramid and four accents.\n{{COMPACT_EVIDENCE}}\nNEOVIM: edit accents; keep subtractive rows.",
+    "choices": [
+      "ANIMATION: the existing pyramid strip keeps its subtractive rows while four accent cells change. | NEOVIM: replace those cells in place; keep every frame boundary.",
+      "ANIMATION: remove a row whenever the pyramid gets shorter. | NEOVIM: use dd so the six-row poses lose their boundaries.",
+      "ANIMATION: show only the finished pyramid. | NEOVIM: skip the subtractive poses and draw a final still.",
+      "ANIMATION: move the ground bar to follow the base. | NEOVIM: edit the anchor row instead of the pyramid."
+    ],
+    "compact_choices": [
+      "A: accents change, rows stay · V: four cell replaces",
+      "A: rows disappear · V: dd each stage",
+      "A: final still only · V: skip intermediates",
+      "A: ground moves · V: edit anchor row"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the subtractive strip stays intact while four named accent cells are replaced.",
+      "Deleting rows changes frame geometry, not just the pyramid drawing.",
+      "The subtractive poses explain playback and remain part of the six-row evidence.",
+      "The ground bar is an anchor and should not chase the base."
+    ],
+    "animation_prompt": "A fixed ground and row count make the pyramid's existing subtractive sequence visible.",
+    "animation_answer": "Retain every subtractive pose and change only the four authored accent cells.",
+    "neovim_prompt": "What must remain untouched while the pyramid shrinks?",
+    "neovim_answer": "The row boundaries and ground anchor; replace only the four accent cells."
+  },
+  "M7.REWARD.P01": {
+    "prompt": "ANIMATION\nTimed build: identify the anticipation hold, the held completion copy, and the clean settle after it.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit keeps both intentional holds while applying the six bounded completion and settle changes?",
+    "compact_prompt": "ANIMATION: two holds, completion, and settle.\n{{COMPACT_EVIDENCE}}\nNEOVIM: six replaces; retain held copies.",
+    "choices": [
+      "ANIMATION: retain both repeated holds while scoped accents progress through completion and settle. | NEOVIM: make six in-place replacements, repeating each held-copy edit on both identical frames.",
+      "ANIMATION: remove every repeated pose automatically. | NEOVIM: delete both rows of the anticipation.",
+      "ANIMATION: add pauses wherever the motion feels rough. | NEOVIM: insert extra rows without naming a beat.",
+      "ANIMATION: treat the hold as an error. | NEOVIM: move the cursor and never make the completion edit."
+    ],
+    "compact_choices": [
+      "A: two holds + six accents · V: six in-place replaces",
+      "A: repeats removed · V: delete hold rows",
+      "A: pauses added · V: insert rows",
+      "A: hold is error · V: move only"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the target has six bounded replacements; each held-copy edit is repeated on both identical frames, while completion and settle remain.",
+      "The repeated anticipation is a timing beat, not waste to remove.",
+      "Timing needs an explained hold, not arbitrary extra rows.",
+      "A cursor move cannot supply the completion mark."
+    ],
+    "animation_prompt": "Repeated anticipation and held completion copies make six scoped accents readable through settle.",
+    "animation_answer": "Keep both holds, apply the six bounded cell changes including each held copy, and end on the settled pose.",
+    "neovim_prompt": "How should the six completion and settle replacements be authored?",
+    "neovim_answer": "Replace the six nominated cells in place, repeating the two held-copy changes on both identical frames; do not delete the holds."
+  },
+  "M8.REWARD.P01": {
+    "prompt": "ANIMATION\nThe complete walk strip alternates contact while the arm catches up on a later beat.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nThe complete walk rows are already supplied. Which edit preserves contact timing while refining the target?",
+    "compact_prompt": "ANIMATION: The complete walk strip alternates contact while the arm catches up on a later beat.\n{{COMPACT_EVIDENCE}}\nNEOVIM: local replacements; keep the plate rows.",
+    "choices": [
+      "ANIMATION: retain alternating contact and the later arm beat. | NEOVIM: replace nominated head, body and contact cells without adding rows.",
+      "ANIMATION: make both feet plant on every frame. | NEOVIM: duplicate the same row until the walk looks even.",
+      "ANIMATION: remove the passing pose. | NEOVIM: delete the frame boundary before the next contact.",
+      "ANIMATION: move the planted-foot landmark with the camera. | NEOVIM: navigate with j and leave the strip unchanged."
+    ],
+    "compact_choices": [
+      "A: contact timing remains · V: replace named cells",
+      "A: both feet plant · V: duplicate one row",
+      "A: passing removed · V: delete boundary",
+      "A: foot landmark moves · V: j only"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "The eight poses already exist. Four cell replacements refine them without appending rows or deleting the passing pose.",
+      "Two planted feet on every frame erase the alternating contact pattern.",
+      "Passing is the transition between contacts and must remain visible.",
+      "A moving landmark reads as camera drift, and j alone changes no art."
+    ],
+    "animation_prompt": "The complete walk strip alternates contact while the arm catches up on a later beat.",
+    "animation_answer": "Preserve the existing walk poses and refine only the nominated head, body and contact cells.",
+    "neovim_prompt": "The complete walk rows are already supplied. Which edit preserves contact timing while refining the target?",
+    "neovim_answer": "The eight poses already exist. Four cell replacements refine them without appending rows or deleting the passing pose."
+  },
+  "M9.REWARD.P01": {
+    "prompt": "ANIMATION\nBounce capstone: read high fall, squash at contact, rebound overshoot, and settle against one fixed ground.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit keeps the ground fixed while authoring the complete arc?",
+    "compact_prompt": "ANIMATION: fall, squash, rebound, overshoot.\n{{COMPACT_EVIDENCE}}\nNEOVIM: preserve the ground anchor.",
+    "choices": [
+      "ANIMATION: keep the ground fixed while the ball compresses, rebounds, overshoots, and settles. | NEOVIM: copy the owned rows and change the ball cells in place.",
+      "ANIMATION: remove squash as an irregular frame. | NEOVIM: delete the contact row before the rebound.",
+      "ANIMATION: raise the ground to meet the ball. | NEOVIM: insert a new baseline under each pose.",
+      "ANIMATION: show only high and low extremes. | NEOVIM: jump between rows and skip the arc edits."
+    ],
+    "compact_choices": [
+      "A: ground fixed, arc reads · V: copy + cell edits",
+      "A: squash removed · V: delete contact row",
+      "A: ground rises · V: insert baseline",
+      "A: extremes only · V: skip arc edits"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the ground anchors the squash and rebound, while the ball cells carry the arc.",
+      "Squash is the contact pose that makes the bounce feel physical.",
+      "Moving the ground hides whether the ball actually lands.",
+      "A bounce needs its transition poses, not just two endpoints."
+    ],
+    "animation_prompt": "The ground is stable evidence for changing height and contact shape.",
+    "animation_answer": "Keep the ground line unchanged through all extremes and transitions.",
+    "neovim_prompt": "What should the edit leave fixed?",
+    "neovim_answer": "The ground rows; alter only the ball's owned cells in the copied poses."
+  },
+  "M10.REWARD.P01": {
+    "prompt": "ANIMATION\nSJIS puff: compare the proportional lobe, arch, slash turns, one intentional hold, and kanji-like hatch using the authored UTF-8 spelling.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit preserves full-width and half-width spaces while changing the named glyphs?",
+    "compact_prompt": "ANIMATION: lobe, slash turns, one hold, hatch.\n{{COMPACT_EVIDENCE}}\nNEOVIM: preserve UTF-8 spacing.",
+    "choices": [
+      "ANIMATION: retain the lobe idioms and native spacing while two lobes, slash turns, and one hatch glyph change. | NEOVIM: replace named glyphs without normalizing U+3000 or U+0020.",
+      "ANIMATION: make all spaces ASCII for equal terminal columns. | NEOVIM: substitute every full-width space in the file.",
+      "ANIMATION: judge only byte count and ignore visual advance. | NEOVIM: pad rows until their byte lengths match.",
+      "ANIMATION: import a raster to repair the hatch. | NEOVIM: leave the UTF-8 text untouched."
+    ],
+    "compact_choices": [
+      "A: idioms + spaces stay · V: named glyph replace",
+      "A: ASCII spaces only · V: replace all U+3000",
+      "A: bytes decide width · V: pad rows",
+      "A: raster repair · V: no text edit"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: proportional spacing stays authored while the two lobes, slash turns, and hatch glyph change.",
+      "ASCII normalization destroys the distinction this study measures.",
+      "Byte length does not describe the displayed advance of these characters.",
+      "The study is original text art and must remain editable as UTF-8 text."
+    ],
+    "animation_prompt": "The puff's spacing, directional slash choices, and one intentional hold are visual evidence, not padding.",
+    "animation_answer": "Keep both space codepoints and the hold while judging lobe, slash, and hatch changes in native metrics.",
+    "neovim_prompt": "What must a safe SJIS edit preserve?",
+    "neovim_answer": "The authored UTF-8 codepoints and their displayed advance."
+  },
+  "M11.REWARD.P01": {
+    "prompt": "ANIMATION\nMissile redraw: follow the moving hull, first replacement, aligned trail, undo/redo redraw, and recovered settle.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich history-aware edit preserves the moving hull while recovering?",
+    "compact_prompt": "ANIMATION: moving hull, trail, undo/redo.\n{{COMPACT_EVIDENCE}}\nNEOVIM: recover the redraw without losing motion.",
+    "choices": [
+      "ANIMATION: let the hull move through its poses while roof and trail changes stay aligned. | NEOVIM: make the first r{char} replacement, then use u and <C-r> to inspect recovery.",
+      "ANIMATION: freeze the hull while the roof shifts independently. | NEOVIM: insert cells instead of undoing and redoing the redraw.",
+      "ANIMATION: erase older history after recovery. | NEOVIM: delete the branch so only the newest pose remains.",
+      "ANIMATION: rewrite roof, nose, and hull as one mark. | NEOVIM: replace all missile rows together."
+    ],
+    "compact_choices": [
+      "A: hull moves, trail aligns · V: r{char} + u/<C-r>",
+      "A: hull frozen, roof shifts · V: insert cells",
+      "A: history erased · V: delete branch",
+      "A: all missiles change · V: replace every missile row"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the first replacement is recoverable with u and <C-r>, while the moving hull and trail remain visible.",
+      "The hull's motion is part of the study; freezing it misreads the redraw.",
+      "Older states are evidence for recovery and should remain inspectable.",
+      "The redraw is bounded to this missile strip, not every similar mark."
+    ],
+    "animation_prompt": "Hull motion, roof tension, and trail spacing share one recoverable redraw study.",
+    "animation_answer": "Keep the hull's motion and aligned trail visible while the first redraw is undone and redone.",
+    "neovim_prompt": "Which operation family fits fixed-width recovery?",
+    "neovim_answer": "Make the first replacement, then use undo and redo to inspect the recovered redraw."
+  },
+  "M12.REWARD.P01": {
+    "prompt": "ANIMATION\nJoint sweep: read the upper and lower punctuation hits, two intentional holds, and final eye accent around one centre axis.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit reaches each joint without moving the shell?",
+    "compact_prompt": "ANIMATION: staggered joints, two holds, eye accent.\n{{COMPACT_EVIDENCE}}\nNEOVIM: preserve the centre axis.",
+    "choices": [
+      "ANIMATION: preserve the shell and centre while joints answer on different beats and the final eye accent lands. | NEOVIM: use till/find landmarks, then replace only nominated cells.",
+      "ANIMATION: flash both sides at once. | NEOVIM: replace every punctuation mark in the three rows.",
+      "ANIMATION: shift the shell toward each hit. | NEOVIM: insert a column before the next joint.",
+      "ANIMATION: remove the return pose. | NEOVIM: move across the row without changing either joint."
+    ],
+    "compact_choices": [
+      "A: hits stagger, eye accents · V: landmark + replace",
+      "A: both flash together · V: replace all punctuation",
+      "A: shell shifts · V: insert column",
+      "A: return removed · V: move only"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: landmark motion and local replacement preserve stagger, holds, shell, and final eye accent.",
+      "Simultaneous replacement erases the delayed response the sweep is showing.",
+      "The shell is the stable frame of reference, not a moving target.",
+      "The return closes the sweep and still needs the second joint state."
+    ],
+    "animation_prompt": "Punctuation acts in sequence around a fixed shell, with two deliberate repeated beats.",
+    "animation_answer": "Keep the axis fixed, preserve both holds, and let joint and eye accents arrive on their beats.",
+    "neovim_prompt": "How should each punctuation joint be reached?",
+    "neovim_answer": "Use a visible landmark motion, then replace only that joint cell."
+  },
+  "M13.REWARD.P01": {
+    "prompt": "ANIMATION\nTexture pulse: follow the accent across separated WORD landmarks while support rows stay quiet.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit changes one cluster without collapsing the texture spacing?",
+    "compact_prompt": "ANIMATION: accent travels across texture clusters.\n{{COMPACT_EVIDENCE}}\nNEOVIM: use WORD landmarks; keep spacing.",
+    "choices": [
+      "ANIMATION: let one accent travel while cluster widths and support rows stay stable. | NEOVIM: use W/B landmarks and replace one cluster cell at a time.",
+      "ANIMATION: rewrite all punctuation as one flash. | NEOVIM: substitute every matching mark on every row.",
+      "ANIMATION: close the spaces between clusters. | NEOVIM: delete separators so later WORDs move together.",
+      "ANIMATION: hide the support rows after the first beat. | NEOVIM: edit only the visible top row and ignore the rest."
+    ],
+    "compact_choices": [
+      "A: one accent travels · V: W/B + replace",
+      "A: all marks flash · V: substitute every row",
+      "A: clusters close · V: delete separators",
+      "A: supports hidden · V: top row only"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: WORD landmarks keep each punctuation cluster separate while the accent advances.",
+      "A single global flash loses the pulse's travel path.",
+      "Separators are part of the texture rhythm and must remain.",
+      "Support rows verify that the pulse did not alter the underlying material."
+    ],
+    "animation_prompt": "Separated clusters and quiet supports make a travelling accent visible.",
+    "animation_answer": "Move the accent between clusters without closing gaps or touching support rows.",
+    "neovim_prompt": "Which navigation keeps the texture landmarks usable?",
+    "neovim_answer": "Use WORD motions to reach a cluster, then replace its nominated cell."
+  },
+  "M14.REWARD.P01": {
+    "prompt": "ANIMATION\nVariant palette: compare saved, open-eye, star-eye, and final plus-mouth variants without redrawing the contour.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit changes named palette cells while preserving the face object?",
+    "compact_prompt": "ANIMATION: face variants, eye palette, plus mouth.\n{{COMPACT_EVIDENCE}}\nNEOVIM: edit named cells; keep contour.",
+    "choices": [
+      "ANIMATION: reuse the same contour while eye palette glyphs and the final mouth accent change. | NEOVIM: select named cells and replace them from the taught palette operation.",
+      "ANIMATION: redraw the wall for each eye variant. | NEOVIM: append a fresh paragraph around every face.",
+      "ANIMATION: flatten all variants into one eye. | NEOVIM: delete the comparison poses.",
+      "ANIMATION: change every eye in the saved face together. | NEOVIM: replace the palette glyph in every variant."
+    ],
+    "compact_choices": [
+      "A: contour reused, eye/mouth vary · V: named-cell replace",
+      "A: wall redraws · V: append paragraphs",
+      "A: variants flatten · V: delete poses",
+      "A: every eye varies · V: replace every palette eye"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: the contour is reusable while palette-owned eye cells and the final mouth accent change.",
+      "Redrawing the wall obscures whether the variant kept its silhouette.",
+      "The comparison poses teach palette choice; deleting them removes the evidence.",
+      "A global palette change exceeds the one-face study."
+    ],
+    "animation_prompt": "A stable face contour lets the viewer compare eye palette glyphs and the final mouth accent.",
+    "animation_answer": "Keep the contour and separator rows; change only selected eye and mouth cells.",
+    "neovim_prompt": "What should the palette edit leave intact?",
+    "neovim_answer": "The complete face contour, separators, and frame boundaries."
+  },
+  "M15.REWARD.P01": {
+    "prompt": "ANIMATION\nTexture ground: compare dither density, one-cell brick offset, shadow turn, and settle.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit changes material accents while preserving the ground structure?",
+    "compact_prompt": "ANIMATION: dither, brick offset, shadow turn.\n{{COMPACT_EVIDENCE}}\nNEOVIM: preserve ground rows; edit accents.",
+    "choices": [
+      "ANIMATION: change dither, brick offset, and the final shadow direction while ground rows stay aligned. | NEOVIM: replace the named material accents in place.",
+      "ANIMATION: slide the whole shadow with every brick shift. | NEOVIM: insert a column under the ground to follow it.",
+      "ANIMATION: replace dither, brick, and shadow marks together. | NEOVIM: rewrite every material mark at once.",
+      "ANIMATION: remove the settle as redundant. | NEOVIM: stop after the first dither edit."
+    ],
+    "compact_choices": [
+      "A: accents change, ground aligns · V: named replace",
+      "A: whole shadow slides · V: insert ground column",
+      "A: all material changes · V: replace all marks",
+      "A: settle removed · V: stop early"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: material accents and the final shadow turn change without losing ground alignment.",
+      "Moving the whole shadow with each brick shift breaks the ground's structural read.",
+      "A blanket material replacement hides the one-cell offset decision.",
+      "The settle closes the texture loop and belongs to the complete study."
+    ],
+    "animation_prompt": "Dither and brick rhythm change before a deliberate final shadow turn and settle.",
+    "animation_answer": "Keep ground rows aligned while authoring dither, brick, and shadow accents deliberately.",
+    "neovim_prompt": "Which scope protects the depth cue?",
+    "neovim_answer": "Replace the named accents in place; do not insert a new ground column."
+  },
+  "M16.REWARD.P01": {
+    "prompt": "ANIMATION\nThe target refines selected written pose labels and body strokes while keeping their plate boundaries.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit matches the selected label and body-stroke changes without replacing the whole plan?",
+    "compact_prompt": "ANIMATION: The target refines selected written pose labels and body strokes while keeping their plate boundaries.\n{{COMPACT_EVIDENCE}}\nNEOVIM: local replacements; keep the plate rows.",
+    "choices": [
+      "ANIMATION: keep the labelled pose plates and their boundaries intact. | NEOVIM: replace only the nominated label digits, body stroke and final letter.",
+      "ANIMATION: erase labels once the drawing looks right. | NEOVIM: delete every timing row after copying.",
+      "ANIMATION: guess the in-between without its breakdown note. | NEOVIM: replace the written plan with an unrelated shortcut.",
+      "ANIMATION: change timing labels on every pose. | NEOVIM: move through the plate without editing its named glyph."
+    ],
+    "compact_choices": [
+      "A: planned plates remain · V: label and stroke edits",
+      "A: labels erased · V: delete timing rows",
+      "A: in-between guessed · V: unrelated shortcut",
+      "A: labels all change · V: move without edit"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "The target deliberately changes two label digits, one body stroke and the final A to B. Preserving every label glyph would not match it.",
+      "Labels are part of the saved plate and explain why a pose exists.",
+      "The breakdown note is the evidence that the in-between was planned.",
+      "Changing every timing label loses the distinction between planned poses."
+    ],
+    "animation_prompt": "The target refines selected written pose labels and body strokes while keeping their plate boundaries.",
+    "animation_answer": "Keep the planned plates intact and match only the nominated label and body-stroke changes.",
+    "neovim_prompt": "Which edit matches the selected label and body-stroke changes without replacing the whole plan?",
+    "neovim_answer": "The target deliberately changes two label digits, one body stroke and the final A to B. Preserving every label glyph would not match it."
+  },
+  "M17.REWARD.P01": {
+    "prompt": "ANIMATION\nCoherent anchors: track homologous eye cells while the shell travels and the palette pass changes selected eyes.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit changes those eye cells coherently without disturbing shell rows?",
+    "compact_prompt": "ANIMATION: homologous eye changes through shell travel.\n{{COMPACT_EVIDENCE}}\nNEOVIM: replace selected eye cells; keep shell rows.",
+    "choices": [
+      "ANIMATION: keep homologous eye changes coherent while shell poses travel. | NEOVIM: replace the selected eye cells while leaving shell rows intact.",
+      "ANIMATION: move every eye with each shell pose. | NEOVIM: insert cells until each eye appears centred again.",
+      "ANIMATION: change one eye and ignore its homologues. | NEOVIM: replace the first matching glyph only.",
+      "ANIMATION: remove the return pose. | NEOVIM: navigate through the shell without changing its named cells."
+    ],
+    "compact_choices": [
+      "A: eyes change coherently · V: selected-eye replace",
+      "A: eyes follow shell · V: insert cells",
+      "A: one eye changes · V: first match only",
+      "A: return removed · V: navigation only"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: homologous eye cells change together while shell rows remain intact.",
+      "Moving every eye with the shell loses the distinction between material and travel.",
+      "A partial eye edit makes the palette pass incoherent across poses.",
+      "The return completes the shell sequence and preserves its selected eye changes."
+    ],
+    "animation_prompt": "Homologous eye cells carry a coherent palette change through travelling shell poses.",
+    "animation_answer": "Change selected eyes together while retaining the shell's travelling row geometry.",
+    "neovim_prompt": "Which cells are safe to replace?",
+    "neovim_answer": "The selected homologous eye cells, not unrelated shell rows."
+  },
+  "M18.REWARD.P01": {
+    "prompt": "ANIMATION\nThe actor returns through directional poses while the directional rail translates and turns around the turnaround; one rail glyph is refined.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit refines the selected eyes and final rail mark without reversing the stored text?",
+    "compact_prompt": "ANIMATION: directional rail translates and turns; one glyph is refined.\n{{COMPACT_EVIDENCE}}\nNEOVIM: local replacements; keep the plate rows.",
+    "choices": [
+      "ANIMATION: retain directional poses and the rail's translating, turning path. | NEOVIM: replace the nominated eye and rail glyphs in place.",
+      "ANIMATION: let the actor cross the rail on return. | NEOVIM: add a new rail column for the overshoot.",
+      "ANIMATION: remove the turnaround pose. | NEOVIM: delete the return frame before reversing.",
+      "ANIMATION: mirror every unrelated object too. | NEOVIM: substitute each slash in the drawing."
+    ],
+    "compact_choices": [
+      "A: poses + rail translates/turns · V: named replacements",
+      "A: actor crosses rail · V: add rail column",
+      "A: turnaround removed · V: delete return frame",
+      "A: all objects mirror · V: replace every slash"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "The rail's translation and turnaround are part of the path; only the final = to - glyph and selected eyes are replaced in place.",
+      "Crossing the rail changes the stage boundary rather than the actor's direction.",
+      "The turnaround pose is part of the directional sequence before reverse reuse.",
+      "The target names selected eyes and one rail mark, not every directional slash."
+    ],
+    "animation_prompt": "The actor returns through directional poses while the directional rail translates and turns around the turnaround; one rail glyph is refined.",
+    "animation_answer": "Preserve the directional pose order and the rail's translating, turning path while refining the nominated eyes and final rail mark.",
+    "neovim_prompt": "Which edit refines the selected eyes and final rail mark without reversing the stored text?",
+    "neovim_answer": "The final rail mark changes from = to -, not its coordinate. Selected eyes change without a byte reversal or inserted cells."
+  },
+  "M19.REWARD.P01": {
+    "prompt": "ANIMATION\nMirror key-pose bounce: compare full-body contact, squash, flight, rebound, and hand-mirrored settle across the ground.\n\n{{FULL_EVIDENCE}}\n\nNEOVIM\nWhich edit changes the body accents while preserving ground and frame height?",
+    "compact_prompt": "ANIMATION: full-body squash, bounce, mirrored settle.\n{{COMPACT_EVIDENCE}}\nNEOVIM: preserve ground and frame height.",
+    "choices": [
+      "ANIMATION: preserve ground and frame height while body contact, squash, flight, and rebound accents change. | NEOVIM: replace the selected body cells in place.",
+      "ANIMATION: redraw the ground under each body pose. | NEOVIM: insert rows to make room for the bounce.",
+      "ANIMATION: collapse the body arc into one still. | NEOVIM: delete the contact and rebound poses.",
+      "ANIMATION: change every similar body mark in the drawing. | NEOVIM: replace all bounce accents together."
+    ],
+    "compact_choices": [
+      "A: ground fixed, body bounces · V: replace cells",
+      "A: ground redraws · V: insert rows",
+      "A: one still · V: delete bounce poses",
+      "A: all bodies change · V: replace all accents"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: local body replacements preserve the ground and let the squash/rebound arc read.",
+      "The ground is the bounce reference and should not be redrawn per pose.",
+      "Contact and rebound are the motion evidence, not optional stills.",
+      "A broad body change would erase the distinction between the authored poses."
+    ],
+    "animation_prompt": "A full body compresses, flies, contacts, rebounds, and settles against one ground.",
+    "animation_answer": "Read the complete bounce and hand-mirrored settle, not one isolated pose.",
+    "neovim_prompt": "What should a body edit preserve?",
+    "neovim_answer": "The ground rows and each frame's height while replacing only selected body cells."
+  }
+}

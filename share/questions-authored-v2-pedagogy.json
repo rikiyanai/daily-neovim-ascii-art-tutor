@@ -1,0 +1,842 @@
+{
+  "M0.L0.P01": {
+    "source_ref": "Fireworks radial shell; Normal-mode line-start motion",
+    "prompt": "ANIMATION\nThe Fireworks shell is untouched after moving the cursor.\n\n│    \\¡/ │\n│   -—*—-│\n│    /!\\ │\n\nNEOVIM\nAfter j0, where is the cursor?",
+    "compact_prompt": "ANIMATION\nThe shell stays intact.\n│    \\¡/ │\n│   -—*—-│\n│    /!\\ │\n\nNEOVIM\nAfter j0, where is the cursor?",
+    "animation_prompt": "The supplied shell has no edited cells.\n│    \\¡/ │\n│   -—*—-│\n│    /!\\ │",
+    "animation_answer": "Cursor movement preserves the complete shell.",
+    "neovim_prompt": "Where does 0 land after j reaches the core row?",
+    "neovim_answer": "0 lands at column 1 of the current row, even when that cell is a space.",
+    "choices": [
+      "ANIMATION: The shell is intact. | NEOVIM: The cursor is at column 1 of the core row.",
+      "ANIMATION: The core becomes zero. | NEOVIM: 0 replaces the star with a digit.",
+      "ANIMATION: The upper ray is erased. | NEOVIM: 0 deletes the first row.",
+      "ANIMATION: A blank row is added. | NEOVIM: 0 opens a row above the drawing."
+    ],
+    "compact_choices": [
+      "A: shell intact · V: column 1 of core row",
+      "A: core becomes zero · V: replace star with digit",
+      "A: upper ray erased · V: delete first row",
+      "A: blank row added · V: open row above"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: j moves down one row, then 0 returns to that row's first column without editing it.",
+      "0 is movement here. It does not insert a digit or replace the core.",
+      "The upper ray stays present because neither j nor 0 deletes text.",
+      "0 moves inside an existing row; it does not open a new row."
+    ]
+  },
+  "M0.F0.P01": {
+    "source_ref": "Fireworks radial shell; Normal-mode character-find motion",
+    "prompt": "ANIMATION\nThe cursor reaches the Fireworks star, but its energy has not changed.\n\n│    \\¡/ │\n│   -—*—-│\n│    /!\\ │\n\nNEOVIM\nWhat did f* do after j0?",
+    "compact_prompt": "ANIMATION\nThe star is still visible.\n│    \\¡/ │\n│   -—*—-│\n│    /!\\ │\n\nNEOVIM\nWhat did f* do after j0?",
+    "animation_prompt": "Finding the star leaves its glyph and all rays intact.\n│    \\¡/ │\n│   -—*—-│\n│    /!\\ │",
+    "animation_answer": "The drawing is unchanged; only the cursor moves onto its core.",
+    "neovim_prompt": "Does f* move onto the star or edit it?",
+    "neovim_answer": "f* moves forward to the next star on the current row. It does not edit that glyph.",
+    "choices": [
+      "ANIMATION: The star dims into o. | NEOVIM: f* replaces the found star automatically.",
+      "ANIMATION: The star stays intact. | NEOVIM: f* moves onto the next star on this row.",
+      "ANIMATION: Every ray becomes a star. | NEOVIM: f* inserts stars throughout the file.",
+      "ANIMATION: The lower ray moves upward. | NEOVIM: f* searches vertically and rearranges rows."
+    ],
+    "compact_choices": [
+      "A: star dims · V: find replaces automatically",
+      "A: star intact · V: find next star on this row",
+      "A: all rays become stars · V: insert throughout file",
+      "A: lower ray moves up · V: rearrange rows vertically"
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "The core cannot dim yet: f* is only a motion, and no replacement command was typed.",
+      "Correct: f* finds the next star on the current row and leaves its text untouched.",
+      "Character-find does not insert any text, so every ray retains its original glyph.",
+      "f stays on the current row. It cannot move the lower ray or reorder rows."
+    ]
+  },
+  "M0.DG.P01": {
+    "source_ref": "Fireworks core digraph study; Neovim help digraphs",
+    "prompt": "ANIMATION\nOnly the radial core becomes a middle dot.\n\n│   -—*—-│ → │   -—·—-│\n│    /!\\│     │    /!\\│\n\nNEOVIM\nWhat does Ctrl-k .M contribute after r?",
+    "compact_prompt": "ANIMATION\nOnly the radial core becomes a middle dot.\n\n│   -—*—-│ → │   -—·—-│\n│    /!\\│     │    /!\\│\n\nNEOVIM\nWhat does Ctrl-k .M contribute after r?",
+    "animation_prompt": "ANIMATION\nOnly the radial core becomes a middle dot.\n│   -—*—-│ → │   -—·—-│\n│    /!\\│     │    /!\\│",
+    "animation_answer": "Only the core changes.",
+    "neovim_prompt": "NEOVIM\nWhat does Ctrl-k .M contribute after r?",
+    "neovim_answer": "Ctrl-k composes .M as ·; r uses it for one replacement.",
+    "choices": [
+      "ANIMATION: Only the core changes. | NEOVIM: It composes one middle-dot glyph.",
+      "ANIMATION: The whole ray row changes. | NEOVIM: It starts a row-wide replacement.",
+      "ANIMATION: The core moves right. | NEOVIM: It inserts the two letters .M.",
+      "ANIMATION: The star stays fixed. | NEOVIM: It only moves the cursor."
+    ],
+    "compact_choices": [
+      "A: Only the core changes. · V: It composes one middle-dot glyph.",
+      "A: The whole ray row changes. · V: It starts a row-wide replacement.",
+      "A: The core moves right. · V: It inserts the two letters .M.",
+      "A: The star stays fixed. · V: It only moves the cursor."
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Ctrl-k composes .M as ·; r uses it for one replacement.",
+      "The digraph does not widen r to cover a whole ray row.",
+      "The two mnemonic keys produce one glyph, not two inserted letters.",
+      "Digraph composition supplies the replacement character; it is not a motion."
+    ]
+  },
+  "M0.DGH.P01": {
+    "source_ref": "Fireworks core digraph study; Neovim help digraphs",
+    "prompt": "ANIMATION\nThe shell remains fixed while its core becomes ¡.\n\n│   -—·—-│ → │   -—¡—-│\n│    /!\\│     │    /!\\│\n\nNEOVIM\nWhy use Ctrl-k !I here?",
+    "compact_prompt": "ANIMATION\nThe shell remains fixed while its core becomes ¡.\n\n│   -—·—-│ → │   -—¡—-│\n│    /!\\│     │    /!\\│\n\nNEOVIM\nWhy use Ctrl-k !I here?",
+    "animation_prompt": "ANIMATION\nThe shell remains fixed while its core becomes ¡.\n│   -—·—-│ → │   -—¡—-│\n│    /!\\│     │    /!\\│",
+    "animation_answer": "One inverted-exclamation core appears.",
+    "neovim_prompt": "NEOVIM\nWhy use Ctrl-k !I here?",
+    "neovim_answer": "The !I digraph gives ¡ to the one-cell replacement.",
+    "choices": [
+      "ANIMATION: Both slash rays turn upside down. | NEOVIM: !I mirrors a selected region.",
+      "ANIMATION: One inverted-exclamation core appears. | NEOVIM: !I composes the requested glyph.",
+      "ANIMATION: The core becomes two cells. | NEOVIM: ! and I are inserted separately.",
+      "ANIMATION: The lower accent disappears. | NEOVIM: Ctrl-k deletes an entire row."
+    ],
+    "compact_choices": [
+      "A: Both slash rays turn upside down. · V: !I mirrors a selected region.",
+      "A: One inverted-exclamation core appears. · V: !I composes the requested glyph.",
+      "A: The core becomes two cells. · V: ! and I are inserted separately.",
+      "A: The lower accent disappears. · V: Ctrl-k deletes an entire row."
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "A digraph names a glyph; it does not mirror the surrounding rays.",
+      "The !I digraph gives ¡ to the one-cell replacement.",
+      "Composition produces a single character, preserving the core's width.",
+      "Ctrl-k does not delete the lower ray or any row."
+    ]
+  },
+  "M4.WIN.P01": {
+    "source_ref": "Cave Party lava window study; Neovim help windows and diff",
+    "prompt": "ANIMATION\nThe lava frame is unchanged after opening and closing a split.\n\n│   o│\n│  /|\\│\n\nNEOVIM\nWhat does :vsplit with no file name create?",
+    "compact_prompt": "ANIMATION\nThe lava frame is unchanged after opening and closing a split.\n\n│   o│\n│  /|\\│\n\nNEOVIM\nWhat does :vsplit with no file name create?",
+    "animation_prompt": "ANIMATION\nThe lava frame is unchanged after opening and closing a split.\n│   o│\n│  /|\\│",
+    "animation_answer": "The same frame has two views.",
+    "neovim_prompt": "NEOVIM\nWhat does :vsplit with no file name create?",
+    "neovim_answer": "A split is a second view, not a second copy of the frame text.",
+    "choices": [
+      "ANIMATION: The frame gains a row. | NEOVIM: It splits the current text row.",
+      "ANIMATION: A blank frame appears. | NEOVIM: It always creates an empty buffer.",
+      "ANIMATION: The same frame has two views. | NEOVIM: Both windows share one buffer.",
+      "ANIMATION: The art is saved twice. | NEOVIM: It writes a separate file."
+    ],
+    "compact_choices": [
+      "A: The frame gains a row. · V: It splits the current text row.",
+      "A: A blank frame appears. · V: It always creates an empty buffer.",
+      "A: The same frame has two views. · V: Both windows share one buffer.",
+      "A: The art is saved twice. · V: It writes a separate file."
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "Window layout changes independently of the frame's row structure.",
+      ":vnew, rather than :vsplit without a file name, opens an empty buffer.",
+      "A split is a second view, not a second copy of the frame text.",
+      "No write occurs just because a window is split."
+    ]
+  },
+  "M4.REF.P01": {
+    "source_ref": "Cave Party lava window study; Neovim help windows and diff",
+    "prompt": "ANIMATION\nKeep the working lava frame while viewing a saved reference.\n\n│   o│\n│  /|\\│\n\nNEOVIM\nWhat does :read # add to the disposable window?",
+    "compact_prompt": "ANIMATION\nKeep the working lava frame while viewing a saved reference.\n\n│   o│\n│  /|\\│\n\nNEOVIM\nWhat does :read # add to the disposable window?",
+    "animation_prompt": "ANIMATION\nKeep the working lava frame while viewing a saved reference.\n│   o│\n│  /|\\│",
+    "animation_answer": "The saved alternate frame appears.",
+    "neovim_prompt": "NEOVIM\nWhat does :read # add to the disposable window?",
+    "neovim_answer": "# supplies the alternate file name, and read inserts its saved text.",
+    "choices": [
+      "ANIMATION: The working frame disappears. | NEOVIM: read moves the other file here.",
+      "ANIMATION: The current frame is duplicated. | NEOVIM: # names the current file.",
+      "ANIMATION: A hash is drawn in the lava. | NEOVIM: # is literal inserted text.",
+      "ANIMATION: The saved alternate frame appears. | NEOVIM: # names the alternate file."
+    ],
+    "compact_choices": [
+      "A: The working frame disappears. · V: read moves the other file here.",
+      "A: The current frame is duplicated. · V: # names the current file.",
+      "A: A hash is drawn in the lava. · V: # is literal inserted text.",
+      "A: The saved alternate frame appears. · V: # names the alternate file."
+    ],
+    "correct_choice": 3,
+    "feedback": [
+      "Reading copies text into the disposable buffer; it does not move or erase the working frame.",
+      "The current file name is represented by %, not #.",
+      "Here # is a file placeholder, not a glyph to draw.",
+      "# supplies the alternate file name, and read inserts its saved text."
+    ]
+  },
+  "M4.DT.P01": {
+    "source_ref": "Cave Party lava window study; Neovim help windows and diff",
+    "prompt": "ANIMATION\nCompare the registered frame without editing its glyphs.\n\n│    o│\n│   /|\\│\n\nNEOVIM\nWhat does :diffoff! do after :diffthis?",
+    "compact_prompt": "ANIMATION\nCompare the registered frame without editing its glyphs.\n\n│    o│\n│   /|\\│\n\nNEOVIM\nWhat does :diffoff! do after :diffthis?",
+    "animation_prompt": "ANIMATION\nCompare the registered frame without editing its glyphs.\n│    o│\n│   /|\\│",
+    "animation_answer": "The comparison ends; art stays fixed.",
+    "neovim_prompt": "NEOVIM\nWhat does :diffoff! do after :diffthis?",
+    "neovim_answer": "The bang asks diffoff to leave diff mode in all windows; text remains intact.",
+    "choices": [
+      "ANIMATION: The comparison ends; art stays fixed. | NEOVIM: It turns diff off in all windows.",
+      "ANIMATION: The reference becomes the target. | NEOVIM: It copies highlighted changes.",
+      "ANIMATION: The working frame is removed. | NEOVIM: It deletes the compared buffer.",
+      "ANIMATION: Only one highlight disappears. | NEOVIM: It turns off one cursor cell."
+    ],
+    "compact_choices": [
+      "A: The comparison ends; art stays fixed. · V: It turns diff off in all windows.",
+      "A: The reference becomes the target. · V: It copies highlighted changes.",
+      "A: The working frame is removed. · V: It deletes the compared buffer.",
+      "A: Only one highlight disappears. · V: It turns off one cursor cell."
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "The bang asks diffoff to leave diff mode in all windows; text remains intact.",
+      "Turning diff display off is not a command to copy reference text.",
+      "The buffer and its drawing survive leaving diff mode.",
+      "Diff mode is a window setting, not a per-cell highlight toggle."
+    ]
+  },
+  "M7.D0.P01": {
+    "source_ref": "Authored material marks; Neovim help single-repeat",
+    "prompt": "ANIMATION\nOnly the first material mark changes.\n\n│ - │ → │ = │\n│ - │    │ - │\n\nNEOVIM\nWhat is available to dot after r= finishes?",
+    "compact_prompt": "ANIMATION\nOnly the first material mark changes.\n\n│ - │ → │ = │\n│ - │    │ - │\n\nNEOVIM\nWhat is available to dot after r= finishes?",
+    "animation_prompt": "ANIMATION\nOnly the first material mark changes.\n│ - │ → │ = │\n│ - │    │ - │",
+    "animation_answer": "One mark becomes =.",
+    "neovim_prompt": "NEOVIM\nWhat is available to dot after r= finishes?",
+    "neovim_answer": "r= records a bounded replacement as the last change, ready for dot.",
+    "choices": [
+      "ANIMATION: Both rows become = immediately. | NEOVIM: r= applies to every matching dash.",
+      "ANIMATION: One mark becomes =. | NEOVIM: The last one-cell change can be repeated.",
+      "ANIMATION: The first row grows wider. | NEOVIM: r= inserts an extra equals sign.",
+      "ANIMATION: The cursor returns to the top. | NEOVIM: Dot saves the previous motion."
+    ],
+    "compact_choices": [
+      "A: Both rows become = immediately. · V: r= applies to every matching dash.",
+      "A: One mark becomes =. · V: The last one-cell change can be repeated.",
+      "A: The first row grows wider. · V: r= inserts an extra equals sign.",
+      "A: The cursor returns to the top. · V: Dot saves the previous motion."
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "r replaces one character; it does not select every matching row.",
+      "r= records a bounded replacement as the last change, ready for dot.",
+      "Replacement consumes the existing dash and keeps the row width.",
+      "Dot repeats a change, not an unrelated cursor motion."
+    ]
+  },
+  "M7.D1.P01": {
+    "source_ref": "Authored material marks; Neovim help single-repeat",
+    "prompt": "ANIMATION\nThe first two marks change; the third stays a dash.\n\n│ - │ → │ = │\n│ - │    │ = │\n│ - │    │ - │\n\nNEOVIM\nWhy move to the second dash before pressing dot?",
+    "compact_prompt": "ANIMATION\nThe first two marks change; the third stays a dash.\n\n│ - │ → │ = │\n│ - │    │ = │\n│ - │    │ - │\n\nNEOVIM\nWhy move to the second dash before pressing dot?",
+    "animation_prompt": "ANIMATION\nThe first two marks change; the third stays a dash.\n│ - │ → │ = │\n│ - │    │ = │\n│ - │    │ - │",
+    "animation_answer": "The matching second mark becomes =.",
+    "neovim_prompt": "NEOVIM\nWhy move to the second dash before pressing dot?",
+    "neovim_answer": "Movement chooses the new landing; dot reapplies the last replacement there.",
+    "choices": [
+      "ANIMATION: The third mark also changes. | NEOVIM: Dot repeats on all later rows.",
+      "ANIMATION: The first mark changes back. | NEOVIM: Dot always returns to the old location.",
+      "ANIMATION: The matching second mark becomes =. | NEOVIM: Dot repeats the change at the cursor.",
+      "ANIMATION: A dot is drawn in row two. | NEOVIM: Normal-mode dot inserts punctuation."
+    ],
+    "compact_choices": [
+      "A: The third mark also changes. · V: Dot repeats on all later rows.",
+      "A: The first mark changes back. · V: Dot always returns to the old location.",
+      "A: The matching second mark becomes =. · V: Dot repeats the change at the cursor.",
+      "A: A dot is drawn in row two. · V: Normal-mode dot inserts punctuation."
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "One dot runs one change, not a loop over all remaining rows.",
+      "Dot does not restore the earlier cursor location or undo the equals sign.",
+      "Movement chooses the new landing; dot reapplies the last replacement there.",
+      "In Normal mode, dot is the repeat command rather than inserted text."
+    ]
+  },
+  "M11.BR.P01": {
+    "source_ref": "Supplied Skully source frames; Neovim help undo, substitute and virtualedit",
+    "prompt": "ANIMATION\nThe chosen Skully look follows an abandoned idle source frame.\n\n│     ,--. │ → │     ,--. │ → │     ,--. │\n│    (_=,=)│   │    (_o,o)│   │    (_O,o)│\n│      `\"´ │   │      `\"´ │   │      `\"´ │\n\nNEOVIM\nWhat makes the abandoned source frame remain in undo history?",
+    "compact_prompt": "ANIMATION\nRevisit the Skully idle source frame, then submit the look source frame.\n\n│     ,--. │ → │     ,--. │ → │     ,--. │\n│    (_=,=)│   │    (_o,o)│   │    (_O,o)│\n│      `\"´ │   │      `\"´ │   │      `\"´ │\n\nNEOVIM\nWhat makes the older source frame remain in history?",
+    "animation_prompt": "ANIMATION\nThe chosen Skully look follows an abandoned idle source frame.\n│     ,--. │ → │     ,--. │ → │     ,--. │\n│    (_=,=)│   │    (_o,o)│   │    (_O,o)│\n│      `\"´ │   │      `\"´ │   │      `\"´ │",
+    "animation_answer": "The eye ends as O.",
+  "neovim_prompt": "NEOVIM\nWhat makes the abandoned source frame remain in undo history?",
+  "neovim_answer": "Undo returns before the idle source frame; making the look frame then creates another branch, retaining the abandoned take.",
+    "choices": [
+    "ANIMATION: The abandoned take vanishes forever. | NEOVIM: Undo deletes its history.",
+      "ANIMATION: Both eyes end as O. | NEOVIM: Undo repeats the edit on another eye.",
+    "ANIMATION: The eye stays on the abandoned frame. | NEOVIM: A new change cannot follow undo.",
+    "ANIMATION: The eye ends as O. | NEOVIM: Undoing a source frame then changing again creates a branch."
+    ],
+    "compact_choices": [
+    "A: The abandoned take vanishes forever. · V: Undo deletes its history.",
+      "A: Both eyes end as O. · V: Undo repeats the edit on another eye.",
+    "A: The eye stays on the abandoned frame. · V: A new change cannot follow undo.",
+    "A: The eye ends as O. · V: Undoing a source frame then changing again creates a branch."
+    ],
+    "correct_choice": 3,
+    "feedback": [
+    "The abandoned source take remains available through undo-tree travel.",
+      "Undo changes history position, not the neighboring eye.",
+      "You can author a new take after undo and select it as the result.",
+      "Undo returns before the idle source frame; making O then creates another branch, retaining the abandoned take."
+    ]
+  },
+  "M11.GM.P01": {
+    "source_ref": "Supplied Frog source frames; Neovim help undo, substitute and virtualedit",
+    "prompt": "ANIMATION\nThe selected Frog shut-eye frame follows an abandoned half-blink source frame.\n\n│     ,O- │ → │     ,=- │ → │     ,-- │\n│  (\\/ .-)│   │  (\\/ .-)│   │  (\\/ .-)│\n│  ´ ·-\\´\\│   │  ´ ·-\\´\\│   │  ´ ·-\\´\\│\n\nNEOVIM\nWhat does g- select before the separate g+ return?",
+    "compact_prompt": "ANIMATION\nRevisit the Frog half-blink source frame before returning to shut-eye.\n\n│     ,O- │ → │     ,=- │ → │     ,-- │\n│  (\\/ .-)│   │  (\\/ .-)│   │  (\\/ .-)│\n│  ´ ·-\\´\\│   │  ´ ·-\\´\\│   │  ´ ·-\\´\\│\n\nNEOVIM\nWhat does g- select before the separate g+ return?",
+    "animation_prompt": "ANIMATION\nThe selected Frog shut-eye frame follows an abandoned half-blink source frame.\n│     ,O- │ → │     ,=- │ → │     ,-- │\n│  (\\/ .-)│   │  (\\/ .-)│   │  (\\/ .-)│\n│  ´ ·-\\´\\│   │  ´ ·-\\´\\│   │  ´ ·-\\´\\│",
+    "animation_answer": "The older abandoned take becomes active.",
+    "neovim_prompt": "NEOVIM\nWhat does g- select before the separate g+ return?",
+  "neovim_answer": "g- visits the older abandoned half-blink source state in chronological history.",
+    "choices": [
+    "ANIMATION: The abandoned half-blink source state is selected. | NEOVIM: g- visits the older chronological state; g+ is taught separately.",
+      "ANIMATION: The frog moves one row. | NEOVIM: g- and g+ are vertical cursor motions.",
+      "ANIMATION: The eye is duplicated. | NEOVIM: g- copies the current branch.",
+      "ANIMATION: Only the active branch is reachable. | NEOVIM: g- is identical to u and cannot reach an abandoned state."
+    ],
+    "compact_choices": [
+    "A: abandoned half-blink selected · V: g- visits older state",
+      "A: frog moves one row · V: vertical cursor motion",
+      "A: eye duplicated · V: g- copies branch",
+      "A: active branch only · V: g- = u"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+    "Correct: g- selects the older abandoned half-blink source state; returning to shut-eye is taught separately.",
+      "g- and g+ select history states, not buffer rows.",
+      "History travel does not paste a second Frog eye.",
+      "u and Ctrl-r follow a branch; g- can reach a state on an abandoned branch."
+    ]
+  },
+  "M11.ER.P01": {
+    "source_ref": "Supplied TowerDefense missile source frames; Neovim help undo, substitute and virtualedit",
+    "prompt": "ANIMATION\nCompare an earlier missile frame, then return to the selected frame 3 exhaust.\n\n│  ____/   │ → │  ____/   │ → │  ____/   │\n│< / / |:' │   │< / / |:. │   │< / / |::'│\n│  ¯¯¯¯\\   │   │  ¯¯¯¯\\   │   │  ¯¯¯¯\\   │\n\nNEOVIM\nWhat does :earlier 1 select?",
+    "compact_prompt": "ANIMATION\nRevisit missile frame 1, then return to source frame 3.\n\n│  ____/   │ → │  ____/   │ → │  ____/   │\n│< / / |:' │   │< / / |:. │   │< / / |::'│\n│  ¯¯¯¯\\   │   │  ¯¯¯¯\\   │   │  ¯¯¯¯\\   │\n\nNEOVIM\nWhat does :earlier 1 select?",
+    "animation_prompt": "ANIMATION\nCompare an earlier missile frame, then return to the selected frame 3 exhaust.\n│  ____/   │ → │  ____/   │ → │  ____/   │\n│< / / |:' │   │< / / |:. │   │< / / |::'│\n│  ¯¯¯¯\\   │   │  ¯¯¯¯\\   │   │  ¯¯¯¯\\   │",
+    "animation_answer": "An older exhaust state is shown.",
+    "neovim_prompt": "NEOVIM\nWhat does :earlier 1 select?",
+    "neovim_answer": "With no time suffix, earlier 1 moves back one recorded change; g+ can move forward again.",
+    "choices": [
+      "ANIMATION: The exhaust moves up. | NEOVIM: It moves one text row earlier.",
+      "ANIMATION: An older exhaust state is shown. | NEOVIM: It travels one change earlier.",
+      "ANIMATION: The frame is saved again. | NEOVIM: It creates a new checkpoint file.",
+      "ANIMATION: Every exhaust dot changes. | NEOVIM: It applies a substitute."
+    ],
+    "compact_choices": [
+      "A: The exhaust moves up. · V: It moves one text row earlier.",
+      "A: An older exhaust state is shown. · V: It travels one change earlier.",
+      "A: The frame is saved again. · V: It creates a new checkpoint file.",
+      "A: Every exhaust dot changes. · V: It applies a substitute."
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "An undo-history step is not a row motion.",
+      "With no time suffix, earlier 1 moves back one recorded change; g+ can move forward again.",
+      "History navigation does not save a separate checkpoint file.",
+      ":earlier selects a previous state rather than matching and replacing dots."
+    ]
+  },
+  "M11.AT.P01": {
+    "source_ref": "Supplied Skully, Frog and missile studies; Neovim help undo, substitute and virtualedit",
+    "prompt": "ANIMATION\nOnly the two inner slash strokes reverse.\n\n│< / / |:.│ → │< \\ \\ |:.│\n│  ____/│     │  ____/│\n\nNEOVIM\nWhy separate this substitute with @?",
+    "compact_prompt": "ANIMATION\nOnly the two inner slash strokes reverse.\n\n│< / / |:.│ → │< \\ \\ |:.│\n│  ____/│     │  ____/│\n\nNEOVIM\nWhy separate this substitute with @?",
+    "animation_prompt": "ANIMATION\nOnly the two inner slash strokes reverse.\n│< / / |:.│ → │< \\ \\ |:.│\n│  ____/│     │  ____/│",
+    "animation_answer": "Only the inner slashes change.",
+    "neovim_prompt": "NEOVIM\nWhy separate this substitute with @?",
+    "neovim_answer": "Using @ as the separator lets / be the pattern text on the selected row.",
+    "choices": [
+      "ANIMATION: An @ appears in the hull. | NEOVIM: @ is the replacement glyph.",
+      "ANIMATION: Both rows reverse. | NEOVIM: @ means every row.",
+      "ANIMATION: Only the inner slashes change. | NEOVIM: @ separates pattern and replacement.",
+      "ANIMATION: The slashes disappear. | NEOVIM: @ repeats the last deletion."
+    ],
+    "compact_choices": [
+      "A: An @ appears in the hull. · V: @ is the replacement glyph.",
+      "A: Both rows reverse. · V: @ means every row.",
+      "A: Only the inner slashes change. · V: @ separates pattern and replacement.",
+      "A: The slashes disappear. · V: @ repeats the last deletion."
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "The replacement is the backslash field; @ is not drawn.",
+      "The separator does not expand the command's row scope.",
+      "Using @ as the separator lets / be the pattern text on the selected row.",
+      "In a substitute, @ separates fields rather than replaying a deletion."
+    ]
+  },
+  "M11.COL.P01": {
+    "source_ref": "Supplied Skully, Frog and missile studies; Neovim help undo, substitute and virtualedit",
+    "prompt": "ANIMATION\nInspect display column 12 beyond a short row; insert nothing yet.\n\n│< / / |:.│\n│  ¯¯¯¯\\│\n\nNEOVIM\nWith virtualedit=all, what does 12| change?",
+    "compact_prompt": "ANIMATION\nInspect display column 12 beyond a short row; insert nothing yet.\n\n│< / / |:.│\n│  ¯¯¯¯\\│\n\nNEOVIM\nWith virtualedit=all, what does 12| change?",
+    "animation_prompt": "ANIMATION\nInspect display column 12 beyond a short row; insert nothing yet.\n│< / / |:.│\n│  ¯¯¯¯\\│",
+    "animation_answer": "The frame text is untouched.",
+    "neovim_prompt": "NEOVIM\nWith virtualedit=all, what does 12| change?",
+    "neovim_answer": "12| chooses an absolute display column; virtualedit permits landing past row end.",
+    "choices": [
+      "ANIMATION: The cursor goes twelve cells right. | NEOVIM: The count is relative travel.",
+      "ANIMATION: A rail appears at column 12. | NEOVIM: It inserts the vertical bar.",
+      "ANIMATION: Twelve rows are added. | NEOVIM: It grows the buffer downward.",
+      "ANIMATION: The frame text is untouched. | NEOVIM: It lands the cursor at display column 12."
+    ],
+    "compact_choices": [
+      "A: The cursor goes twelve cells right. · V: The count is relative travel.",
+      "A: A rail appears at column 12. · V: It inserts the vertical bar.",
+      "A: Twelve rows are added. · V: It grows the buffer downward.",
+      "A: The frame text is untouched. · V: It lands the cursor at display column 12."
+    ],
+    "correct_choice": 3,
+    "feedback": [
+      "The count names a column measured from the left edge, not a distance from the cursor.",
+      "The bar is a motion command here, not a replacement or insertion.",
+      "Reaching a virtual column does not create rows.",
+      "12| chooses an absolute display column; virtualedit permits landing past row end."
+    ]
+  },
+  "M11.INS.P01": {
+    "source_ref": "Supplied Skully, Frog and missile studies; Neovim help undo, substitute and virtualedit",
+    "prompt": "ANIMATION\nInsert the nominated column-12 edge; pad only the empty tail and preserve all hull glyphs.\n\n│< / / |:.│ → │< / / |:.  |│\n│  ¯¯¯¯\\│     │  ¯¯¯¯\\│\n\nNEOVIM\nWhat does Escape finish after i|?",
+    "compact_prompt": "ANIMATION\nInsert the nominated column-12 edge; pad only the empty tail and preserve all hull glyphs.\n\n│< / / |:.│ → │< / / |:.  |│\n│  ¯¯¯¯\\│     │  ¯¯¯¯\\│\n\nNEOVIM\nWhat does Escape finish after i|?",
+    "animation_prompt": "ANIMATION\nInsert the nominated column-12 edge; pad only the empty tail and preserve all hull glyphs.\n│< / / |:.│ → │< / / |:.  |│\n│  ¯¯¯¯\\│     │  ¯¯¯¯\\│",
+    "animation_answer": "One comparison edge remains.",
+    "neovim_prompt": "NEOVIM\nWhat does Escape finish after i|?",
+    "neovim_answer": "Escape returns to Normal mode while preserving the bar entered with i.",
+    "choices": [
+      "ANIMATION: One comparison edge remains. | NEOVIM: It ends Insert mode.",
+      "ANIMATION: The edge is discarded. | NEOVIM: It cancels all inserted text.",
+      "ANIMATION: The entire hull becomes bars. | NEOVIM: It repeats the insertion across the row.",
+      "ANIMATION: The lower rail is removed. | NEOVIM: It deletes the next line."
+    ],
+    "compact_choices": [
+      "A: One comparison edge remains. · V: It ends Insert mode.",
+      "A: The edge is discarded. · V: It cancels all inserted text.",
+      "A: The entire hull becomes bars. · V: It repeats the insertion across the row.",
+      "A: The lower rail is removed. · V: It deletes the next line."
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Escape returns to Normal mode while preserving the bar entered with i.",
+      "Escape ends the insertion; undo would be needed to remove it.",
+      "Leaving Insert mode does not repeat the bar across the hull.",
+      "No row deletion occurs when Insert mode ends."
+    ]
+  },
+  "M13.WS.P01": {
+    "source_ref": "Authored stroke clusters; Neovim help WORD",
+    "prompt": "ANIMATION\nMark only the first glyph of the first material cluster.\n\n│ -- ~~ :: │ → │ !- ~~ :: │\n│ -- ~~ :: │    │ -- ~~ :: │\n\nNEOVIM\nWhere does W land from the left rail?",
+    "compact_prompt": "ANIMATION\nMark only the first glyph of the first material cluster.\n\n│ -- ~~ :: │ → │ !- ~~ :: │\n│ -- ~~ :: │    │ -- ~~ :: │\n\nNEOVIM\nWhere does W land from the left rail?",
+    "animation_prompt": "ANIMATION\nMark only the first glyph of the first material cluster.\n│ -- ~~ :: │ → │ !- ~~ :: │\n│ -- ~~ :: │    │ -- ~~ :: │",
+    "animation_answer": "The first cluster's start changes.",
+    "neovim_prompt": "NEOVIM\nWhere does W land from the left rail?",
+    "neovim_answer": "W crosses whitespace to the next WORD start, which is the first dash here.",
+    "choices": [
+      "ANIMATION: The cluster's end changes. | NEOVIM: W means end of the next WORD.",
+      "ANIMATION: The first cluster's start changes. | NEOVIM: W lands on the next space-separated WORD.",
+      "ANIMATION: The previous cluster changes. | NEOVIM: W moves backward.",
+      "ANIMATION: All three clusters change. | NEOVIM: W selects the entire row."
+    ],
+    "compact_choices": [
+      "A: The cluster's end changes. · V: W means end of the next WORD.",
+      "A: The first cluster's start changes. · V: W lands on the next space-separated WORD.",
+      "A: The previous cluster changes. · V: W moves backward.",
+      "A: All three clusters change. · V: W selects the entire row."
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "E is the WORD-end motion; W stops at its start.",
+      "W crosses whitespace to the next WORD start, which is the first dash here.",
+      "B moves backward by WORD starts.",
+      "W is a landing motion, not a whole-row selection."
+    ]
+  },
+  "M13.WE.P01": {
+    "source_ref": "Authored stroke clusters; Neovim help WORD",
+    "prompt": "ANIMATION\nMark the endpoint of the first cluster, not its first glyph.\n\n│ -- ~~ :: │ → │ -! ~~ :: │\n│ -- ~~ :: │    │ -- ~~ :: │\n\nNEOVIM\nWhat does E add after W reaches --?",
+    "compact_prompt": "ANIMATION\nMark the endpoint of the first cluster, not its first glyph.\n\n│ -- ~~ :: │ → │ -! ~~ :: │\n│ -- ~~ :: │    │ -- ~~ :: │\n\nNEOVIM\nWhat does E add after W reaches --?",
+    "animation_prompt": "ANIMATION\nMark the endpoint of the first cluster, not its first glyph.\n│ -- ~~ :: │ → │ -! ~~ :: │\n│ -- ~~ :: │    │ -- ~~ :: │",
+    "animation_answer": "The second a changes.",
+    "neovim_prompt": "NEOVIM\nWhat does E add after W reaches aa?",
+    "neovim_answer": "After W reaches --, E lands on its final dash for the one-cell replacement.",
+    "choices": [
+      "ANIMATION: Both a glyphs change. | NEOVIM: E starts a selection.",
+      "ANIMATION: The first tilde changes. | NEOVIM: E always skips to the next WORD start.",
+      "ANIMATION: The second dash changes. | NEOVIM: E lands at this WORD's end.",
+      "ANIMATION: The left rail changes. | NEOVIM: E moves to the row's left edge."
+    ],
+    "compact_choices": [
+      "A: Both a glyphs change. · V: E starts a selection.",
+      "A: The first tilde changes. · V: E always skips to the next WORD start.",
+      "A: The second dash changes. · V: E lands at this WORD's end.",
+      "A: The left rail changes. · V: E moves to the row's left edge."
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "E moves the cursor without selecting both characters.",
+      "The next start belongs to W, not E.",
+      "After W reaches --, E lands on its final dash for the one-cell replacement.",
+      "0 reaches the left edge; E follows WORD boundaries."
+    ]
+  },
+  "M15.MAC3.P01": {
+    "source_ref": "Authored four-row material study; Neovim help recording",
+    "prompt": "ANIMATION\nFour material rows change: one during recording and three during replay.\n\n│  : │ → │  . │\n│  : │    │  . │\n\nNEOVIM\nWhy must the recorded macro include j?",
+    "compact_prompt": "ANIMATION\nFour material rows change: one during recording and three during replay.\n\n│  : │ → │  . │\n│  : │    │  . │\n\nNEOVIM\nWhy must the recorded macro include j?",
+    "animation_prompt": "ANIMATION\nFour material rows change: one during recording and three during replay.\n│  : │ → │  . │\n│  : │    │  . │",
+    "animation_answer": "The same edit reaches later rows.",
+    "neovim_prompt": "NEOVIM\nWhy must the recorded macro include j?",
+    "neovim_answer": "Including j moves to the next row each time, so three replays cover the other three marks.",
+    "choices": [
+      "ANIMATION: Only the first mark changes. | NEOVIM: 3@q counts characters to replace.",
+      "ANIMATION: The row is copied below. | NEOVIM: j yanks the current row.",
+      "ANIMATION: Each row becomes wider. | NEOVIM: j inserts a blank cell.",
+      "ANIMATION: The same edit reaches later rows. | NEOVIM: j advances after each recorded change."
+    ],
+    "compact_choices": [
+      "A: Only the first mark changes. · V: 3@q counts characters to replace.",
+      "A: The row is copied below. · V: j yanks the current row.",
+      "A: Each row becomes wider. · V: j inserts a blank cell.",
+      "A: The same edit reaches later rows. · V: j advances after each recorded change."
+    ],
+    "correct_choice": 3,
+    "feedback": [
+      "3@q repeats the whole macro three times, not a three-character replacement.",
+      "j moves the cursor; y would copy text.",
+      "A cursor motion does not widen any material row.",
+      "Including j moves to the next row each time, so three replays cover the other three marks."
+    ]
+  },
+  "M16.ZERO.P01": {
+    "source_ref": "Authored numbered plan metadata; Neovim help copy and CTRL-A",
+    "prompt": "ANIMATION\nCopy the complete three-row A plan ahead of its original.\n\n│ A │\n│aaa│\n│---│\n\nNEOVIM\nIn :1,3t0, why is the destination zero?",
+    "compact_prompt": "ANIMATION\nCopy the complete three-row A plan ahead of its original.\n\n│ A │\n│aaa│\n│---│\n\nNEOVIM\nIn :1,3t0, why is the destination zero?",
+    "animation_prompt": "ANIMATION\nCopy the complete three-row A plan ahead of its original.\n│ A │\n│aaa│\n│---│",
+    "animation_answer": "A copy appears above the first plan.",
+    "neovim_prompt": "NEOVIM\nIn :1,3t0, why is the destination zero?",
+    "neovim_answer": "Line zero is a destination before line one, so all three selected rows are copied there.",
+    "choices": [
+      "ANIMATION: A copy appears above the first plan. | NEOVIM: Zero means before the first line.",
+      "ANIMATION: The first plan is removed. | NEOVIM: Zero asks for no copied lines.",
+      "ANIMATION: The copy follows the last plan. | NEOVIM: Zero means the file's end.",
+      "ANIMATION: Only A is copied. | NEOVIM: Zero chooses the first character."
+    ],
+    "compact_choices": [
+      "A: A copy appears above the first plan. · V: Zero means before the first line.",
+      "A: The first plan is removed. · V: Zero asks for no copied lines.",
+      "A: The copy follows the last plan. · V: Zero means the file's end.",
+      "A: Only A is copied. · V: Zero chooses the first character."
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Line zero is a destination before line one, so all three selected rows are copied there.",
+      "The source range still contains three rows; zero names where to put them.",
+      "$ names the last line; zero names the boundary before the first.",
+      "The range selects complete rows, not a single character."
+    ]
+  },
+  "M16.INC.P01": {
+    "source_ref": "Authored numbered plan metadata; Neovim help copy and CTRL-A",
+    "prompt": "ANIMATION\nOnly the first frame number advances by two.\n\n│FRAME 01│ → │FRAME 03│\n│FRAME 02│    │FRAME 02│\n\nNEOVIM\nWhat does the count in 2 Ctrl-a mean?",
+    "compact_prompt": "ANIMATION\nOnly the first frame number advances by two.\n\n│FRAME 01│ → │FRAME 03│\n│FRAME 02│    │FRAME 02│\n\nNEOVIM\nWhat does the count in 2 Ctrl-a mean?",
+    "animation_prompt": "ANIMATION\nOnly the first frame number advances by two.\n│FRAME 01│ → │FRAME 03│\n│FRAME 02│    │FRAME 02│",
+    "animation_answer": "The first number becomes 03.",
+    "neovim_prompt": "NEOVIM\nWhat does the count in 2 Ctrl-a mean?",
+    "neovim_answer": "The count sets the increment amount for the number under or after the cursor.",
+    "choices": [
+      "ANIMATION: Two frame rows change. | NEOVIM: Increment the first two numbers.",
+      "ANIMATION: The first number becomes 03. | NEOVIM: Increase that number by two.",
+      "ANIMATION: The first label becomes 02. | NEOVIM: Ignore the count.",
+      "ANIMATION: Two a glyphs appear. | NEOVIM: Insert the letters aa."
+    ],
+    "compact_choices": [
+      "A: Two frame rows change. · V: Increment the first two numbers.",
+      "A: The first number becomes 03. · V: Increase that number by two.",
+      "A: The first label becomes 02. · V: Ignore the count.",
+      "A: Two a glyphs appear. · V: Insert the letters aa."
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "Counted Ctrl-a changes one number by an amount; it does not walk through rows.",
+      "The count sets the increment amount for the number under or after the cursor.",
+      "The explicit two is meaningful, so 01 advances to 03 rather than 02.",
+      "Ctrl-a edits a numeric value instead of inserting letter a."
+    ]
+  },
+  "M16.INCH.P01": {
+    "source_ref": "Authored numbered plan metadata; Neovim help copy and CTRL-A",
+    "prompt": "ANIMATION\nThe new label text stays fixed while its first number advances twice.\n\n│TAKE 01│ → │TAKE 03│\n│TAKE 02│    │TAKE 02│\n\nNEOVIM\nWhat must be located before a counted increment?",
+    "compact_prompt": "ANIMATION\nThe new label text stays fixed while its first number advances twice.\n\n│TAKE 01│ → │TAKE 03│\n│TAKE 02│    │TAKE 02│\n\nNEOVIM\nWhat must be located before a counted increment?",
+    "animation_prompt": "ANIMATION\nThe new label text stays fixed while its first number advances twice.\n│TAKE 01│ → │TAKE 03│\n│TAKE 02│    │TAKE 02│",
+    "animation_answer": "Only the first take number changes.",
+    "neovim_prompt": "NEOVIM\nWhat must be located before a counted increment?",
+    "neovim_answer": "A counted increment acts on the number at or after its landing, so locate the nominated TAKE number.",
+    "choices": [
+      "ANIMATION: The label becomes FRAME. | NEOVIM: The increment rewrites the word.",
+      "ANIMATION: Both take rows change. | NEOVIM: The cursor may stay on any row.",
+      "ANIMATION: Only the first take number changes. | NEOVIM: The cursor must reach that number.",
+      "ANIMATION: The first take vanishes. | NEOVIM: Increment deletes the label row."
+    ],
+    "compact_choices": [
+      "A: The label becomes FRAME. · V: The increment rewrites the word.",
+      "A: Both take rows change. · V: The cursor may stay on any row.",
+      "A: Only the first take number changes. · V: The cursor must reach that number.",
+      "A: The first take vanishes. · V: Increment deletes the label row."
+    ],
+    "correct_choice": 2,
+    "feedback": [
+      "The command changes the numeric value, not the surrounding label word.",
+      "Starting on another row risks changing its number instead.",
+      "A counted increment acts on the number at or after its landing, so locate the nominated TAKE number.",
+      "Numeric increment preserves the label row rather than deleting it."
+    ]
+  },
+  "M17.LITDOT.P01": {
+    "source_ref": "Authored dot and backslash stroke studies; Neovim help pattern",
+    "prompt": "ANIMATION\nChange only the dot on the acting row.\n\n│ o.v │ → │ oXv │\n│ o.v │    │ o.v │\n\nNEOVIM\nWhy use \\. instead of a bare dot in the pattern?",
+    "compact_prompt": "ANIMATION\nChange only the dot on the acting row.\n\n│ o.v │ → │ oXv │\n│ o.v │    │ o.v │\n\nNEOVIM\nWhy use \\. instead of a bare dot in the pattern?",
+    "animation_prompt": "ANIMATION\nChange only the dot on the acting row.\n│ o.v │ → │ oXv │\n│ o.v │    │ o.v │",
+    "animation_answer": "Only the punctuation changes.",
+    "neovim_prompt": "NEOVIM\nWhy use \\. instead of a bare dot in the pattern?",
+    "neovim_answer": "A bare dot can match any character; \\. specifically matches the dot glyph.",
+    "choices": [
+      "ANIMATION: The dot stays fixed. | NEOVIM: Backslash disables substitution.",
+      "ANIMATION: All glyphs become X. | NEOVIM: Backslash makes the dot match everything.",
+      "ANIMATION: A new row appears. | NEOVIM: Backslash inserts a line break.",
+      "ANIMATION: Only the punctuation changes. | NEOVIM: Backslash makes the dot literal."
+    ],
+    "compact_choices": [
+      "A: The dot stays fixed. · V: Backslash disables substitution.",
+      "A: All glyphs become X. · V: Backslash makes the dot match everything.",
+      "A: A new row appears. · V: Backslash inserts a line break.",
+      "A: Only the punctuation changes. · V: Backslash makes the dot literal."
+    ],
+    "correct_choice": 3,
+    "feedback": [
+      "The escaped pattern still performs a substitution when the literal dot matches.",
+      "Escaping the dot narrows the match rather than broadening it.",
+      "The pattern escape is not an inserted line break.",
+      "A bare dot can match any character; \\. specifically matches the dot glyph."
+    ]
+  },
+  "M17.LITBS.P01": {
+    "source_ref": "Authored dot and backslash stroke studies; Neovim help pattern",
+    "prompt": "ANIMATION\nReplace one drawn backslash, leaving the neighboring letters.\n\n│ o\\v │ → │ oXv │\n│ o\\v │    │ o\\v │\n\nNEOVIM\nWhy does the pattern contain two backslashes?",
+    "compact_prompt": "ANIMATION\nReplace one drawn backslash, leaving the neighboring letters.\n\n│ o\\v │ → │ oXv │\n│ o\\v │    │ o\\v │\n\nNEOVIM\nWhy does the pattern contain two backslashes?",
+    "animation_prompt": "ANIMATION\nReplace one drawn backslash, leaving the neighboring letters.\n│ o\\v │ → │ oXv │\n│ o\\v │    │ o\\v │",
+    "animation_answer": "One drawn slash is matched.",
+    "neovim_prompt": "NEOVIM\nWhy does the pattern contain two backslashes?",
+    "neovim_answer": "The doubled pattern represents one literal backslash character to find.",
+    "choices": [
+      "ANIMATION: One drawn backslash is matched. | NEOVIM: The first backslash escapes the second.",
+      "ANIMATION: Two rows are matched. | NEOVIM: Each backslash chooses a row.",
+      "ANIMATION: Two X glyphs appear. | NEOVIM: Each backslash requests a replacement.",
+      "ANIMATION: The v changes. | NEOVIM: Two backslashes make v the pattern."
+    ],
+    "compact_choices": [
+      "A: One drawn backslash is matched. · V: The first backslash escapes the second.",
+      "A: Two rows are matched. · V: Each backslash chooses a row.",
+      "A: Two X glyphs appear. · V: Each backslash requests a replacement.",
+      "A: The v changes. · V: Two backslashes make v the pattern."
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "The doubled pattern represents one literal backslash character to find.",
+      "Pattern backslashes do not select buffer rows.",
+      "The replacement field supplies X once per matched backslash, not once per pattern byte.",
+      "The v is neighboring drawing text, not part of this literal-backslash pattern."
+    ]
+  },
+  "M19.VRH.P01": {
+    "source_ref": "Pallas right-face expression; Neovim help Virtual Replace",
+    "prompt": "ANIMATION\nChange the right ghost's expression while preserving its closing contour.\n\n│  (- -)   │ → │  (> <)   │\n│`-´ ‾ /   │    │`-´ ‾ /   │\n\nNEOVIM\nWhy end Virtual Replace after the three expression cells?",
+    "compact_prompt": "ANIMATION\nChange the right ghost's expression while preserving its closing contour.\n\n│  (- -)   │ → │  (> <)   │\n│`-´ ‾ /   │    │`-´ ‾ /   │\n\nNEOVIM\nWhy end Virtual Replace after the three expression cells?",
+    "animation_prompt": "ANIMATION\nChange the right ghost's expression while preserving its closing contour.\n│  (- -)   │ → │  (> <)   │\n│`-´ ‾ /   │    │`-´ ‾ /   │",
+    "animation_answer": "The expression changes; ) stays fixed.",
+    "neovim_prompt": "NEOVIM\nWhy end Virtual Replace after the three expression cells?",
+    "neovim_answer": "The stop boundary protects the closing parenthesis and every remaining contour cell.",
+    "choices": [
+      "ANIMATION: The whole ghost changes. | NEOVIM: Virtual Replace stops at the row's left rail.",
+      "ANIMATION: The expression changes; ) stays fixed. | NEOVIM: Escape stops further overwriting.",
+      "ANIMATION: The row grows three cells. | NEOVIM: Virtual Replace inserts before the eyes.",
+      "ANIMATION: The closing parenthesis changes too. | NEOVIM: Stopping after the expression is unnecessary."
+    ],
+    "compact_choices": [
+      "A: The whole ghost changes. · V: Virtual Replace stops at the row's left rail.",
+      "A: The expression changes; ) stays fixed. · V: Escape stops further overwriting.",
+      "A: The row grows three cells. · V: Virtual Replace inserts before the eyes.",
+      "A: The closing parenthesis changes too. · V: Stopping after the expression is unnecessary."
+    ],
+    "correct_choice": 1,
+    "feedback": [
+      "The mode starts at the nominated eye; the left rail is not its stop boundary.",
+      "The stop boundary protects the closing parenthesis and every remaining contour cell.",
+      "Virtual Replace overwrites display cells rather than inserting an extra expression before them.",
+      "Continuing would overwrite stable contour cells outside the expression."
+    ]
+  },
+  "M2.TEN.P01": {
+    "source_ref": "Authored three-face line-count study; Neovim help counted G",
+    "prompt": "ANIMATION\nThe cursor visits the tenth supplied row while every face cell stays fixed.\n\n│ /---\\ │\n│  .    │\n│ \\___/ │\n│ /---\\ │\n│  O    │\n│ \\___/ │\n│ /---\\ │\n│  -    │\n│ \\___/ │\n\nNEOVIM\nWhy is 10G one counted line jump?",
+    "compact_prompt": "ANIMATION\nVisit row ten without editing the faces.\n\n│ /---\\ │\n│  O    │\n│ \\___/ │\n│ /---\\ │\n│  -    │\n│ \\___/ │\n\nNEOVIM\nRead 10G as one count.",
+    "animation_prompt": "ANIMATION\nA counted jump reaches the tenth row; all three supplied faces remain fixed.\n│ /---\\ │\n│  O    │\n│ \\___/ │",
+    "animation_answer": "The cursor moves only; no face glyph changes.",
+    "neovim_prompt": "NEOVIM\nWhy is 10G one counted line jump?",
+    "neovim_answer": "The two digits form the count ten, and G jumps to that line from the top; the 0 is not a separate command.",
+    "choices": [
+      "ANIMATION: The cursor moves to row ten and art stays fixed. | NEOVIM: 10 is one count and G jumps to line ten.",
+      "ANIMATION: The tenth face is deleted. | NEOVIM: 1 selects a line and 0 deletes it.",
+      "ANIMATION: Two rows are copied. | NEOVIM: 10 means one then zero as separate motions.",
+      "ANIMATION: Every face shifts down. | NEOVIM: G always jumps to the last line only."
+    ],
+    "compact_choices": [
+      "A: cursor only · V: 10=count, G=line ten",
+      "A: tenth face deleted · V: 1 selects, 0 deletes",
+      "A: two rows copied · V: 1 then 0 motions",
+      "A: every face shifts · V: G=last only"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: 10 is one two-digit count, so G lands on line ten without editing.",
+      "10G is navigation; it does not delete a face.",
+      "The digits are parsed as one count rather than two separate motions.",
+      "A counted G targets line ten; an uncounted G alone means the last line."
+    ]
+  },
+  "M4.SIL.P01": {
+    "source_ref": "Authored missile comparison setup; Neovim help :silent and :read",
+    "prompt": "ANIMATION\nThe working missile remains unchanged while a disposable reference is read without a message banner.\n\n│  ____/  │\n│< / / |::'│\n│  ¯¯¯¯\\  │\n\nNEOVIM\nWhat does :silent add to the reference read?",
+    "compact_prompt": "ANIMATION\nRead a reference quietly; working art stays fixed.\n\n│  ____/  │\n│< / / |::'│\n│  ¯¯¯¯\\  │\n\nNEOVIM\nWhat does :silent do?",
+    "animation_prompt": "ANIMATION\nThe reference appears without a command-line message; the working missile remains unchanged.\n│  ____/  │\n│< / / |::'│\n│  ¯¯¯¯\\  │",
+    "animation_answer": "Only the disposable reference view is populated; no missile cell changes.",
+    "neovim_prompt": "NEOVIM\nWhat does :silent add to the reference read?",
+    "neovim_answer": ":silent suppresses the informational read message; it does not change what :read # places in the disposable window.",
+    "choices": [
+      "ANIMATION: Reference loads quietly; working art stays fixed. | NEOVIM: :silent suppresses the read message while :read # still imports the alternate file.",
+      "ANIMATION: The missile is erased. | NEOVIM: :silent deletes every line before reading.",
+      "ANIMATION: Both windows are edited together. | NEOVIM: :silent binds their buffers.",
+      "ANIMATION: The reference is never loaded. | NEOVIM: :silent cancels :read #."
+    ],
+    "compact_choices": [
+      "A: quiet reference · V: hide message, still read",
+      "A: missile erased · V: delete before read",
+      "A: both edit · V: bind buffers",
+      "A: no reference · V: cancel read"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: :silent changes the message display, not the reference content or working buffer.",
+      ":silent does not delete the working missile.",
+      "Buffer comparison and scroll binding are separate operations.",
+      "The alternate file is still read; only the informational message is suppressed."
+    ]
+  },
+  "M4.TRIM.P01": {
+    "source_ref": "Authored four-row reference trim; Neovim help linewise delete",
+    "prompt": "ANIMATION\nThe disposable reference loses one duplicate row while its remaining three-row pose stays registered.\n\n│  ____/  │\n│< / / |::'│\n│  ¯¯¯¯\\  │\n│  ----   │\n\nNEOVIM\nWhy does ggdd remove only the imported first line?",
+    "compact_prompt": "ANIMATION\nTrim one duplicate reference row.\n\n│< / / |::'│\n│  ¯¯¯¯\\  │\n│  ----   │\n\nNEOVIM\nRead ggdd as a linewise delete.",
+    "animation_prompt": "ANIMATION\nThe first imported line disappears; the lower reference rows stay in their original order.\n│< / / |::'│\n│  ¯¯¯¯\\  │\n│  ----   │",
+    "animation_answer": "One complete line is removed from the disposable reference.",
+    "neovim_prompt": "NEOVIM\nWhy does ggdd remove only the imported first line?",
+    "neovim_answer": "gg returns to the first line and dd deletes that complete linewise unit, leaving the other rows untouched.",
+    "choices": [
+      "ANIMATION: Only the first reference row is removed. | NEOVIM: gg lands on line one and dd deletes that whole line.",
+      "ANIMATION: Every reference row is removed. | NEOVIM: dd always deletes the whole buffer.",
+      "ANIMATION: The row is shortened at the cursor. | NEOVIM: dd is a character delete like x.",
+      "ANIMATION: The working missile changes too. | NEOVIM: ggdd deletes matching lines in both windows."
+    ],
+    "compact_choices": [
+      "A: first row only · V: gg + whole-line dd",
+      "A: all reference rows · V: dd deletes buffer",
+      "A: row shortened · V: dd = x",
+      "A: working changes · V: both windows delete"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: gg chooses the imported first row and dd removes that one whole line.",
+      "A single dd is linewise, not a whole-buffer wipe.",
+      "dd deletes a complete line; it does not act like characterwise x.",
+      "The disposable reference buffer is the acting window; the working missile is separate."
+    ]
+  },
+  "M4.SCB.P01": {
+    "source_ref": "Authored two-window comparison setup; Neovim help scrollbind",
+    "prompt": "ANIMATION\nReference and working rows scroll together while the missile remains unchanged.\n\n│  ____/  │ ⇄ │  ____/  │\n│< / / |::'│   │< / / |::.│\n│  ¯¯¯¯\\  │   │  ¯¯¯¯\\  │\n\nNEOVIM\nWhat does :set scrollbind establish?",
+    "compact_prompt": "ANIMATION\nKeep reference and working rows aligned.\n\n│< / / |::'│ ⇄ │< / / |::.│\n│  ¯¯¯¯\\  │   │  ¯¯¯¯\\  │\n\nNEOVIM\nWhat does scrollbind do?",
+    "animation_prompt": "ANIMATION\nThe two missile views keep corresponding rows aligned during inspection.\n│< / / |::'│ ⇄ │< / / |::.│\n│  ¯¯¯¯\\  │   │  ¯¯¯¯\\  │",
+    "animation_answer": "Only viewport alignment changes; the art cells stay fixed.",
+    "neovim_prompt": "NEOVIM\nWhat does :set scrollbind establish?",
+    "neovim_answer": "It binds this window's scrolling to the comparison window so corresponding rows remain aligned while inspecting a diff.",
+    "choices": [
+      "ANIMATION: Corresponding rows stay aligned and art stays fixed. | NEOVIM: :set scrollbind couples viewport scrolling between the comparison windows.",
+      "ANIMATION: Both missile buffers become identical. | NEOVIM: scrollbind copies edits between windows.",
+      "ANIMATION: Rows deliberately drift apart. | NEOVIM: scrollbind disables synchronized scrolling.",
+      "ANIMATION: The reference is closed. | NEOVIM: scrollbind is a window-delete command."
+    ],
+    "compact_choices": [
+      "A: rows aligned · V: bind viewport scrolling",
+      "A: buffers identical · V: copy edits",
+      "A: rows drift · V: disable sync",
+      "A: reference closes · V: delete window"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: scrollbind synchronizes viewport movement, not buffer contents.",
+      "Diff highlighting does not mirror edits between buffers.",
+      "The point of binding is alignment, not deliberate drift.",
+      "Window teardown uses :q or :bwipeout!, not scrollbind."
+    ]
+  },
+  "M11.GP.P01": {
+    "source_ref": "Supplied Frog source frames; Neovim help undo tree g+",
+    "prompt": "ANIMATION\nThe abandoned Frog half-blink frame is visited and then the chosen shut-eye frame returns.\n\n│     ,=- │ → │     ,-- │\n│  (\\/ .-)│   │  (\\/ .-)│\n│  ´ ·-\\´\\│   │  ´ ·-\\´\\│\n\nNEOVIM\nWhat does the separate g+ step restore?",
+    "compact_prompt": "ANIMATION\nReturn from the older Frog half-blink source frame to shut-eye.\n\n│     ,=- │ → │     ,-- │\n│  (\\/ .-)│   │  (\\/ .-)│\n│  ´ ·-\\´\\│   │  ´ ·-\\´\\│\n\nNEOVIM\nWhat does g+ restore?",
+    "animation_prompt": "ANIMATION\nThe chosen shut-eye frame returns after the older half-blink source state is inspected.\n│     ,=- │ → │     ,-- │\n│  (\\/ .-)│   │  (\\/ .-)│\n│  ´ ·-\\´\\│   │  ´ ·-\\´\\│",
+    "animation_answer": "The selected newer dash state returns without duplicating the eye.",
+    "neovim_prompt": "NEOVIM\nWhat does the separate g+ step restore?",
+  "neovim_answer": "g+ walks forward to the newer chosen shut-eye source state after g- visited the abandoned half-blink frame.",
+    "choices": [
+    "ANIMATION: The chosen shut-eye frame returns. | NEOVIM: g+ moves forward to the newer history state.",
+      "ANIMATION: The frog moves down one row. | NEOVIM: g+ is a vertical cursor motion.",
+    "ANIMATION: The half-blink frame is copied beside shut-eye. | NEOVIM: g+ pastes the old branch.",
+      "ANIMATION: The newer state is discarded. | NEOVIM: g+ is another undo step backward."
+    ],
+    "compact_choices": [
+    "A: shut-eye returns · V: g+ moves newer",
+      "A: frog moves down · V: cursor motion",
+      "A: eye copied · V: paste branch",
+      "A: newer discarded · V: undo backward"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: g+ returns forward to the chosen newer state after the older visit.",
+      "History travel changes a whole buffer state, not the cursor row.",
+      "No eye is pasted; the existing newer state is revisited.",
+      "g+ moves forward in time; g- is the backward history step."
+    ]
+  },
+  "M13.BEB.P01": {
+    "source_ref": "Authored three-cluster WORD-boundary study; Neovim help W E B",
+    "prompt": "ANIMATION\nThe first, middle, and third material clusters receive one-cell marks; both support rows remain exact.\n\n    BEFORE           AFTER\n    │| aa bb cc |│   │| aa bb cc |│\n    │| aa bb cc |│   │| a! +b ?c |│\n    │| aa bb cc |│   │| aa bb cc |│\n\nNEOVIM\nWhy is B the final boundary step after the counted 2W?",
+    "compact_prompt": "ANIMATION\nReturn one WORD boundary to mark the middle cluster.\n\n    │| aa bb cc |│\n    │| a! +b ?c |│\n    │| aa bb cc |│\n\nNEOVIM\nUse B after 2W.",
+    "animation_prompt": "ANIMATION\nAll three named clusters change on the middle row; support rows stay exact copies.\n\n    BEFORE           AFTER\n    │| aa bb cc |│   │| aa bb cc |│\n    │| aa bb cc |│   │| a! +b ?c |│\n    │| aa bb cc |│   │| aa bb cc |│",
+    "animation_answer": "Three bounded one-cell edits occur on the acting row without collapsing its spaces.",
+    "neovim_prompt": "NEOVIM\nWhy is B the final boundary step after the counted 2W?",
+    "neovim_answer": "After 2W reaches the third cluster, B returns to the preceding middle-cluster WORD start so r+ marks that cluster in place.",
+    "choices": [
+      "ANIMATION: All three middle-row clusters change; supports stay exact. | NEOVIM: B returns one WORD start after 2W, then r+ marks the middle cluster.",
+      "ANIMATION: The spaces collapse between clusters. | NEOVIM: B deletes the gap before r+.",
+      "ANIMATION: Support rows change with the middle row. | NEOVIM: B moves vertically to the lower row.",
+      "ANIMATION: Only the first cluster changes. | NEOVIM: B repeats the original W start instead of returning."
+    ],
+    "compact_choices": [
+      "A: three clusters · V: B back one WORD, then r+",
+      "A: gaps collapse · V: B deletes gap",
+      "A: supports change · V: B moves down",
+      "A: first only · V: B repeats W"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: B returns one WORD start after 2W so the middle cluster can be edited in place.",
+      "B is motion, not deletion; cluster spacing remains fixed.",
+      "B stays on the acting row and does not select a support row.",
+      "The first cluster was already handled; B supplies the middle-cluster return."
+    ]
+  }
+}

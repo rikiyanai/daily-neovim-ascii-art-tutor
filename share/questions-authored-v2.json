@@ -7,13 +7,13 @@
     "neovim_prompt": "Read 5j as count plus motion.",
     "neovim_answer": "5 is the count; j is move down one row; together they move down five rows.",
     "choices": [
-      "ANIMATION: Five canopy cells are erased. | NEOVIM: 5 is a line address and j deletes that line.",
+      "ANIMATION: Five canopy cells are erased. | NEOVIM: 5 is a line selector and j deletes that line.",
       "ANIMATION: The art stays unchanged while the cursor moves. | NEOVIM: 5 is a count and j is the down-one-row motion, so 5j moves down five rows.",
       "ANIMATION: The whole canopy moves down five rows. | NEOVIM: 5j inserts five blank lines below the cursor.",
       "ANIMATION: Only the fifth row is replaced. | NEOVIM: j is an editing operator that uses 5 as its target row."
     ],
     "compact_choices": [
-      "A: erase five cells · V: address and delete",
+      "A: erase five cells · V: select and delete",
       "A: art unchanged · V: count 5 + down motion j",
       "A: move figure · V: insert five lines",
       "A: replace row 5 · V: j is an operator"
@@ -27,28 +27,28 @@
     ]
   },
   "M0.01.P01": {
-    "prompt": "ANIMATION\nCompare the sourced three-row Fireworks radial shell. Only its star core should dim; `\\¡/`, `/!\\`, both em-dash spokes, and both outer rays stay fixed.\n\n    BEFORE       AFTER\n  1 │    \\¡/│    │    \\¡/│\n  2 │   -—*—-│    │   -—o—-│\n  3 │    /!\\│    │    /!\\│\n\nNEOVIM\nWhich reading explains the edit you just made?",
-    "compact_prompt": "ANIMATION\nDim only the Fireworks star core.\n\n  │-—*—-│ → │-—o—-│\n\nNEOVIM\nWhich command changes one cell without shifting either spoke?",
-    "animation_prompt": "The core changes from * to o while every Fireworks accent and ray remains registered.\n\n  │    \\¡/│    │    \\¡/│\n  │   -—*—-│ →  │   -—o—-│\n  │    /!\\│    │    /!\\│",
+    "prompt": "ANIMATION\nCompare the sourced three-row Fireworks radial shell. Only its star core should dim; `\\¡/`, `/!\\`, both em-dash spokes, and both outer rays stay fixed.\n\n    BEFORE       AFTER\n  1 │    \\¡/ │    │    \\¡/ │\n  2 │   -—*—-│    │   -—o—-│\n  3 │    /!\\ │    │    /!\\ │\n\nNEOVIM\nWhich reading explains the edit you just made?",
+    "compact_prompt": "ANIMATION\nDim only the Fireworks star core.\n\n  │-—*—-│ → │-—o—-│\n\nNEOVIM\nWhich new command changed one cell?",
+    "animation_prompt": "The core changes from * to o while every Fireworks accent and ray remains registered.\n\n  │    \\¡/ │    │    \\¡/ │\n  │   -—*—-│ →  │   -—o—-│\n  │    /!\\ │    │    /!\\ │",
     "animation_answer": "Replace only the core; preserve all surrounding cells.",
-    "neovim_prompt": "Identify the one-cell overwrite operation.",
-    "neovim_answer": "f* finds the source star and ro replaces that one character without changing row width.",
+    "neovim_prompt": "You already practised j0 and f*. What does ro do after those motions?",
+    "neovim_answer": "r followed by o replaces the current star cell with o; the earlier j0f* motions only position the cursor.",
     "choices": [
-      "ANIMATION: The star core dims and every accent remains registered. | NEOVIM: f* finds the star and ro overwrites that one cell with o.",
-      "ANIMATION: The right spoke moves one column right. | NEOVIM: f* only moves to the star; stopping there cannot change or shift any cell.",
+      "ANIMATION: The star core dims and every accent remains registered. | NEOVIM: 0 anchors column 1 before f* finds the star, and ro overwrites that one cell with o.",
+      "ANIMATION: The right spoke moves one column right. | NEOVIM: 0 jumps to line zero and f* only moves to the star; no cell is replaced.",
       "ANIMATION: The entire acting row disappears. | NEOVIM: j only moves down one row; it cannot delete the acting row.",
       "ANIMATION: A second Fireworks frame is added below. | NEOVIM: ro overwrites one cursor cell; it cannot create three new rows."
     ],
     "compact_choices": [
-      "A: star dims; accents fixed · V: find star, replace one cell",
-      "A: right spoke shifts · V: find motion only",
+      "A: star dims; accents fixed · V: 0 anchors, f* finds, ro replaces",
+      "A: right spoke shifts · V: 0 means line zero; f* only moves",
       "A: acting row deleted · V: down motion only",
       "A: second frame added · V: one-cell replace"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct. r overwrites one cell, so fixed-width registration survives.",
-      "f. is only the landmark motion; without r and its replacement character, the buffer is unchanged.",
+      "Correct. 0 supplies the line-start anchor before f*, and r overwrites one cell, so fixed-width registration survives.",
+      "0 means column 1 here, not a line-zero jump; f* is only the landmark motion, so the stated replacement still matters.",
       "j is movement only; it cannot remove the acting row.",
       "ro owns one existing cell and cannot add a second multi-row frame."
     ]
@@ -110,36 +110,36 @@
   "M0.SR.P01": {
     "prompt": "ANIMATION\nOnly the Fireworks core on row 2 brightens; `\\¡/`, `/!\\`, the em-dash spokes, and outer rays remain identical.\n\n    BEFORE       AFTER\n  1 │    \\¡/│    │    \\¡/│\n  2 │   -—o—-│    │   -—O—-│\n  3 │    /!\\│    │    /!\\│\n\nNEOVIM\nRead :2s/o/O/g from left to right.",
     "compact_prompt": "ANIMATION\nBrighten the o on row 2 only.\n\n  │-—o—-│ → │-—O—-│\n\nNEOVIM\nDecode :2s/o/O/g.",
-    "animation_prompt": "The addressed core brightens while both contour rows and both em-dash spokes stay registered.\n\n  │    \\¡/│    │    \\¡/│\n  │   -—o—-│ →  │   -—O—-│\n  │    /!\\│    │    /!\\│",
+    "animation_prompt": "The selected core brightens while both contour rows and both em-dash spokes stay registered.\n\n  │    \\¡/│    │    \\¡/│\n  │   -—o—-│ →  │   -—O—-│\n  │    /!\\│    │    /!\\│",
     "animation_answer": "Brighten every matching core on only row 2.",
-    "neovim_prompt": "Decode address, substitute, pattern, replacement, and flag.",
-    "neovim_answer": "2 addresses row 2; s substitutes; o is the pattern; O is the replacement; g means every match on that row.",
+    "neovim_prompt": "Decode line selection, substitute, pattern, replacement, and flag.",
+    "neovim_answer": "2 selects row 2; s substitutes; o is the pattern; O is the replacement; g means every match on that row.",
     "choices": [
       "ANIMATION: Brighten every o anywhere in the file. | NEOVIM: 2 is a repeat count, so the substitution runs twice on every row.",
       "ANIMATION: Brighten only the first o on row 2. | NEOVIM: g moves the cursor to the first match and stops.",
-      "ANIMATION: Brighten every o on row 2 and leave other rows alone. | NEOVIM: 2 is the row address, s substitutes o with O, and g means every match on that row.",
-      "ANIMATION: Delete row 2 and insert a new bright row. | NEOVIM: s removes the addressed line before O opens a replacement line."
+      "ANIMATION: Brighten every o on row 2 and leave other rows alone. | NEOVIM: 2 is the row number, s substitutes o with O, and g means every match on that row.",
+      "ANIMATION: Delete row 2 and insert a new bright row. | NEOVIM: s removes the selected line before O opens a replacement line."
     ],
     "compact_choices": [
       "A: whole file · V: repeat twice",
       "A: first match only · V: g stops",
-      "A: every o on row 2 · V: address + substitute + all matches",
+      "A: every o on row 2 · V: line selection + substitute + all matches",
       "A: replace whole line · V: delete then open"
     ],
     "correct_choice": 2,
     "feedback": [
-      "A leading 2 after the colon is a line address, not a repeat count or whole-file scope.",
-      "Without g only the first match changes; g means all matches on the addressed line.",
-      "Correct. The command has an address, command, pattern, replacement, and flag.",
-      "s is substitution within the addressed line; it does not delete the line."
+      "A leading 2 after the colon is a line selector, not a repeat count or whole-file scope.",
+      "Without g only the first match changes; g means all matches on the selected line.",
+      "Correct. The command has a line selection, command, pattern, replacement, and flag.",
+      "s is substitution within the selected line; it does not delete the line."
     ]
   },
   "M0.02.P01": {
     "prompt": "ANIMATION\nThe strip grows from one dim Fireworks frame to dim followed by bright. The copied shell must keep every source accent.\n\n    BEFORE       AFTER\n  1 │    \\¡/│    │    \\¡/│\n  2 │   -—o—-│    │   -—o—-│\n  3 │    /!\\│    │    /!\\│\n  4 │         │    │    \\¡/│\n  5 │         │    │   -—O—-│\n  6 │         │    │    /!\\│\n\nNEOVIM\nWhich explanation matches gg3yyGp:4,6s/o/O/g?",
-    "compact_prompt": "ANIMATION\nCopy the dim Fireworks shell; brighten only the copy.\n\n  │-—o—-│\n       ↓ copy + bounded edit\n  │-—o—-│ │-—O—-│\n\nNEOVIM\nDecode the copy, then the addressed substitute.",
+    "compact_prompt": "ANIMATION\nCopy the dim Fireworks shell; brighten only the copy.\n\n  │-—o—-│\n       ↓ copy + bounded edit\n  │-—o—-│ │-—O—-│\n\nNEOVIM\nDecode the copy, then the substitute on named rows.",
     "animation_prompt": "The new Fireworks pose retains `\\¡/`, `/!\\`, and both em-dash spokes; only its core brightens.\n\n  │   -—o—-│ → │   -—o—-│ │   -—O—-│",
     "animation_answer": "Append a full copy, then brighten the copied core only.",
-    "neovim_prompt": "Separate the Normal-mode frame copy from the Ex range edit.",
+    "neovim_prompt": "Separate the Normal-mode frame copy from the :s range edit.",
     "neovim_answer": "gg3yyGp copies the first three rows below; :4,6s/o/O/g limits substitution to copied rows 4–6.",
     "choices": [
       "ANIMATION: Append a full copy and brighten only its core. | NEOVIM: gg3yyGp copies three lines below; :4,6s/o/O/g substitutes only inside copied rows 4–6.",
@@ -155,7 +155,7 @@
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct. The Normal command makes the frame; the Ex range confines the brightness edit to the copy.",
+      "Correct. The Normal command makes the frame; the : command range confines the brightness edit to the copy.",
       "Commands before : are executed; the copy is not discarded.",
       "3yy is linewise and copies three complete rows.",
       "4,6 is the inclusive range from row 4 through row 6, not rows 1 through 6."
@@ -193,13 +193,13 @@
     "compact_prompt": "ANIMATION\nCopy the complete Fireworks flare as a hold.\n\n  │=—O—=│ → │=—O—=│ │=—O—=│\n\nNEOVIM\nDecode :1,3t$.",
     "animation_prompt": "The complete radial flare is duplicated below as a deliberate hold; its accents remain part of the copied object.\n\n  │    \\¡/│\n  │   =—O—=│ ×2\n  │    /!\\│",
     "animation_answer": "Duplicate rows 1–3 after the final row.",
-    "neovim_prompt": "Decode the Ex source range, copy command, and destination.",
+    "neovim_prompt": "Decode the : command source range, copy command, and destination.",
     "neovim_answer": "1,3 is the source range; t copies it; $ is the destination after the last line.",
     "choices": [
       "ANIMATION: Copy only row 3 to the top. | NEOVIM: 1,3 is a count and $ means the first line.",
       "ANIMATION: Move the flare so the original disappears. | NEOVIM: t removes the source range after transferring it.",
       "ANIMATION: Duplicate rows 1–3 after the last line as a complete hold frame. | NEOVIM: 1,3 is the source range, t copies it, and $ names the last-line destination.",
-      "ANIMATION: Reverse the three flare rows. | NEOVIM: t transposes the addressed range before placing it."
+      "ANIMATION: Reverse the three flare rows. | NEOVIM: t transposes the explicit range before placing it."
     ],
     "compact_choices": [
       "A: row 3 to top · V: count, first line",
@@ -210,14 +210,14 @@
     "correct_choice": 2,
     "feedback": [
       "1,3 is an inclusive line range, and $ means the last line.",
-      "The Ex t command copies; :move is the command that relocates lines.",
+      "The :t command copies; :move is the command that relocates lines.",
       "Correct. Source range, copy command, and destination describe one whole-frame append.",
       "t is short for :copy; it does not reverse the source rows."
     ]
   },
   "M0.05.P01": {
     "prompt": "ANIMATION\nA second identical Fireworks flare is intentional: two consecutive complete radial shells create a brief hold before the settle.\n\n    BEFORE       AFTER\n  7 │    \\¡/│    │    \\¡/│\n  8 │   =—O—=│    │   =—O—=│\n  9 │    /!\\│    │    /!\\│\n 10 │         │    │    \\¡/│\n 11 │         │    │   =—O—=│\n 12 │         │    │    /!\\│\n\nNEOVIM\nYou were asked to use ONE method. Which statement correctly compares the accepted methods?",
-    "compact_prompt": "ANIMATION\nThe duplicate radial shell is a timed hold, not an accidental dead frame.\n\n  │=—O—=│ → │=—O—=│ │=—O—=│\n\nNEOVIM\nCompare counted yank/put with addressed :t. Use one, not both.",
+    "compact_prompt": "ANIMATION\nThe duplicate radial shell is a timed hold, not an accidental dead frame.\n\n  │=—O—=│ → │=—O—=│ │=—O—=│\n\nNEOVIM\nCompare counted yank/put with :t with an explicit range. Use one, not both.",
     "animation_prompt": "The added complete Fireworks flare intentionally extends its screen time by one frame.\n\n  │    \\¡/│\n  │   =—O—=│ ×2\n  │    /!\\│",
     "animation_answer": "Add exactly one complete duplicate flare as an intentional hold.",
     "neovim_prompt": "Compare 7G3yyGp with :7,9t$ without performing both.",
@@ -247,24 +247,24 @@
     "compact_prompt": "ANIMATION\nChange every comma on the current canopy row.\n\n  │. ,,*,, .│ → │. ::*:: .│\n\nNEOVIM\nDecode :s/,/:/g on row 2.",
     "animation_prompt": "All four comma cells on the current material row change; both neighbouring Fireworks rows stay fixed.\n\n  │  .,,*,,.│ → │  .::*::.│",
     "animation_answer": "Change every comma on only the current line.",
-    "neovim_prompt": "Explain the implicit current-line address and g flag.",
-    "neovim_answer": "With no explicit address, :s uses the current line; g replaces every comma on that line.",
+    "neovim_prompt": "Explain the implicit current-line selector and g flag.",
+    "neovim_answer": "With no explicit line selection, :s uses the current line; g replaces every comma on that line.",
     "choices": [
       "ANIMATION: Change all four commas and preserve every other canopy cell. | NEOVIM: :s uses the current line implicitly, and g replaces every match on that line.",
       "ANIMATION: Change only the first comma. | NEOVIM: g means stop after the first match.",
-      "ANIMATION: Change punctuation throughout the complete file. | NEOVIM: an omitted address means all lines.",
+      "ANIMATION: Change punctuation throughout the complete file. | NEOVIM: an omitted range means all lines.",
       "ANIMATION: Replace the complete middle row. | NEOVIM: s is a whole-line rewrite command."
     ],
     "compact_choices": [
       "A: all commas only · V: current line, every match",
       "A: first comma only · V: g stops",
-      "A: whole file · V: omitted address means all lines",
+      "A: whole file · V: omitted range means all lines",
       "A: whole row replaced · V: s rewrites line"
     ],
     "correct_choice": 0,
     "feedback": [
       "Correct. The cursor supplies the line scope; g supplies all matches within that scope.",
-      "g does the opposite: it continues through every match on the addressed line.",
+      "g does the opposite: it continues through every match on the selected line.",
       "Whole-file scope must be written explicitly as %.",
       "s replaces matching text, not the whole current line."
     ]
@@ -491,7 +491,7 @@
     "animation_prompt": "The final two complete radial shells are identical because their declared role is a brief flare hold.\n\n  │-—O—-│ → │=—O—=│ │=—O—=│",
     "animation_answer": "Treat the duplicate as one deliberate hold frame, not accidental repetition.",
     "neovim_prompt": "Copy one complete three-line range once.",
-    "neovim_answer": "Either a three-line yank/put or one addressed :t copy creates the single added hold.",
+    "neovim_answer": "Either a three-line yank/put or one :t copy with an explicit range creates the single added hold.",
     "choices": [
       "ANIMATION: F2 and F3 make a deliberate two-frame flare hold. | NEOVIM: Copy the complete three-row F2 once with one accepted whole-frame method.",
       "ANIMATION: Identical adjacent frames can never be valid. | NEOVIM: Delete F3 regardless of the stated timing intent.",
@@ -571,23 +571,23 @@
     "compact_prompt": "ANIMATION\nKeep the dim row; strengthen only the new flare.\n\n  row 2 │-—o—-│ stays\n  row 8 │-—O—-│ → │=—O—=│\n\nNEOVIM\nChoose row scope, not whole-file scope.",
     "animation_prompt": "The outer-ray edit owns row 8 only; changing row 2 destroys the dim Fireworks state.\n\n  row 2 │-—o—-│ stays\n  row 8 │-—O—-│ → │=—O—=│",
     "animation_answer": "Widen the new flare row and preserve the earlier dim row.",
-    "neovim_prompt": "Distinguish an explicit row address from % whole-file scope.",
+    "neovim_prompt": "Distinguish an explicit row number from % whole-file scope.",
     "neovim_answer": ":8s/-/=/g changes all dashes on row 8 only; :%s/-/=/g changes matching dashes throughout the file.",
     "choices": [
-      "ANIMATION: Widen only the new flare on row 8. | NEOVIM: :8s/-/=/g addresses row 8 and changes every dash there.",
-      "ANIMATION: Widen every frame for consistency. | NEOVIM: :%s/-/=/g intentionally addresses all lines.",
+      "ANIMATION: Widen only the new flare on row 8. | NEOVIM: :8s/-/=/g selects row 8 and changes every dash there.",
+      "ANIMATION: Widen every frame for consistency. | NEOVIM: :%s/-/=/g intentionally selects all lines.",
       "ANIMATION: Widen only the first dash of row 8. | NEOVIM: Remove g so the second ray remains narrow.",
       "ANIMATION: Delete the dim frame before widening. | NEOVIM: A line delete is required before any substitute."
     ],
     "compact_choices": [
-      "A: row 8 only · V: :8 address + all matches",
+      "A: row 8 only · V: :8 selects row + all matches",
       "A: every frame · V: % whole file",
       "A: first dash only · V: omit g",
       "A: delete dim frame · V: delete before substitute"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct. The explicit address and g flag together mean every match on row 8 only.",
+      "Correct. The explicit line selection and g flag together mean every match on row 8 only.",
       "% would also widen earlier frames and erase their contrast with the flare.",
       "The target shows both horizontal rays widened, so g is required within row 8.",
       "The dim frame is part of the animation arc and must remain intact."

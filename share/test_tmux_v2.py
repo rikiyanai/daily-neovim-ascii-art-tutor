@@ -34,6 +34,8 @@ QUESTION_ORDER = (1, 2, 0, 3)  # Put semantic choice 0 at displayed letter c.
 M0_CARD_IDS = next(module for module in CURRICULUM["modules"]
                    if module["id"] == "M0")["card_ids"]
 M0_TOTAL = len(M0_CARD_IDS)
+M0_PREREQUISITES = M0_CARD_IDS[:M0_CARD_IDS.index("M0.01")]
+M0_PREREQ_XP = 10 * len(M0_PREREQUISITES)
 M0_AFTER_FIRST = M0_CARD_IDS[M0_CARD_IDS.index("M0.01") + 1]
 S0_TOTAL = len(next(stage for stage in CURRICULUM["stages"]
                     if stage["id"] == "S0")["card_ids"])
@@ -80,6 +82,41 @@ def capture_until_absent(socket, pane, needles, timeout=5.0):
         time.sleep(0.1)
 
 
+def saved_art_until(path, predicate, timeout=5.0):
+    """Wait for a complete save, including a transient missing pathname."""
+    deadline = time.monotonic() + timeout
+    saved = None
+    while True:
+        try:
+            saved = path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            saved = None
+        if saved is not None and predicate(saved):
+            return saved
+        if time.monotonic() >= deadline:
+            raise AssertionError("saved art did not reach the expected state: %r" % saved)
+        time.sleep(0.05)
+
+
+class SaveProbe:
+    def __init__(self):
+        self.reads = 0
+
+    def read_text(self, **_kwargs):
+        self.reads += 1
+        if self.reads == 1:
+            raise FileNotFoundError("save in progress")
+        return "complete"
+
+
+assert saved_art_until(SaveProbe(), lambda text: text == "complete") == "complete"
+try:
+    saved_art_until(SaveProbe(), lambda text: text == "wrong", timeout=0)
+    raise AssertionError("save wait accepted a missing/wrong artifact")
+except AssertionError as exc:
+    assert "did not reach" in str(exc)
+
+
 with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
     root = Path(tmp)
     data = root / "data"
@@ -105,6 +142,11 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         "XDG_STATE_HOME": str(state),
         "EDITOR": "nvim",
         "TERM": "xterm-256color",
+        # The legacy headed matrix exercises the Neovim/popup contract.  The
+        # Textual lesson/result surface has its own Pilot coverage in
+        # test_lesson_tui.py; disabling it here keeps the ready/post signals
+        # anchored to the editor and preserves this fixture's route oracle.
+        "VIM_DAILY_TEXTUAL": "0",
         # The daily deck warm-up is exercised by test_deck.py; these routes
         # start at the lesson itself.
         "VIM_DAILY_NO_WARMUP": "1",
@@ -119,16 +161,17 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         lesson_env["VIM_DAILY_CLEAN"] = "1"
     process_env = dict(os.environ, **lesson_env)
 
-    # The grammar primer now precedes the first editor card. Seed only that
-    # card so this acceptance test can keep exercising the full live Neovim
+    # Seed every current prerequisite so this acceptance test exercises the
+    # replacement lesson rather than accidentally opening a new navigation lab.
+    # This acceptance test keeps exercising the full live Neovim
     # surface. M0.01's transfer question deliberately follows the guided edit:
     # no learner is interrogated about a command before seeing and using it.
     tutor_state = state / "vim-daily"
     tutor_state.mkdir(parents=True)
-    (tutor_state / "events-v2.jsonl").write_text(json.dumps({
-        "type": "card", "result": "pass", "card_id": "M0.P0", "module_id": "M0",
+    (tutor_state / "events-v2.jsonl").write_text("".join(json.dumps({
+        "type": "card", "result": "pass", "card_id": cid, "module_id": "M0",
         "at": "2026-09-28T00:00:00-04:00",
-    }) + "\n", encoding="utf-8")
+    }) + "\n" for cid in M0_PREREQUISITES), encoding="utf-8")
 
     if GATE.resolve() != ROOT / "bin" / "vim-daily-gate":
         raise AssertionError("installed gate does not resolve to this checkout: %s" % GATE.resolve())
@@ -240,19 +283,18 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             raise AssertionError("popup rebound the global copy-mode-vi table:\n" + copy_bindings)
         required = [
             "vim drill · drag selects · Cmd-C copies · questions: y copies all",
-            "NEOVIM × ASCII ANIMATION",
             "M0.01",
             "DO THIS",
             "NORMAL",
-            "PROGRESS S0 1/%d learning · M0 1/%d" % (S0_TOTAL, M0_TOTAL),
-            "XP 10",
+            "PROGRESS",
+            "★ NEW 1:",
+            "%d/%d · Lv1 %d/" % (len(M0_PREREQUISITES), M0_TOTAL, M0_PREREQ_XP),
             "TARGET",
         ]
         if ROWS < 38:
             required += ["RECIPE"]
         else:
-            required += ["COMMAND RECIPE", "WHY THIS EXISTS", "Motion intent:",
-                         "Authoring principle:", "Failure to watch:"]
+            required += ["COMMAND RECIPE"]
         screen = capture_until(outer_socket, outer_pane, required)
         flattened = " ".join(screen.split())
         missing = [text for text in required if text not in flattened]
@@ -264,15 +306,14 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             print("--- AUTOMATIC CLIENT-ATTACHED POPUP pane=%s ---" % outer_pane)
             print(screen.rstrip())
 
-        # Inspect the lower half of the same read-only brief. This proves the
-        # legacy teaching sections exist in the rendered UI, not merely in a
-        # generated file hidden below the split viewport.
+        # Reference material is retained in a closed MORE fold, not forced
+        # onto the first task screen. Search opens it in the brief only.
         tmux(outer_socket, "send-keys", "-t", outer_pane, "C-w", "w")
         tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", "/KEYS WORTH KEEPING")
         tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter", "z", "t")
         key_required = [
             "KEYS WORTH KEEPING",
-            "replace one character",
+            "ro replaces the current cell with o",
         ]
         key_brief = capture_until(outer_socket, outer_pane, key_required)
         # At 80x24 the brief pane is ~12 rows, so the source sections sit below
@@ -301,6 +342,10 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         concept_flat = " ".join(concept_brief.split())
         if "LEGACY VIM CONCEPT" not in concept_flat or "Motions:" not in concept_flat:
             raise AssertionError("legacy concept prose missing:\n" + concept_brief)
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", "/READING THE RECIPE")
+        tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter", "z", "t")
+        recipe_brief = capture_until(outer_socket, outer_pane,
+                                     ["READING THE RECIPE", "<C-k>.M middle-dot"])
         tmux(outer_socket, "send-keys", "-t", outer_pane, "G")
         lower_required = [
             "READING THE RECIPE",
@@ -308,7 +353,8 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             "SUBMIT / STUCK",
             ":q! exits without submission",
         ]
-        lower_brief = capture_until(outer_socket, outer_pane, lower_required)
+        lower_brief = recipe_brief + capture_until(outer_socket, outer_pane,
+                                                   ["SUBMIT / STUCK", ":q! exits without submission"])
         lower_flattened = " ".join(lower_brief.split())
         lower_missing = [text for text in lower_required if text not in lower_flattened]
         if lower_missing:
@@ -384,19 +430,14 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         tmux(outer_socket, "send-keys", "-t", outer_pane, "Escape")
         tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", ":w")
         tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
-        deadline = time.monotonic() + 5
-        while art_path.read_text(encoding="utf-8") == before_indent_probe and time.monotonic() < deadline:
-            time.sleep(0.05)
-        probed_lines = art_path.read_text(encoding="utf-8").splitlines()
+        probed_lines = saved_art_until(
+            art_path, lambda text: text != before_indent_probe and "X" in text.splitlines()).splitlines()
         if "X" not in probed_lines:
             raise AssertionError("o inherited art indentation or probe keys were lost: %r" % probed_lines)
         tmux(outer_socket, "send-keys", "-t", outer_pane, "u")
         tmux(outer_socket, "send-keys", "-t", outer_pane, "-l", ":w")
         tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
-        deadline = time.monotonic() + 5
-        while art_path.read_text(encoding="utf-8") != before_indent_probe and time.monotonic() < deadline:
-            time.sleep(0.05)
-        if art_path.read_text(encoding="utf-8") != before_indent_probe:
+        if saved_art_until(art_path, lambda text: text == before_indent_probe) != before_indent_probe:
             raise AssertionError("indent probe did not restore the lesson checkpoint")
 
         # Legacy coaching parity: the operator's hint-mode Hardtime intervenes
@@ -472,12 +513,12 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         failed_progress_screen = capture_outer(outer_socket, outer_pane)
         failed_progress_flat = " ".join(failed_progress_screen.split())
         failed_progress_required = [
-            "PROGRESS UNCHANGED", "SKILL TREE / MODULE PROGRESS", "S0", "1/%d" % S0_TOTAL,
+            "PROGRESS UNCHANGED", "SKILL TREE / MODULE PROGRESS", "S0", "%d/%d" % (len(M0_PREREQUISITES), S0_TOTAL),
             "streak: 1 day", "next: M0.01",
         ]
         missing = [text for text in failed_progress_required if text not in failed_progress_flat]
-        if not (("XP 10" in failed_progress_flat and "today 1/12" in failed_progress_flat)
-                or ("XP: 10" in failed_progress_flat
+        if not (("XP %d" % M0_PREREQ_XP in failed_progress_flat and "today 1/12" in failed_progress_flat)
+                or ("XP: %d" % M0_PREREQ_XP in failed_progress_flat
                     and "today: 1/12 lessons" in failed_progress_flat)):
             missing.append("compact or full XP/today progress evidence")
         if missing:
@@ -560,9 +601,10 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
             raise AssertionError("the submitted paired question did not record attempt evidence")
         # VD-62: a pass opens the viewer on what the learner just made
         # (a still plays as before -> yours); Enter continues to the debrief.
-        viewer_screen = capture_until(outer_socket, outer_pane, ["WATCH YOUR WORK"])
+        viewer_required = ("WATCH YOUR WORK", "before → yours", "space pause", "Enter continue")
+        viewer_screen = capture_until(outer_socket, outer_pane, viewer_required)
         viewer_flat = " ".join(viewer_screen.split())
-        for text in ("WATCH YOUR WORK", "before → yours", "space pause", "Enter continue"):
+        for text in viewer_required:
             if text not in viewer_flat:
                 raise AssertionError("post-pass viewer missing %r:\n%s" % (text, viewer_screen))
         if "--show-capture" in sys.argv:
@@ -618,12 +660,12 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         progress_screen = capture_outer(outer_socket, outer_pane)
         progress_flat = " ".join(progress_screen.split())
         progress_required = [
-            "PROGRESS AWARDED", "SKILL TREE / MODULE PROGRESS", "S0", "2/%d" % S0_TOTAL,
+            "PROGRESS AWARDED", "SKILL TREE / MODULE PROGRESS", "S0", "%d/%d" % (len(M0_PREREQUISITES) + 1, S0_TOTAL),
             "streak: 1 day", "next: %s" % M0_AFTER_FIRST,
         ]
         missing = [text for text in progress_required if text not in progress_flat]
-        if not (("XP 20" in progress_flat and "today 2/12" in progress_flat)
-                or ("XP: 20" in progress_flat
+        if not (("XP %d" % (M0_PREREQ_XP + 10) in progress_flat and "today 2/12" in progress_flat)
+                or ("XP: %d" % (M0_PREREQ_XP + 10) in progress_flat
                     and "today: 2/12 lessons" in progress_flat)):
             missing.append("compact or full XP/today progress evidence")
         if missing:
@@ -724,8 +766,8 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         practice_flat = " ".join(practice_screen.split())
         if "PRACTICE COMPLETE · PROGRESS UNCHANGED" not in practice_flat:
             raise AssertionError("repeat awarded progress instead of practice:\n" + practice_screen)
-        if not (("XP 20" in practice_flat and "today 2/12" in practice_flat)
-                or ("XP: 20" in practice_flat and "today: 2/12 lessons" in practice_flat)):
+        if not (("XP %d" % (M0_PREREQ_XP + 10) in practice_flat and "today 2/12" in practice_flat)
+                or ("XP: %d" % (M0_PREREQ_XP + 10) in practice_flat and "today: 2/12 lessons" in practice_flat)):
             raise AssertionError("repeat changed XP or daily credit:\n" + practice_screen)
 
         tmux(outer_socket, "send-keys", "-t", outer_pane, "Enter")
@@ -740,6 +782,16 @@ with tempfile.TemporaryDirectory(prefix="vim-daily-tmux-") as tmp:
         closed_screen = capture_outer(outer_socket, outer_pane)
         if "PROGRESS AWARDED" in closed_screen:
             raise AssertionError("explicit close left the popup visible:\n" + closed_screen)
+        # The gate's done signal precedes the shell launcher's EXIT trap.
+        # Inspect only after that trap has removed both ownership fields;
+        # otherwise a capture can observe its two sequential unset commands.
+        cleanup_deadline = time.monotonic() + 3
+        while time.monotonic() < cleanup_deadline:
+            ownership = tmux(inner_socket, "show-options", "-q", "-t", inner_session,
+                             capture_output=True).stdout
+            if "@vim_daily_mouse_owner" not in ownership and "@vim_daily_mouse_base" not in ownership:
+                break
+            time.sleep(0.05)
         restored_mouse = tmux(
             inner_socket, "show-options", "-gv", "mouse",
             capture_output=True).stdout.strip()

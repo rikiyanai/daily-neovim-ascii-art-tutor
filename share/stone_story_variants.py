@@ -16,6 +16,8 @@ local use (VD-18); the repository is public, so committing/pushing this file
 is a publishing decision recorded in VD-29.
 """
 
+from copy import deepcopy
+
 SOURCE_ROOT = "~/Downloads/stone-story-consolidated"
 
 
@@ -329,24 +331,35 @@ REPLACEMENTS = {
                  "Stone Story chick egg: copy the complete three-row cracked egg before the hatch frames change it.",
                  "A count on yy copies whole rows; put the copy after the last line."),
     ]},
-    # M11.UR teaches replace, undo, redo on one fixed cell.
+    # M11.UR teaches undo/redo between complete source eye-pair states.
     "M11.UR": {"review_variants": [
-        _variant(CHICK_EGG_F3, CHICK_EGG_F4, "2G0f;lr,u<C-r>",
-                 [["2G0f;l", "go to the cell right of the first crack"],
-                  ["r,", "add the next crack glyph"],
-                  ["u<C-r>", "scrub back one frame and forward again"]],
-                 "official-Pets/Chick res01 hatch frame 3 -> 4",
-                 "replace one cell, then undo and redo it",
-                 "Stone Story egg hatch: add the next crack cell, undo to compare, then redo so frame 4 remains.",
-                 "Find the existing crack, step one cell right, replace; u then CTRL-R."),
-        _variant(SKULLY_IDLE, SKULLY_LOOK, "2G0forOu<C-r>",
-                 [["2G0fo", "go to the eye row and find the left eye"],
-                  ["rO", "widen it: Skully looks left"],
-                  ["u<C-r>", "scrub back one frame and forward again"]],
-                 "official-Pets/Skully res01 -> res02 look overlay",
-                 "replace one cell, then undo and redo it",
-                 "Stone Story Skully: widen the left eye so it looks left, undo to compare, then redo so the look remains.",
-                 "Find the eye on the middle row, replace it; u then CTRL-R."),
+        _variant(SNOWBUNNY_BLINK + SNOWBUNNY_IDLE,
+                 SNOWBUNNY_IDLE + SNOWBUNNY_IDLE, "2G:s/-/n/g<CR>u<C-r>",
+                 [["2G:s/-/n/g<CR>", "open both eyes in one change"],
+                  ["u", "compare the source blink"],
+                  ["<C-r>", "restore the source idle pose"]],
+                 "official-Pets/SnowBunny res01 idle + res03 blink overlay",
+                 "undo and redo the eye-pair change",
+                 "Stone Story snow bunny strip: open the first pose's eyes, undo to compare the blink, then redo; keep the second idle pose unchanged.",
+                 "On row 2, substitute both eye glyphs; u then CTRL-R.") | {
+                     "history_recipe_frames": [SNOWBUNNY_BLINK + SNOWBUNNY_IDLE,
+                                               SNOWBUNNY_IDLE + SNOWBUNNY_IDLE,
+                                               SNOWBUNNY_BLINK + SNOWBUNNY_IDLE,
+                                               SNOWBUNNY_IDLE + SNOWBUNNY_IDLE]},
+        _variant(SNOWBUNNY_IDLE + SNOWBUNNY_BLINK,
+                 SNOWBUNNY_BLINK + SNOWBUNNY_BLINK,
+                 "2G:s/n/-/g<CR>u<C-r>",
+                 [["2G:s/n/-/g<CR>", "close both eyes in the first pose only"],
+                  ["u", "compare the idle/blink strip"],
+                  ["<C-r>", "restore the two-blink strip"]],
+                 "official-Pets/SnowBunny res01 idle + res03 blink overlay",
+                 "undo and redo the eye-pair change",
+                 "Stone Story snow bunny strip: close the first pose's eyes, undo to compare, then redo; keep the second blink unchanged.",
+                 "Substitute on row 2 only; u then CTRL-R.") | {
+                     "history_recipe_frames": [SNOWBUNNY_IDLE + SNOWBUNNY_BLINK,
+                                               SNOWBUNNY_BLINK + SNOWBUNNY_BLINK,
+                                               SNOWBUNNY_IDLE + SNOWBUNNY_BLINK,
+                                               SNOWBUNNY_BLINK + SNOWBUNNY_BLINK]},
     ]},
     # M11.04 teaches Replace mode over two cells, then undo/redo.
     "M11.04": {"review_variants": [
@@ -478,29 +491,29 @@ REPLACEMENTS = {
         _variant(DRACULA_WALK_F3 + DRACULA_WALK_F2, DRACULA_WALK_F2 + DRACULA_WALK_F3, ":1,3m$<CR>",
                  [[":1,3m$<CR>", "move the first three-row frame after the second"]],
                  "official-Pets/Dracula res01 walk frames 3,2 -> 2,3",
-                 "reorder two frames with an addressed move",
+                 "reorder two frames with a move with an explicit range",
                  "Stone Story Dracula walk: the frames play out of order (3 before 2). Move the first frame after the second; copy nothing.",
-                 "An Ex move takes a line range and a destination line."),
+                 "An :move takes a line range and a destination line."),
         _variant(CHICK_EGG_F2 + CHICK_EGG_F1, CHICK_EGG_F1 + CHICK_EGG_F2, ":1,3m$<CR>",
                  [[":1,3m$<CR>", "move the cracked egg after the whole egg"]],
                  "official-Pets/Chick res01 hatch frames 2,1 -> 1,2",
-                 "reorder two frames with an addressed move",
+                 "reorder two frames with a move with an explicit range",
                  "Stone Story egg hatch: the cracked egg plays before the whole egg. Move the first frame after the second; copy nothing.",
-                 "An Ex move takes a line range and a destination line."),
+                 "An :move takes a line range and a destination line."),
     ]},
     "M16.MOVE": {"review_variants": [
         _variant(MISSILE_F2 + MISSILE_F1, MISSILE_F1 + MISSILE_F2, ":1,3m$<CR>",
                  [[":1,3m$<CR>", "move the first three-row frame after the second"]],
                  "official-Games/TowerDefense res18 missile frames 2,1 -> 1,2",
-                 "reorder two planned frames with an addressed move",
+                 "reorder two planned frames with a move with an explicit range",
                  "Stone Story missile plan: frame 2 is filed before frame 1. Move the first block after the second; copy nothing.",
-                 "An Ex move takes a line range and a destination line."),
+                 "An :move takes a line range and a destination line."),
         _variant(SKULLY_BLINK + SKULLY_IDLE, SKULLY_IDLE + SKULLY_BLINK, ":1,3m$<CR>",
                  [[":1,3m$<CR>", "move the blink after the open-eyed key"]],
                  "official-Pets/Skully res04,res01 -> res01,res04",
-                 "reorder two planned frames with an addressed move",
+                 "reorder two planned frames with a move with an explicit range",
                  "Stone Story Skully plan: the blink is filed before the open-eyed key pose. Move the first block after the second.",
-                 "An Ex move takes a line range and a destination line."),
+                 "An :move takes a line range and a destination line."),
     ]},
     # M7.GLOBAL teaches :g/pattern/normal! to repeat one edit on every matching row.
     "M7.GLOBAL": {"review_variants": [
@@ -1038,5 +1051,5 @@ def apply(cards):
                 if cell_difference(row["start"], card["start"]) < 0.5:
                     raise ValueError(
                         "%s: replacement art is not different art from the card" % card_id)
-            card[field] = [dict(row) for row in rows]
+            card[field] = deepcopy(rows)
     return cards

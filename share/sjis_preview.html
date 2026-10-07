@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shift_JIS proportional preview</title>
+  <link rel="stylesheet" href="/sjis_preview.css">
+</head>
+<body>
+  <main>
+    <h1>Shift_JIS proportional preview</h1>
+    <p id="status" role="status">Loading native preview…</p>
+    <section id="receipt" class="receipt" aria-label="gating receipt"></section>
+    <section class="panels" aria-label="raw text and native raster comparison">
+      <article class="panel" data-panel="before">
+        <h2>BEFORE</h2>
+        <pre class="raw" tabindex="0"></pre>
+        <img class="raster" alt="BEFORE rendered with the declared native font">
+      </article>
+      <article class="panel" data-panel="yours">
+        <h2>YOURS</h2>
+        <pre class="raw" tabindex="0"></pre>
+        <img class="raster" alt="YOURS rendered with the declared native font">
+      </article>
+      <article class="panel" data-panel="target">
+        <h2>TARGET</h2>
+        <pre class="raw" tabindex="0"></pre>
+        <img class="raster" alt="TARGET rendered with the declared native font">
+      </article>
+    </section>
+    <section class="difference" aria-label="visual difference">
+      <h2>VISUAL DIFFERENCE</h2>
+      <p id="difference-summary"></p>
+      <img id="difference-image" alt="Changed native-font pixels highlighted in red">
+    </section>
+    <section class="difference" aria-label="native join registration">
+      <h2>NATIVE JOIN REGISTRATION</h2>
+      <p>Measured target anchors are separate from transcription and pixel equality. Human artistic acceptance is still required.</p>
+      <p id="join-summary"></p>
+      <details><summary>Inspect native glyph positions</summary><pre id="join-measurements"></pre></details>
+    </section>
+  </main>
+  <script src="/sjis_preview.js"></script>
+</body>
+</html>

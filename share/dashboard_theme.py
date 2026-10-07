@@ -9,6 +9,22 @@ for the level ladder. Badge TROPHIES reuse Stone Story RPG animation frames
 The operator confirmed publication rights on 2026-09-29 (FAILURE_LOG VD-60).
 """
 
+from __future__ import annotations
+
+from collections.abc import Iterable, Mapping
+import importlib.util
+from pathlib import Path
+
+try:
+    import ui_style as UI
+except ImportError:  # the installed gate may load this module by file path
+    _style_path = Path(__file__).with_name("ui_style.py")
+    _style_spec = importlib.util.spec_from_file_location("vim_daily_ui_style", _style_path)
+    if _style_spec is None or _style_spec.loader is None:
+        raise
+    UI = importlib.util.module_from_spec(_style_spec)
+    _style_spec.loader.exec_module(UI)
+
 # Level tiers. A level belongs to the last tier whose `from_level` it reaches.
 # `colour` None = the terminal's own foreground (beginner has no colour).
 # `gradient` = colour stops swept across the text (the "gemini" pro tier).
@@ -16,8 +32,10 @@ TIERS = [
     {"id": "beginner", "name": "Beginner", "from_level": 1, "colour": None},
     {"id": "intermediate", "name": "Intermediate", "from_level": 4, "colour": "#cd7f32"},
     {"id": "advanced", "name": "Advanced", "from_level": 8, "colour": "#ffd700"},
-    {"id": "pro", "name": "Pro", "from_level": 12, "colour": "#8e7cf0",
-     "gradient": ["#4285f4", "#7b6cf6", "#b36be0", "#e26d9a", "#f2a65a"]},
+    # The pro tier uses the specified pink-purple Gemini band;
+    # this is a reviewable palette choice, not a silent avatar swap.
+    {"id": "pro", "name": "Pro", "from_level": 12, "colour": UI.GEMINI_COLORS[0],
+     "gradient": list(UI.GEMINI_COLORS)},
 ]
 
 
@@ -53,23 +71,20 @@ def avatar_for_level(level):
     return AVATARS[max(1, min(level, len(AVATARS))) - 1]
 
 
-# Semantic colours (Rich style strings). Every ✓ and every "+N" is `ok`.
-STYLE = {
-    "ok": "bold #3fd46b",
-    "warn": "#f0c040",
-    "fail": "bold #ff5f5f",
-    "meta": "#8a8f98",
-    "key": "bold #5fd7ff",
-    "heading": "bold",
-    "here": "bold #5fd7ff",
-    "bar_full": "#3fd46b",
-    "bar_empty": "#4a4f58",
+# Semantic colours (Rich style strings).  The first nine roles are the shared
+# contract; the remainder are dashboard-only aliases derived from that table.
+# Every ✓ and every "+N" uses ``ok``.
+STYLE = dict(UI.STYLE)
+STYLE.update({
+    "here": UI.STYLE["key"],
+    "bar_full": UI.STYLE["ok"].replace("bold ", ""),
+    "bar_empty": UI.STYLE["meta"],
     "flame": "bold #ff8c1a",
     "flame_glow": ["#ff5a1a", "#ff8c1a", "#ffb31a", "#ffd966", "#ffb31a", "#ff8c1a"],
     "sparkle": ["#fff3b0", "#ffd700", "#ffffff", "#b3e5ff"],
-    "strip_on": "#3fd46b",
-    "strip_off": "#4a4f58",
-}
+    "strip_on": UI.STYLE["ok"].replace("bold ", ""),
+    "strip_off": UI.STYLE["meta"],
+})
 
 # Journey states, in the words the learner sees. (glyph, style key, word)
 STATE = {
@@ -137,7 +152,137 @@ BADGES = [
      "desc": "open every stills stage S0–S7", "rule": "unlocked_stills", "need": 8},
     {"id": "transfer-adept", "glyph": "◆", "name": "Transfer adept",
      "desc": "pass 3 unseen-art lessons", "rule": "transfer", "need": 3},
+    {"id": "week-in-motion", "glyph": "◈", "name": "Week in motion",
+     "desc": "practise on 7 distinct days", "rule": "distinct_days", "need": 7},
+    {"id": "module-mapper", "glyph": "⌘", "name": "Module mapper",
+     "desc": "pass 5 different modules", "rule": "modules", "need": 5},
+    {"id": "review-pioneer", "glyph": "↟", "name": "Review pioneer",
+     "desc": "complete 3 different spaced reviews", "rule": "reviews_distinct", "need": 3},
 ]
+
+# ``glyph`` remains the dashboard's rendering field for compatibility with
+# existing snapshots.  ``icon`` and ``style`` make the descriptor complete for
+# static trees and future surfaces without importing dashboard_tui.
+_BADGE_STYLES = {
+    "first-step": "new", "transfer": "concept", "grid-author": "key",
+    "still-artist": "key", "inbetweener": "key", "timing-editor": "key",
+    "animator": "key", "corpus-reader": "concept", "clean-hands": "ok",
+    "review-keeper": "ok", "review-pioneer": "ok", "full-day": "ok",
+    "week-in-motion": "ok", "module-mapper": "concept",
+}
+_BADGE_ICONS = {
+    "first-step": "[.]", "transfer": ">>", "grid-author": "[#]",
+    "still-artist": "/\\", "inbetweener": "o-o", "timing-editor": "|:|",
+    "animator": "[>]", "corpus-reader": "{?}", "streak-keeper-7": "(*)",
+    "streak-keeper-14": "(* *)", "streak-keeper-30": "(*^*)",
+    "commands-10": "+|", "commands-25": "++", "commands-50": "+++",
+    "safe-ranger": "[..]", "branch-rescuer": "/+/", "clean-hands": "[+]",
+    "review-keeper": "<->", "full-day": "(+)", "cartographer": "[/]",
+    "transfer-adept": ">>>", "week-in-motion": "o>o", "module-mapper": "[=]",
+    "review-pioneer": "<^>",
+}
+for _badge in BADGES:
+    _badge.setdefault("icon", _BADGE_ICONS[_badge["id"]])
+    _badge.setdefault("style", _BADGE_STYLES.get(_badge["id"], "warn"))
+
+
+def _cfg_value(cfg, name, default=None):
+    if isinstance(cfg, Mapping):
+        return cfg.get(name, default)
+    return getattr(cfg, name, default) if cfg is not None else default
+
+
+def _badge_events(cfg, progress):
+    events = _cfg_value(cfg, "events", None)
+    if events is None:
+        events = progress.get("events", []) if isinstance(progress, Mapping) else []
+    # A generator is useful to callers, but badge evaluation needs to inspect
+    # the ledger more than once.  Do not consume a caller-owned list in place.
+    if not isinstance(events, Iterable) or isinstance(events, (str, bytes)):
+        return []
+    return [event for event in events if isinstance(event, Mapping)]
+
+
+def _badge_values(cur, progress, cfg=None):
+    """Derive farm-resistant counts from projection data and an event ledger."""
+    events = _badge_events(cfg, progress)
+    passed = set(progress.get("passed_cards", []))
+    cards = {c.get("id"): c for c in cur.get("cards", [])}
+    passed_events = [e for e in events
+                     if e.get("type") in ("card", "review") and e.get("result") == "pass"]
+    days = {str(e.get("at", ""))[:10] for e in passed_events if e.get("at")}
+    modules = {cards[cid].get("module_id") for cid in passed if cid in cards}
+    review_keys = {e.get("review_key") for e in events
+                   if e.get("type") == "review" and e.get("result") == "pass"
+                   and e.get("review_key")}
+    first_try = {e.get("card_id") for e in events
+                 if e.get("type") == "card" and e.get("result") == "pass"
+                 and e.get("attempts") == 1 and e.get("card_id")}
+    scheduled = set()
+    rescued = set()
+    for event in events:
+        if event.get("type") == "remediation_scheduled" and event.get("card_id"):
+            scheduled.add(event["card_id"])
+        elif (event.get("type") in ("card", "review")
+              and event.get("result") == "pass"
+              and event.get("card_id") in scheduled):
+            rescued.add(event["card_id"])
+            scheduled.discard(event["card_id"])
+    values = {
+        "passed": len(passed),
+        "transfer": sum(1 for cid in passed if str(cid).endswith(".06")),
+        "best_streak": progress.get("best_streak", 0),
+        "commands": len(progress.get("deck", [])),
+        "range": 0,
+        "rescued": len(rescued),
+        "first_try": len(first_try),
+        "reviews": len({(e.get("review_key"), e.get("review_stage")) for e in events
+                         if e.get("type") == "review" and e.get("result") == "pass"}),
+        "reviews_distinct": len(review_keys),
+        "distinct_days": len(days),
+        "modules": len({m for m in modules if m}),
+        "goal_day": 0,
+        "unlocked_stills": sum(1 for sid, stage in progress.get("stages", {}).items()
+                                if str(sid).startswith("S") and stage.get("state") != "locked"),
+    }
+    target = _cfg_value(cfg, "target", 12)
+    per_day = {}
+    for event in passed_events:
+        day = str(event.get("at", ""))[:10]
+        per_day[day] = per_day.get(day, 0) + 1
+    values["goal_day"] = int(any(n >= target for n in per_day.values()))
+    supplied = _cfg_value(cfg, "values", {})
+    if isinstance(supplied, Mapping):
+        values.update(supplied)
+    return values
+
+
+def badge_status(cur, progress, cfg=None):
+    """Return the canonical descriptor/evaluator rows for every badge.
+
+    ``cfg`` is intentionally a plain mapping or small namespace.  It may carry
+    ``events``, ``target`` and precomputed values such as the key-family count
+    when a caller already owns that domain-specific parser.  The function has
+    no Textual/Rich dependency and is therefore safe for static trees, tests,
+    and future renderers.
+    """
+
+    values = _badge_values(cur, progress, cfg)
+    rows = []
+    for badge in BADGES:
+        if badge["rule"] == "stage":
+            cell = progress.get("stages", {}).get(badge["stage"], {})
+            have = cell.get("done", 0) + cell.get("reviews_done", 0)
+            need = cell.get("total", 0) + cell.get("reviews_total", 0)
+            earned = cell.get("state") == "mastered"
+        else:
+            have = values.get(badge["rule"], 0)
+            need = badge.get("need", 1)
+            earned = have >= need
+        if badge.get("runtime"):
+            earned = badge["id"] in progress.get("badges", [])
+        rows.append(dict(badge, have=min(have, need), need=need, earned=earned))
+    return rows
 
 # Animation timing (seconds). Effects are off under NO_COLOR, TERM=dumb and
 # VIM_DAILY_ANIM=off; see dashboard_tui.animations_enabled().
@@ -157,7 +302,12 @@ TUTOR_CREDIT = "Art: original to this tutor"
 
 
 def _stone(name):
-    import stone_story_variants as SV
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location(
+        "vim_daily_stone_story_variants", Path(__file__).with_name("stone_story_variants.py"))
+    SV = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(SV)
     return list(getattr(SV, name))
 
 

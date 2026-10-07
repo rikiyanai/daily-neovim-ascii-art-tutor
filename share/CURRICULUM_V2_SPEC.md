@@ -1,11 +1,14 @@
 # Curriculum v2 — animation projects, Vim fluency, and durable mastery
 
-Status: revision `.59` contains 215 cards and 395 manually authored questions.
-The clean-Neovim suite passes all 174 recipe-bearing paths. The base headed
-popup path renders the stage tree at 80x24, 100x36, and 188x49; the full
-post-M2 route matrix and real-config suite remain separate acceptance evidence.
-Stage ownership/order is implemented; manual disposition and migration of
-older temporal content still assigned to S0-S7 is not complete. The
+Status: the generated `curriculum-v2.json` owns the current revision and counts.
+The previous VD-80 checkpoint verified 250 cards, 430 manually authored
+questions and 209 primary recipes. The 2026-10-01 course continuation changes
+that source, so the prior tests are not final-source acceptance for this batch.
+Current requirements and proof are tracked in
+[`audits/COURSE_COMPLETION_LEDGER_2026-10-01.md`](audits/COURSE_COMPLETION_LEDGER_2026-10-01.md).
+Legacy command parity remains separately visible in
+[`LEGACY_CURRICULUM_DISPOSITION.md`](LEGACY_CURRICULUM_DISPOSITION.md).
+The
 runtime/data owners are `share/v2_runtime.py`,
 `share/gen_curriculum_v2.py`, and generated `share/curriculum-v2.json`. The old
 46-drill path remains available and its state is not migrated destructively.
@@ -50,7 +53,7 @@ Non-goals: importing a browser trainer engine; reproducing proprietary lesson pr
 making every popup a long art session; scoring speed as skill; automatically inventing
 glyph in-betweens; or replacing the user's private practice ledger with a cloud account.
 
-## 2. Evidence ledger — current state, not inferred intent
+## 2. Evidence ledger — historical source intake, not current acceptance
 
 The current working tree is dirty and contains user-owned changes. These observations
 refer to its 2026-09-26 state; no existing user edits were reverted to prepare this spec.
@@ -59,7 +62,7 @@ refer to its 2026-09-26 state; no existing user edits were reverted to prepare t
 |---|---|---|
 | E01 | Legacy `share/curriculum.json:10-20` has only three tier thresholds, 0/8/16 lifetime passes; legacy `unlocked` at `bin/vim-daily-gate:325-328` checks total passes, not prerequisites. | A learner could unlock later legacy material by repeating unrelated easy drills. V2 supersedes this route with module prerequisites. |
 | E02 | Legacy `bin/vim-daily-gate:331-355` chooses by `passed - failed`; the three-item recency exclusion sorts `last`, which legacy `do_drill` sets only on success (`:723-750`). | A failed legacy drill can reappear after one intervening slot, while repeats remain exact. V2 reviews use item variants and explicit due times. |
-| E03 | Legacy `bin/vim-daily-gate:390-427` defines eight fixed questions only for `grammar` and `modes`; `:879-881` runs them only by explicit `--quiz`; `:469-474` stores best score, total, and last date. | The legacy bank has no animation-reading, interstitial, or unlock role. V2 provides 395 item-level questions and check evidence. |
+| E03 | Legacy `bin/vim-daily-gate:390-427` defines eight fixed questions only for `grammar` and `modes`; `:879-881` runs them only by explicit `--quiz`; `:469-474` stores best score, total, and last date. | The legacy bank has no animation-reading, interstitial, or unlock role. V2 provides 471 item-level questions and check evidence. |
 | E04 | Legacy `bin/vim-daily-gate:499-546` prints the full concept, recipe, and visible target before an edit. | V2 keeps the visible target on every edit. Guided cards also expose the recipe; retrieval/check cards expose a non-key hint while withholding only the exact command answer. |
 | E05 | Legacy `bin/vim-daily-gate:723-750` writes a date-and-drill-specific lesson file and records one drill result. | V2 adds authoritative continuing `strip.txt`, transfer, manifest, checkpoint, and next-card state. |
 | E06 | Legacy `bin/vim-daily-gate:358-383` calls one-pass coverage `concept_mastery`; `:866-903` exposes it in manual export/status. | Legacy evidence remains visible through `--legacy-status`; V2 `--tree` now exposes prerequisite-backed module state. |
@@ -146,10 +149,13 @@ Module completion remains visible, but it cannot override the stage gate.
 
 ## 5. Module sequence and lesson inventory
 
-Implemented content is **20 modules / 215 cards**, plus **395 distinct paired
+Implemented content is **20 modules / 311 cards**, plus **491 distinct paired
 conceptual items** and transfer/review variants. Each card has one
 new decision or edit; no popup silently expands into a 45-minute session. A module
-shares one `strip.txt` across its eight cards. The table is the authoring order,
+shares one `strip.txt` across its core cards. Additional guided/hidden operation
+studies own isolated transfer artifacts. Module endcaps own eight-frame animation
+studies. Revised source-history tasks use contract-keyed files so legacy saved
+strips and checkpoints remain untouched. The table is the core authoring order,
 not a promise that every user sees all cards on consecutive clock hours.
 
 Every module transfer has two changed-art variants. Variant 1 uses the card's
@@ -239,12 +245,18 @@ card must (a) state the same desired buffer outcome, (b) run both real Neovim pa
 | Reorder authored frames | Move one line/block manually | Address-scoped `:m` or a visual selection and move | Why can authoring order differ from playback order? |
 | Replace a glyph across a selected region | Repeat `r`/`x` | Scoped `:s` or `:'<,'>normal` where appropriate | What is the blast radius of `%` versus a range? |
 
-The evaluator grades the exact artifact plus any declared method contract. Most
-cards permit any bounded edit that reaches the target. A card may additionally
-require a captured token pattern and impose a keystroke ceiling when its purpose is
-to teach one command family. Compare-method cards accept only one of their two
-captured taught paths; an unrecognized path that happens to reach the target does
-not establish either method. Transfer/capstone checks use unseen art variants.
+The evaluator grades the exact artifact plus the actual taught commands.
+The operator's C31 policy supersedes recipe-order and keystroke-ceiling rules.
+Correct target plus taught commands used anywhere in the attempt passes.
+Extra, reordered and exploratory keys do not reject a correct target.
+Complete commands retain their mode, register, count and operator argument;
+Insert text and Visual-mode impostors do not establish Normal-mode history use.
+The focal-command policy omits incidental positioning in worked examples.
+Comparison cards accept either demonstrated taught method, not its example
+cursor route. Correct target without taught commands says TARGET CORRECT,
+shows used commands green and missing taught commands red, and offers instant
+retry. It does not present a plain target failure. Transfer/capstone checks use
+changed art variants.
 Never assert operation mastery because a command string merely appears in an answer
 key; coverage comes only from runtime-enforced evidence and later spaced retrieval.
 

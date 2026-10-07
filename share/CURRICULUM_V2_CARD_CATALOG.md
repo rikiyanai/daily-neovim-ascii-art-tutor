@@ -1,4 +1,55 @@
-# Curriculum v2 card catalog — implemented 152-card spine
+# Curriculum v2 card catalog — historical core and current expansion
+
+The original 152-card spine below is not the complete current inventory.
+The current expanded inventory contains 311 cards and 491 authored paired questions.
+`curriculum-v2.json` owns the executable inventory. The completion ledger owns
+current-source evidence; older numbers and proposed contracts below remain
+historical planning context, not current acceptance claims.
+
+Each module also owns one `M*.REWARD` endcap with eight original frames.
+The generated JSON records its exact revision and executable art contracts.
+Source-history acceptance is separately tracked by C33/C35 in the completion
+ledger; an inventory count is not a passing provenance or runtime receipt.
+
+## Current operation-study expansion
+
+Every pair below has a guided study followed by a key-hidden study on changed
+material. Hidden studies have two changed-art review variants and are required
+before module mastery. Text-label studies are explicit; their words are not
+claimed as Stone Story drawing glyphs or animated poses.
+
+| Operation | Guided | Hidden |
+|---|---|---|
+| Delete word with `dw` | M2.DW | M2.DWH |
+| Delete to word end with `de` | M2.DE | M2.DEH |
+| Counted WORD deletion | M2.D2W | M2.D2WH |
+| Change word | M3.CW | M3.CWH |
+| Around-parenthesis change | M3.CA | M3.CAH |
+| Yank register zero after deletion | M3.Y0 | M3.Y0H |
+| Mark travel and return | M3.MARK | M3.MARKH |
+| Visual-line deletion | M3.VD | M3.VDH |
+| Block insertion (existing pair) | M4.BI | M4.BIH |
+| Block deletion | M4.BD | M4.BDH |
+| Join fragments | M6.J | M6.JH |
+| Adjacent-row swap | M6.DDP | M6.DDPH |
+| Toggle one letter | M7.TC | M7.TCH |
+| Operator case toggle | M7.GTC | M7.GTCH |
+| Open above | M8.O | M8.OH |
+| Repeat padding | M8.PAD | M8.PADH |
+| Append after cursor | M15.APP | M15.APPH |
+| Append at row end | M15.APPA | M15.APPAH |
+
+The M19 mirror key-pose still module adds eight numbered core cards plus
+M19.VRH virtual-replace retrieval. It remains a still study, not animation.
+M0.L0/F0 teach cursor motion over unchanged artwork. M11.BR/GM/GP/ER separate
+branching, backward history, forward history and Ex history travel. M0 and M11
+also expose a separate source-motion tab with credited poses and explicitly
+declared tutorial pacing. Reference playback never becomes the saved study.
+
+Incidental positioning is not an exact-transcript requirement. Taught operator
+and Visual scope, exact targets, independent method evidence, and fresh cursor
+receipts still govern credit. The guided history steps require their named
+history operation rather than every branch-building example key.
 
 Status: these 152 row-level contracts describe the implemented teaching intent
 and are retained in generated data as `roadmap_contract` for traceability. The
@@ -74,7 +125,7 @@ transcript Part 1 `:339-401`.
 | M0.02 | G | Copy all three frame rows, then brighten only the core in the copy. |
 | M0.03 | Q | Read complete multi-row frames and choose the change actually supported by the visible evidence. |
 | M0.04 | G | Copy the bright keyframe, then widen only the new frame's horizontal rays into a flare. |
-| M0.05 | X | Create one deliberate whole-frame flare hold using ONE method: counted yank/put or addressed `:t`; after success, compare cursor dependence. |
+| M0.05 | X | Create one deliberate whole-frame flare hold using ONE method: counted yank/put or `:t` with an explicit range; after success, compare cursor dependence. |
 | M0.06 | T | Brighten and widen an unfamiliar three-row comet without shifting its registered rays. |
 | M0.07 | Q | Read the ordered five-frame strip and distinguish a purposeful flare hold from drift or an arbitrary duplicate. |
 | M0.08 | K | Add the registered dim settle frame and pass the mixed conceptual/artifact checkpoint. |
@@ -130,7 +181,7 @@ spec §5 M3, §6 method contrast; legacy `yank-put`, `named-register`,
 | M3.02 | G | Use a counted linewise yank/put to duplicate all six rows. |
 | M3.03 | Q | Four complete command sequences: which duplicates the *whole* pose and replaces just the accent without destroying the source? |
 | M3.04 | G | Change only the eye in the copied six-row pose; torso and feet must remain registered. |
-| M3.05 | X | Append the same complete pose with counted `y/p` and precisely addressed `:t`. |
+| M3.05 | X | Append the same complete pose with counted `y/p` and `:t` with a precise range. |
 | M3.06 | T | Copy an unfamiliar six-row body and change one acting feature only in the copy. |
 | M3.07 | Q | Diagnose partial-pose copying, body drift, or an unjustified unchanged hold. |
 | M3.08 | K | Give only the final complete pose a middle-dot accent and pass the whole-block transfer check. |
@@ -169,7 +220,7 @@ layer/seam method indexed in the authoring skill §§3, 11.
 | M5.02 | G | Copy the complete seven-row composite before moving the blade. |
 | M5.03 | Q | From four composites, identify the false seam that makes foreground and background read as one object. |
 | M5.04 | G | Swing the copied foreground while keeping the pivot and negative-space break registered. |
-| M5.05 | X | Return to the first full layered frame by counted yank/put and addressed `:t`; preserve every material row. |
+| M5.05 | X | Return to the first full layered frame by counted yank/put and `:t` with an explicit range; preserve every material row. |
 | M5.06 | T | Repair an unfamiliar overlapping scene, preserving layer order and the nominated foreground edge. |
 | M5.07 | Q | Predict when a break glyph attaches to the wrong object or an erasure destroys the silhouette. |
 | M5.08 | K | Preview the layered sequence and pass independent seam, selection-scope, and artifact checks. |
@@ -190,7 +241,7 @@ reordered strip grows from the base upward.
 | M6.02 | G | Copy the complete pose before any subtractive change. |
 | M6.03 | Q | Choose why copying then erasing can be easier than drawing an accretive build-up forward. |
 | M6.04 | G | Clear only the copied apex row while preserving that empty row and every lower layer of the five-row frame. |
-| M6.05 | X | Copy the first reduction by counted yank and addressed `:t`, then clear the next upper unit with `D`. |
+| M6.05 | X | Copy the first reduction by counted yank and `:t` with an explicit range, then clear the next upper unit with `D`. |
 | M6.06 | T | Move an unfamiliar finished five-row build after its reduced state to establish forward playback order. |
 | M6.07 | Q | Given authoring order and four playback orders, pick the sequence that visibly builds rather than vanishes. |
 | M6.08 | K | Reorder complete equal-height frame ranges and prove that the strip visibly builds rather than deconstructs. |
@@ -265,7 +316,7 @@ viewer's `sjis_combos.v1` dataset. Held-out slugs remain excluded.
 | M10.02 | G | Copy the complete lobe pose, then transform all three copied rows into the wider `／￣＼` and `＼＿／` extreme. |
 | M10.03 | Q | Read the proportional expansion and choose both the supported animation principle and bounded Neovim edit. |
 | M10.04 | G | Append a complete three-row impact pose with `ﾆ二ニ` hatching contained by its outline. |
-| M10.05 | X | Duplicate the full impact pose as a purposeful hold by counted yank and by addressed `:t`; compare cursor dependence. |
+| M10.05 | X | Duplicate the full impact pose as a purposeful hold by counted yank and with an explicit rangeed `:t`; compare cursor dependence. |
 | M10.06 | T | Complete an unseen `｀ヽ` or `／￣` shoulder while preserving the changed pose's two registered lower rows. |
 | M10.07 | Q | Diagnose shear, escaped hatching, or false terminal-cell alignment in an ordered proportional strip. |
 | M10.08 | K | Return to the complete lobe as the settle and pass a mixed animation, Saitamaar-boundary, and Neovim checkpoint. |
@@ -343,7 +394,7 @@ viewer's `sjis_combos.v1` dataset. Held-out slugs remain excluded.
 | M16.02 | G | Import the saved five-line planning plate with `:read %`, then increment only the imported frame label. |
 | M16.03 | Q | Connect reference, concept, size-test, frame identity, and FPS evidence to the saved-source semantics of `:read`. |
 | M16.04 | G | Copy a complete five-line plan block with `:t` and use counted `<C-a>` to assign the third frame number. |
-| M16.05 | X | Reorder one complete planned key-pose block with addressed `:m` and with linewise delete/put; compare verified range scope with selection scope. |
+| M16.05 | X | Reorder one complete planned key-pose block with `:m` with an explicit range and with linewise delete/put; compare verified range scope with selection scope. |
 | M16.06 | T | Increment the numeric frame label on an unfamiliar pose and timing plan without altering its art or FPS line. |
 | M16.07 | Q | Diagnose duplicate identifiers, stale saved input, a split five-line block, or timing written only after drawing. |
 | M16.08 | K | Copy the current primary key-pose plan as a fourth block and count-increment its label while preserving the approved pose and FPS. |

@@ -11,12 +11,39 @@ their public-repository publication boundary remains unresolved.
 import json
 import re
 import textwrap
+from copy import deepcopy
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import stone_story_variants  # noqa: E402  (VD-29 art table beside this file)
 import deck as deck_module  # noqa: E402  (memory plan 2026-09-29: authored deck-v2.json)
+from history_source_frames import (  # noqa: E402
+    HISTORY_CARD_CHARACTERS,
+    validate_history_card_art,
+    validate_history_diagram_text,
+    validate_history_recipe,
+    validate_history_review_art,
+)
+from authored_review_variants import REVIEW_VARIANTS
+
+# The whole-module animation endcaps are authored in a sibling data module by
+# the animation-content lane.  Keep this import fail-closed while that file is
+# being prepared: the existing curriculum remains buildable at .71, but no
+# placeholder animation or guessed recipe is emitted.  Once the sibling API
+# lands, the same generator consumes its canonical contracts and emits .72.
+try:
+    from module_animations import MODULE_ANIMATIONS, animation_for  # noqa: E402
+    try:
+        from module_animations import endcap_study_contract  # noqa: E402
+    except ImportError:  # The required API is animation_for; helper is optional.
+        endcap_study_contract = None
+except ModuleNotFoundError as exc:  # pragma: no cover - exercised before the sibling lands
+    if exc.name != "module_animations":
+        raise
+    MODULE_ANIMATIONS = None
+    animation_for = None
+    endcap_study_contract = None
 
 
 ROOT = Path(__file__).resolve().parent
@@ -24,6 +51,7 @@ OUT = ROOT / "curriculum-v2.json"
 CATALOG = ROOT / "CURRICULUM_V2_CARD_CATALOG.md"
 LEGACY = ROOT / "curriculum.json"
 ANIMATION_PACK = ROOT / "animation_lesson_pack.md"
+ANIMATION_EXPANSION_QUESTIONS = ROOT / "questions-authored-v2-animation-expansion.json"
 AUTHORED_QUESTION_FILES = (
     ROOT / "questions-authored-v2.json",
     ROOT / "questions-authored-v2-stills-a.json",
@@ -31,6 +59,8 @@ AUTHORED_QUESTION_FILES = (
     ROOT / "questions-authored-v2-motion-a.json",
     ROOT / "questions-authored-v2-motion-b.json",
     ROOT / "questions-authored-v2-mastery.json",
+    ROOT / "questions-authored-v2-pedagogy.json",
+    ROOT / "questions-authored-v2-course-completion.json",
 )
 AUTHORED_QUESTION_OVERRIDE_FILES = (
     # Manual per-question source-art rewrites.  These are explicit editorial
@@ -38,6 +68,268 @@ AUTHORED_QUESTION_OVERRIDE_FILES = (
     # the currently reviewed module auditable while the wider bank is revised.
     ROOT / "questions-authored-v2-m19.json",
 )
+
+
+def animation_expansion_available():
+    """Return whether the sibling-owned endcap contracts are available."""
+    return MODULE_ANIMATIONS is not None and animation_for is not None
+
+
+def animation_contract_for(module_id):
+    """Read the sibling's canonical endcap contract without inventing data."""
+    animation = animation_for(module_id)
+    if endcap_study_contract is None:
+        return animation
+    contract = endcap_study_contract(module_id)
+    if not isinstance(contract, dict):
+        raise TypeError("%s endcap study contract must be a mapping" % module_id)
+    merged = deepcopy(animation)
+    merged.update(contract)
+    return merged
+
+
+def authored_question_paths():
+    """Return the authored banks that are valid for the available source set."""
+    paths = list(AUTHORED_QUESTION_FILES)
+    if animation_expansion_available():
+        paths.append(ANIMATION_EXPANSION_QUESTIONS)
+    return tuple(paths)
+
+
+def _contract_value(contract, *names, required=True):
+    """Read one canonical endcap field without inventing a fallback value."""
+    for name in names:
+        value = contract.get(name)
+        if value is not None and value != "":
+            return value
+    if required:
+        raise ValueError(
+            "module animation contract missing one of %s" % ", ".join(names))
+    return None
+
+
+def _endcap_metadata(module, contract, card_id):
+    """Validate and copy one sibling-owned whole-module animation contract."""
+    if not isinstance(contract, dict):
+        raise TypeError("%s animation contract must be a mapping" % module["id"])
+    start = _contract_value(contract, "start")
+    target = _contract_value(contract, "target")
+    expected = _contract_value(contract, "expected")
+    cursor = _contract_value(contract, "cursor")
+    if not isinstance(cursor, str) or not cursor:
+        raise ValueError("%s endcap cursor must be a Normal-mode key string" % module["id"])
+    frame_slices = _contract_value(contract, "frame_slices")
+    if not isinstance(start, list) or not isinstance(target, list):
+        raise ValueError("%s endcap start/target must be row lists" % module["id"])
+    if any(not isinstance(row, str) for row in [*start, *target]):
+        raise ValueError("%s endcap rows must be strings" % module["id"])
+    if not isinstance(expected, str):
+        raise ValueError("%s endcap expected recipe must be a key string" % module["id"])
+    if not isinstance(frame_slices, list) or len(frame_slices) < 8:
+        raise ValueError("%s endcap needs at least eight frame slices" % module["id"])
+    if any(not isinstance(size, int) or size < 1 for size in frame_slices):
+        raise ValueError("%s endcap frame slices must be positive integers" % module["id"])
+    if sum(frame_slices) != len(start) or sum(frame_slices) != len(target):
+        raise ValueError("%s endcap frame slices must cover start and target" % module["id"])
+    if start == target:
+        raise ValueError("%s endcap must make a real learner-visible edit" % module["id"])
+
+    # These are supplied by the animation-content lane.  The generator does
+    # not invent a timing or hold explanation from frame counts.
+    key_pose = _contract_value(contract, "key_pose", "key_pose_principle")
+    timing = _contract_value(contract, "timing", "timing_principle")
+    hold = _contract_value(contract, "hold", "hold_principle", "hold_reason")
+    known_commands = _contract_value(
+        contract, "known_taught_commands", "known_commands", "taught_commands")
+    if (not isinstance(known_commands, list) or not known_commands
+            or any(not isinstance(command, str) or not command for command in known_commands)):
+        raise ValueError("%s endcap needs known taught-command annotations" % module["id"])
+
+    # The generated contract uses JSON lists, including canonical frames.
+    # Keep build() and the installed JSON structurally identical.
+    metadata = json.loads(json.dumps(contract, ensure_ascii=False))
+    metadata.update({
+        "card_id": card_id,
+        "module_id": module["id"],
+        "key_pose": key_pose,
+        "timing": timing,
+        "hold": hold,
+        "known_taught_commands": list(known_commands),
+        "frame_count": len(frame_slices),
+    })
+    return metadata
+
+
+def _endcap_visual_evidence(card):
+    """Render the complete authored sequence for its paired question.
+
+    ``start`` and ``target`` are flattened frame plates.  The animation lane
+    owns the frame boundaries; this renderer only presents them and never
+    guesses a missing frame or command.
+    """
+    slices = card.get("frame_slices", [])
+    if not slices or sum(slices) != len(card.get("start", [])):
+        raise ValueError("%s endcap evidence has invalid frame slices" % card["id"])
+    start_frames, target_frames = [], []
+    start_at = target_at = 0
+    for index, rows in enumerate(slices, start=1):
+        start_frame = card["start"][start_at:start_at + rows]
+        target_frame = card["target"][target_at:target_at + rows]
+        start_at += rows
+        target_at += rows
+        start_frames.append(start_frame)
+        target_frames.append(target_frame)
+    full = "\n\n".join(
+        "FRAME %02d\n%s" % (index, visual_pair(before, after))
+        for index, (before, after) in enumerate(zip(start_frames, target_frames), start=1)
+    )
+    # Full evidence retains every plate. Compact evidence names its samples
+    # and preserves separate art rows rather than flattening the strip.
+    changed_indices = [index for index, (before, after) in enumerate(
+        zip(start_frames, target_frames)) if before != after]
+    indices = sorted({changed_indices[0], changed_indices[-1]})
+    samples = []
+    for index in indices:
+        delta = visual_delta(start_frames[index], target_frames[index], max_rows=1).splitlines()
+        samples.append("F%02d %s\n%s" % (
+            index + 1, delta[0].lstrip(), "\n".join(delta[1:])))
+    location = ("native preview" if card.get("medium") == "proportional-sjis"
+                else "animation tab")
+    compact = "SAMPLES · full sequence in %s\n" % location + "\n".join(samples)
+    return full, compact
+
+
+def _expand_endcap_authored_question(question, card):
+    """Resolve only explicit placeholders in the manually authored endcap bank."""
+    full, compact = _endcap_visual_evidence(card)
+    metadata = card["module_reward"]
+    replacements = {
+        "{{MODULE_ID}}": card["module_id"],
+        "{{TITLE}}": card["title"],
+        "{{EXPECTED}}": card["expected"],
+        "{{KEY_POSE}}": str(metadata["key_pose"]),
+        "{{TIMING}}": str(metadata["timing"]),
+        "{{HOLD}}": str(metadata["hold"]),
+        "{{KNOWN_COMMANDS}}": "; ".join(metadata["known_taught_commands"]),
+        "{{FULL_EVIDENCE}}": full,
+        "{{COMPACT_EVIDENCE}}": compact,
+    }
+    for key in ("prompt", "compact_prompt", "animation_prompt", "animation_answer",
+                "neovim_prompt", "neovim_answer"):
+        if isinstance(question.get(key), str):
+            for marker, value in replacements.items():
+                question[key] = question[key].replace(marker, value)
+    for key in ("choices", "compact_choices", "feedback"):
+        if isinstance(question.get(key), list):
+            question[key] = [
+                item if not isinstance(item, str) else
+                _replace_markers(item, replacements)
+                for item in question[key]
+            ]
+    question["evidence"] = {
+        "full": full,
+        "compact": compact,
+        "frame_slices": deepcopy(card["frame_slices"]),
+        "cursor": deepcopy(card["cursor"]),
+        "frame_count": len(card["frame_slices"]),
+    }
+    question["animation_evidence"] = deepcopy(question["evidence"])
+
+
+def _replace_markers(text, replacements):
+    for marker, value in replacements.items():
+        text = text.replace(marker, value)
+    return text
+
+
+def _make_module_reward_card(module, contract, existing_cards):
+    """Create the learner-editable endcap between .07 and .08."""
+    mid = module["id"]
+    card_id = f"{mid}.REWARD"
+    metadata = _endcap_metadata(module, contract, card_id)
+    check = next((card for card in existing_cards if card["id"] == f"{mid}.08"), None)
+    if check is None:
+        raise ValueError("%s: module-check .08 is required before its endcap" % mid)
+    import v2_keys
+    # Parse the actual operations: rB is a replacement, not a WORD motion,
+    # and Normal redo followed by a count is not an Insert register paste.
+    allowed = {"gg": "normal-motion", "0": "normal-motion",
+               "j": "normal-motion", "[count]j": "normal-motion",
+               "k": "normal-motion", "[count]k": "normal-motion",
+               "l": "normal-motion", "[count]l": "normal-motion",
+               "r{char}": "normal-replace", "u": "undo-redo", "<C-r>": "undo-redo"}
+    families = []
+    for _keys, _meaning, family in v2_keys.explain(metadata["expected"]):
+        if family not in allowed:
+            raise ValueError("%s: undeclared endcap operation %s" % (mid, family))
+        if allowed[family] not in families:
+            families.append(allowed[family])
+    if not families or any(family not in FAMILY_DEFS for family in families):
+        raise ValueError("%s: endcap must reuse known grammar families" % mid)
+    title = metadata.get("title") or "Whole-module animation endcap"
+    principle = metadata.get("principle") or module["principle"]
+    prompt = (
+        f"Match TARGET in the eight-frame {module['title']} strip; preserve other cells."
+    )
+    frame_rows = metadata.get("frame_rows")
+    if frame_rows is None and len(set(metadata["frame_slices"])) == 1:
+        frame_rows = metadata["frame_slices"][0]
+    card = {
+        "id": card_id,
+        "module_id": mid,
+        "ordinal": 7.5,
+        "kind": "module_reward",
+        "title": f"{module['title']} · {title}",
+        "prompt": prompt,
+        "roadmap_contract": prompt,
+        "lesson_benefit": (
+            "edit the complete animation sequence while preserving "
+            "the declared key-pose, timing, and hold principle"
+        ),
+        "skill": module["skill"],
+        "source_ref": "share/module_animations.py::animation_for(%s)" % mid,
+        "medium": module.get("medium", "monospace"),
+        "labels": mid == "M16",  # F0/F1 are intentional key-pose identifiers.
+        "node_ids": [module["node"]],
+        "project_id": module["project"],
+        "variant_group": f"{mid}.module-reward",
+        "start": list(metadata["start"]),
+        "target": list(metadata["target"]),
+        "expected": metadata["expected"],
+        "recipe": [[
+            metadata["expected"],
+            "apply the taught operations to the complete animation sequence",
+        ]],
+        "cursor": metadata["cursor"],
+        "frame_slices": list(metadata["frame_slices"]),
+        "frame_rows": frame_rows,
+        "show_target": True,
+        "show_recipe": False,
+        "hint": (
+            "Use the taught operations listed in KEYS WORTH KEEPING. Preserve every frame "
+            "boundary, key pose, timing beat, and intentional hold."
+        ),
+        "artifact": "animation-study",
+        "grammar_families": families,
+        "grammar_stage": "hidden",
+        "master_habits": list(MASTER_COVERAGE[mid][0]),
+        "master_stages": list(MASTER_COVERAGE[mid][1]),
+        "key_vocabulary": list(metadata["known_taught_commands"]),
+        "method_requirement": require_method(
+                "use the taught operations for the complete animation sequence",
+            all_of=list(metadata["known_taught_commands"])),
+        "module_reward": metadata,
+    }
+    frames, offset = [], 0
+    for size in metadata["frame_slices"]:
+        frames.append(card["target"][offset:offset + size])
+        offset += size
+    card["duplicate_frames"] = [
+        duplicate((index + 1, index + 2), "hold",
+                  "intentional repeated pose in the authored complete sequence", True, 2)
+        for index in range(len(frames) - 1) if frames[index] == frames[index + 1]
+    ]
+    return card
 
 # The standalone pack is deliberately attached to existing v2 cards instead
 # of becoming a second scheduler.  These links give the generated artifact a
@@ -62,32 +354,32 @@ ANIMATION_PACK_DELIVERY = {
 # teaching-content provenance, not mastery migration: v2 still grades its own
 # changed art and method requirements.
 LEGACY_CARD_MAP = {
-    "move-x": "M9.04", "delete-word": "M2.01", "delete-eol": "M6.05",
-    "count-motion": "M2.01", "delete-line": "M7.08", "undo": "M11.04",
-    "put": "M0.02", "replace-char": "M0.01", "change-word": "M3.04",
+    "move-x": "M9.04", "delete-word": "M2.DW", "delete-eol": "M6.05",
+    "count-motion": "M2.D2W", "delete-line": "M7.08", "undo": "M11.04",
+    "put": "M0.02", "replace-char": "M0.01", "change-word": "M3.CW",
     "change-eol": "M4.01", "search": "M1.01", "match-paren": "M3.01",
-    "substitute": "M0.02", "substitute-all": "M7.05", "open-line": "M8.04",
-    "append": "M8.04", "yank-put": "M0.02", "join": "M6.04",
-    "toggle-case": "M7.05", "text-object-paren": "M3.04",
+    "substitute": "M0.02", "substitute-all": "M7.05", "open-line": "M8.O",
+    "append": "M15.APP", "yank-put": "M0.02", "join": "M6.J",
+    "toggle-case": "M7.TC", "text-object-paren": "M3.CA",
     "paragraph-object": "M14.05", "named-register": "M3.06",
-    "yank-register-0": "M3.06", "marks": "M3.08",
-    "visual-delete": "M3.06", "block-insert": "M4.04",
-    "block-append": "M15.05", "block-erase": "M4.04",
+    "yank-register-0": "M3.Y0", "marks": "M3.MARK",
+    "visual-delete": "M3.VD", "block-insert": "M4.BI",
+    "block-append": "M15.05", "block-erase": "M4.BD",
     "block-replace": "M4.04", "macro": "M7.05",
     "symbol-table": "M14.04", "dot-repeat": "M7.04",
     "find-char": "M7.06", "ex-copy": "M5.05", "hold-frame": "M7.01",
     "tween-frame": "M9.05", "break-seam": "M5.01",
-    "playback-order": "M6.08", "range-normal": "M7.05",
-    "mirror-run": "M18.01", "pad-frames": "M8.04",
+    "playback-order": "M6.DDP", "range-normal": "M7.05",
+    "mirror-run": "M18.01", "pad-frames": "M8.PAD",
     "macro-frames": "M7.05", "ant-drop": "M7.08",
     "centipede-hold": "M7.01", "cheer-eyes": "M3.04",
-    "candle-join": "M6.04",
+    "candle-join": "M6.J",
 }
 
 PHASE_TITLES = {
     1: "Foundation edit", 2: "Develop the strip", 3: "Read the motion",
     4: "Independent edit", 5: "Compare editing methods", 6: "Unseen transfer",
-    7: "Diagnose the animation", 8: "Module mastery check",
+    7: "Diagnose the animation", 8: "Lesson mastery check",
 }
 
 
@@ -452,8 +744,6 @@ M1_LEFT_TIGHT = M1_LEFT_SOURCE[:3] + ["  \\`/     `!/", M1_LEFT_SOURCE[4]]
 M1_RIGHT_SOURCE = stone_story_variants.ACRONIAN_WING_RIGHT_F2
 M1_RIGHT_COLON = M1_RIGHT_SOURCE[:4] + ["\\:.´"]
 M1_RIGHT_TIGHT = M1_RIGHT_SOURCE[:4] + ["\\!.´"]
-M1_RIGHT_INSERT_KEYS = "6G5ddG" + "".join(
-    "o%s<Esc>" % row for row in M1_RIGHT_COLON)
 M1_PRIMARY_SOURCE = (
     "official-Cosmetics/AcronianGuardian res06 left-wing frame 1 and "
     "res11 right-wing frame 2; authored comma/colon/tight-joint study"
@@ -484,12 +774,18 @@ MODULES = [
                 M0_RADIAL_SOURCE,
                 M0_RADIAL_DIM,
                 "j0f*ro",
-                [["j", "move to the acting row"],
-                 ["f*", "find the visible source star without padding the path with unused word motions"],
-                 ["ro", "replace only the core while keeping every Fireworks accent registered"]],
+                [["j0", "move down to the star row, then return to column 1"],
+                 ["f*", "move onto the star on this row"],
+                 ["ro", "replace only the core with o; every accent stays fixed"]],
                 method_requirement=require_method(
                     "find the visible core, then replace it in place",
-                    exact_any_of=["j0f*ro"]),
+                    exact_any_of=["j0f*ro", "jf*ro"]),
+                key_vocabulary=[
+                    "j moves down one row; 0 returns to column 1",
+                    "f* finds the next star on the current row",
+                    "ro replaces the current cell with o",
+                    "From the supplied starting cursor, jf*ro also works; j0f*ro is the taught path.",
+                ],
                 review_variants=[
                     dict(step(
                         stone_story_variants.FIREWORK_RADIAL_F4,
@@ -508,17 +804,18 @@ MODULES = [
                             exact_any_of=["2j0f*ro"])),
                         source="official-Cosmetics/Fireworks res03 radial nodes; authored dim core"),
                 ],
-            ), source=M0_PRIMARY_SOURCE),
+            ), source=M0_PRIMARY_SOURCE,
+                key_shape="j = down one row · 0 = column 1 · f{char} = find on this row · r{char} = replace one cell"),
             dict(step(
                 M0_RADIAL_DIM,
                 M0_RADIAL_DIM + M0_RADIAL_BRIGHT,
                 "gg3yyGp:4,6s/o/O/g<CR>",
                 [["gg3yy", "copy the complete three-row dim Fireworks keyframe"],
                  ["Gp", "put the copy after the original"],
-                 [":4,6s/o/O/g", "on rows 4 through 6 substitute O for every o; only the copied core matches, and g means every match on each addressed row"]],
+                 [":4,6s/o/O/g", "on rows 4 through 6 substitute O for every o; only the copied core matches, and g means every match on each selected row"]],
                 key_vocabulary=[
                     "{count}yy then p/P — yank complete frame rows and put them below/above",
-                    ":{start},{end}s/old/new/g — across addressed rows replace every match; g means all matches per row",
+                    ":{start},{end}s/old/new/g — across selected rows replace every match; g means all matches per row",
                 ],
             ), source=M0_PRIMARY_SOURCE),
             dict(step(
@@ -529,7 +826,7 @@ MODULES = [
                  [":8s/-/=/g", "strengthen only the new frame's two outer ASCII rays"]],
                 key_vocabulary=[
                     "{count}yy then p/P — yank complete frame rows and put them below/above",
-                    ":{start},{end}s/old/new/g — across addressed rows replace every match; a one-line address is the bounded form",
+                    ":{start},{end}s/old/new/g — across selected rows replace every match; a one-line selector is the bounded form",
                 ],
             ), source=M0_PRIMARY_SOURCE),
             dict(step(
@@ -539,7 +836,7 @@ MODULES = [
                 [[":7,9t$", "copy the whole flare extreme to create a deliberate two-frame hold"]], alternatives=[
                 method("counted yank and put", "7G3yyGp", "copy the three-row flare from its first row",
                        {"kind": "linewise_yank_put", "rows": 3}),
-                method("addressed copy", ":7,9t$<CR>", "copy the exact flare range without relying on cursor position",
+                method("copy with an explicit range", ":7,9t$<CR>", "copy the exact flare range without relying on cursor position",
                        {"kind": "ex_copy", "start": 7, "end": 9, "destination": "$"}),
             ]), source=M0_PRIMARY_SOURCE),
             dict(step(
@@ -599,26 +896,24 @@ MODULES = [
             ), source=M1_PRIMARY_SOURCE),
             dict(step(
                 M1_LEFT_COLON + M1_LEFT_COLON,
-                M1_LEFT_COLON + M1_RIGHT_COLON,
-                M1_RIGHT_INSERT_KEYS,
-                [["6G5ddGo", "remove only the copied five-row pose and open its replacement"],
-                 ["type five source rows", "hand-author the right-facing wing and preserve each directional glyph by eye"]],
+                M1_LEFT_COLON,
+                "6G5dd",
+                [["6G5dd", "remove only the duplicate supplied left-wing pose; keep the complete source pose registered"]],
             ), source=M1_PRIMARY_SOURCE),
             dict(step(
-                M1_LEFT_COLON + M1_RIGHT_COLON,
-                M1_LEFT_TIGHT + M1_RIGHT_TIGHT,
-                "4G0f:r!6j0f:.",
-                [["4G0f:r!", "replace the left colon with a tightened exclamation joint"],
-                 ["6j0f:.", "find the right colon and repeat the verified replacement"]], alternatives=[
-                method("local plus dot", "4G0f:r!6j0f:.", "edit the left joint and repeat that replacement on the right pose"),
-                method("bounded substitute", ":%s/:/!/g<CR>", "replace the only two colon joints in the owned ten-row strip"),
+                M1_LEFT_COLON,
+                M1_LEFT_TIGHT,
+                "4G0f:r!",
+                [["4G0f:r!", "replace the supplied left colon with a tightened exclamation joint"]], alternatives=[
+                method("local replacement", "4G0f:r!", "edit the one nominated supplied joint"),
+                method("bounded substitute", ":%s/:/!/g<CR>", "replace the matching joint in the owned five-row strip"),
             ]), source=M1_PRIMARY_SOURCE),
             dict(step(
-                M1_LEFT_TIGHT + M1_RIGHT_TIGHT,
-                M1_LEFT_TIGHT + M1_RIGHT_TIGHT + M1_LEFT_COLON,
-                ":1,5t$<CR>14G0f!r:",
+                M1_LEFT_TIGHT,
+                M1_LEFT_TIGHT + M1_LEFT_COLON,
+                ":1,5t$<CR>9G0f!r:",
                 [[":1,5t$", "copy the complete left-wing pose as the return scaffold"],
-                 ["14G0f!r:", "change only the return joint so it is not a dead duplicate"]],
+                 ["9G0f!r:", "change only the return joint so it is not a dead duplicate"]],
             ), source=M1_PRIMARY_SOURCE),
         ],
         "transfer": dict(step(
@@ -742,7 +1037,7 @@ MODULES = [
         "principle": "derive every later frame from the approved complete primary pose",
         "defect": "only part of the body was copied, or stable torso and feet drift with the eye",
         "basic": "copy all six pose rows with 6yy/p, then edit only the copy",
-        "scaled": "copy the addressed six-line pose with :t, then change one acting feature",
+        "scaled": "copy the complete six-line pose with :t, then change one acting feature",
         "steps": [
             step(
                 ["  /\\   ", " (.)   ", " /|\\   ", "  |    ", " / \\   ", "/___\\  "],
@@ -778,9 +1073,9 @@ MODULES = [
                  "  /\\   ", " (O)   ", " /|\\   ", "  |    ", " / \\   ", "/___\\  ",
                  "  /\\   ", " (o)   ", " /|\\   ", "  |    ", " / \\   ", "/___\\  "],
                 ":1,6t$<CR>",
-                [[":1,6t$", "copy the addressed primary pose to the end"]], alternatives=[
+                [[":1,6t$", "copy the selected primary pose to the end"]], alternatives=[
                 method("counted yank", "gg6yyGp", "copy the first six-row pose and put it at the end"),
-                method("addressed copy", ":1,6t$<CR>", "copy lines 1 through 6 directly to the end"),
+                method("copy with an explicit range", ":1,6t$<CR>", "copy lines 1 through 6 directly to the end"),
             ]),
             step(
                 ["  /\\   ", " (o)   ", " /|\\   ", "  |    ", " / \\   ", "/___\\  ",
@@ -873,7 +1168,7 @@ MODULES = [
                 "10G0C   |<Esc>11G0C   |<Esc>:1,3t$<CR>",
                 [["10G/11G C", "turn the copied forward extreme into the return midpoint"],
                  [":1,3t$", "append a seam candidate that the mastery check must inspect"]], alternatives=[
-                method("addressed seam candidate", "10G0C   |<Esc>11G0C   |<Esc>:1,3t$<CR>", "redraw the return midpoint, then copy the exact first frame"),
+                method("seam candidate with an explicit range", "10G0C   |<Esc>11G0C   |<Esc>:1,3t$<CR>", "redraw the return midpoint, then copy the exact first frame"),
                 method("counted seam candidate", "10G0C   |<Esc>11G0C   |<Esc>gg3yyGp", "redraw the return midpoint, then yank and put the complete first frame"),
             ]),
             step(
@@ -1004,7 +1299,7 @@ MODULES = [
                 ":1,7t7<CR>8G0C    |<Esc>9G0C    |<Esc>",
                 [[":1,7t7", "insert the complete left extreme into the temporal gap"],
                  ["8G/9G C", "redraw only its blade rows as a distinct vertical midpoint"]], alternatives=[
-                method("addressed midpoint", ":1,7t7<CR>8G0C    |<Esc>9G0C    |<Esc>", "copy the exact seven-row frame into the gap, then redraw its moving rows"),
+                method("midpoint with an explicit range", ":1,7t7<CR>8G0C    |<Esc>9G0C    |<Esc>", "copy the exact seven-row frame into the gap, then redraw its moving rows"),
                 method("counted midpoint", "gg7yy7Gp8G0C    |<Esc>9G0C    |<Esc>", "yank seven rows into the gap, then redraw its moving rows"),
             ]),
             step(
@@ -1112,7 +1407,7 @@ MODULES = [
                 [[":6,10t$", "copy the complete first reduced frame"],
                  ["12G0D", "remove the next upper unit without deleting its row"]], alternatives=[
                 method("counted yank then clear", "6G5yyGp12G0D", "copy five rows, then clear the copied shoulder row"),
-                method("addressed copy then clear", ":6,10t$<CR>12G0D", "copy the exact frame range, then clear its next upper unit"),
+                method("copy an explicit range, then clear", ":6,10t$<CR>12G0D", "copy the exact frame range, then clear its next upper unit"),
             ]),
             step(
                 ["    ^    ", "   /_\\   ", "  /---\\  ", " /-----\\ ", "/-------\\",
@@ -1401,7 +1696,7 @@ MODULES = [
             stone_story_variants.BOO_HOVER_F3,
             stone_story_variants.BOO_HOVER_F4,
             "3G0C /   \\<Esc>",
-            [["3G0", "address only Boo's acting skirt row"],
+            [["3G0", "select only Boo's acting skirt row"],
              ["C /   \\<Esc>", "redraw the flare as the inward-folded squash contour"]],
         ), source="official-Pets/Boo res01 hover frame 3 to frame 4",
            prompt=(
@@ -1426,6 +1721,11 @@ MODULES = [
         "frame_rows": 3, "medium": "proportional-sjis",
         "phase_titles": {3: "Read the proportional motion", 7: "Diagnose the proportional motion"},
         "source_ref": "sjis_corpus_findings.v1.json; ascii-art-authoring §§9-10,15.3-15.7",
+        "transcription_boundary": (
+            "Neovim grades exact UTF-8 transcription and scoped edits only. "
+            "Proportional true-metric animation acceptance is outside terminal-cell evidence "
+            "and belongs to Saitamaar; no proportional acceptance is inferred here."
+        ),
         "meaning": "a three-row proportional puff expands from a lobe into an arch, holds at impact with bounded hatching, then settles",
         "first_reading": "the missing partner becomes ⌒ヽ while the lower two contour rows remain registered",
         "principle": "keep complete equal-height frames and stable contour landmarks, but judge proportional alignment in Saitamaar at true advances",
@@ -1434,51 +1734,64 @@ MODULES = [
         "scaled": "copy the complete three-row frame, transform its outline as one pose, and preview the ordered strip in Saitamaar",
         "steps": [
             step(
-                ["　　⌒?", "　（　　）", "　　ヽ_ノ"],
-                ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ"],
+                ["　　⌒?", "　（　　）", "　　ヽ_ノ",
+                 "　／￣＼", "（　　　）", "　＼＿／",
+                 "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／"],
+                ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
+                 "　／￣＼", "（　　　）", "　＼＿／",
+                 "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／"],
                 "$rヽ",
                 [["$", "reach the missing partner inside the complete puff frame"],
                  ["rヽ", "complete the ⌒ヽ shoulder without disturbing the registered base"]],
             ),
-            step(
-                ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ"],
-                ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
-                 "　／￣＼", "（　　　）", "　＼＿／"],
-                "gg3yyGp4G0C　／￣＼<Esc>5G0C（　　　）<Esc>6G0C　＼＿／<Esc>",
-                [["gg3yyGp", "copy the complete three-row lobe as the expansion scaffold"],
-                 ["4G/5G/6G C", "redraw all three copied rows as the wider arch extreme"]],
-            ),
-            step(
-                ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
-                 "　／￣＼", "（　　　）", "　＼＿／"],
-                ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
-                 "　／￣＼", "（　　　）", "　＼＿／",
-                 "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／"],
-                "Go／￣￣＼<Esc>o|ﾆ二ニ|<Esc>o＼＿＿／<Esc>",
-                [["G", "go to the end of the two-frame proportional strip"],
-                 ["three bounded rows", "append the impact pose with hatching contained by its outline"]],
-            ),
-            step(
+            dict(step(
                 ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
                  "　／￣＼", "（　　　）", "　＼＿／",
                  "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／"],
                 ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
+                 "　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
+                 "　／￣＼", "（　　　）", "　＼＿／",
+                 "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／"],
+                "gg3yy3Gp",
+                [["gg3yy3Gp", "copy the supplied three-row lobe after row three; keep the supplied arch and impact intact"]],
+            ), source="sjis_corpus_findings.v1.json; UTF-8 lobe transcription from the proportional puff corpus"),
+            dict(step(
+                ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
+                 "　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
+                 "　／￣＼", "（　　　）", "　＼＿／",
+                 "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／"],
+                ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
+                 "　　⌒ヽ", "[（　　）", "　　ヽ_ノ",
+                 "　／￣＼", "（　　　）", "　＼＿／",
+                 "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／"],
+                "5G0r[",
+                [["5G0r[", "replace one supplied arch endpoint in place; retain every other proportional transcription"]],
+            ), source="sjis_corpus_findings.v1.json; UTF-8 impact transcription from the proportional puff corpus"),
+            step(
+                ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
+                 "　　⌒ヽ", "[（　　）", "　　ヽ_ノ",
+                 "　／￣＼", "（　　　）", "　＼＿／",
+                 "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／"],
+                ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
+                 "　　⌒ヽ", "[（　　）", "　　ヽ_ノ",
                  "　／￣＼", "（　　　）", "　＼＿／",
                  "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／",
                  "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／"],
-                ":7,9t$<CR>",
-                [[":7,9t$", "repeat the complete impact pose as a deliberate two-frame hold"]], alternatives=[
-                method("counted yank and put", "7G3yyGp", "copy all three impact rows from their first line",
+                ":10,12t$<CR>",
+                [[":10,12t$", "repeat the complete impact pose as a deliberate two-frame hold"]], alternatives=[
+                method("counted yank and put", "10G3yyGp", "copy all three impact rows from their first line",
                        {"kind": "linewise_yank_put", "rows": 3}),
-                method("addressed copy", ":7,9t$<CR>", "copy the exact impact-frame range without relying on cursor position",
-                       {"kind": "ex_copy", "start": 7, "end": 9, "destination": "$"}),
+                method("copy with an explicit range", ":10,12t$<CR>", "copy the exact impact-frame range without relying on cursor position",
+                       {"kind": "ex_copy", "start": 10, "end": 12, "destination": "$"}),
             ]),
             step(
                 ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
+                 "　　⌒ヽ", "[（　　）", "　　ヽ_ノ",
                  "　／￣＼", "（　　　）", "　＼＿／",
                  "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／",
                  "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／"],
                 ["　　⌒ヽ", "　（　　）", "　　ヽ_ノ",
+                 "　　⌒ヽ", "[（　　）", "　　ヽ_ノ",
                  "　／￣＼", "（　　　）", "　＼＿／",
                  "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／",
                  "／￣￣＼", "|ﾆ二ニ|", "＼＿＿／",
@@ -1651,7 +1964,7 @@ MODULES = [
             stone_story_variants.SNAIL_CRAWL_F4,
             stone_story_variants.SNAIL_CRAWL_IDLE,
             "3G0r¯",
-            [["3G0", "address the first cell of Snail's acting crawl baseline"],
+            [["3G0", "reach the first cell of Snail's acting crawl baseline"],
              ["r¯", "settle the one high accent back to the flat baseline"]],
         ), source="official-Pets/Snail res28-res31 to res32-res35 crawl composites; @ spiral adapted to O",
            prompt=(
@@ -1666,7 +1979,7 @@ MODULES = [
         "source_ref": "ascii-art-authoring §4.6 joint height and off-vertical anti-aliasing; §10 stagger and drag; Neovim help f, t, ;, comma, visual-mode, gv",
         "meaning": "a three-row mirrored mechanism passes a joint accent from left to right, then staggers the lower joints before returning on the opposite side",
         "first_reading": "the left upper joint changes from : to ! while the centre axis, mirrored outline, and right joint stay registered",
-        "principle": "preserve the already paired shell and centre axis while addressing homologous punctuation by its visible landmark rather than memorised columns",
+        "principle": "preserve the already paired shell and centre axis while finding matching punctuation by its visible landmark rather than memorised columns",
         "defect": "the stable shell is reversed unnecessarily, a character search lands on the delimiter instead of beside it, or both joint accents change at the same time despite a planned stagger",
         "basic": "use t or T to approach a visible joint from either direction, then make one in-place replacement",
         "scaled": "repeat a character search across homologous joints, compare it with a row-scoped substitute, and author the mirrored return pose",
@@ -1826,7 +2139,7 @@ MODULES = [
         "principle": "treat whitespace-separated texture clusters as WORD landmarks, but replace cells in place so the animation does not collapse its fixed-width layout",
         "defect": "a lowercase word motion stops inside punctuation, a delete shifts every later cluster, or the pulse changes support rows that should remain temporal anchors",
         "basic": "use W to reach the next punctuation cluster and replace its first cell without changing row length",
-        "scaled": "combine E, counted W, and B to address opposite cluster edges, then compare local repeated edits with a row-scoped material substitution",
+        "scaled": "combine E, counted W, and B to reach opposite cluster edges, then compare local repeated edits with a row-scoped material substitution",
         "steps": [
             step(
                 ["..:: ..:: ..::", ".:::..|..:::.", "_____.|._____"],
@@ -1861,7 +2174,7 @@ MODULES = [
                  ["2Wr.Er!", "clear the old right start and accent that WORD's far edge"],
                  ["2Br!", "return to the centre WORD and accent its first cell"]],
                 method_requirement=require_method(
-                    "address three texture edges with E, counted W, and B",
+                    "reach three texture edges with E, counted W, and B",
                     exact_any_of=["4G3yyGp7GEr!2Wr.Er!2Br!"]),
                 review_variants=[
                     step(["--++ !-++ --++", "-+++--|--+++-", "_____-|-_____",
@@ -1870,9 +2183,9 @@ MODULES = [
                           "--++ --++ x-++", "-+++--|--+++-", "_____-|-_____",
                           "--+! !-++ .-+!", "-+++--|--+++-", "_____-|-_____"],
                          "4G3yyGp7GEr!2Wr.Er!2Br!",
-                         [["E / 2W / E / 2B", "address all three changed texture edges"]],
+                         [["E / 2W / E / 2B", "reach all three changed texture edges"]],
                          method_requirement=require_method(
-                             "address the changed texture edges with E, W, and B",
+                             "reach the changed texture edges with E, W, and B",
                              exact_any_of=["4G3yyGp7GEr!2Wr.Er!2Br!"])),
                     step(["__.. !_.. __..", "_...__|__..._", "-----+|+-----",
                           "__.. __.. O_..", "_...__|__..._", "-----+|+-----"],
@@ -1880,9 +2193,9 @@ MODULES = [
                           "__.. __.. O_..", "_...__|__..._", "-----+|+-----",
                           "__.! !_.. __.!", "_...__|__..._", "-----+|+-----"],
                          "4G3yyGp7GEr!2Wr_Er!2Br!",
-                         [["E / 2W / E / 2B", "address the alternate texture edges"]],
+                         [["E / 2W / E / 2B", "reach the alternate texture edges"]],
                          method_requirement=require_method(
-                             "address the alternate texture edges with E, W, and B",
+                             "reach the alternate texture edges with E, W, and B",
                              exact_any_of=["4G3yyGp7GEr!2Wr_Er!2Br!"])),
                 ],
             ),
@@ -1990,7 +2303,7 @@ MODULES = [
         "principle": "keep variants in the file, treat each blank-line-separated frame as one object, and reuse a deliberate glyph vocabulary instead of retyping it from memory",
         "defect": "a put copies only one row, a register paste inserts and shifts the right wall, or a palette glyph is retyped inconsistently between variants",
         "basic": "yank one visible palette glyph into a named register and insert it through Replace mode over the acting cell",
-        "scaled": "copy an entire paragraph frame with yap, navigate variants with }, and compare objectwise put with an addressed range copy",
+        "scaled": "copy an entire paragraph frame with yap, navigate variants with }, and compare objectwise put with an explicit range copy",
         "steps": [
             step(
                 ["/^\\  [*+]", "|o|       ", "\\_/       ", ""],
@@ -2073,7 +2386,7 @@ MODULES = [
                  ["gg}jP", "move to the next frame boundary and put the object as a complete third variant"]],
                 alternatives=[
                     method("paragraph object copy", "5Gyapgg}jP", "copy the current blank-line-separated frame with yap and place it at a frame boundary with P"),
-                    method("addressed four-line copy", ":5,8t$<CR>", "copy the exact three art rows plus their separator by address"),
+                    method("copy of an explicit four-line range", ":5,8t$<CR>", "copy the exact three art rows plus their separator with an explicit range"),
                 ],
                 review_variants=[
                     step(["/o\\ [#@]", "|#|      ", "\\_/      ", "",
@@ -2300,7 +2613,9 @@ MODULES = [
                           "!!..!!..!!|", "  <>__<>__<>|", "\\========/|",
                           "!!..!!..!!", " <>__<>__<>", "\\========/"],
                          ":1,3t$<CR>7G0qqf:r.q3@q",
-                         [["qq ... q / 3@q", "record once and replay across the changed dither row"]],
+                         [[":1,3t$<CR>", "append the registered source frame before recording"],
+                          ["7G0qqf:r.q", "record one anchored colon-to-dot edit and stop recording"],
+                          ["3@q", "replay that complete macro exactly three times on the changed dither row"]],
                          method_requirement=require_method(
                              "replay the dither macro on changed texture",
                              exact_any_of=[":1,3t$<CR>7G0qqf:r.q3@q"])),
@@ -2310,7 +2625,9 @@ MODULES = [
                           "++..++..++|", "  {}__{}__{}|", "\\~~~~~~~~/|",
                           "++..++..++", " {}__{}__{}", "\\~~~~~~~~/"],
                          ":1,3t$<CR>7G0qqf:r.q3@q",
-                         [["qq ... q / 3@q", "record once and replay across the alternate dither row"]],
+                         [[":1,3t$<CR>", "append the registered source frame before recording"],
+                          ["7G0qqf:r.q", "record one anchored colon-to-dot edit and stop recording"],
+                          ["3@q", "replay that complete macro exactly three times on the alternate dither row"]],
                          method_requirement=require_method(
                              "replay the macro on alternate texture",
                              exact_any_of=[":1,3t$<CR>7G0qqf:r.q3@q"])),
@@ -2353,14 +2670,14 @@ MODULES = [
     {
         "id": "M16", "title": "Key-pose plan", "node": "A0/V16",
         "project": "key-pose-plan", "frame_rows": 5, "labels_steps": [1, 2, 4, 5, 6, 8],
-        "skill": "reference intake, size tests, written frame plans, saved-plate import, addressed copy/move, and numeric frame labels",
+        "skill": "reference intake, size tests, written frame plans, saved-plate import, copy with an explicit range/move, and numeric frame labels",
         "source_ref": "ascii-art-authoring §§2,7.1; archived animation workflow transcript Part 1 00:52:45–01:01:05; Neovim help :read, :copy, :move, CTRL-A",
         "meaning": "one approved small key pose becomes a written multi-block plan whose frame numbers can be copied, incremented, and reordered without retyping the art",
         "first_reading": "the small three-row pose is already readable at playback size, while its F01 and T08 FPS lines state frame identity and timing before in-betweening begins",
         "principle": "collect a reference, test the smallest readable key pose, write timing and frame intent down, then preserve that approved plate while planning later poses",
         "defect": "a copied plan block loses an art row, two blocks retain the same frame number, a move cuts through a five-line plate, or an imported plate comes from unsaved buffer state instead of the named source",
         "basic": "increment a numeric frame label in place with CTRL-A while the pose and timing line remain unchanged",
-        "scaled": "read a saved plate, copy complete five-line plan blocks by address, and compare addressed move with a linewise delete-and-put reorder",
+        "scaled": "read a saved plate, copy complete five-line plan blocks with an explicit range, and compare an explicit-range move with a whole-line delete-and-put reorder",
         "steps": [
             step(
                 ["   o   ", "  /|\\  ", "  / \\  ", "F00 KEY", "T08 FPS"],
@@ -2462,7 +2779,7 @@ MODULES = [
                 ":6,10m0<CR>",
                 [[":6,10m0", "move exactly the second complete planning block before the first"]],
                 alternatives=[
-                    method("addressed plan-block move", ":6,10m0<CR>", "move the verified five-line block directly by range"),
+                    method("plan-block move with an explicit range", ":6,10m0<CR>", "move the verified five-line block directly by range"),
                     method("linewise delete and put", "6GV4jdggP", "select the same five complete lines, delete them, and put them before line one"),
                 ],
                 review_variants=[
@@ -2475,7 +2792,7 @@ MODULES = [
                          ":6,10m0<CR>",
                          [[":m", "move the changed complete plan block by exact range"]],
                          method_requirement=require_method(
-                             "use addressed move on changed planning blocks",
+                             "use move with an explicit range on changed planning blocks",
                              exact_any_of=[":6,10m0<CR>"])),
                     step(["   +   ", "  <|>  ", "  / \\  ", "F07 KEY", "T06 FPS",
                           "   +   ", "  <|>  ", "  / \\  ", "F08 KEY", "T06 FPS",
@@ -2536,7 +2853,7 @@ MODULES = [
             ["    _", " ,'   `.", "/    1  \\", "\\       /", " \\/|..-'"],
             ["    _", " ,'   `.", "/    2  \\", "\\       /", " \\/|..-'"],
             "3G0f1<C-a>",
-            [["3G0f1", "address the number drawn inside the FrogBog pad"],
+            [["3G0f1", "reach the number drawn inside the FrogBog pad"],
              ["<C-a>", "advance pad frame 1 to frame 2 without moving its contour"]],
             method_requirement=require_method(
                 "increment the embedded FrogBog frame number without redrawing the pad",
@@ -2550,7 +2867,7 @@ MODULES = [
             ["    _", " ,'   `.", "/    2  \\", "\\       /", " \\/|..-'"],
             ["    _", " ,'   `.", "/    3  \\", "\\       /", " \\/|..-'"],
             "3G0f2<C-a>",
-            [["3G0f2", "address the next number drawn inside the FrogBog pad"],
+            [["3G0f2", "reach the next number drawn inside the FrogBog pad"],
              ["<C-a>", "advance pad frame 2 to frame 3 without moving its contour"]],
             method_requirement=require_method(
                 "increment the alternate embedded FrogBog frame number",
@@ -2782,9 +3099,9 @@ MODULES = [
                 ["|o--->....|", "|./|......|", "|./.\\.....|", "CHECK=0"],
                 ["|....<---o|", "|......|\\.|", "|...../.\\.|", "CHECK=0"],
                 "0C|....<---o|<Esc>j0C|......|\\.|<Esc>j0C|...../.\\.|<Esc>",
-                [["0C...", "overwrite the complete top row with the actor and arrowhead exchanged by hand"],
-                 ["j0C...", "redraw the arm slash and spacing rather than reversing bytes"],
-                 ["j0C...", "redraw the leg slashes at their mirrored positions while preserving width"]],
+                [["0C|....<---o|<Esc>", "overwrite the complete top row with the actor and arrowhead exchanged by hand"],
+                 ["j0C|......|\\.|<Esc>", "redraw the arm slash and spacing rather than reversing bytes"],
+                 ["j0C|...../.\\.|<Esc>", "redraw the leg slashes at their mirrored positions while preserving width"]],
                 method_requirement=require_method(
                     "hand-author all three mirrored art rows without a software flip",
                     exact_any_of=["0C|....<---o|<Esc>j0C|......|\\.|<Esc>j0C|...../.\\.|<Esc>"]),
@@ -2822,8 +3139,8 @@ MODULES = [
                 ["|....<---o|", "|......|\\.|", "|...../.\\.|", "CHECK=0",
                  "|...<---o.|", "|.....|\\..|", "|..../.\\..|", "CHECK=0"],
                 "5G0C|...<---o.|<Esc>j0C|.....|\\..|<Esc>j0C|..../.\\..|<Esc>",
-                [["5G0C...", "move the copied top action one cell past the return extreme"],
-                 ["j0C... twice", "redraw both limb rows at the same one-cell overshoot"]],
+                [["5G0C|...<---o.|<Esc>", "move the copied top action one cell past the return extreme"],
+                 ["j0C|.....|\\..|<Esc> then j0C|..../.\\..|<Esc>", "redraw both limb rows at the same one-cell overshoot"]],
                 method_requirement=require_method(
                     "hand-author the copied return overshoot across all three art rows",
                     exact_any_of=["5G0C|...<---o.|<Esc>j0C|.....|\\..|<Esc>j0C|..../.\\..|<Esc>"]),
@@ -2920,19 +3237,17 @@ MODULES = [
             ),
         ],
         "transfer": dict(step(
-            PALLAS_LEFT_CALM_RAILS,
-            PALLAS_RIGHT_CALM_RAILS,
-            full_row_rewrite(PALLAS_RIGHT_CALM_RAILS, "C"),
-            [["C on six fixed-rail rows", "hand-author the complete source-authored right ghost, including accent and tail spacing"]],
-            method_requirement=require_method(
-                "hand-author the complete Pallas ghost mirror without reversing bytes",
-                exact_any_of=[full_row_rewrite(PALLAS_RIGHT_CALM_RAILS, "C")]),
-        ), frame_rows=6,
-           source="official-Foes/PallasCrown res01 left calm ghost to res03 right calm ghost; fixed tutor rails only",
+            [row + "  " for row in stone_story_variants.MISSILE_F3],
+            [row + "  " for row in stone_story_variants.MISSILE_F4],
+            "2Gg_r.",
+            [["2G", "go to the supplied missile exhaust row"],
+             ["g_", "land on the final visible exhaust glyph, ignoring alignment spaces"],
+             ["r.", "replace that one supplied endpoint in place"]]
+        ), frame_rows=3, preserve_trailing_whitespace=True,
+           source="official-Games/TowerDefense res18 missile frame 3 to frame 4; supplied UTF-8 source transcription with two authored alignment spaces per row",
            prompt=(
-               "Hand-author Pallas's calm left ghost as its source-authored right-side mirror. "
-               "Exchange the accent, curve directions, tail wisp, and spacing across all six rows; "
-               "keep both tutor rails fixed."
+               "On the supplied missile pair, replace only the final visible exhaust apostrophe with the next-frame dot. "
+               "The source rows and alignment spaces are already present; no full-row retyping is needed."
            )),
         "transfer_alt": dict(step(
             PALLAS_LEFT_STRAIN_RAILS,
@@ -2955,7 +3270,7 @@ MODULES = [
         "stage": "S2", "project": "pallas-mirror-study", "frame_rows": 6,
         "labels_steps": [1, 2, 4, 5, 6, 8],
         "skill": "hand mirroring a complete still with virtual replace and directional glyph judgment",
-        "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :copy",
+        "source_ref": "ascii-art-authoring §§4.4,4.7.7; Neovim help gR, f, ;, :delete, :copy",
         "meaning": "Pallas's left calm ghost is copied and redrawn by hand as the official right calm pose before any in-betweens are attempted",
         "first_reading": "one uncertain left-ghost eye is approved without shifting either fixed-width rail",
         "principle": "a mirrored animation extreme is a newly authored still: exchange directional glyphs and spacing by eye instead of reversing stored bytes",
@@ -2964,8 +3279,8 @@ MODULES = [
         "scaled": "copy the complete six-row Pallas key pose, then hand-author every directional row of its official mirrored extreme",
         "steps": [
             dict(step(
-                M19_LEFT_PLACEHOLDER,
-                PALLAS_LEFT_CALM_RAILS,
+                M19_LEFT_PLACEHOLDER + PALLAS_RIGHT_CALM_RAILS,
+                PALLAS_LEFT_CALM_RAILS + PALLAS_RIGHT_CALM_RAILS,
                 "2G0f?gR-<Esc>",
                 [["2G0f?", "land on the visible eye placeholder"],
                  ["gR-<Esc>", "Virtual Replace the one eye cell and return to Normal mode"]],
@@ -2974,21 +3289,17 @@ MODULES = [
                     exact_any_of=["2G0f?gR-<Esc>"]),
             ), source=M19_PRIMARY_SOURCE + "; tutor-injected eye placeholder"),
             dict(step(
-                PALLAS_LEFT_CALM_RAILS,
-                PALLAS_LEFT_CALM_RAILS + PALLAS_LEFT_CALM_RAILS,
-                "gg6yyGp",
-                [["gg6yy", "copy the complete approved six-row Pallas still"],
-                 ["Gp", "append one working extreme below it"]],
+                PALLAS_LEFT_CALM_RAILS + PALLAS_RIGHT_CALM_RAILS,
+                PALLAS_LEFT_CALM_RAILS + PALLAS_LEFT_CALM_RAILS + PALLAS_RIGHT_CALM_RAILS,
+                "gg6yy6Gp",
+                [["gg6yy", "copy the complete supplied left calm still"],
+                 ["6Gp", "put that left pose after row six, before the supplied right source pose"]],
             ), source=M19_PRIMARY_SOURCE + "; res01 left calm pose copied"),
             dict(step(
-                PALLAS_LEFT_CALM_RAILS + PALLAS_LEFT_CALM_RAILS,
+                PALLAS_LEFT_CALM_RAILS + PALLAS_LEFT_CALM_RAILS + PALLAS_RIGHT_CALM_RAILS,
                 PALLAS_LEFT_CALM_RAILS + PALLAS_RIGHT_CALM_RAILS,
-                "7G" + full_row_rewrite(PALLAS_RIGHT_CALM_RAILS, "gR"),
-                [["7G0gR…<Esc>", "redraw the copied crown row without changing its width"],
-                 ["j0gR…<Esc> ×5", "hand-author the remaining official right ghost, including accent, body curve, tail wisp, and spacing"]],
-                method_requirement=require_method(
-                    "hand-author all six copied Pallas mirror rows with virtual replace",
-                    exact_any_of=["7G" + full_row_rewrite(PALLAS_RIGHT_CALM_RAILS, "gR")]),
+                "7G6dd",
+                [["7G6dd", "delete only the duplicate supplied left pose; retain the complete official right source pose"]],
             ), source=M19_PRIMARY_SOURCE + "; res01 left calm to res03 right calm"),
             dict(step(
                 PALLAS_LEFT_CALM_RAILS + PALLAS_RIGHT_CALM_RAILS,
@@ -3021,33 +3332,25 @@ MODULES = [
             ), source=M19_PRIMARY_SOURCE + "; res01 left calm copied with res02 strain eye expression"),
         ],
         "transfer": dict(step(
-            ACRONIAN_LEFT_MID_RAILS,
+            ACRONIAN_LEFT_MID_RAILS + ACRONIAN_RIGHT_MID_RAILS,
             ACRONIAN_RIGHT_MID_RAILS,
-            full_row_rewrite(ACRONIAN_RIGHT_MID_RAILS, "gR"),
-            [["gR on six fixed-rail rows", "hand-author the complete source right mid-wing, including the folded inner contour"]],
-            method_requirement=require_method(
-                "hand-author the complete Acronian wing mirror with virtual replace",
-                exact_any_of=[full_row_rewrite(ACRONIAN_RIGHT_MID_RAILS, "gR")]),
+            "gg6dd",
+            [["gg6dd", "delete only the six supplied left mid-wing rows; the official right source transcription remains"]],
         ), frame_rows=6,
            source="official-Cosmetics/AcronianGuardian res08 left mid-wing to res12 right mid-wing; fixed tutor rails only",
            prompt=(
-               "Hand-author Acronian Guardian's complete folded mid-wing as its source "
-               "right-side mirror. Judge the outer edge, inner fold, accents, and every "
-               "gap across all six rows; keep both tutor rails fixed."
+               "Delete only the six supplied left mid-wing rows; keep the complete "
+               "right source pose and both rails unchanged."
            )),
         "transfer_alt": dict(step(
-            ACRONIAN_LEFT_F2_RAILS,
+            ACRONIAN_LEFT_F2_RAILS + ACRONIAN_RIGHT_F2_RAILS,
             ACRONIAN_RIGHT_F2_RAILS,
-            full_row_rewrite(ACRONIAN_RIGHT_F2_RAILS, "gR"),
-            [["gR on five fixed-rail rows", "hand-author the alternate downstroke mirror without a software flip"]],
-            method_requirement=require_method(
-                "hand-author the alternate Acronian wing mirror with virtual replace",
-                exact_any_of=[full_row_rewrite(ACRONIAN_RIGHT_F2_RAILS, "gR")]),
+            ":1,5d<CR>",
+            [[":1,5d<CR>", "remove only the supplied left downstroke; the official right source transcription remains"]],
         ), source="official-Cosmetics/AcronianGuardian res07 left wing to res11 right wing; fixed tutor rails only",
            prompt=(
-               "Hand-author the downstroke left wing as its source-authored right-wing mirror. "
-               "Judge every accent, slash, interior gap, and feather edge; keep all five "
-               "rows and both rails registered."
+               "Delete only the five supplied left downstroke rows; keep the complete "
+               "right source pose and both rails unchanged."
            )),
     },
 ]
@@ -3112,7 +3415,7 @@ PRIMARY_STAGE_BY_MODULE = {
 # copy; the remaining M0 cards own A1 and form the first animation strip.
 STAGE_OWNER_OVERRIDES = {
     card_id: "S0" for card_id in (
-        "M0.P0", "M0.01", "M0.YP", "M0.O", "M0.SR", "M0.T", "M0.SL",
+        "M0.P0", "M0.L0", "M0.F0", "M0.01", "M0.YP", "M0.O", "M0.SR", "M0.T", "M0.SL",
     )
 }
 STAGE_OWNER_OVERRIDES.update({
@@ -3134,7 +3437,7 @@ ARTIFACT_MODE_BY_STAGE = {
 
 # These existing independent/check cards had source-linked review art but only
 # graded the final buffer.  The master curriculum rule is stricter: the named
-# command family must be demonstrated with hidden keys before its spaced review
+# command kind must be demonstrated with hidden keys before its spaced review
 # can count toward mastery.
 STRICT_HIDDEN_RETRIEVALS = {
     "M8.04": ("normal-open-line", "append the complete opposite-contact pose with open-line o"),
@@ -3150,20 +3453,24 @@ STILL_PROMPT_REWRITES = {
     "M0.SL": "On the sourced Fireworks canopy, change every comma on the current material row to a colon with one line-scoped substitute; leave both neighbouring spark rows alone.",
     "M11.02": "Copy the complete three-row missile as a second redraw candidate.",
     "M11.WS": "Inspect the padded missile still with visible whitespace and column guides, then remove only trailing spaces. Every visible missile and exhaust glyph must remain unchanged.",
-    "M11.UT": "Try ! as an exaggerated left-eye take, undo it, author the chosen O look, visit the abandoned ! take with chronological history, then return to and submit the O-eye still.",
+    "M11.UT": "Author the chosen Skully look take, recover the registered idle take with g-, return to look with g+, and append the recovered three-row source pose below it.",
     "M11.WSH": "On the unfamiliar Chick still, turn on the whitespace and column guides, then remove only the three invisible tail spaces from each row. Preserve every visible drawing cell.",
-    "M11.UTH": "On the unfamiliar SnowBunny still, try ! as an exaggerated left-eye take, undo and author the chosen dash, inspect the abandoned take chronologically, then return to the half-closed eye for submission.",
+    "M11.UTH": "Keep two complete source blink poses first. Recover the registered idle pose with g-, return to the duplicated blink strip with g+, and append the three-row idle pose below it.",
     "M11.07": "Diagnose the displayed fixed-width redraw, then choose the bounded repair that preserves every registered cell outside the named change.",
     "M1.02": "Copy all five rows of the approved Acronian left-wing pose as a second still candidate.",
     "M1.DD": "Remove only the second redundant five-row wing candidate; keep the first complete pose registered.",
-    "M1.04": "Replace the copied left wing with the shown five-row right-facing source pose, typing its directional glyphs by eye instead of software-flipping bytes.",
+    "M1.04": "Delete only the redundant five-row left wing candidate; keep the first left pose and the supplied right source pose intact.",
     "M1.07": "Diagnose the displayed Acronian wing study, then choose the bounded repair that preserves all five rows, feather edges, and the nominated joint material.",
-    "M19.01": "Approve one uncertain Pallas eye cell with `gR`, preserving both fixed-width rails of the six-row left ghost.",
+    "M19.01": "Repair the left ghost's '?' eye with gR; keep its rails.",
     "M19.02": "Copy the complete six-row Pallas still as the working opposite-facing candidate.",
     "M19.03": "Inspect the complete hand-mirrored still below, then choose the interpretation supported by its visible glyph and spacing evidence.",
-    "M19.06": "Transfer full-row Virtual Replace mirroring to unfamiliar fixed-rail still art with the exact keys hidden.",
+    "M19.04": "Delete only the duplicate six-row left ghost; preserve the first left still and the supplied right source pose.",
+    "M19.06": "Transfer a bounded six-row deletion to unfamiliar fixed-rail still art with the exact keys hidden.",
     "M19.07": "Diagnose the displayed hand-mirrored still, then choose the repair that preserves fixed rails and directional glyph roles.",
     "M19.08": "Answer five checks, then perform this key-hidden art task: retain the complete left calm ghost as a third candidate and change only its three-cell eye expression. The target stays visible; the exact command path stays hidden until evaluation.",
+    "M10.01": "Restore only the missing partner in the first lobe; keep the supplied arch and hatched impact unchanged.",
+    "M10.02": "Copy the complete first lobe immediately after row three; preserve the supplied arch and impact transcriptions.",
+    "M10.04": "Replace only the nominated endpoint on the second lobe's middle row; keep every other supplied UTF-8 glyph unchanged.",
     "M2.07": "Diagnose the displayed face study, then choose the bounded repair that preserves silhouette, focus, and fixed width.",
     "M2.08": "Answer five checks, then perform this key-hidden art task: copy the complete face as a second expression candidate and close only its eye. The target stays visible; the exact command path stays hidden until evaluation.",
     "M12.AA": "On this single four-row stroke study, replace the hard vertical bars with the shown off-vertical anti-aliasing glyphs: apostrophe, dot, exclamation, then inverted exclamation. The four rows form one drawing.",
@@ -3327,7 +3634,7 @@ QUESTION_PROMPTS = {
         ("The next pose must widen while its centre stays registered. What motion constraint governs the edit?", "Which one-character command changes the core without entering Insert mode or shifting neighbouring rays?"),
         ("Why can two identical wide-flare frames be intentional in this strip?", "For a known three-line flare at lines 7–9, when is :7,9t$ the safer copy method?"),
         ("The transfer comet faces the other direction. What must remain invariant as its core and tail brighten?", "Which search-and-replace sequence reaches the unfamiliar core and limits the dash replacement to its current row?"),
-        ("Read the five spark poses in order. What timing pattern do they show?", "Which Ex range copies a complete three-row settle pose to the end of the file?"),
+        ("Read the five spark poses in order. What timing pattern do they show?", "Which : command range copies a complete three-row settle pose to the end of the file?"),
         ("What distinguishes the repeated flare from an accidental duplicate?", "What count must accompany yy so the yank contains the whole spark frame?"),
         ("After the hold, what should the final dim frame communicate?", "Why does the settle copy lines 1–3 and then lower only its core from o to .?"),
         ("A proposed global change would also rewrite stable rays. What repair preserves the animation?", "Which scope check should happen before replacing '-' with '=' in an ASCII frame?"),
@@ -3361,19 +3668,19 @@ QUESTION_PROMPTS = {
         ("Why must all six rows be copied before the second acting pose is edited?", "Which count makes yy include head, torso, legs, and baseline together?"),
         ("Only the head row was duplicated. What continuity evidence is missing?", "Which Visual-line span selects the complete six-row pose for a named register?"),
         ("The copied eye changes from o to O. What must stay identical around it?", "Why does ci( fit the eye edit better than C on the entire head row?"),
-        ("When is :1,6t$ clearer than gg6yyGp for this pose?", "What cursor-dependence does an addressed :t copy remove?"),
+        ("When is :1,6t$ clearer than gg6yyGp for this pose?", "What cursor-dependence does a :t command with an explicit range copy remove?"),
         ("The transfer body has different arms. What still defines a valid whole-pose copy?", "How do V, \"ay, and \"ap preserve the selected pose while other deletes may overwrite the unnamed register?"),
-        ("Across the three poses, which body rows are temporal anchors?", "Which direct line address reaches the final pose's eye row without adding an unused mark-and-return detour?"),
+        ("Across the three poses, which body rows are temporal anchors?", "Which direct line selector reaches the final pose's eye row without adding an unused mark-and-return detour?"),
         ("Why is a changed eye not permission to redraw the torso?", "After reaching line 14, which find motion locates the eye inside that row without touching the torso?"),
-        ("What does changing the last eye to a middle dot add to the acting sequence?", "Which digraph replacement changes only that directly addressed eye?"),
+        ("What does changing the last eye to a middle dot add to the acting sequence?", "Which digraph replacement changes only that selected eye?"),
         ("A copy omits the feet. What correction restores a usable keyframe?", "Which linewise selection or six-line range guarantees the baseline travels with the pose?"),
     ],
     "M4": [
         ("Which two diagonal stroke cells cross the fixed pivot axis between the readable extremes?", "Why must the upper tip be redrawn with C while the lower stroke can use a local r?"),
         ("Why must the backslash and slash extremes read before a vertical tween is inserted?", "Which three-line copy preserves the registered pivot row while making a working frame?"),
-        ("The upper tip moved but the lower stroke did not turn. What rigid-part defect appears?", "Which two addressed line edits finish the diagonal without touching the pivot row?"),
-        ("Where must the vertical midpoint sit relative to both diagonal extremes?", "Which :copy address inserts a complete extreme before C aligns row 4 and a two-row block replaces the column?"),
-        ("Why is the returning vertical pose a distinct frame rather than a copied diagonal?", "How do the addressed-copy and counted-yank alternatives append the same complete seam candidate after redrawing that midpoint?"),
+        ("The upper tip moved but the lower stroke did not turn. What rigid-part defect appears?", "Which two edits on named lines finish the diagonal without touching the pivot row?"),
+        ("Where must the vertical midpoint sit relative to both diagonal extremes?", "Which :copy source range inserts a complete extreme before C aligns row 4 and a two-row block replaces the column?"),
+        ("Why is the returning vertical pose a distinct frame rather than a copied diagonal?", "How do the explicit-range copy and counted-yank alternatives append the same complete seam candidate after redrawing that midpoint?"),
         ("The transfer prop is offset, but its pivot remains registered. What must carry into the tween?", "Which copied rows does C redraw to produce the complete vertical midpoint?"),
         ("Read backslash, vertical, slash, vertical, then wrap to the first frame. What loop results?", "Which exact three-line deletion removes the redundant copied first pose from the loop boundary?"),
         ("Why does pivot column 4 remain invariant while the upper tip changes columns?", "Which local motion reaches column 4 for the lower-stroke replacement?"),
@@ -3385,7 +3692,7 @@ QUESTION_PROMPTS = {
         ("Why must foreground, contact row, texture bands, and ground travel as one seven-row frame?", "Which Visual-line span selects that complete composited frame?"),
         ("The blade swings but the break below its fixed pivot is refilled. What false object appears?", "Which search or find motion should locate the touching background bar before r<Space>?"),
         ("When the blade changes sides, which layer still owns the negative-space break?", "Why may C redraw only the copied foreground rows while leaving the pivot/contact rows intact?"),
-        ("What makes :1,7t7 clearer than a cursor-relative yank for this composite?", "Which addressed range inserts every texture and ground row into the temporal gap before the blade rows are redrawn?"),
+        ("What makes :1,7t7 clearer than a cursor-relative yank for this composite?", "Which explicit range inserts every texture and ground row into the temporal gap before the blade rows are redrawn?"),
         ("The transfer uses a triangular foreground ending at a new pivot. Where must the break sit?", "Which counted l motion reaches the bar directly below that visible pivot?"),
         ("Across all frames, what proves foreground and background remain distinct despite contact?", "Which scoped r command can accent the pivot without refilling the erased bar below it?"),
         ("Why is erasing the blade instead of the background the wrong depth repair?", "How does linewise Visual mode expose the full seven-row ownership boundary before yanking?"),
@@ -3405,7 +3712,7 @@ QUESTION_PROMPTS = {
         ("A deletion shortens one pose. What recovery keeps the strip animatable?", "Why should D clear a chosen upper row rather than dd remove that row?"),
     ],
     "M7": [
-        ("Why does the incomplete build repeat before the completed frame?", "Which addressed copy inserts a five-row anticipation hold after the first frame?"),
+        ("Why does the incomplete build repeat before the completed frame?", "Which copy with an explicit range inserts a five-row anticipation hold after the first frame?"),
         ("When is a duplicate settle frame accidental rather than a hold?", "Which range copies the full five-row settle candidate for review?"),
         ("Two held frames have different three-cell material bands. What timing defect does that create?", "How can dot repeat apply the same bounded Visual replacement exactly five rows later?"),
         ("What property must both anticipation frames share?", "Which initial v2lr= change establishes the band edit that . will replay?"),
@@ -3445,7 +3752,7 @@ QUESTION_PROMPTS = {
         ("Why must the lobe remain a complete three-row frame before it expands?", "Which counted yank copies all three proportional rows as an expansion scaffold?"),
         ("The top shoulder widens but the bowl stays narrow. What motion defect results?", "Which C edits redraw all three copied rows as one wider extreme?"),
         ("What role does the ￣ over ＿ relationship play in the wider puff?", "Which Neovim edit preserves their vertical row relationship instead of joining them?"),
-        ("Why is a second identical hatched impact frame legitimate?", "Which addressed :t range copies the complete three-row impact pose?"),
+        ("Why is a second identical hatched impact frame legitimate?", "Which explicit :t range copies the complete three-row impact pose?"),
         ("The transfer shoulder uses ｀ヽ. What must stay registered below it?", "Which $ and r sequence completes the pair without relying on terminal cell width?"),
         ("Read lobe, arch, impact, hold, settle. What is the animation arc?", "Which first-frame range is copied to close the strip after the impact hold?"),
         ("Why must hatching remain inside the impact outline?", "Which row-local edit can change the hatching without replacing either contour row?"),
@@ -3459,10 +3766,10 @@ QUESTION_PROMPTS = {
         ("Why must undo return the copied roof to == before redo restores ~~?", "Which adjacent u and <C-r> pair proves recovery on the actual slack-roof redraw rather than acting as a no-op?"),
         ("The copied missile banks by changing / / to \\ \\ on one row. What is the acting change?", "When do two local r edits and one current-row :s describe the same bounded result?"),
         ("Which spaces in the padded missile are structural and which may be removed?", "Why does the \\s\\+$ pattern preserve leading registration and internal stroke spacing?"),
-        ("Why may Skully's rejected ! eye remain in history without becoming the submitted pose?", "Which chronological-history commands revisit the discarded take and return to the chosen O eye?"),
+        ("Why may Skully's registered blink eye remain in history without becoming the submitted pose?", "Which chronological-history commands revisit the source blink take and return to the chosen O eye?"),
         ("Which two Snail cells close while its shell spiral and baseline remain fixed?", "Which fO plus two-cell Replace path closes Oo without shifting later glyphs?"),
         ("The missile rows end at different physical columns. Why is column 12 still one intentional target?", "Which :set option plus 12| permits inserting a bar in empty tail space without hand-counted padding?"),
-        ("What jitter appears if the taut and banked poses place their trail bars in different columns?", "Which row jump and repeated 12| address puts both bars at display column 12?"),
+        ("What jitter appears if the taut and banked poses place their trail bars in different columns?", "Which row jump and repeated 12| column target puts both bars at display column 12?"),
     ],
     "M12": [
         ("Which joint changes first while the mirrored outline and centre axis stay fixed?", "How does t: approach the left joint without landing on it, and which final motion reaches the joint for replacement?"),
@@ -3471,7 +3778,7 @@ QUESTION_PROMPTS = {
         ("Why do the lower joints activate one frame after the upper pair?", "How do ; and , revisit the two homologous joints after one f: search?"),
         ("Two base cells brighten together in the release. When are repeated search and row substitution equivalent?", "Which two accepted paths change only the copied base row's two o cells?"),
         ("The transfer shell reverses slash directions but keeps its axis. What must manual mirroring preserve?", "Which forward and backward till motions reach the changed shell's paired joints without column counts?"),
-        ("Read left accent, both upper accents, lower stagger, bright release, and right accent. What motion travels across the strip?", "Which addressed copy supplies the return scaffold before the accent is moved to its mirror?"),
+        ("Read left accent, both upper accents, lower stagger, bright release, and right accent. What motion travels across the strip?", "Which copy with an explicit range supplies the return scaffold before the accent is moved to its mirror?"),
         ("Why is reversing the row's bytes not a valid way to make the return pose?", "What must happen to \\ and / while the left ! becomes : and the right : becomes !?"),
         ("After 0t: on the upper row, where is the cursor relative to the joint?", "Which l then r! sequence changes the joint while preserving row width?"),
         ("A return pose keeps the left ! and also adds the right !. What loop defect remains?", "Which t! and T: edits exchange the acting accent instead of duplicating it?"),
@@ -3480,11 +3787,11 @@ QUESTION_PROMPTS = {
         ("Which texture cluster receives the first pulse while both support rows stay fixed?", "Which uppercase WORD motion reaches that whitespace-separated punctuation cluster?"),
         ("Why is the complete centre-pulse frame copied before the accent moves right?", "Which two W-based replacements clear the old cluster and activate the next one?"),
         ("A delete closes the gap between texture clusters. What animation defect does that create?", "Why must r be used after W or E instead of x or d on the fixed-width row?"),
-        ("What does the three-edge expansion communicate after the right-only pose?", "How do E, counted W, E, and counted B address those three different cluster landmarks?"),
+        ("What does the three-edge expansion communicate after the right-only pose?", "How do E, counted W, E, and counted B reach those three different cluster landmarks?"),
         ("Why can three ! cells change to * in one copied frame without changing the supports?", "When are repeated f/; replacements and a current-row substitute equivalent?"),
         ("The transfer texture uses dashes instead of dots. What timing intention survives?", "How do counted W and B reach the third and centre clusters without punctuation-sensitive lowercase stops?"),
-        ("Read centre, right, expanded edges, flash, and left. What path does the material accent trace?", "Which addressed copy supplies the final left-exit scaffold?"),
-        ("Why are the second and third rows temporal anchors rather than part of the pulse?", "Which line address keeps every WORD edit confined to the acting first row?"),
+        ("Read centre, right, expanded edges, flash, and left. What path does the material accent trace?", "Which copy with an explicit range supplies the final left-exit scaffold?"),
+        ("Why are the second and third rows temporal anchors rather than part of the pulse?", "Which line selector keeps every WORD edit confined to the acting first row?"),
         ("Starting at the first cell, where does W land on '..:: ..:: ..::'?", "How does that differ from lowercase w when punctuation boundaries are present?"),
         ("The flash edits every *-eligible glyph in the file. What scope failure appears?", "Which current-row or explicit-range substitute protects the support rows and earlier poses?"),
     ],
@@ -3493,12 +3800,12 @@ QUESTION_PROMPTS = {
         ("Why keep the palette text beside the frame instead of retyping a similar glyph from memory?", "Which named-register yank preserves the exact selected glyph for later retrieval?"),
         ("The right wall moves one column after the eye changes. What fixed-grid error occurred?", "Why must `<C-r>a` be used from Replace mode rather than ordinary insertion at the eye?"),
         ("The copied variant changes from star to plus while its silhouette stays identical. What is the animation reading?", "Which line-local search, named-register yank, and Replace-mode retrieval perform that change?"),
-        ("Why can paragraph-object copy and an addressed four-line copy produce the same third variant?", "When is `yap` plus frame-boundary `P` safer than `:5,8t$`, and when is the explicit range clearer?"),
+        ("Why can paragraph-object copy and a copy of an explicit four-line range produce the same third variant?", "When is `yap` plus frame-boundary `P` safer than `:5,8t$`, and when is the explicit range clearer?"),
         ("The transfer shell and palette glyphs differ. What invariant proves the technique transferred?", "Which exact path stores the unfamiliar palette glyph and replaces the acting cell without insertion?"),
         ("Read star, plus, star across the three complete face blocks. What makes this a variant sequence rather than three unrelated drawings?", "How does `}` move between blank-line-separated frame objects before register retrieval?"),
         ("Why is one copied eye row not a valid saved variant?", "Which paragraph text object owns the three art rows plus their separator?"),
         ("What does returning the third eye to the first palette glyph communicate?", "Which named register and paragraph navigation make that return causal rather than retyped?"),
-        ("A paragraph copy includes neighbouring prose or omits the separator. What boundary should be repaired?", "How should blank lines and the cursor position be checked before `yap` or an addressed `:t`?"),
+        ("A paragraph copy includes neighbouring prose or omits the separator. What boundary should be repaired?", "How should blank lines and the cursor position be checked before `yap` or an `:t` with an explicit range?"),
     ],
     "M15": [
         ("Which material moves in the first texture-ground edit while the depth cue remains fixed?", "Why are `shiftwidth=1` and `>>` both required for the one-cell offset?"),
@@ -3507,8 +3814,8 @@ QUESTION_PROMPTS = {
         ("How does replacing colons with dots change the material reading without changing its silhouette?", "Which row-bounded substitute lightens only the copied dither band?"),
         ("Why do blockwise `$A` and `:4,6s/$/|/` create the same occluding edge?", "What scope difference should decide between the visual block and explicit range?"),
         ("The transfer uses new brick and shadow glyphs. What proves the texture method transferred?", "Which exact one-cell indent changes only its unfamiliar repeated-material row?"),
-        ("Read offset, lightened edge frame, and settle. What makes the shadow row a depth anchor?", "Which line addresses prevent texture edits from leaking into earlier frames?"),
-        ("Why is the angled base not lightened together with the top dither?", "How does a current-line or addressed substitute protect a different material rule?"),
+        ("Read offset, lightened edge frame, and settle. What makes the shadow row a depth anchor?", "Which line numbers prevent texture edits from leaking into earlier frames?"),
+        ("Why is the angled base not lightened together with the top dither?", "How does a current-line or substitute on named rows protect a different material rule?"),
         ("What advantage does a recorded landmark edit have across four repeated dither cells?", "How do `qq...q` and `3@q` make the same bounded replacement four times?"),
         ("A macro reaches support punctuation after the last dither mark. What failed?", "Which search landmark and replay count must be checked before accepting the macro?"),
     ],
@@ -3517,7 +3824,7 @@ QUESTION_PROMPTS = {
         ("Why should the approved plate and its T08 FPS line be saved before more poses are authored?", "What does `:read %` import, and why must the file on disk be the intended source?"),
         ("Two plan blocks both say F01. What planning defect does that create?", "Which numeric command advances the imported label while preserving zero padding?"),
         ("Why copy one complete five-line plan block instead of redrawing its small pose?", "How do `:1,5t$` and counted CTRL-A create a later numbered plate?"),
-        ("When is reordering a planned key pose legitimate before any in-betweens are drawn?", "How do addressed `:m` and linewise delete/put move the same whole block?"),
+        ("When is reordering a planned key pose legitimate before any in-betweens are drawn?", "How do `:m` with an explicit range and linewise delete/put move the same whole block?"),
         ("The transfer changes pose glyphs and timing. What invariant proves planning skill transferred?", "Which exact path increments its unfamiliar F03 label without touching T12 FPS?"),
         ("Read the key-pose blocks as a plan rather than playback. What remains provisional?", "Which five-line boundary must a copy or move preserve?"),
         ("Why write FPS before recursive in-betweening begins?", "Which line should remain unchanged while frame identifiers are incremented?"),
@@ -3531,7 +3838,7 @@ QUESTION_PROMPTS = {
         ("How can the fourth shell change shape while its eye remains a stable anchor?", "Which two landmark replacements alter only the copied contour rows?"),
         ("Why can search-plus-dot and `:g/o/normal! ...` legitimately reach the same four eyes?", "What proof must exist before the global line selector is safe?"),
         ("The transfer shells use brackets and different contours. What invariant identifies corresponding cells?", "Which exact search-repeat path updates their three x anchors?"),
-        ("Read the strip after every eye becomes star. What changed, and what did not?", "Which command family batch-edited one homologous landmark without changing shell geometry?"),
+        ("Read the strip after every eye becomes star. What changed, and what did not?", "Which command kind batch-edited one homologous landmark without changing shell geometry?"),
         ("Why is an unchanged eye useful while surrounding contours move?", "How should matches be counted before replaying a macro across frames?"),
         ("What makes a macro with `n` suitable for a known run of frame anchors?", "Which part of the macro advances to the next verified landmark?"),
         ("The macro wraps and changes the first frame twice. What method error occurred?", "How should the replay count relate to the number of remaining matches?"),
@@ -3540,10 +3847,10 @@ QUESTION_PROMPTS = {
         ("Which directional features must be redrawn, not merely relocated, in the mirrored action?", "Why do three explicit `C` overwrites demonstrate a hand mirror rather than a software flip?"),
         ("Why copy the complete mirrored return before authoring its overshoot?", "Which counted yank includes three art rows and the pending validation line?"),
         ("The actor moved left but its arrowhead and limbs still face right. What failed?", "Which rowwise overwrite boundary makes every directional decision explicit?"),
-        ("What does the one-cell overshoot add after the return extreme?", "How do addressed row overwrites keep all three body parts at the same offset?"),
+        ("What does the one-cell overshoot add after the return extreme?", "How do overwrites on named rows keep all three body parts at the same offset?"),
         ("Why may a `\\=` expression update CHECK but never generate the mirrored art here?", "How does `getline()` inspect an already-authored row while substitution changes only one digit?"),
         ("The transfer uses a different actor and limb vocabulary. What proves it was mirrored by hand?", "Which exact three-row overwrite redraws every directional glyph and space?"),
-        ("Read return, overshoot, overshoot, return. What timing event does the duplicate express?", "Which two addressed copies reuse approved frames in reverse order?"),
+        ("Read return, overshoot, overshoot, return. What timing event does the duplicate express?", "Which two copies with explicit ranges reuse approved frames in reverse order?"),
         ("Why is the middle duplicate acceptable here but not as an unexplained loop seam?", "What evidence declares it as a turnaround hold rather than a stale scaffold?"),
         ("A byte reversal puts the actor on the other side but corrupts slash direction. What rule was violated?", "Which manual edit family forces the author to judge `/`, `\\`, `<`, and `>`?"),
         ("An expression substitution rewrites all three art rows into a mirror. Why is that not mastery?", "What is the permitted validation-only scope of `\\=` in this module?"),
@@ -3557,7 +3864,7 @@ QUESTION_PROMPTS = {
         ("The transfer uses folded wing contours instead of a ghost. What still defines a valid hand mirror?", "Which six-row `gR` path proves the unfamiliar directional rows were authored rather than flipped?"),
         ("Read left calm, right strain, and left strain as a still-variant plate. What is not animation yet?", "Which complete-frame operation keeps each candidate available for comparison?"),
         ("Why is the third ghost a variant rather than an accidental duplicate?", "Which local replacement makes it observably distinct while preserving its six-row bounds?"),
-        ("A byte-reversed row moves the accent but corrupts curve and tail semantics. What principle failed?", "Which command family overwrites chosen display cells without reversing stored bytes?"),
+        ("A byte-reversed row moves the accent but corrupts curve and tail semantics. What principle failed?", "Which command kind overwrites chosen display cells without reversing stored bytes?"),
         ("One mirrored row is a cell shorter than the original. Why can it not become an animation extreme?", "Which invariant must be checked after every full-row virtual replacement?"),
     ],
 }
@@ -3573,13 +3880,13 @@ QUESTION_ANSWERS = {
         ("dim, bright, flare, flare, lower settle reads as anticipation, impact hold, and release", ":1,3t$ copies the complete dim scaffold, then 14Gfor. lowers only the settle core"),
         ("both frames repeat a complete readable flare for a declared timing pause", "3yy is the required yank; yy alone omits two rows of the frame"),
         ("the final lower core releases the impact without duplicating the first pose at the loop seam", ":1,3t$ appends the frame scaffold and 14Gfor. makes the settle distinct"),
-        ("restrict the change to the intended flare row and verify stable glyphs before accepting it", "use a line address or current-row :s before the substitution; do not use an unchecked % range"),
+        ("restrict the change to the intended flare row and verify stable glyphs before accepting it", "use a line selector or current-row :s before the substitution; do not use an unchecked % range"),
     ],
     "M1": [
         ("only the low comma joint becomes a colon; every feather edge stays registered", "4G0f, finds the row-4 comma and r: overwrites one cell"),
         ("all five source rows travel together as one working wing pose", "gg5yyGp yanks five whole lines and puts the complete copy below"),
         ("only the HOLD label disappears below an unchanged five-row wing", "dW deletes one whitespace-delimited WORD without touching an art row"),
-        ("the first left wing remains while only its five-row duplicate is discarded", "6G5dd addresses and deletes the duplicate's complete five-line boundary"),
+        ("the first left wing remains while only its five-row duplicate is discarded", "6G5dd selects and deletes the duplicate's complete five-line boundary"),
         ("the same colon-to-exclamation correction applies to one joint in each wing", "4G0f:r!6j0f:. makes the first r! change and repeats it at the second colon"),
         ("the unfamiliar left wing keeps all edges while its final comma becomes a colon", "G0f,r: selects that pose's final row, finds its comma, and replaces one cell"),
         ("the right-wing row remains unchanged while the cursor revisits its next apostrophe", "; repeats the last f/F/t/T character find; n repeats a slash search"),
@@ -3604,11 +3911,11 @@ QUESTION_ANSWERS = {
         ("a derived key pose must inherit head, torso, legs, and baseline from the approved primary pose", "6yy is the complete-pose yank; yy copies only the current row"),
         ("without torso, legs, and baseline, the copied head is not a registered animation pose", "ggV5j selects all six pose rows before a named-register yank"),
         ("the eye becomes O inside the unchanged parenthesized head and stable body", "8Gci(O<Esc> changes the contents of the parentheses while retaining both delimiters"),
-        ("an addressed copy communicates the owned six-line boundary and avoids dependence on cursor position", ":1,6t$ copies exactly the primary pose to the end"),
+        ("a copy with an explicit range communicates the owned six-line boundary and avoids dependence on cursor position", ":1,6t$ copies exactly the primary pose to the end"),
         ("the unfamiliar arm shape is preserved because the complete selected pose is copied before the eye changes", "ggV5j\"ay stores the pose in register a and G\"ap appends it even if the unnamed register changes"),
         ("head outline, torso, leg spacing, and baseline stay fixed across the acting changes", "14G reaches the final pose's eye row directly; no unused mark detour is needed"),
         ("the acting feature is local; stable anatomy is the continuity evidence between poses", "14Gfo locates the final eye on its own row without revisiting unrelated poses"),
-        ("the middle dot supplies a smaller settle accent in the final complete pose", "r<C-k>.M enters the middle-dot digraph at the directly addressed eye cell"),
+        ("the middle dot supplies a smaller settle accent in the final complete pose", "r<C-k>.M enters the middle-dot digraph at the selected eye cell"),
         ("restore the omitted feet and baseline by copying the complete six-row key pose", "use ggV5j or :1,6t$ so every body row travels together"),
     ],
     "M4": [
@@ -3628,7 +3935,7 @@ QUESTION_ANSWERS = {
         ("all seven composited rows define one frame, so contact, texture bands, and ground must stay registered", "ggV6jyGp selects and appends the complete seven-row composite"),
         ("refilling the break makes the fixed pivot appear fused to the background band", "locate the touching bar on the row below the pivot, then r<Space> changes that one cell"),
         ("the background owns the hole; the swinging foreground rows change while pivot and break remain fixed", "C is safe only on the explicitly chosen copied foreground rows"),
-        ("the addressed range states the whole seven-row composite and its insertion point independent of cursor position", ":1,7t7 copies every foreground, contact, texture, and ground row into the gap"),
+        ("the explicit range states the whole seven-row composite and its insertion point independent of cursor position", ":1,7t7 copies every foreground, contact, texture, and ground row into the gap"),
         ("erase the bar directly below the unfamiliar triangle's visible pivot", "4G05lr<Space> reaches and breaks the transfer seam without editing the foreground"),
         ("every frame retains a fixed pivot with a blank immediately below it, so the layers touch without fusing", "10G0forO accents only the middle pivot and leaves its row-11 break intact"),
         ("erasing foreground damages the readable silhouette instead of separating it from the background", "V6j makes the entire seven-row ownership boundary visible before yanking"),
@@ -3640,7 +3947,7 @@ QUESTION_ANSWERS = {
         ("subtractive authoring begins from a complete approved result so each later omission is deliberate", ":1,5t$ copies the entire finished five-row frame"),
         ("deleting the apex row would collapse the five-row boundary; clearing its content preserves registration", "6G0D blanks the copied apex row without deleting it"),
         ("the first reduction removes the apex while keeping the attached shoulder and complete base", "0D clears the apex row in place, so the remaining form does not float"),
-        ("the addressed range protects all five rows before the next upper unit is cleared", ":6,10t$ copies the frame and 12G0D clears row 2 of that copy without deleting it"),
+        ("the explicit range protects all five rows before the next upper unit is cleared", ":6,10t$ copies the frame and 12G0D clears row 2 of that copy without deleting it"),
         ("the reduced pose must precede the finished pose so forward playback adds upper units", ":1,5m$ moves the finished transfer frame after its reduced predecessor"),
         ("equal-height frames reveal the pyramid accumulating from reduced form to finished keyframe", "move or copy exact five-line ranges; never reorder single rows independently"),
         ("reverse authoring is efficient because each earlier playback frame removes a bounded unit from the finished form", "verify five rows per pose before a :move so blank padding is not lost"),
@@ -3702,10 +4009,10 @@ QUESTION_ANSWERS = {
         ("undo visibly returns the copied roof to == and redo reapplies ~~ as the saved slack extreme", "4G0f=R~~<Esc>u<C-r> makes both recovery operations causally necessary"),
         ("only the copied middle row's two / strokes reverse to \\ while roof, exhaust, and hull remain stable", "two local r edits and 5G:s@/@\\\\@g<CR> are the accepted bounded paths"),
         ("trailing tail spaces may be removed while leading registration and internal spacing stay untouched", ":set list and %s/\\s\\+$//e expose and remove only line-ending whitespace"),
-        ("Skully's rejected ! eye remains inspectable while the chosen O eye is the submitted state", "g-/g+ and :earlier traverse chronological history before returning to the chosen state"),
+        ("Skully's registered blink eye remains inspectable while the chosen O eye is the submitted state", "g-/g+ and :earlier traverse chronological history before returning to the chosen state"),
         ("Snail's adjacent Oo eyes become -- while its shell spiral, slash, and baseline stay registered", "0fOR--<Esc> overwrites exactly the two eye cells"),
-        ("column 12 is part of the planned comparison edge even where the stored missile row is shorter", ":set virtualedit=all permits 12| to address that empty column before i| writes the edge"),
-        ("a one-column trail mismatch reads as jitter between otherwise registered missile poses", "2G12|i|<Esc>3j12|i|<Esc> addresses column 12 explicitly on both homologous rows"),
+        ("column 12 is part of the planned comparison edge even where the stored missile row is shorter", ":set virtualedit=all permits 12| to reach that empty column before i| writes the edge"),
+        ("a one-column trail mismatch reads as jitter between otherwise registered missile poses", "2G12|i|<Esc>3j12|i|<Esc> reaches column 12 explicitly on both homologous rows"),
     ],
     "M12": [
         ("only the left upper joint changes from : to !; the axis, outline, and right joint stay registered", "0t: stops before the first :, then l reaches it and r! replaces it in place"),
@@ -3723,13 +4030,13 @@ QUESTION_ANSWERS = {
         ("only the centre cluster's first cell changes to ! while all widths and support rows stay registered", "W reaches the next whitespace-separated punctuation WORD and r! changes its first cell in place"),
         ("copying all three rows preserves the material and its anchors before the acting accent advances", "4GWr.Wr! clears the copied centre start, advances one WORD, and accents the right start"),
         ("closing a gap shifts later landmarks, so the texture no longer registers between frames", "r overwrites one cell after a WORD motion; x or d would shorten the row and move every later cluster"),
-        ("the pulse broadens from one cluster to three separated edges before the brighter flash", "Er!2Wr.Er!2Br! addresses first end, third start/end, and centre start without column counts"),
+        ("the pulse broadens from one cluster to three separated edges before the brighter flash", "Er!2Wr.Er!2Br! reaches first end, third start/end, and centre start without column counts"),
         ("the three acting cells share one material change on the copied row while both supports remain stable", "10G0f!r*;r*;r* and 10G:s/!/*/g are accepted bounded paths to the same row result"),
         ("the accent still moves across three whitespace-separated clusters despite their changed material", "2Wr+ reaches the third WORD and Br+ returns to the centre WORD"),
         ("the accent travels centre to right, expands, flashes, and exits left across registered supports", ":1,3t$ copies the complete centre-pulse pose before 13GWr.Br! moves its accent left"),
-        ("stable support rows make the changing first-row texture readable as material motion rather than camera drift", "the line-7/10/13 addresses constrain edits to acting rows and leave both support rows untouched"),
+        ("stable support rows make the changing first-row texture readable as material motion rather than camera drift", "the line-7/10/13 selections constrain edits to acting rows and leave both support rows untouched"),
         ("W lands on the first cell of the second whitespace-delimited punctuation cluster", "uppercase W treats each punctuation run as one WORD; lowercase w may stop at internal punctuation classes"),
-        ("an unbounded flash destroys earlier timing states or stable support material", "use a current-row :s after an exact line address, or an explicit owned range, rather than :%s"),
+        ("an unbounded flash destroys earlier timing states or stable support material", "use a current-row :s after an exact line selector, or an explicit owned range, rather than :%s"),
     ],
     "M14": [
         ("only the eye changes from o to the exact visible * palette glyph; the three-row outline stays registered", "f*\"ayl stores * in register a, then j0foR<C-r>a<Esc> overwrites the eye from that register"),
@@ -3750,8 +4057,8 @@ QUESTION_ANSWERS = {
         ("lower dither density reads as a lighter surface while row width and support geometry remain unchanged", ":4s/:/./g changes only colon marks on the copied top row"),
         ("both methods append one vertical occluder at each of the three owned row ends", "blockwise $A follows selected row ends; :4,6s/$/|/ states the owned line range directly"),
         ("the unfamiliar motifs change, but exactly one repeated-material row moves exactly one cell", "j:set shiftwidth=1<CR>>> selects the changed brick row and applies one declared indent"),
-        ("the stable angled base preserves depth while the surface treatment changes above it", "addresses 4 through 6 own the middle frame, while line 7 owns only the appended settle dither"),
-        ("the shadow has its own dense material rule and must remain a stable depth cue", "use :4s/:/./g or another exact line address instead of a file-wide substitution"),
+        ("the stable angled base preserves depth while the surface treatment changes above it", "lines 4 through 6 own the middle frame, while line 7 owns only the appended settle dither"),
+        ("the shadow has its own dense material rule and must remain a stable depth cue", "use :4s/:/./g or another exact line selector instead of a file-wide substitution"),
         ("recording removes four opportunities to mistype the same landmark edit and preserves its rhythm", "qqf:r.q records one search-and-replace; 3@q repeats it at the remaining three colons"),
         ("the replay count exceeded the four owned colon landmarks and escaped the acting dither row", "verify f: has four matches on line 7, record one replacement, and replay exactly three times"),
     ],
@@ -3798,8 +4105,8 @@ QUESTION_ANSWERS = {
         ("all six copied rows are authored because even unchanged-looking crown and face spacing shift within the rails", "each gR pass overwrites existing display cells and must end at the unchanged right rail"),
         ("both modes may replace the same bounded three-cell eye run when neither crosses into the parenthesis", "Escape immediately after the third replacement cell protects the following ) glyph"),
         ("fixed rails and pose height persist while wing edges, folds, accents, and spacing exchange direction", "the exact gR path redraws each unfamiliar directional row and contains no reverse operation"),
-        ("the plate contains candidate stills; no timing, in-betweens, or playback spacing has been authored yet", "a six-row yank or addressed copy retains each complete candidate for comparison"),
-        ("the changed eye expression makes a deliberate variant while every other registered cell stays fixed", "the addressed gR replacement changes the visible three-cell eye run inside the copied six-row object"),
+        ("the plate contains candidate stills; no timing, in-betweens, or playback spacing has been authored yet", "a six-row yank or copy with an explicit range retains each complete candidate for comparison"),
+        ("the changed eye expression makes a deliberate variant while every other registered cell stays fixed", "the gR replacement on the selected row changes the visible three-cell eye run inside the copied six-row object"),
         ("visual mirroring requires semantic glyph exchange, not byte-order reversal", "gR or R overwrites the author-chosen display cells without transforming the stored row"),
         ("unequal widths move the rail and prevent frame registration during later playback", "after each gR row, verify equal display width and matching left/right rail columns"),
     ],
@@ -4024,6 +4331,11 @@ FAMILY_DEFS = {
         "grammar": "r + replacement glyph; overwrite one cell without shifting the row",
         "terms": [["replace", "overwrite", "r"], ["cell", "glyph"], ["width", "shift", "registered"]],
     },
+    "number-increment": {
+        "class": "standalone_normal",
+        "grammar": "[count]<C-a> adds the count to the number under the cursor without retyping its label",
+        "terms": [["count", "number"], ["increment", "add"], ["Ctrl-a", "<C-a>"], ["label", "frame"]],
+    },
     "change-to-end": {
         "class": "operator",
         "grammar": "C is c$; change from the cursor through row end, type replacement text, then <Esc>",
@@ -4039,6 +4351,66 @@ FAMILY_DEFS = {
         "grammar": "count + dd deletes whole rows; D is d$ and deletes from the cursor to row end",
         "terms": [["delete", "operator"], ["line", "row", "end"], ["count", "scope"]],
     },
+    "word-delete": {
+        "class": "operator",
+        "grammar": "d with w, e, or aw deletes a word-sized text object while keeping the surrounding row registered",
+        "terms": [["delete", "d"], ["word", "w", "e", "aw"], ["scope", "text object"]],
+    },
+    "word-count-delete": {
+        "class": "operator",
+        "grammar": "a counted WORD motion such as d2W deletes two blank-separated WORD runs as one bounded edit",
+        "terms": [["delete", "d"], ["count", "2"], ["WORD", "W"], ["scope", "runs"]],
+    },
+    "word-change": {
+        "class": "operator",
+        "grammar": "c with w changes one word-sized span, then typed text and Escape restore Normal mode",
+        "terms": [["change", "c"], ["word", "w"], ["insert", "replacement"], ["escape", "normal"]],
+    },
+    "paren-text-object": {
+        "class": "operator",
+        "grammar": "ci( changes inside parentheses while ca( includes the delimiters; the selected text object owns the scope",
+        "terms": [["change", "c"], ["inside", "ci("], ["around", "ca("], ["parentheses", "delimiters"]],
+    },
+    "register-zero": {
+        "class": "standalone_normal",
+        "grammar": "a delete preserves the latest yank in register 0; \"0p retrieves that preserved copy",
+        "terms": [["register", "0"], ["yank", "yy"], ["delete", "dd"], ["put", "p"]],
+    },
+    "marks-travel": {
+        "class": "standalone_normal",
+        "grammar": "ma stores a named line mark, G travels away, and 'a returns to the marked line before a bounded edit",
+        "terms": [["mark", "ma"], ["travel", "G", "'a"], ["line", "return"], ["edit", "scope"]],
+    },
+    "visual-line-delete": {
+        "class": "visual",
+        "grammar": "V selects complete rows, a count extends the linewise selection, and d deletes those selected rows",
+        "terms": [["visual", "V"], ["line", "row"], ["count", "scope"], ["delete", "d"]],
+    },
+    "block-delete": {
+        "class": "visual",
+        "grammar": "Ctrl-v selects a rectangular block and d erases the same columns across every selected row",
+        "terms": [["ctrl-v", "block"], ["column", "rectangle"], ["delete", "d"], ["each row", "scope"]],
+    },
+    "join-lines": {
+        "class": "operator",
+        "grammar": "J joins the current row with the next row, inserting one separating space while preserving the joined text",
+        "terms": [["join", "J"], ["next row", "line"], ["space", "separator"], ["text", "preserve"]],
+    },
+    "line-swap": {
+        "class": "operator",
+        "grammar": "dd removes one complete row and p puts it below the following row, swapping adjacent rows without redrawing them",
+        "terms": [["delete", "dd"], ["put", "p"], ["adjacent", "rows"], ["swap", "order"]],
+    },
+    "toggle-case": {
+        "class": "standalone_normal",
+        "grammar": "~ toggles one glyph's case and g~ plus a motion toggles the selected text object's case",
+        "terms": [["toggle", "case", "~"], ["motion", "g~"], ["word", "w"], ["glyph", "scope"]],
+    },
+    "normal-append": {
+        "class": "standalone_normal",
+        "grammar": "a appends after the cursor and A appends at row end; typed glyphs are followed by Escape",
+        "terms": [["append", "a", "A"], ["cursor", "after"], ["row end", "A"], ["escape", "normal"]],
+    },
     "normal-open-line": {
         "class": "standalone_normal",
         "grammar": "o/O opens one row below/above and enters Insert; <Esc> returns to Normal",
@@ -4046,12 +4418,12 @@ FAMILY_DEFS = {
     },
     "ex-substitute": {
         "class": "ex",
-        "grammar": ["address/range", "s command", "pattern", "replacement", "flags", "<CR> execution"],
+        "grammar": ["line or range", "s command", "pattern", "replacement", "flags", "<CR> execution"],
         "terms": [["range", "address", "line"], ["substitute", "replace"], ["pattern"], ["flag", "global", "g"], ["enter", "execute"]],
     },
     "ex-substitute-line": {
         "class": "ex",
-        "grammar": "current-line address + s command + pattern + replacement + flags + <CR>",
+        "grammar": "current-line selector + s command + pattern + replacement + flags + <CR>",
         "terms": [["current line", "line"], ["substitute", "replace"], ["pattern"], ["replacement"], ["flag", "global", "g"], ["enter", "execute"]],
     },
     "ex-substitute-range": {
@@ -4061,12 +4433,12 @@ FAMILY_DEFS = {
     },
     "ex-copy": {
         "class": "ex",
-        "grammar": ["source address/range", "t/copy command", "destination address", "<CR> execution"],
+        "grammar": ["source line or range", "t/copy command", "destination line", "<CR> execution"],
         "terms": [["range", "source", "lines", "rows"], ["copy", "t"], ["destination", "after", "end"], ["enter", "execute"]],
     },
     "ex-move": {
         "class": "ex",
-        "grammar": ["source address/range", "m/move command", "destination address", "<CR> execution"],
+        "grammar": ["source line or range", "m/move command", "destination line", "<CR> execution"],
         "terms": [["range", "source", "lines", "rows"], ["move"], ["destination", "after", "before"]],
     },
     "operator-motion-object": {
@@ -4176,8 +4548,8 @@ FAMILY_DEFS = {
     },
     "virtual-column": {
         "class": "ex",
-        "grammar": ":set virtualedit=all permits N| to address an empty fixed-width column past row end",
-        "terms": [["virtualedit", "empty"], ["column", "n|", "exact"], ["padding", "registered"]],
+        "grammar": ":set virtualedit=all permits an explicit column motion such as 12| to reach an empty fixed-width cell past row end",
+        "terms": [["virtualedit", "empty"], ["column", "12|", "exact"], ["padding", "registered"]],
     },
     "undo-redo": {
         "class": "standalone_normal",
@@ -4191,7 +4563,7 @@ FAMILY_DEFS = {
     },
     "expression-substitute": {
         "class": "ex",
-        "grammar": ["address/range", "s command", "pattern", "\\= expression replacement", "<CR> execution"],
+        "grammar": ["line or range", "s command", "pattern", "\\= expression replacement", "<CR> execution"],
         "terms": [["range", "address"], ["substitute", "pattern"], ["expression", "\\="], ["getline", "validation"], ["enter", "execute"]],
     },
     "replace-mode": {
@@ -4211,7 +4583,7 @@ FAMILY_DEFS = {
     },
     "ex-command": {
         "class": "ex",
-        "grammar": ["address/range when needed", "command", "arguments", "flags when needed", "<CR> execution"],
+        "grammar": ["line or range when needed", "command", "arguments", "flags when needed", "<CR> execution"],
         "terms": [["command"], ["argument", "range", "address"], ["enter", "execute"]],
     },
 }
@@ -4223,9 +4595,9 @@ FAMILY_DEFS = {
 # must not pass (VD-21/22).
 WHY_SPECS = {
     "M0.05": {
-        "question": "When is addressed copy safer than counted yank/put, and what complete object must both methods duplicate?",
+        "question": "When is copy with an explicit range safer than counted yank/put, and what complete object must both methods duplicate?",
         "groups": [["address", "range", "7,9"], ["cursor", "position"], ["three-row", "three row", "flare", "frame"]],
-        "sample": "Addressed copy does not depend on cursor position; both methods must duplicate the complete three-row flare frame.",
+        "sample": "Copying with an explicit range does not depend on cursor position; both methods must duplicate the complete three-row flare frame.",
     },
     "M1.05": {
         "question": "How do local edit plus dot and whole-buffer substitution differ on this art-only pair, and which two-cell Acronian scope must both preserve?",
@@ -4238,9 +4610,9 @@ WHY_SPECS = {
         "sample": "Local replacements visit each eye explicitly; a scoped regex is shorter but must match only eye spellings and never the contour.",
     },
     "M3.05": {
-        "question": "What cursor assumption separates counted yank/put from addressed copy, and how many pose rows belong to the object?",
+        "question": "What cursor assumption separates counted yank/put from copy with an explicit range, and how many pose rows belong to the object?",
         "groups": [["cursor", "position"], ["address", "1,6", "range"], ["six", "6", "pose rows"]],
-        "sample": "Counted yank starts from the correct cursor row; addressed copy names lines 1 through 6, and both copy all six pose rows.",
+        "sample": "Counted yank starts from the correct cursor row; copy with an explicit range names lines 1 through 6, and both copy all six pose rows.",
     },
     "M4.05": {
         "question": "Why must either seam method copy the complete first frame after redrawing the return midpoint, rather than only the changed cells?",
@@ -4248,9 +4620,9 @@ WHY_SPECS = {
         "sample": "After redrawing the return midpoint, both methods copy the complete three-row first frame so registration closes the loop seam.",
     },
     "M5.05": {
-        "question": "What does an addressed seven-row midpoint protect that counted yank must track by cursor, and which rows are redrawn afterward?",
+        "question": "What does a midpoint copied with an explicit seven-row range protect that counted yank must track by cursor, and which rows are redrawn afterward?",
         "groups": [["seven", "7", "range"], ["cursor", "count"], ["moving", "foreground", "rows"]],
-        "sample": "The addressed range protects all seven midpoint rows; counted yank relies on cursor and count, then only the moving foreground rows are redrawn.",
+        "sample": "The explicit range protects all seven midpoint rows; counted yank relies on cursor and count, then only the moving foreground rows are redrawn.",
     },
     "M6.05": {
         "question": "After copying the five-row build, why does either method clear the copied shoulder row instead of deleting that row?",
@@ -4273,9 +4645,9 @@ WHY_SPECS = {
         "sample": "Copy-then-vary preserves the registered rails and ground; direct authoring must reproduce all three bounded midpoint rows exactly.",
     },
     "M10.05": {
-        "question": "Why can an addressed range be safer than counted yank for the impact pose, and what three-row hatched object must stay intact?",
+        "question": "Why can an explicit range be safer than counted yank for the impact pose, and what three-row hatched object must stay intact?",
         "groups": [["address", "range", "7,9"], ["cursor", "position"], ["impact", "three-row", "hatch"]],
-        "sample": "The addressed range avoids cursor-position dependence; both methods copy the complete three-row hatched impact pose.",
+        "sample": "The explicit range avoids cursor-position dependence; both methods copy the complete three-row hatched impact pose.",
     },
     "M11.05": {
         "question": "How does current-row substitution bound the two inner-stroke reversals, and what would an unbounded substitution risk?",
@@ -4293,9 +4665,9 @@ WHY_SPECS = {
         "sample": "Landmark repeats visit each of the three acting cells; the row-scoped substitute is equivalent only because it matches those three cells and no others.",
     },
     "M14.05": {
-        "question": "What boundary does yap discover that an addressed copy must count explicitly, and why must the blank separator travel with the frame?",
+        "question": "What boundary does yap discover that a copy with an explicit range must count explicitly, and why must the blank separator travel with the frame?",
         "groups": [["paragraph", "yap", "boundary"], ["address", "four", "4", "lines"], ["blank", "separator", "frame"]],
-        "sample": "yap discovers the paragraph boundary; addressed copy must name all four lines, including the blank separator that keeps frames distinct.",
+        "sample": "yap discovers the paragraph boundary; copy with an explicit range must name all four lines, including the blank separator that keeps frames distinct.",
     },
     "M15.05": {
         "question": "How do blockwise $A and a bounded range substitution reach the same row ends without shifting the texture frame?",
@@ -4303,9 +4675,9 @@ WHY_SPECS = {
         "sample": "Blockwise $A appends at all three selected row ends; bounded substitution owns the same three-row range, and neither shifts existing cells.",
     },
     "M16.05": {
-        "question": "Why must both the addressed move and linewise delete/put own the same five-line plan block rather than individual rows?",
+        "question": "Why must both the move with an explicit range and linewise delete/put own the same five-line plan block rather than individual rows?",
         "groups": [["move", ":m", "address"], ["delete", "put", "visual"], ["five", "5", "block", "lines"]],
-        "sample": "The Ex move addresses the five-line block directly; Visual delete/put selects those same five lines so the plan stays intact.",
+        "sample": "The :move selects the five-line block directly; Visual delete/put selects those same five lines so the plan stays intact.",
     },
     "M17.05": {
         "question": "When does search plus dot risk the wrong match, and how does :global restrict the eye replacement pass?",
@@ -4489,7 +4861,11 @@ def _multiple_choice_pair(question, card, module):
             "project-wide command"
         )
 
-    animation_correct = card["prompt"].rstrip(".")
+    # The generated fallback must explain the visible pair without making the
+    # correct animation half a verbatim restatement of the learner prompt.
+    # Fully authored records replace this scaffold; this distinction keeps the
+    # small pedagogy bridge records useful while retaining the quality gate.
+    animation_correct = "The shown before/after pair matches the stated change: %s" % card["prompt"].rstrip(".")
     animation_wrong = "This visible failure occurs: %s" % module["defect"].rstrip(".")
     art_visual = visual_pair(card.get("start", []), card.get("target", []))
     compact_art_visual = visual_delta(card.get("start", []), card.get("target", []))
@@ -4500,11 +4876,11 @@ def _multiple_choice_pair(question, card, module):
     records = [
         (animation_correct, neovim_correct, None),
         (animation_correct, neovim_wrong,
-         f"The animation reading is right for {card['id']}, but the Neovim half ignores the bounded command path. {neovim_correct}."),
+         f"The animation reading is right for {card['title']}, but the Neovim half ignores the bounded command path. {neovim_correct}."),
         (animation_wrong, neovim_correct,
-         f"The Neovim reading is right for {card['id']}, but shifted or project-wide art breaks this card's registration contract."),
+         f"The Neovim reading is right for {card['title']}, but shifted or project-wide art breaks this lesson's fixed-width scope."),
         (animation_wrong, neovim_wrong,
-         f"Both halves break {card['id']}: preserve the named animation scope and use the bounded Neovim reading. {neovim_correct}."),
+         f"Both halves break {card['title']}: preserve the named animation scope and use the bounded Neovim reading. {neovim_correct}."),
     ]
     # Do not let a stable answer position become a second grading shortcut.
     shift = sum(ord(char) for char in question["id"]) % 4
@@ -4725,7 +5101,7 @@ def paired_question(module, card):
             "prompt": (
                 "ANIMATION\n%s\n\nNEOVIM\nComplete the reusable grammar: %s"
             ) % (module["principle"],
-                 "an Ex statement runs only after ____" if ex else
+                 "a : command runs only after ____" if ex else
                  "[count] operator [count] ____ names the operated scope"),
             "answer_contract": {
                 "form": "complete",
@@ -4748,11 +5124,11 @@ def m0_extra_cards(module):
         "id": "M0.P0", "ordinal": 0, "kind": "concept",
         "title": "Fireworks radial loop · Vim grammar primer", "project_id": module["project"],
         "variant_group": "M0.grammar-primer", "lesson_benefit": (
-            "distinguish operator sentences, standalone Normal commands, and Ex statements"
+            "distinguish operator sentences, standalone Normal commands, and : commands"
         ),
         "prompt": (
             "Use the movement grammar taught above to interpret one new command. "
-            "Do not decode operators, text objects, or Ex commands yet."
+            "Do not decode operators, text objects, or : commands yet."
         ),
         "teaching_lines": [
             "Vim's first small sentence is [count] + motion.",
@@ -4764,6 +5140,42 @@ def m0_extra_cards(module):
             "[count] + motion",
             "j = down one row; 4j = down four rows",
         ],
+    })
+    # Navigation-only practice separates the two new motions from r{char}.
+    # The exact key evidence proves the action; the supplied art stays intact.
+    line_start = dict(base, **{
+        "id": "M0.L0", "ordinal": 0.3, "kind": "guided_edit",
+        "title": "Fireworks radial loop · Return to column 1",
+        "project_id": "m0-line-start-lab", "artifact": "transfer",
+        "variant_group": "M0.line-start", "lesson_benefit": "reach the first column without changing a glyph",
+        "prompt": "Move down to the star row with j. Use 0 to reach its first column. Leave the Fireworks shell unchanged.",
+        "start": M0_RADIAL_SOURCE, "target": M0_RADIAL_SOURCE,
+        "expected": "j0", "recipe": [["j", "move down to the star row"], ["0", "return to column 1"]],
+        "cursor_goal": {"row": 2, "column": 1}, "navigation_only": True,
+        "cursor": "^", "show_target": True, "show_recipe": True,
+        "hint": "j is familiar movement. The new idea is 0: move to column 1 of the current row.",
+        "frame_slices": [3], "source": M0_PRIMARY_SOURCE,
+        "grammar_families": ["normal-motion"], "grammar_stage": "guided",
+        "key_vocabulary": ["0 moves to column 1, including any leading spaces"],
+        "key_shape": "j = down one row · 0 = column 1",
+        "method_requirement": require_method("use 0 and finish on the star row", all_of=["0"]),
+    })
+    find_star = dict(base, **{
+        "id": "M0.F0", "ordinal": 0.6, "kind": "guided_edit",
+        "title": "Fireworks radial loop · Find the star on one row",
+        "project_id": "m0-find-star-lab", "artifact": "transfer",
+        "variant_group": "M0.find-star", "lesson_benefit": "find one visible landmark without editing the drawing",
+        "prompt": "Use the familiar j0 to reach the star row at column 1. Type f* to move onto its star. Do not replace it yet.",
+        "start": M0_RADIAL_SOURCE, "target": M0_RADIAL_SOURCE,
+        "expected": "j0f*", "recipe": [["j0", "reach the star row at column 1"], ["f*", "find the next star on this row"]],
+        "cursor_goal": {"row": 2, "column": 6}, "navigation_only": True,
+        "cursor": "^", "show_target": True, "show_recipe": True,
+        "hint": "f followed by a glyph finds its next occurrence on the current row. f* only moves; the star stays intact.",
+        "frame_slices": [3], "source": M0_PRIMARY_SOURCE,
+        "grammar_families": ["normal-motion", "search-landmark"], "grammar_stage": "guided",
+        "key_vocabulary": ["f* moves onto the next star on the current row"],
+        "key_shape": "j0 = down one row, then column 1 · f{char} = find on this row",
+        "method_requirement": require_method("find the visible star without editing it", all_of=["f*"]),
     })
     yank_put = dict(base, **{
         "id": "M0.YP", "ordinal": 1.5, "kind": "guided_edit",
@@ -4832,10 +5244,10 @@ def m0_extra_cards(module):
     })
     addressed_substitute = dict(base, **{
         "id": "M0.SR", "ordinal": 1.9, "kind": "guided_edit",
-        "title": "Fireworks radial loop · Address one row and substitute",
+        "title": "Fireworks radial loop · Pick one row and substitute",
         "project_id": "m0-addressed-substitute-lab", "artifact": "transfer",
         "variant_group": "M0.addressed-substitute", "lesson_benefit": (
-            "read an Ex substitute as address + command + old/new arguments + flag + Enter"
+            "read a :s command as line selection + command + old/new arguments + flag + Enter"
         ),
         "prompt": (
             "On row 2 only, replace the dim core o with O. Keep the Fireworks accents unchanged."
@@ -4843,14 +5255,14 @@ def m0_extra_cards(module):
         "start": M0_RADIAL_DIM,
         "target": M0_RADIAL_BRIGHT,
         "expected": ":2s/o/O/g<CR>",
-        "recipe": [[":2", "address row 2 only"],
+        "recipe": [[":2", "select row 2 only"],
                    ["s", "start the substitute command"],
                    ["/o/O/", "name the old glyph and its replacement"],
-                   ["g", "replace every match on that addressed row"],
+                   ["g", "replace every match on that selected row"],
                    ["<CR>", "press Enter to run the whole : command line"]],
         "cursor": "^", "show_target": True, "show_recipe": True,
         "hint": (
-            "Read :2s/o/O/g as address + command + old/new arguments + all-matches flag; "
+            "Read :2s/o/O/g as line selection + command + old/new arguments + all-matches flag; "
             "press Enter only after the full sentence is assembled."
         ),
         "frame_slices": [3], "grammar_families": ["ex-substitute-range"],
@@ -4859,13 +5271,13 @@ def m0_extra_cards(module):
     })
     ex_copy = dict(base, **{
         "id": "M0.T", "ordinal": 4.5, "kind": "guided_edit",
-        "title": "Fireworks radial loop · Addressed whole-frame copy",
+        "title": "Fireworks radial loop · Copy a whole frame with an explicit range",
         "project_id": "m0-ex-copy-lab", "artifact": "transfer",
         "variant_group": "M0.ex-copy", "lesson_benefit": (
             "work out source range, copy command, destination, and Enter before M0.05 hides them"
         ),
         "prompt": (
-            "Copy the complete three-row Fireworks flare after the file with one addressed Ex statement."
+            "Copy the complete three-row Fireworks flare after the file with one : command with an explicit range."
         ),
         "start": M0_RADIAL_FLARE,
         "target": M0_RADIAL_FLARE + M0_RADIAL_FLARE,
@@ -4875,7 +5287,7 @@ def m0_extra_cards(module):
                    ["<CR>", "press Enter to run the whole : command line"]],
         "cursor": "^", "show_target": True, "show_recipe": True,
         "hint": (
-            "Ex copy grammar is source range + t/copy + destination + Enter; `$` means the "
+            ":copy grammar is source range + t/copy + destination + Enter; `$` means the "
             "last line, independent of cursor position."
         ),
         "frame_slices": [3, 3], "grammar_families": ["ex-copy"],
@@ -4883,18 +5295,55 @@ def m0_extra_cards(module):
         "source": M0_PRIMARY_SOURCE,
         "duplicate_frames": [{
             "frames": [1, 2], "role": "scaffold",
-            "reason": "a working whole-frame copy used to learn addressed Ex scope",
+            "reason": "a working whole-frame copy used to learn an explicit source range",
             "playback": False,
         }],
     })
-    for card in (primer, yank_put, open_line, addressed_substitute, ex_copy):
+    digraph_intro = dict(base, **{
+        "id": "M0.DG", "ordinal": 4.6, "kind": "guided_edit",
+        "title": "Fireworks radial loop · Enter one glyph by digraph",
+        "project_id": "m0-digraph-intro-lab", "artifact": "transfer",
+        "variant_group": "M0.digraph-intro", "lesson_benefit": (
+            "enter a non-ASCII cell as one Unicode glyph without changing row width"
+        ),
+        "prompt": "Replace the sourced radial core with a middle dot using one digraph; every accent and rail stays registered.",
+        "start": M0_RADIAL_SOURCE, "target": [M0_RADIAL_SOURCE[0], "   -—·—-", M0_RADIAL_SOURCE[2]],
+        "expected": "2G0f*r<C-k>.M",
+        "recipe": [["2G0f*", "land on the sourced core"],
+                   ["r<C-k>.M", "enter the middle-dot digraph as one replacement glyph"]],
+        "cursor": "^", "show_target": True, "show_recipe": True,
+        "hint": "The digraph is the only new idea: r<C-k>.M replaces one cell and preserves the fixed-width row.",
+        "frame_slices": [3], "source": M0_PRIMARY_SOURCE,
+        "grammar_families": ["digraph"], "grammar_stage": "guided",
+    })
+    digraph_reinforce = dict(base, **{
+        "id": "M0.DGH", "ordinal": 4.7, "kind": "guided_edit",
+        "title": "Fireworks radial loop · Reinforce digraph entry",
+        "project_id": "m0-digraph-reinforce-lab", "artifact": "transfer",
+        "variant_group": "M0.digraph-reinforce", "lesson_benefit": (
+            "repeat digraph entry on a changed supplied cell before later hidden retrieval"
+        ),
+        "prompt": "On the same sourced shell, replace the middle dot with the inverted exclamation digraph; preserve every other cell.",
+        "start": [M0_RADIAL_SOURCE[0], "   -—·—-", M0_RADIAL_SOURCE[2]],
+        "target": [M0_RADIAL_SOURCE[0], "   -—¡—-", M0_RADIAL_SOURCE[2]],
+        "expected": "2G0f·r<C-k>!I",
+        "recipe": [["2G0f·", "land on the supplied middle-dot cell"],
+                   ["r<C-k>!I", "enter the inverted-exclamation digraph in that one cell"]],
+        "cursor": "^", "show_target": True, "show_recipe": True,
+        "hint": "Repeat the one-cell digraph path; do not enter Insert mode or redraw the shell.",
+        "frame_slices": [3], "source": M0_PRIMARY_SOURCE,
+        "grammar_families": ["digraph"], "grammar_stage": "guided",
+    })
+    for card in (primer, line_start, find_star, yank_put, open_line, addressed_substitute, ex_copy,
+                 digraph_intro, digraph_reinforce):
         card["roadmap_contract"] = card["prompt"]
         card.setdefault("key_vocabulary", _family_breakdown(card["grammar_families"]))
-    return primer, yank_put, open_line, addressed_substitute, ex_copy
+    return (primer, line_start, find_star, yank_put, open_line, addressed_substitute, ex_copy,
+            digraph_intro, digraph_reinforce)
 
 
 def guided_bridge_cards(module):
-    """Visible microcards inserted before a command family is required hidden."""
+    """Visible microcards inserted before a command kind is required hidden."""
     habits, stages = MASTER_COVERAGE[module["id"]]
 
     def bridge(suffix, title, prompt, start, target, expected, recipe, family,
@@ -4908,11 +5357,15 @@ def guided_bridge_cards(module):
             "skill": module["skill"], "source_ref": module["source_ref"],
             "medium": "monospace", "node_ids": [module["node"]],
             "master_habits": habits, "master_stages": stages,
-            "lesson_benefit": "perform %s visibly before a later key-hidden animation edit requires it" % family,
+            "lesson_benefit": title,
             "prompt": prompt, "roadmap_contract": prompt,
             "start": start, "target": target, "expected": expected,
             "recipe": recipe, "cursor": "^", "show_target": True,
-            "show_recipe": True, "hint": "Work out the scope first; then follow the visible grammar once.",
+            # The recipe is authored for this card.  Echo its operation-level
+            # purpose rather than handing the learner an undifferentiated
+            # toolbox (which is especially misleading on transfer art).
+            "show_recipe": True,
+            "hint": "Operation: %s." % "; ".join(why for _keys, why in recipe),
             "grammar_families": [family], "grammar_stage": "guided",
             "key_vocabulary": _family_breakdown([family]),
             "frame_rows": len(start), "frame_slices": [len(target)],
@@ -4920,18 +5373,30 @@ def guided_bridge_cards(module):
         if labels:
             card["labels"] = True
         def changed(rows, marker):
-            # Perturb only the stable left registration rail.  Replacing the
-            # first bar anywhere can accidentally replace the cell that the
-            # lesson is meant to edit (for example M4.VB's top-centre x -> |).
-            # Keeping width and every command-addressed column unchanged also
-            # makes these genuine changed-art transfers rather than new paths.
-            return [marker + row[1:] if row.startswith("|") else row for row in rows]
+            # Perturb one stable visible cell in both start and target.  The
+            # changed-art review must differ even when a supplied source row
+            # begins with leading whitespace rather than a registration rail.
+            for row in rows:
+                positions = [index for index, char in enumerate(row) if not char.isspace()]
+                if positions:
+                    position = positions[0]
+                    return [
+                        (line[:position] + marker + line[position + 1:]
+                         if index == 0 else line)
+                        for index, line in enumerate(rows)
+                    ]
+            return list(rows)
         card["review_variants"] = [{
             "start": changed(start, marker), "target": changed(target, marker),
             "expected": expected, "recipe": recipe,
         } for marker in ("!", "+")]
         card["review_source_card_id"] = card_id
         card["review_method_family"] = family
+        if family in {"word-delete", "word-count-delete", "word-change",
+                      "paren-text-object", "register-zero", "marks-travel",
+                      "visual-line-delete", "join-lines", "line-swap",
+                      "toggle-case", "normal-append"} or suffix in {"O", "PAD"}:
+            card["labels"] = True
         return card
 
     mid = module["id"]
@@ -4946,7 +5411,7 @@ def guided_bridge_cards(module):
              stone_story_variants.FIREWORK_CANOPY[2]],
             "2G:s/,/:/g<CR>",
             [["2G", "land on the row whose repeated material changes"],
-             [":s/,/:/g<CR>", "use the current row as the implicit address and replace every comma there"]],
+             [":s/,/:/g<CR>", "use the current row as the selected row and replace every comma there"]],
             "ex-substitute-line", 5.5)
         current_line["source"] = (
             "official-Cosmetics/Fireworks res03 willow frame 5 canopy rows 1-3; "
@@ -4957,14 +5422,153 @@ def guided_bridge_cards(module):
         delete_pose = bridge(
             "DD", "Delete one complete redundant frame",
             "Remove only the second five-row Acronian wing candidate; keep the first complete pose registered.",
-            M1_LEFT_COLON + M1_LEFT_COLON,
-            M1_LEFT_COLON, "6G5dd",
+            [" " + row for row in M1_LEFT_COLON + M1_LEFT_COLON],
+            [" " + row for row in M1_LEFT_COLON], "6G5dd",
             [["6G", "land on the first row of the redundant wing pose"],
              ["5dd", "count all five source rows and delete that pose linewise"]],
             "linewise-delete", 3.5)
-        delete_pose["source"] = M1_PRIMARY_SOURCE
+        delete_pose["source"] = M1_PRIMARY_SOURCE + "; one-column registration offset"
         rows.append(("M1.04", delete_pose))
+    elif mid == "M2":
+        word_delete_start = ["| one two      |", "|   /\\        |", "|______________|"]
+        word_delete_start = [row.ljust(18) for row in word_delete_start]
+        word_delete_target = ["| two      |  ", "|   /\\        |   ", "|______________|  "]
+        counted_word_start = ["| red blue green |", "|    /\\        |", "|_______________|"]
+        counted_word_start = [row.ljust(19) for row in counted_word_start]
+        counted_word_target = ["| green | ", "|    /\\        |   ", "|_______________|  "]
+        end_word_start = ["| one two      |", "|   /\\        |", "|______________|"]
+        end_word_target = ["|  two      |  ", "|   /\\        |   ", "|______________|  "]
+        end_word_start = [row.ljust(18) for row in end_word_start]
+        rows.extend([
+            ("M2.04", bridge(
+                "DW", "Delete one word with dw",
+                "On the original three-row banner, remove only the first word-sized span before two remains; the scaffold rows stay fixed.",
+                word_delete_start, word_delete_target, "ggfodw",
+                [["ggfo", "land on the first word's o"],
+                 ["dw", "delete the first word span and its separating space"]],
+                "word-delete", 3.4)),
+            ("M2.04", bridge(
+                "DE", "Contrast de at a word end",
+                "On the second banner, compare de with the taught dw and daw scopes: remove the current word through its final glyph while the following word remains.",
+                end_word_start, end_word_target, "ggfode",
+                [["ggfo", "land at the first word's o"],
+                 ["de", "delete through the current word's final glyph without taking the following space"]],
+                "word-delete", 3.42)),
+            ("M2.04", bridge(
+                "D2W", "Count two WORD deletions",
+                "On the changed banner, delete the first two blank-separated WORD runs in one counted operation and preserve the final green run.",
+                counted_word_start, counted_word_target, "ggfrd2W",
+                [["ggfr", "land at the first WORD's r"],
+                 ["d2W", "delete two counted WORD spans as one bounded edit"]],
+                "word-count-delete", 3.45)),
+        ])
+        for _before, _row in rows:
+            if _row["id"] == "M2.DW":
+                _row["source"] = "Authored word-span contrast; Neovim help dw and daw"
+            elif _row["id"] == "M2.DE":
+                _row["source"] = "Authored word-span contrast; Neovim help de"
+            elif _row["id"] == "M2.D2W":
+                _row["source"] = "Authored counted WORD contrast; Neovim help d2W"
+        # M2.08 is the first authored transfer that uses a two-digit line
+        # count.  Give 10G its own visible, no-edit performance first so the
+        # zero is read as part of the count rather than as a new command.
+        ten = bridge(
+            "TEN", "Jump to a two-digit line count",
+            "Move to the tenth supplied row without changing any face cell; read 10G as one counted line jump.",
+            [
+                " /---\\", "|  .  |", "| \\_/ |", " \\___/",
+                " /---\\", "|  O  |", "| \\_/ |", " \\___/",
+                " /---\\", "|  -  |", "| \\_/ |", " \\___/",
+            ],
+            [
+                " /---\\", "|  .  |", "| \\_/ |", " \\___/",
+                " /---\\", "|  O  |", "| \\_/ |", " \\___/",
+                " /---\\", "|  -  |", "| \\_/ |", " \\___/",
+            ],
+            "10G", [["10G", "jump to line ten as one two-digit count"]],
+            "normal-motion", 7.8)
+        ten["frame_rows"] = 4
+        ten["frame_slices"] = [4, 4, 4]
+        ten["source"] = "Authored three-face line-count study; Neovim help counted G"
+        rows.append(("M2.08", ten))
     elif mid == "M3":
+        cw_start = ["| TODO       |", "|   /\\      |", "|____________|"]
+        cw_start = [row.ljust(15) for row in cw_start]
+        cw_target = ["| done       |", "|   /\\      |", "|____________|"]
+        cw_target = [row.ljust(15) for row in cw_target]
+        ca_start = ["| ( old )    |", "|    /\\     |", "|____________|"]
+        ca_start = [row.ljust(15) for row in ca_start]
+        ca_target = ["| new    | ", "|    /\\     |", "|____________| "]
+        ca_target = [row.ljust(15) for row in ca_target]
+        ca_target[0] = "| new    | "
+        register_zero_start = ["| A |", "| B |", "| C |", "| D |"]
+        register_zero_target = ["| A |", "| C |", "| A |", "| D |"]
+        marks_start = ["| mark top |", "| move one |", "| move two |", "| anchor   |", "| finish   |"]
+        marks_target = ["| mark top |", "| move one |", "| move two |", "| ancho!   |", "| finish   |"]
+        visual_delete_start = ["| keep 1 |", "| keep 2 |", "| drop 1 |", "| drop 2 |", "| tail   |"]
+        visual_delete_target = ["| keep 1 |", "| keep 2 |", "| tail   |"]
+        rows.extend([
+            ("M3.04", bridge(
+                "CW", "Change one word with cw",
+                "Replace the TODO label with done using the word change span; the frame rails remain registered.",
+                cw_start, cw_target, "ggfTcwdone<Esc>",
+                [["ggfT", "land on the TODO word"],
+                 ["cw", "change exactly that word-sized span"],
+                 ["done<Esc>", "type the replacement and return to Normal"]],
+                "word-change", 3.3)),
+            ("M3.04", bridge(
+                "CA", "Change around parentheses with ca(",
+                "Replace the complete parenthesized token, including its delimiters, so this text-object contrast is visible beside ci(.",
+                ca_start, ca_target, "gg0f(ca(new<Esc>",
+                [["gg0f(", "land on the opening parenthesis"],
+                 ["ca(", "select the parenthesized token including both delimiters"],
+                 ["new<Esc>", "type the replacement and return to Normal"]],
+                "paren-text-object", 3.35)),
+            ("M3.06", bridge(
+                "Y0", "Retrieve register 0 after a delete",
+                "Yank the first complete row, delete the next row, then retrieve the preserved yank with register 0; the final four-row order proves the storage step.",
+                register_zero_start, register_zero_target, "ggyyj1dd\"0p",
+                [["ggyy", "yank the first complete row into the unnamed and zero yank registers"],
+                 ["j1dd", "move to and delete the next row"],
+                 ["\"0p", "put the preserved latest yank below the deletion"]],
+                "register-zero", 5.6)),
+            ("M3.06", bridge(
+                "MARK", "Travel back to a meaningful mark",
+                "Mark the anchor row, travel to the end of the supplied five-row strip, return with 'a, and change only the marked anchor.",
+                marks_start, marks_target, "gg4GmaG'a0frr!",
+                [["gg4Gma", "store mark a on the anchor row"],
+                 ["G", "travel to the end of the strip"],
+                 ["'a", "return to the marked anchor line"],
+                 ["0frr!", "find the marked row's r and replace that glyph without changing its width"]],
+                "marks-travel", 5.7)),
+            ("M3.06", bridge(
+                "VD", "Delete complete rows in Visual line mode",
+                "Select the two unwanted rows linewise and delete them, leaving the two kept rows and the tail registered.",
+                visual_delete_start, visual_delete_target, "ggjjVjd",
+                [["ggjjVj", "move to and select the two complete rows linewise"],
+                 ["d", "delete only the selected rows"]],
+                "visual-line-delete", 5.8)),
+        ])
+        for _before, _row in rows:
+            if _row["id"] == "M3.CW":
+                _row["source"] = "Authored TODO banner; Neovim help cw word change"
+            elif _row["id"] == "M3.CA":
+                _row["source"] = "Authored parenthesis scope contrast; Neovim help ca( and ci("
+            elif _row["id"] == "M3.Y0":
+                _row["source"] = "Authored four-row yank/delete retrieval study; Neovim help register 0"
+            elif _row["id"] == "M3.MARK":
+                _row["source"] = "Authored five-row mark travel study; Neovim help named marks"
+            elif _row["id"] == "M3.VD":
+                _row["source"] = "Authored five-row Visual-line deletion study; Neovim help V and d"
+            if _row["id"] == "M3.Y0":
+                # The review marker sits on the source row that is yanked.
+                # After B is deleted, register 0 puts that marked row back
+                # below C; keep both authored marker locations in TARGET.
+                for _variant in _row["review_variants"]:
+                    _variant["target"] = [
+                        _variant["start"][0], register_zero_target[1],
+                        _variant["start"][0], register_zero_target[3],
+                    ]
         register_bridge = bridge(
             "REG", "Copy a complete pose through a named register",
             "Store the complete three-row pose in register a, put it below, then change only the copied eye.",
@@ -5008,6 +5612,63 @@ def guided_bridge_cards(module):
              ["<C-v>2j", "select that exact column through three rows"],
              ["r|", "replace every selected cell in place"]],
             "visual-scope", 3.5)))
+        block_delete_start = ["| /[]\\ |", "|  []  |", "| \\[]/ |"]
+        block_delete_target = ["| /\\ |", "|    |", "| \\/ |"]
+        rows.append(("M4.04", bridge(
+            "BD", "Delete one rectangular block",
+            "Select the two-cell center block through all three rows and erase it, keeping the outer contours intact and the rows aligned.",
+            block_delete_start, block_delete_target, "ggf[<C-v>2jld",
+            [["ggf[<C-v>2j", "select the first defect cell through the three rows"],
+             ["l", "extend the block across the second defect cell"],
+             ["d", "erase only that selected block"]],
+            "block-delete", 3.45)))
+        rows[-1][1]["source"] = "Authored three-row rectangular erase study; Neovim help blockwise d"
+        # The comparison card used to be the first place where three
+        # unrelated command ideas appeared together.  These small bridges
+        # make :silent, linewise dd, and scroll binding independently
+        # retrievable before the full two-window comparison.
+        silent = bridge(
+            "SIL", "Read a reference without command-line noise",
+            "Open a disposable reference and read the saved prior frame silently; the working three-row pose stays unchanged.",
+            ["  ____/", "< / / |::'", "  ¯¯¯¯\\"],
+            ["  ____/", "< / / |::'", "  ¯¯¯¯\\"],
+            ":vnew<CR>:silent 0read #<CR>:bwipeout!<CR>",
+            [[":vnew<CR>", "open a disposable empty reference window"],
+             [":silent 0read #<CR>", "read the alternate file before the empty first line without printing a message"],
+             [":bwipeout!<CR>", "close the inspected disposable reference and return to the saved artwork"]],
+            "onion-diff-view", 3.35)
+        silent["source"] = "Authored missile comparison setup; Neovim help :silent and :read"
+        silent["method_requirement"] = {"label": "read the reference with :silent", "all_of": [":silent 0read #<CR>"]}
+        trim = bridge(
+            "TRIM", "Trim the imported reference linewise",
+            "In the disposable four-row reference, delete its first duplicate line so the three-row pose is ready for comparison.",
+            ["  ____/", "< / / |::'", "  ¯¯¯¯\\", "  ----"],
+            ["< / / |::'", "  ¯¯¯¯\\", "  ----"],
+            "ggdd",
+            [["gg", "land on the first imported reference row"],
+             ["dd", "delete that complete duplicate line without touching the remaining pose"]],
+            "linewise-delete", 3.36)
+        trim["source"] = "Authored four-row reference trim; Neovim help linewise delete"
+        trim["method_requirement"] = {"label": "delete the complete reference row with dd", "all_of": ["dd"]}
+        scrollbind = bridge(
+            "SCB", "Bind a comparison window's scrolling",
+            "Enable scroll binding in the current comparison window so corresponding reference rows move together.",
+            ["  ____/", "< / / |::'", "  ¯¯¯¯\\"],
+            ["  ____/", "< / / |::'", "  ¯¯¯¯\\"],
+            ":set scrollbind<CR>",
+            [[":set scrollbind<CR>", "bind this window's scrolling to its comparison partner"]],
+            "onion-diff-view", 3.37)
+        scrollbind["source"] = "Authored two-window comparison setup; Neovim help scrollbind"
+        scrollbind["method_requirement"] = {"label": "enable scroll binding", "all_of": [":set scrollbind<CR>"]}
+        rows.extend([("M4.04", silent), ("M4.04", trim), ("M4.04", scrollbind)])
+        for _before, _row in rows:
+            if _row["id"] == "M4.TRIM":
+                # The changed glyph belongs to the duplicate row removed by
+                # ggdd, so it must not survive in the post-delete target.
+                _row["review_variants"] = [
+                    dict(_variant, target=list(trim["target"]))
+                    for _variant in _row["review_variants"]
+                ]
     elif mid == "M5":
         change_tail = bridge(
             "C", "Redraw one layer tail without moving its seam",
@@ -5027,7 +5688,20 @@ def guided_bridge_cards(module):
         change_tail.pop("review_method_family", None)
         rows.append(("M5.04", change_tail))
     elif mid == "M6":
+        join_start = ["| left  |", "| right |", "|  /\\   |", "|  ..   |"]
+        join_target = ["| left  |    | right |    ", "|  /\\   |    ", "|  ..   |    "]
+        join_start = [row.ljust(13) for row in join_start]
+        join_target = [row.ljust(13) for row in join_target]
+        swap_start = ["| top    |", "| middle |", "| bottom |"]
+        swap_target = ["| middle |", "| top    |", "| bottom |"]
         rows.extend([
+            ("M6.04", bridge(
+                "J", "Join two registered rows",
+                "Join the two text rows of the authored candle study with J; the joined sentence stays above the unchanged base stroke.",
+                join_start, join_target, "ggflJ",
+                [["ggfl", "land on the first row's left landmark"],
+                 ["J", "join it to the following row with one separating space"]],
+                "join-lines", 3.4)),
             ("M6.04", bridge(
                 "D", "Erase a layer tail without deleting its row",
                 "Remove the temporary layer tail after the left anchor; keep the three-row build and its anchor.",
@@ -5036,6 +5710,13 @@ def guided_bridge_cards(module):
                 [["2G0l", "land just after the preserved anchor"],
                  ["D", "delete from the cursor through the end of this row"]],
                 "linewise-delete", 3.5, labels=True)),
+            ("M6.08", bridge(
+                "DDP", "Swap adjacent rows with ddp",
+                "Swap the first two adjacent rows by deleting the first complete row and putting it below the next; the third row remains in place.",
+                swap_start, swap_target, "ggddp",
+                [["ggdd", "delete the complete first row into the unnamed register"],
+                 ["p", "put it below the next row to swap their order"]],
+                "line-swap", 7.4)),
             ("M6.06", bridge(
                 "MOVE", "Move a complete build range",
                 "Move the first complete three-row build after the second; do not copy or split either build.",
@@ -5046,8 +5727,53 @@ def guided_bridge_cards(module):
                  ["m$", "move it after the final row"], ["<CR>", "press Enter to run the whole : command line"]],
                 "ex-move", 5.5)),
         ])
+        for _before, _row in rows:
+            if _row["id"] == "M6.J":
+                _row["source"] = "Authored candle-join study; Neovim help J"
+            elif _row["id"] == "M6.DDP":
+                _row["source"] = "Authored playback-order study; Neovim help ddp"
+            if _row["id"] == "M6.DDP":
+                # ddp deletes the marked first row and puts it below the
+                # second row; the marker therefore travels to row two.
+                for _variant in _row["review_variants"]:
+                    _variant["target"] = [
+                        swap_target[0], _variant["start"][0], swap_target[2],
+                    ]
     elif mid == "M7":
+        toggle_start = ["| abc |", "| abc |", "| abc |"]
+        toggle_target = ["| Abc |", "| abc |", "| abc |"]
+        toggle_word_start = ["| red blue |", "| red blue |", "| red blue |"]
+        toggle_word_target = ["| RED blue |", "| red blue |", "| red blue |"]
         rows.extend([
+            ("M7.04", bridge(
+                "TC", "Toggle one glyph's case",
+                "Toggle only the first lowercase glyph in the authored three-row label study; the other labels and rails stay fixed.",
+                toggle_start, toggle_target, "ggfa~",
+                [["ggfa", "land on the first label glyph"],
+                 ["~", "toggle that one glyph's case in place"]],
+                "toggle-case", 3.1)),
+            ("M7.04", bridge(
+                "GTC", "Toggle a word with g~",
+                "Toggle the first word on the first label row with g~w, leaving the repeated comparison rows untouched.",
+                toggle_word_start, toggle_word_target, "ggfrg~w",
+                [["ggfr", "land at the first word"],
+                 ["g~w", "toggle the word-sized text object through its next boundary"]],
+                "toggle-case", 3.15)),
+            ("M7.04", bridge(
+                "D0", "Make one dot-repeat source change",
+                "Change the first homologous dash to an equals sign once. This guide introduces the bounded change before dot-repeat is requested.",
+                ["| - |", "| - |", "| - |"], ["| = |", "| - |", "| - |"],
+                "gg0f-r=",
+                [["gg0f-r=", "replace one acting dash in place"]],
+                "normal-replace", 3.2)),
+            ("M7.04", bridge(
+                "D1", "Repeat that same change once",
+                "Move to the next homologous dash and repeat the exact last change with dot; leave the third row alone.",
+                ["| - |", "| - |", "| - |"], ["| = |", "| = |", "| - |"],
+                "gg0f-r=j.",
+                [["gg0f-r=", "make the first bounded dash-to-equals change"],
+                 ["j.", "move to the next homologous row and repeat that same change"]],
+                "repeat", 3.3)),
             ("M7.04", bridge(
                 "DOT", "Repeat one tween-cell change",
                 "Change the same registered dash to equals on three homologous rows by making one change and repeating it.",
@@ -5085,6 +5811,56 @@ def guided_bridge_cards(module):
                  ["r=", "replace the selected cells without shifting the row"]],
                 "visual-characterwise", 4.75)),
         ])
+        for _before, _row in rows:
+            if _row["id"] == "M7.TC":
+                _row["source"] = "Authored case-toggle study; Neovim help ~"
+            elif _row["id"] == "M7.GTC":
+                _row["source"] = "Authored word-case study; Neovim help g~"
+    elif mid == "M8":
+        open_start = ["|  flame  |", "|   /\\   |", "|_________|"]
+        open_target = ["|  new  |", "|  flame  |", "|   /\\   |", "|_________|"]
+        open_start = [row.ljust(12) for row in open_start]
+        open_target = [row.ljust(12) for row in open_target]
+        open_target[0] = "|  new  |"
+        pad_start = ["|  top    |", "|  base   |", "|  wick   |"]
+        pad_target = ["", "", "|  top    |", "|  base   |", "|  wick   |"]
+        pad_start = [row.ljust(12) for row in pad_start]
+        pad_target = [row.ljust(12) for row in pad_target]
+        pad_target[:2] = ["", ""]
+        rows.extend([
+            ("M8.04", bridge(
+                "O", "Open one row above",
+                "Open a blank row above the authored flame, type the new label, and leave every original row registered below it.",
+                open_start, open_target, "ggflO|  new  |<Esc>",
+                [["ggflO", "open one new row above the first flame row"],
+                 ["new<Esc>", "type the label and return to Normal mode"]],
+                "normal-open-line", 3.4)),
+            ("M8.04", bridge(
+                "PAD", "Pad frame height with O and dot",
+                "Open one row above the two-row authored frame, then repeat that exact opening with dot so two timing holds precede the original frame.",
+                pad_start, pad_target, "ggftO<Esc>.",
+                [["ggftO<Esc>", "open one blank row above and return to Normal"],
+                 [".", "repeat the same open-line change once for the second hold"]],
+                "normal-open-line", 3.45)),
+        ])
+        for _before, _row in rows:
+            if _row["id"] == "M8.O":
+                _row["source"] = "Authored four-row flame padding study; Neovim help O"
+            elif _row["id"] == "M8.PAD":
+                _row["source"] = "Authored two-hold frame-height study; Neovim help O and dot repeat"
+            if _row["id"] == "M8.O":
+                # O inserts an unmarked row; the marker remains on the flame
+                # row that moved down one line.
+                for _variant in _row["review_variants"]:
+                    _variant["target"] = [
+                        open_target[0], _variant["start"][0], *open_target[2:]
+                    ]
+            elif _row["id"] == "M8.PAD":
+                # O and dot add two blank holds above the marked source row.
+                for _variant in _row["review_variants"]:
+                    _variant["target"] = [
+                        "", "", _variant["start"][0], *pad_target[3:]
+                    ]
     elif mid == "M12":
         aa = bridge(
             "AA", "Shape one off-vertical stroke with the full glyph palette",
@@ -5108,7 +5884,7 @@ def guided_bridge_cards(module):
             ["|/ .\\|", "|< .>|", "|\\ ./|"],
             ["|/ :\\|", "|< :>|", "|\\ :/|"],
             "gg4|<C-v>2jr:",
-            [["gg4|", "address display column 4 on the first sample"],
+            [["gg4|", "reach display column 4 on the first sample"],
              ["<C-v>2j", "select the same registered joint cell on all three rows"],
              ["r:", "replace the selected low dots with centred colons"]],
             "visual-scope", 0.8,
@@ -5173,6 +5949,30 @@ def guided_bridge_cards(module):
         para["frame_rows"] = module.get("frame_rows")
         rows.append(("M14.05", para))
     elif mid == "M15":
+        append_start = ["| hi  |", "|  /\\ |", "|_____|"]
+        append_after_cursor = ["| h!i  |", "|  /\\ |", "|_____|"]
+        append_at_end = ["| hi  |!", "|  /\\ |", "|_____|"]
+        rows.extend([
+            ("M15.05", bridge(
+                "APP", "Append after the cursor with a",
+                "Place one authored glyph immediately after the cursor in the hi label; the adjacent rows and their widths remain fixed.",
+                append_start, append_after_cursor, "ggfha!<Esc>",
+                [["ggfh", "land on the i that will receive a following glyph"],
+                 ["a!<Esc>", "append one glyph after the cursor and return to Normal"]],
+                "normal-append", 4.1)),
+            ("M15.05", bridge(
+                "APPA", "Append at row end with A",
+                "Place one authored glyph at the true end of the hi row, then return to Normal without changing the row's existing material.",
+                append_start, append_at_end, "ggfhA!<Esc>",
+                [["ggfh", "land on the acting row and enter append at its end"],
+                 ["!<Esc>", "append the final glyph and return to Normal"]],
+                "normal-append", 4.15)),
+        ])
+        for _before, _row in rows:
+            if _row["id"] == "M15.APP":
+                _row["source"] = "Authored three-row append contrast; Neovim help a"
+            elif _row["id"] == "M15.APPA":
+                _row["source"] = "Authored three-row append contrast; Neovim help A"
         rows.append(("M15.05", bridge(
             "BA", "Append one glyph to a selected column block",
             "Select the final three-row block and append one occluding edge at the true end of each row without redrawing the rows.",
@@ -5187,14 +5987,29 @@ def guided_bridge_cards(module):
             "block-append", 4.5)))
         rows.extend([
             ("M15.08", bridge(
+                "MACR", "Record one bounded macro",
+                "Record one colon-to-dot landmark edit in register q and stop recording; the two later colons remain for the replay step.",
+                ["| : : : |", "|_______|", "| shadow |"],
+                ["| . : : |", "|_______|", "| shadow |"],
+                "gg0qqf:r.q",
+                [["gg0qqf:r.q", "record one anchored material edit in q and stop recording"]],
+                "macro", 7.15, labels=True)),
+            ("M15.08", bridge(
+                "MAC3", "Count macro replays explicitly",
+                "Record one colon-to-dot change and replay it on exactly three later rows with a counted @q; every row keeps its width.",
+                ["|  : |", "|  : |", "|  : |", "|  : |"],
+                ["|  . |", "|  . |", "|  . |", "|  . |"],
+                "gg0qq0f:r.jq3@q",
+                [["qq0f:r.jq", "record the anchored material edit and one-row travel in register q"],
+                 ["3@q", "replay that anchored macro exactly three counted times"]],
+                "macro", 7.2, labels=True)),
+            ("M15.08", bridge(
                 "MAC", "Record one material edit and replay it",
                 "Record one colon-to-dot material edit, then replay it at the next two visible landmarks on the same fixed-width row.",
                 ["| : : : |", "|_______|", "| shadow |"],
                 ["| . . . |", "|_______|", "| shadow |"],
                 "gg0qqf:r.q0@q0@q",
-                [["qq", "start recording register q"],
-                 ["f:r.", "find and replace one material landmark"],
-                 ["q", "stop recording"],
+                [["gg0qqf:r.q", "repeat the taught recording path and stop register q"],
                  ["0@q0@q", "replay the bounded edit at the two remaining landmarks"]],
                 "macro", 7.25, labels=True)),
             ("M15.08", bridge(
@@ -5208,54 +6023,185 @@ def guided_bridge_cards(module):
                  ["<CR>", "execute the complete global command"]],
                 "global-normal", 7.5, labels=True)),
         ])
+        # Recording and ordinary replay is the prerequisite; only then does
+        # the counted replay card introduce 3@q.  Keep GLOBAL after both.
+        macro_ids = {"M15.MACR", "M15.MAC", "M15.MAC3", "M15.GLOBAL"}
+        macro_rows = [row for row in rows if row[1]["id"] in macro_ids]
+        rows = [row for row in rows if row[1]["id"] not in macro_ids]
+        rows.extend(sorted(
+            macro_rows,
+            key=lambda row: {"M15.MACR": 0, "M15.MAC": 1, "M15.MAC3": 2,
+                             "M15.GLOBAL": 3}[row[1]["id"]]))
+        for _before, _row in rows:
+            if _row["id"] == "M15.MACR":
+                _row["source"] = "Authored three-row material study; Neovim help macro recording"
     elif mid == "M16":
-        rows.append(("M16.05", bridge(
-            "MOVE", "Move one complete plan block by addressed range",
+        rows.extend([
+        ("M16.05", bridge(
+            "ZERO", "Copy a range to the line-0 target",
+            "Copy the complete A plan to the line-0 destination so it appears before the existing first line; keep the B plan unchanged.",
+            ["| A |", "|aaa|", "|---|", "| B |", "|bbb|", "|---|"],
+            ["| A |", "|aaa|", "|---|", "| A |", "|aaa|", "|---|", "| B |", "|bbb|", "|---|"],
+            ":1,3t0<CR>", [[":1,3", "select the complete A plan"],
+                             ["t0<CR>", "copy that range to line 0, before the file's first line"]],
+            "ex-copy", 4.2, labels=True)),
+        ("M16.04", bridge(
+            "INC", "Count a numbered frame forward",
+            "Use one counted Ctrl-a to move FRAME 01 forward by two; the other frame labels remain unchanged.",
+            ["FRAME 01", "FRAME 02", "FRAME 03"],
+            ["FRAME 03", "FRAME 02", "FRAME 03"],
+            "gg0f02<C-a>", [["gg0f0", "land on the first frame's number"],
+                              ["2<C-a>", "increment that number twice with the explicit count"]],
+            "number-increment", 4.3, labels=True)),
+        ("M16.05", bridge(
+            "MOVE", "Move one complete plan block by explicit range",
             "Move the complete three-row A plan after the complete B plan without copying or splitting either block.",
             ["| A |", "|aaa|", "|---|", "| B |", "|bbb|", "|---|"],
             ["| B |", "|bbb|", "|---|", "| A |", "|aaa|", "|---|"],
             ":1,3m$<CR>",
-            [[":1,3", "address every row owned by plan A"],
+            [[":1,3", "select every row owned by plan A"],
              ["m$", "move that complete range after the final line"],
-             ["<CR>", "execute the addressed move"]],
-            "ex-move", 4.5, labels=True)))
+             ["<CR>", "execute the move with an explicit range"]],
+            "ex-move", 4.5, labels=True)),
+        ])
+        # A line-0 copy duplicates the changed source row as well.  Changing
+        # only the target's first row would falsely ask Vim to undo part of
+        # its own copy; preserve both instances of each reviewed plan.
+        zero = next(row for _before, row in rows if row["id"] == "M16.ZERO")
+        zero["review_variants"] = [dict(
+            start=[f"| {name} |", material, "|---|", "| B |", "|bbb|", "|---|"],
+            target=[f"| {name} |", material, "|---|", f"| {name} |", material, "|---|", "| B |", "|bbb|", "|---|"],
+            expected=":1,3t0<CR>", recipe=zero["recipe"],
+        ) for name, material in (("C", "|ccc|"), ("D", "|ddd|"))]
     elif mid == "M11":
         undo_redo = bridge(
-            "UR", "Inspect undo and redo on one fixed cell",
-            "On the sourced SnowBunny face, exaggerate only the first eye from dot to !, undo it, then redo it so the submitted still contains the chosen mark.",
+            "UR", "Inspect undo and redo between complete poses",
+            "Change the complete SnowBunny idle pose to its source blink pose, undo back to idle, then redo so the submitted still is the real blink pose.",
             stone_story_variants.SNOWBUNNY_IDLE,
-            [stone_story_variants.SNOWBUNNY_IDLE[0], "  ( n!n)", stone_story_variants.SNOWBUNNY_IDLE[2]],
-            "2G0f.r!u<C-r>",
-            [["2G0f.r!", "replace the first eye cell"], ["u", "undo that visible change"],
+            stone_story_variants.SNOWBUNNY_BLINK,
+            "2G:s/n/-/g<CR>u<C-r>",
+            [["2G:s/n/-/g<CR>", "close both eyes in one source-pose change"], ["u", "restore the complete source idle pose"],
              ["<C-r>", "redo it without retyping"]],
             "undo-redo", 3.5)
-        undo_redo["source"] = "official-Pets/SnowBunny res01 eye-expression study"
+        undo_redo["source"] = "official-Pets/SnowBunny res01/res03 idle and blink source frames"
+        undo_redo["history_source_provenance"] = {
+            "character": "snowbunny", "frame_rows": 3,
+            "rule": "every visible take is a complete frame in share/history_source_frames.py",
+        }
+        undo_redo["history_recipe_frames"] = [
+            list(stone_story_variants.SNOWBUNNY_IDLE),
+            list(stone_story_variants.SNOWBUNNY_BLINK),
+            list(stone_story_variants.SNOWBUNNY_IDLE),
+            list(stone_story_variants.SNOWBUNNY_BLINK),
+        ]
         virtual_column = bridge(
-            "VE", "Address an empty registered column",
+            "VE", "Reach an empty column without shifting existing cells",
             "Place one comparison edge at exact column 12 on every ragged missile row, padding only the empty tail area.",
             M11_MISSILE_BASE,
             ["  ____/    |", "< / / |:.  |", "  ¯¯¯¯\\    |"],
             ":set virtualedit=all<CR>gg12|i|<Esc>2G12|i|<Esc>3G12|i|<Esc>",
-            [[":set virtualedit=all<CR>", "allow cursor addresses past physical row ends"],
-             ["N|", "land on exact display column 12 for each ragged row"],
+            [[":set virtualedit=all<CR>", "allow cursor movement past physical row ends"],
+             ["12|", "land on exact display column 12 for each ragged row"],
              ["i|<Esc>", "insert the registered edge and return to Normal"]],
             "virtual-column", 7.5)
         virtual_column["source"] = (
             "official-Games/TowerDefense res18 missile frame 1; "
             "authored column-12 comparison edges"
         )
-        rows.extend([("M11.04", undo_redo), ("M11.08", virtual_column)])
+        at_substitute = bridge(
+            "AT", "Use @ as a substitute delimiter",
+            "On the supplied missile row, replace every slash on row 2 with a backslash using @ as the delimiter; preserve the other rows.",
+            stone_story_variants.MISSILE_F1,
+            [stone_story_variants.MISSILE_F1[0], stone_story_variants.MISSILE_F1[1].replace("/", "\\", 2), stone_story_variants.MISSILE_F1[2]],
+            "2G:s@/@\\\\@g<CR>",
+            [["2G", "land on the supplied acting row"],
+             [":s@/@\\\\@g<CR>", "use @ as the delimiter and replace every slash on that row with a literal backslash"]],
+            "ex-substitute-line", 3.6)
+        at_substitute["source"] = "official-Games/TowerDefense res18 missile frame 1; delimiter lesson"
+        col = bridge(
+            "COL", "Land on one virtual column",
+            "Enable virtual editing, then land on display column 12 of the middle missile row without inserting yet.",
+            stone_story_variants.MISSILE_F1, stone_story_variants.MISSILE_F1,
+            ":set virtualedit=all<CR>2G12|", [[":set virtualedit=all<CR>", "enable movement beyond the stored row end"], ["2G", "land on the supplied ragged middle row"],
+                       ["12|", "move to exact display column 12 without changing the row"]],
+            "virtual-column", 7.3)
+        col["source"] = "official-Games/TowerDefense res18 missile frame 1; column-12 guide"
+        col["cursor_goal"] = {"row": 2, "column": 12}
+        col["method_requirement"] = require_method(
+            "use 12| and finish on display column 12", all_of=["12|"])
+        ins = bridge(
+            "INS", "Insert one virtual column cell",
+            "Insert one comparison edge at column 12 of the supplied middle missile row, then return to Normal mode.",
+            stone_story_variants.MISSILE_F1,
+            [stone_story_variants.MISSILE_F1[0], stone_story_variants.MISSILE_F1[1].ljust(11) + "|", stone_story_variants.MISSILE_F1[2]],
+            ":set virtualedit=all<CR>2G12|i|<Esc>", [[":set virtualedit=all<CR>", "enable the empty display column"], ["2G12|", "land on the supplied empty registered column"],
+                              ["i|<Esc>", "insert one edge and return to Normal mode"]],
+            "virtual-column", 7.4)
+        ins["source"] = "official-Games/TowerDefense res18 missile frame 1; column-12 insertion"
+        rows.extend([("M11.04", undo_redo), ("M11.05", at_substitute),
+                     ("M11.08", col), ("M11.08", ins), ("M11.08", virtual_column)])
     elif mid == "M13":
-        rows.append(("M13.04", bridge(
+        rows.extend([
+            ("M13.04", bridge(
+            "WS", "Find a WORD start",
+            "On the visible texture row, use one WORD start to reach the first material cluster and mark its first glyph; preserve the other rows.",
+            ["| -- ~~ :: |", "| -- ~~ :: |", "| -- ~~ :: |"],
+            ["| !- ~~ :: |", "| -- ~~ :: |", "| -- ~~ :: |"],
+            "gg0Wr!", [["gg0W", "land on the first WORD start"], ["r!", "mark only its first glyph"]],
+            "word-boundary", 3.2)),
+            ("M13.04", bridge(
+            "WE", "Find a WORD end",
+            "On a fresh texture row, use one WORD end to reach the end of the first material cluster and mark that glyph; preserve the other rows.",
+            ["| -- ~~ :: |", "| -- ~~ :: |", "| -- ~~ :: |"],
+            ["| -! ~~ :: |", "| -- ~~ :: |", "| -- ~~ :: |"],
+            "gg0WEr!", [["gg0WE", "land on the end of the first WORD"], ["r!", "mark only that endpoint"]],
+            "word-boundary", 3.3)),
+            ("M13.04", bridge(
             "BE", "Traverse texture by WORD boundaries",
-            "Use WORD starts and ends to retouch three bounded texture clusters on the middle row.",
-            ["| aa bb cc |", "| aa bb cc |", "| aa bb cc |"],
-            ["| a! +b ?c |", "| aa bb cc |", "| aa bb cc |"],
-            "gg0WEr!2Wr?Br+",
+            "Use WORD starts and a counted 2W to retouch the first and third texture clusters; leave the middle cluster for the next guided B step.",
+            ["| -- ~~ :: |", "| -- ~~ :: |", "| -- ~~ :: |"],
+            ["| -! ~~ ?: |", "| -- ~~ :: |", "| -- ~~ :: |"],
+            "gg0WEr!2Wr?",
             [["W/E", "move to a WORD start, then its end"],
-             ["2W", "count two WORD starts forward"],
-             ["B", "move back one WORD start before the final replacement"]],
-            "word-boundary", 3.5, labels=True)))
+             ["2W", "count two WORD starts forward to the third cluster"],
+             ["r?", "mark that third-cluster cell without shifting the row"]],
+            "word-boundary", 3.5, labels=True)),
+            ("M13.04", bridge(
+            "BEB", "Return by one WORD boundary",
+            "Repeat the taught W/E and counted 2W path, then use B to return one WORD start and mark the middle texture cluster.",
+            ["| -- ~~ :: |", "| -- ~~ :: |", "| -- ~~ :: |"],
+            ["| -! +~ ?: |", "| -- ~~ :: |", "| -- ~~ :: |"],
+            "gg0WEr!2Wr?Br+",
+            [["gg0WEr!2Wr?", "recreate the taught first and third cluster edits"],
+             ["B", "move back one WORD start to the middle cluster"],
+            ["r+", "mark the returned cluster in place"]],
+            "word-boundary", 3.55, labels=True)),
+        ])
+        for _before, _row in rows:
+            if _row["id"] == "M13.BE":
+                _row["source"] = "Authored three-cluster WORD-boundary study; Neovim help W/E and counted motion"
+            elif _row["id"] == "M13.BEB":
+                _row["source"] = "Authored three-cluster WORD-boundary study; Neovim help B return motion"
+    elif mid == "M17":
+        literal_dot = bridge(
+            "LITDOT", "Match one literal dot",
+            "Replace only the literal dot in the supplied material row. The backslash in \\. makes the dot literal instead of a wildcard.",
+            ["| o.v |", "| o.v |", "| o.v |"],
+            ["| o.v |", "| oXv |", "| o.v |"],
+            ":2s/\\./X/g<CR>",
+            [[":2s/\\./X/g<CR>", "scope row 2 and match a literal dot with the escaped \\. pattern"]],
+            "ex-substitute-line", 5.2)
+        literal_dot["source"] = "ascii-art-authoring §4.2.3 literal-dot pattern study"
+        literal_slash = bridge(
+            "LITBS", "Match one literal backslash",
+            "Replace only the literal backslash in the supplied material row. The doubled pattern \\\\ matches one backslash cell.",
+            ["| o\\v |", "| o\\v |", "| o\\v |"],
+            ["| o\\v |", "| oXv |", "| o\\v |"],
+            ":2s/\\\\/X/g<CR>",
+            [[":2s/\\\\/X/g<CR>", "scope row 2 and match one literal backslash with the doubled pattern"]],
+            "ex-substitute-line", 5.3)
+        literal_slash["source"] = "ascii-art-authoring §4.2.3 literal-backslash pattern study"
+        rows.extend([("M17.06", literal_dot), ("M17.06", literal_slash)])
     elif mid == "M18":
         rows.append(("M18.05", bridge(
             "EXPR", "Use an expression only for validation metadata",
@@ -5263,10 +6209,59 @@ def guided_bridge_cards(module):
             ["CHECK 1", "|  o  |", "CHECK 0"],
             ["CHECK 1", "|  o  |", "CHECK 1"],
             ":3s/0/\\=getline(1)[-1:]/<CR>",
-            [[":3s/0/", "on CHECK row 3, replace the zero"],
-             ["\\=getline(1)[-1:]", "evaluate a validation-only replacement from row 1"],
-             ["<CR>", "execute without generating any art row"]],
+            [[":3s/0/", "on CHECK row 3, select the stale validation digit 0"],
+             ["\\=getline(1)[-1:]", "evaluate getline(1), which returns line 1 text, then take its final character with [-1:]"],
+             ["<CR>", "run the substitution; \\= evaluates the replacement expression and changes metadata only"]],
             "expression-substitute", 4.5, labels=True)))
+        rows[-1][1]["vimscript_meaning"] = {
+            "getline(1)": "return the complete text of line 1",
+            "[-1:]": "slice the final character from that text",
+            "\\=": "evaluate the replacement as Vimscript instead of literal text",
+            "scope": "the substitution targets only CHECK row 3; it never creates art",
+        }
+    if mid == "M3":
+        # Register retrieval and the ca(/ci( contrast must follow their
+        # visible prerequisites; stable sorting keeps the authored bridges
+        # ahead of their hidden changed-art returns.
+        m3_order = {
+            "M3.CW": 0, "M3.CI": 1, "M3.CA": 2, "M3.GA": 3,
+            "M3.REG": 4, "M3.Y0": 5, "M3.MARK": 6, "M3.VD": 7,
+            "M3.DI": 8,
+        }
+        rows.sort(key=lambda pair: m3_order.get(pair[1]["id"], 50))
+    # Original tutor studies vary the acting material/identity, not merely
+    # the first border glyph. These are explicitly authored studies, not
+    # claimed official Stone Story source frames.
+    studies = {
+        "M7.D0": [(["| -- : |"] * 3, ["| =- : |", "| -- : |", "| -- : |"]),
+                  (["| : -~ |"] * 3, ["| : =~ |", "| : -~ |", "| : -~ |"])],
+        "M7.D1": [(["| -- : |"] * 3, ["| =- : |", "| =- : |", "| -- : |"]),
+                  (["| : -~ |"] * 3, ["| : =~ |", "| : =~ |", "| : -~ |"])],
+        "M13.WS": [(["| -~ .. :: |"] * 3, ["| !~ .. :: |", "| -~ .. :: |", "| -~ .. :: |"]),
+                   (["| == '' ,, |"] * 3, ["| != '' ,, |", "| == '' ,, |", "| == '' ,, |"])],
+        "M13.WE": [(["| -~ .. :: |"] * 3, ["| -! .. :: |", "| -~ .. :: |", "| -~ .. :: |"]),
+                   (["| == '' ,, |"] * 3, ["| =! '' ,, |", "| == '' ,, |", "| == '' ,, |"])],
+        "M15.MAC3": [(["| : -- |"] * 4, ["| . -- |"] * 4),
+                     (["| -- : |"] * 4, ["| -- . |"] * 4)],
+        "M16.INC": [(["KEYPOSE 03", "KEYPOSE 04", "KEYPOSE 05"],
+                     ["KEYPOSE 05", "KEYPOSE 04", "KEYPOSE 05"]),
+                    (["CUT 08", "CUT 09", "CUT 10"],
+                     ["CUT 10", "CUT 09", "CUT 10"])],
+        "M17.LITDOT": [([" /---\\ ", "| o.v |", " \\---/ "],
+                        [" /---\\ ", "| oXv |", " \\---/ "]),
+                       ([" .---. ", "| v.o |", " '---' "],
+                        [" .---. ", "| vXo |", " '---' "])],
+        "M17.LITBS": [([" /---\\ ", "| o\\v |", " \\---/ "],
+                       [" /---\\ ", "| oXv |", " \\---/ "]),
+                      ([" .---. ", "| v\\o |", " '---' "],
+                       [" .---. ", "| vXo |", " '---' "])],
+    }
+    for _before, row in rows:
+        if row["id"] in studies:
+            row["review_variants"] = [dict(
+                start=start, target=target, expected=row["expected"], recipe=row["recipe"],
+                source="Original tutor material/identity review study; ascii-art-authoring §§4.4-4.5; Neovim command scope",
+            ) for start, target in studies[row["id"]]]
     return rows
 
 
@@ -5280,17 +6275,22 @@ def mastery_extension_cards(module):
     """
     habits, stages = MASTER_COVERAGE[module["id"]]
 
-    def review(start, target, expected, recipe, source, label, prompt, hint):
-        return {
+    def review(start, target, expected, recipe, source, label, prompt, hint,
+               history_recipe_frames=None):
+        row = {
             "start": start, "target": target, "expected": expected,
             "recipe": recipe, "cursor": "^", "source": source,
             "prompt": prompt, "hint": hint,
             "method_requirement": require_method(label, exact_any_of=[expected]),
         }
+        if history_recipe_frames is not None:
+            row["history_recipe_frames"] = [list(frame) for frame in history_recipe_frames]
+        return row
 
     def card(suffix, title, prompt, start, target, expected, recipe, family,
              ordinal, source, *, guided, reviews=None, extra_families=None,
-             preserve_trailing_whitespace=False):
+             preserve_trailing_whitespace=False, history_frames=None,
+             duplicate_frames=None):
         card_id = "%s.%s" % (module["id"], suffix)
         families = [family, *(extra_families or [])]
         row = {
@@ -5305,7 +6305,7 @@ def mastery_extension_cards(module):
             "node_ids": [module["node"]], "master_habits": habits,
             "master_stages": stages,
             "lesson_benefit": (
-                "perform %s with visible keys" % family if guided else
+                title if guided else
                 "retrieve %s on unfamiliar animation art with the key path hidden" % family
             ),
             "prompt": prompt, "roadmap_contract": prompt,
@@ -5313,7 +6313,7 @@ def mastery_extension_cards(module):
             "recipe": recipe, "cursor": "^", "show_target": True,
             "show_recipe": guided,
             "hint": (
-                "Follow the visible grammar once, then inspect the registered result."
+                "Operation: %s." % "; ".join(why for _keys, why in recipe)
                 if guided else
                 "Name the acting cells first. The exact key sequence remains hidden until evaluation."
             ),
@@ -5329,8 +6329,30 @@ def mastery_extension_cards(module):
         }
         if preserve_trailing_whitespace:
             row["preserve_trailing_whitespace"] = True
+        if duplicate_frames is not None:
+            row["duplicate_frames"] = duplicate_frames
+        if card_id in HISTORY_CARD_CHARACTERS:
+            if history_frames is None:
+                raise ValueError(f"{card_id}: missing explicit history recipe frames")
+            row["history_source_provenance"] = {
+                "character": HISTORY_CARD_CHARACTERS[card_id],
+                "frame_rows": 3,
+                "rule": "every visible take is a complete frame in share/history_source_frames.py",
+            }
+            row["history_recipe_frames"] = [list(frame) for frame in history_frames]
+        if family in {"number-increment", "word-delete", "word-count-delete",
+                      "word-change", "paren-text-object", "register-zero",
+                      "marks-travel", "visual-line-delete", "join-lines",
+                      "line-swap", "toggle-case", "normal-append"} or suffix in {"OH", "PADH"}:
+            # Numbered identities are visible plan metadata, not drawing glyphs.
+            row["labels"] = True
         if reviews:
             row["review_variants"] = reviews
+            if card_id in HISTORY_CARD_CHARACTERS:
+                for variant in reviews:
+                    if not variant.get("history_recipe_frames"):
+                        raise ValueError(
+                            f"{card_id}: review is missing explicit history recipe frames")
             row["review_source_card_id"] = card_id
             row["review_method_family"] = family
             row["required_before_mastery"] = True
@@ -5341,8 +6363,77 @@ def mastery_extension_cards(module):
         row["hint"] = hint
         return row
 
+    def original_reviews(start, target, expected, recipe, label, source):
+        """Create two visibly changed, source-linked retrieval studies.
+
+        These studies perturb a whitespace cell without importing another
+        drawing. This is a minimal background variation, not substantive new
+        animation content. The grader requires taught commands, not ordering.
+        """
+        def marked(rows, marker):
+            changed = []
+            for row in rows:
+                position = next((index for index, char in enumerate(row)
+                                 if char.isspace()), None)
+                if position is None:
+                    changed.append(row)
+                else:
+                    changed.append(row[:position] + marker + row[position + 1:])
+            return changed
+        return [
+            review(marked(start, marker), marked(target, marker), expected, recipe,
+                   f"{source}; changed-art {marker}", label,
+                   f"Changed-art retrieval {marker}: use the taught {label} operations on this study.",
+                   "Read the changed landmarks first. Extra exploratory keys are allowed when the target is correct.")
+            for marker in ("!", "+")
+        ]
+
     ss = stone_story_variants
     rows = []
+    if module["id"] == "M2":
+        word_start = ["| one two      |", "|   /\\        |", "|______________|"]
+        word_target = ["| two      |  ", "|   /\\        |   ", "|______________|  "]
+        end_start = ["| one two      |", "|   /\\        |", "|______________|"]
+        end_target = ["|  two      |  ", "|   /\\        |   ", "|______________|  "]
+        counted_start = ["| red blue green |", "|    /\\        |", "|_______________|"]
+        counted_target = ["| green | ", "|    /\\        |   ", "|_______________|  "]
+        word_start = [row.ljust(18) for row in word_start]
+        end_start = [row.ljust(18) for row in end_start]
+        counted_start = [row.ljust(19) for row in counted_start]
+        rows.extend([
+            ("M2.04", card(
+                "DWH", "Retrieve dw on changed word art",
+                "On the changed banner, remove the first word-sized span with the taught dw path and leave the final word and rails intact.",
+                word_start, word_target, "ggfodw",
+                [["ggfo", "land on the first word's o"], ["dw", "remove its word-sized span"]],
+                "word-delete", 5.4,
+                "ascii-art-authoring §2 word-span study; authored banner A", guided=False,
+                reviews=original_reviews(
+                    word_start, word_target,
+                    "ggfodw", [["ggfodw", "delete the first word span"]],
+                                         "delete one word with dw", "ascii-art-authoring §2 word-span review"))),
+            ("M2.04", card(
+                "DEH", "Retrieve de at a word end",
+                "On the changed banner, remove the current word through its final glyph with de while the following word remains.",
+                end_start, end_target, "ggfode",
+                [["ggfo", "land at the current word's o"], ["de", "delete through its final glyph without taking the following space"]],
+                "word-delete", 5.42,
+                "ascii-art-authoring §2 de word-end study; authored banner B", guided=False,
+                reviews=original_reviews(end_start, end_target, "ggfode", [["ggfode", "delete through the word end"]],
+                                         "delete to a word end with de", "ascii-art-authoring §2 de review"))),
+            ("M2.08", card(
+                "D2WH", "Retrieve counted WORD deletion",
+                "On the changed banner, use d2W to remove exactly the first two blank-separated WORD runs and preserve the final run.",
+                counted_start, counted_target, "ggfrd2W",
+                [["ggfr", "land at the first WORD's r"], ["d2W", "delete two counted WORD runs"]],
+                "word-count-delete", 5.45,
+                "ascii-art-authoring §2 counted WORD study; authored banner B", guided=False,
+                reviews=original_reviews(
+                    counted_start, counted_target,
+                    "ggfrd2W", [["ggfrd2W", "delete the first two WORD runs"]],
+                    "count two WORD deletions with d2W", "ascii-art-authoring §2 counted WORD review"))),
+        ])
+
     if module["id"] == "M12":
         checkpoint_label = "restore the exact joint block with gv before the centred replacement"
         checkpoint = card(
@@ -5368,7 +6459,7 @@ def mastery_extension_cards(module):
                     "ascii-art-authoring §4.6.5 mirrored joint sample",
                     checkpoint_label,
                     "Changed-stroke review: refine the three aligned slash joints to centred colons after testing apostrophes.",
-                    "Address the visible joint column once; gv must restore that exact block.",
+                    "Reach the visible joint column once; gv must restore that exact block.",
                 ),
                 review(
                     ["|< .>|", "|[ .]|", "|{ .}|"],
@@ -5408,7 +6499,7 @@ def mastery_extension_cards(module):
                     ["| ..;;;; |", "| ..;;;/\\|", "|   /___\\|", "|__/_____|"],
                     ["| ..;;;; |", "| ..;; /\\|", "|   /___\\|", "|__/_____|"],
                     "2G0f/hr ",
-                    [["f/ then h", "address the final background hatch touching the roof"],
+                    [["f/ then h", "reach the final background hatch touching the roof"],
                      ["r ", "erase only that background cell"]],
                     "ascii-art-authoring §3 negative-space seam; hatch-material composite",
                     seam_label,
@@ -5419,7 +6510,7 @@ def mastery_extension_cards(module):
                     ["| ~~~~~~ |", "| ~~~~/\\ |", "|   /___\\|", "|__/_____|"],
                     ["| ~~~~~~ |", "| ~~~ /\\ |", "|   /___\\|", "|__/_____|"],
                     "2G0f/hr ",
-                    [["f/ then h", "address the touching background wave"],
+                    [["f/ then h", "reach the touching background wave"],
                      ["r ", "make the one-cell separation"]],
                     "ascii-art-authoring §3 negative-space seam; wave-material composite",
                     seam_label,
@@ -5477,7 +6568,7 @@ def mastery_extension_cards(module):
                 ])),
         ])
 
-        gu_label = "use g_ to address the last nonblank glyph"
+        gu_label = "use g_ to reach the last nonblank glyph"
         missile_3_padded = [row + "   " for row in ss.MISSILE_F3]
         missile_4_padded = [row + "   " for row in ss.MISSILE_F4]
         chick_3_padded = [row + "   " for row in ss.CHICK_PEEP_F3]
@@ -5524,6 +6615,35 @@ def mastery_extension_cards(module):
 
         bi_label = "insert one registration rail with blockwise I"
         rows.extend([
+            ("M4.04", card(
+                "WIN", "Open a vertical split and return",
+                "Open one disposable vertical split, move focus to it, then close it without changing the supplied lava rows.",
+                ss.CAVE_LAVA_A, ss.CAVE_LAVA_A,
+                ":vsplit<CR><C-w>p:q<CR>",
+                [[":vsplit<CR>", "open one vertical split"],
+                 ["<C-w>p", "move focus to the adjacent window"],
+                 [":q<CR>", "close only that disposable window"]],
+                "onion-diff-view", 3.0,
+                "official-Cosmetics/CaveParty res06 lava frame 1", guided=True)),
+            ("M4.04", card(
+                "REF", "Read the alternate reference in a new window",
+                "Open a disposable vertical window and read the supplied alternate file into it; then close that reference window.",
+                ss.CAVE_LAVA_B, ss.CAVE_LAVA_B,
+                ":vnew<CR>:read #<CR>:bwipeout!<CR>",
+                [[":vnew<CR>", "open an empty vertical reference window"],
+                 [":read #<CR>", "read the alternate file into the reference"],
+                 [":bwipeout!<CR>", "discard the unsaved disposable reference and close its window"]],
+                "onion-diff-view", 3.1,
+                "official-Cosmetics/CaveParty res06 lava frame 2", guided=True)),
+            ("M4.04", card(
+                "DT", "Join and leave diff mode",
+                "Join the supplied frame to the reference with diffthis, then leave diff mode in every comparison window.",
+                [" " + row for row in ss.CAVE_LAVA_A], [" " + row for row in ss.CAVE_LAVA_A],
+                ":diffthis<CR>:diffoff!<CR>",
+                [[":diffthis<CR>", "join the current window to the diff"],
+                 [":diffoff!<CR>", "leave diff mode in every comparison window"]],
+                "onion-diff-view", 3.2,
+                "official-Cosmetics/CaveParty res06 lava frame 1; one-column registration offset", guided=True)),
             ("M4.04", card(
                 "BI", "Insert one onion-skin rail across a lava frame",
                 "Add one left registration rail to every row of the three-row lava frame in one blockwise insert.",
@@ -5680,6 +6800,22 @@ def mastery_extension_cards(module):
                 ])),
         ])
 
+    if module["id"] == "M4":
+        block_start = ["| /[]\\ |", "|  []  |", "| \\[]/ |"]
+        block_target = ["| /\\ |", "|    |", "| \\/ |"]
+        rows.append(("M4.04", card(
+            "BDH", "Retrieve block delete on changed art",
+            "On the changed three-row rectangle, select the two center columns with Ctrl-v and erase them with d; outer rails remain registered.",
+            block_start, block_target, "ggf[<C-v>2jld",
+            [["ggf[<C-v>2j", "select the first center cell through all rows"],
+             ["l", "extend the block across the second center cell"],
+             ["d", "erase the selected rectangle"]],
+            "block-delete", 5.45,
+            "ascii-art-authoring §4 block erase study; authored rectangle A", guided=False,
+                reviews=original_reviews(block_start, block_target, "ggf[<C-v>2jld",
+                                     [["ggf[<C-v>2jld", "erase the selected center rectangle"]],
+                                     "delete a block with Ctrl-v and d", "ascii-art-authoring §4 block erase review"))))
+
     if module["id"] == "M3":
         ga_label = "inspect the acting glyph with ga before replacing it"
         shock_look = list(ss.FACE_SHOCK)
@@ -5719,6 +6855,165 @@ def mastery_extension_cards(module):
                            "ga reports the glyph you are about to replace; it does not move the cursor."),
                 ])),
         ])
+
+    if module["id"] == "M3":
+        cw_start = ["| TODO       |", "|   /\\      |", "|____________|"]
+        cw_target = ["| done       |", "|   /\\      |", "|____________|"]
+        ca_start = ["| ( old )    |", "|    /\\     |", "|____________|"]
+        ca_target = ["| new    |", "|    /\\     |", "|____________|"]
+        y0_start = ["| A |", "| B |", "| C |", "| D |"]
+        y0_target = ["| A |", "| C |", "| A |", "| D |"]
+        mark_start = ["| mark top |", "| move one |", "| move two |", "| anchor   |", "| finish   |"]
+        mark_target = ["| mark top |", "| move one |", "| move two |", "| ancho!   |", "| finish   |"]
+        vd_start = ["| keep 1 |", "| keep 2 |", "| drop 1 |", "| drop 2 |", "| tail   |"]
+        vd_target = ["| keep 1 |", "| keep 2 |", "| tail   |"]
+        rows.extend([
+            ("M3.04", card(
+                "CWH", "Retrieve cw on changed text art",
+                "On the changed banner, replace TODO with done using cw; the rails and neighboring rows remain fixed.",
+                cw_start, cw_target, "ggfTcwdone<Esc>",
+                [["ggfT", "land on the TODO word"], ["cw", "change that word-sized span"], ["done<Esc>", "type the replacement and return to Normal"]],
+                "word-change", 5.35,
+                "ascii-art-authoring §2 word-change study; authored banner C", guided=False,
+                reviews=original_reviews(cw_start, cw_target, "ggfTcwdone<Esc>",
+                                         [["ggfTcwdone<Esc>", "replace the word span"]],
+                                         "change one word with cw", "ascii-art-authoring §2 word-change review"))),
+            ("M3.04", card(
+                "CAH", "Retrieve ca( against ci(",
+                "On the changed parenthesis study, replace the complete parenthesized token with ca( so its delimiters are included.",
+                ca_start, ca_target, "gg0f(ca(new<Esc>",
+                [["gg0f(", "land on the opening delimiter"], ["ca(", "include both delimiters in the text object"], ["new<Esc>", "type the replacement and return to Normal"]],
+                "paren-text-object", 5.36,
+                "ascii-art-authoring §2 parenthesis-scope contrast; authored banner D", guided=False,
+                reviews=original_reviews(ca_start, ca_target, "gg0f(ca(new<Esc>",
+                                         [["gg0f(ca(new<Esc>", "replace the complete parenthesized token"]],
+                                         "change around parentheses with ca(", "ascii-art-authoring §2 parenthesis review"))),
+            ("M3.06", card(
+                "Y0H", "Retrieve register 0 after delete",
+                "On the changed four-row strip, yank row A, delete row B, then put register 0 below the deletion to restore the preserved copy.",
+                y0_start, y0_target, "ggyyj1dd\"0p",
+                [["ggyy", "yank the first row"], ["j1dd", "delete the next row"], ["\"0p", "retrieve the preserved latest yank"]],
+                "register-zero", 5.6,
+                "ascii-art-authoring §2 register-zero retrieval; authored strip A", guided=False,
+                reviews=original_reviews(y0_start, y0_target, "ggyyj1dd\"0p",
+                                         [["ggyyj1dd\"0p", "restore the yanked row from register 0"]],
+                                         "retrieve register 0 after delete", "ascii-art-authoring §2 register-zero review"))),
+            ("M3.06", card(
+                "MARKH", "Retrieve named-mark travel",
+                "On the changed five-row strip, return to mark a after traveling to the end, then replace only the marked row's r.",
+                mark_start, mark_target, "gg4GmaG'a0frr!",
+                [["gg4Gma", "store mark a on the anchor row"], ["G", "travel to the last row"], ["'a0frr!", "return and replace the marked r"]],
+                "marks-travel", 5.7,
+                "ascii-art-authoring §2 named-mark travel; authored strip B", guided=False,
+                reviews=original_reviews(mark_start, mark_target, "gg4GmaG'a0frr!",
+                                         [["gg4GmaG'a0frr!", "travel away and return to the named mark"]],
+                                         "return to a meaningful mark", "ascii-art-authoring §2 marks review"))),
+            ("M3.06", card(
+                "VDH", "Retrieve Visual-line deletion",
+                "On the changed five-row strip, select the two unwanted rows with V and delete them, leaving the kept rows and tail.",
+                vd_start, vd_target, "ggjjVjd",
+                [["ggjjVj", "move to and select two complete rows linewise"], ["d", "delete the selected rows"]],
+                "visual-line-delete", 5.8,
+                "ascii-art-authoring §2 Visual-line deletion; authored strip C", guided=False,
+                reviews=original_reviews(vd_start, vd_target, "ggjjVjd",
+                                         [["ggjjVjd", "delete the two selected complete rows"]],
+                                         "delete complete rows with Visual line", "ascii-art-authoring §2 Visual-line review"))),
+        ])
+
+    if module["id"] == "M6":
+        join_start = ["| left  |", "| right |", "|  /\\   |", "|  ..   |"]
+        join_target = ["| left  |    | right |    ", "|  /\\   |    ", "|  ..   |    "]
+        join_start = [row.ljust(13) for row in join_start]
+        join_target = [row.ljust(13) for row in join_target]
+        swap_start = ["| top    |", "| middle |", "| bottom |"]
+        swap_target = ["| middle |", "| top    |", "| bottom |"]
+        rows.extend([
+            ("M6.04", card(
+                "JH", "Retrieve J join on changed candle art",
+                "On the changed candle study, join its first two text rows with J; preserve the base stroke and the joined material.",
+                join_start, join_target, "ggflJ",
+                [["ggfl", "land on the upper candle row's left landmark"], ["J", "join it to the next row with one separator"]],
+                "join-lines", 5.35,
+                "ascii-art-authoring §2 line-join study; authored candle A", guided=False,
+                reviews=original_reviews(join_start, join_target, "ggflJ", [["ggflJ", "join the two candle rows"]],
+                                         "join two rows with J", "ascii-art-authoring §2 J-join review"))),
+            ("M6.08", card(
+                "DDPH", "Retrieve adjacent playback swap",
+                "On the changed three-row playback strip, use ddp to swap the first two complete rows while leaving the final row fixed.",
+                swap_start, swap_target, "ggddp",
+                [["ggdd", "delete the first complete row"], ["p", "put it below the next row"]],
+                "line-swap", 7.45,
+                "ascii-art-authoring §2 playback-order study; authored strip A", guided=False,
+                reviews=original_reviews(swap_start, swap_target, "ggddp", [["ggddp", "swap the adjacent rows"]],
+                                         "swap adjacent rows with ddp", "ascii-art-authoring §2 ddp review"))),
+        ])
+        for _before, _row in rows:
+            if _row["id"] == "M6.JH":
+                for _variant in _row["review_variants"]:
+                    _marker = _variant["start"][0][1]
+                    _variant["target"] = [
+                        f"|{_marker}left  |    |{_marker}right |    ",
+                        f"|{_marker} /\\   |    ",
+                        f"|{_marker} ..   |    ",
+                    ]
+
+    if module["id"] == "M7":
+        toggle_start = ["| abc |", "| abc |", "| abc |"]
+        toggle_target = ["| Abc |", "| abc |", "| abc |"]
+        toggle_word_start = ["| red blue |", "| red blue |", "| red blue |"]
+        toggle_word_target = ["| RED blue |", "| red blue |", "| red blue |"]
+        rows.extend([
+            ("M7.04", card(
+                "TCH", "Retrieve one-cell case toggle",
+                "On the changed label strip, toggle only its first lowercase glyph with ~; the other rows stay unchanged.",
+                toggle_start, toggle_target, "ggfa~", [["ggfa", "land on the first label glyph"], ["~", "toggle its case"]],
+                "toggle-case", 5.25,
+                "ascii-art-authoring §2 case-toggle study; authored labels A", guided=False,
+                reviews=original_reviews(toggle_start, toggle_target, "ggfa~", [["ggfa~", "toggle the first glyph"]],
+                                         "toggle one glyph with ~", "ascii-art-authoring §2 toggle review"))),
+            ("M7.05", card(
+                "GTCH", "Retrieve g~ word toggle",
+                "On the changed label strip, toggle the first row's first word with g~w; comparison rows remain lowercase.",
+                toggle_word_start, toggle_word_target, "ggfrg~w", [["ggfr", "land at the first word"], ["g~w", "toggle the word-sized span"]],
+                "toggle-case", 5.3,
+                "ascii-art-authoring §2 word-case study; authored labels B", guided=False,
+                reviews=original_reviews(toggle_word_start, toggle_word_target, "ggfrg~w", [["ggfrg~w", "toggle the first row's first word"]],
+                                         "toggle a word with g~", "ascii-art-authoring §2 g-tilde review"))),
+        ])
+
+    if module["id"] == "M8":
+        open_start = ["|  flame  |", "|   /\\   |", "|_________|"]
+        open_target = ["|  hold  |", "|  flame  |", "|   /\\   |", "|_________|"]
+        open_start = [row.ljust(12) for row in open_start]
+        open_target = [row.ljust(12) for row in open_target]
+        open_target[0] = "|  hold  |"
+        pad_start = ["|  top    |", "|  base   |", "|  wick   |"]
+        pad_target = ["", "", "|  top    |", "|  base   |", "|  wick   |"]
+        pad_start = [row.ljust(12) for row in pad_start]
+        pad_target = [row.ljust(12) for row in pad_target]
+        pad_target[:2] = ["", ""]
+        rows.extend([
+            ("M8.04", card(
+                "OH", "Retrieve O above a changed frame",
+                "On the changed flame frame, open one row above with O and leave the original rows registered below the new hold.",
+                open_start, open_target, "ggflO|  hold  |<Esc>", [["ggflO", "open one row above"], ["|  hold  |<Esc>", "type the hold and return to Normal"]],
+                "normal-open-line", 5.3,
+                "ascii-art-authoring §2 open-line study; authored flame B", guided=False,
+                reviews=original_reviews(open_start, open_target, "ggflO|  hold  |<Esc>", [["ggflO|  hold  |<Esc>", "open and label the upper hold"]],
+                                         "open a row above with O", "ascii-art-authoring §2 O review"))),
+            ("M8.04", card(
+                "PADH", "Retrieve O plus dot frame padding",
+                "On the changed two-row frame, open one row above and use dot to repeat that opening, producing two holds before the original frame.",
+                pad_start, pad_target, "ggftO<Esc>.", [["ggftO<Esc>", "open the first hold"], [".", "repeat the open-line change for the second hold"]],
+                "normal-open-line", 5.35,
+                "ascii-art-authoring §2 frame-height padding; authored timing strip B", guided=False,
+                reviews=original_reviews(pad_start, pad_target, "ggftO<Esc>.", [["ggftO<Esc>.", "pad the frame with two upper holds"]],
+                                         "pad frame height with O and dot", "ascii-art-authoring §2 O-dot review"))),
+        ])
+        for _before, _row in rows:
+            if _row["id"] == "M8.OH":
+                for _variant in _row["review_variants"]:
+                    _variant["target"][0] = "|  hold  |"
 
     if module["id"] == "M14":
         dap_label = "delete one complete blank-line-separated frame with dap"
@@ -5764,7 +7059,7 @@ def mastery_extension_cards(module):
         frog_hold = ss.FROG_OPEN + [""] + ss.FROG_OPEN + [""] + ss.FROG_SHUT + [""]
         put_hidden = card(
             "PH", "Retrieve paragraph put-before on an unfamiliar blink strip",
-            "Copy the complete open-eyed Skully paragraph and place it immediately before the blink as an anticipation hold. Use the paragraph boundary and P; do not address four line numbers.",
+            "Copy the complete open-eyed Skully paragraph and place it immediately before the blink as an anticipation hold. Use the paragraph boundary and P; do not select four line numbers.",
             skully_strip, skully_hold, "ggyapgg}jP",
             [["ggyap", "yank the complete open-eyed pose and separator"],
              ["gg}j", "cross to the next pose boundary"],
@@ -5884,6 +7179,61 @@ def mastery_extension_cards(module):
                 ),
             ])))
 
+    if module["id"] == "M15":
+        append_start = ["| hi  |", "|  /\\ |", "|_____|"]
+        append_after_cursor = ["| h!i  |", "|  /\\ |", "|_____|"]
+        append_at_end = ["| hi  |!", "|  /\\ |", "|_____|"]
+        rows.extend([
+            ("M15.05", card(
+                "APPH", "Retrieve ordinary a append",
+                "On the changed three-row label, append one glyph after the cursor with a; block append is not involved and the rails stay fixed.",
+                append_start, append_after_cursor, "ggfha!<Esc>", [["ggfh", "land on the i"], ["a!<Esc>", "append one glyph after it"]],
+                "normal-append", 5.2,
+                "ascii-art-authoring §2 ordinary append contrast; authored labels C", guided=False,
+                reviews=original_reviews(append_start, append_after_cursor, "ggfha!<Esc>", [["ggfha!<Esc>", "append after the cursor"]],
+                                         "append after the cursor with a", "ascii-art-authoring §2 append-a review"))),
+            ("M15.05", card(
+                "APPAH", "Retrieve ordinary A append",
+                "On the changed three-row label, append one glyph at the acting row's true end with A; preserve all existing cells.",
+                append_start, append_at_end, "ggfhA!<Esc>", [["ggfh", "land on the acting row and enter append at its end"], ["!<Esc>", "append the final glyph and return to Normal"]],
+                "normal-append", 5.25,
+                "ascii-art-authoring §2 ordinary append contrast; authored labels D", guided=False,
+                reviews=original_reviews(append_start, append_at_end, "ggfhA!<Esc>", [["ggfhA!<Esc>", "append at row end"]],
+                                         "append at row end with A", "ascii-art-authoring §2 append-A review"))),
+        ])
+
+    if module["id"] == "M16":
+        rows.append(("M16.05", card(
+            "INCH", "Retrieve counted number increment",
+            "On the unfamiliar numbered strip, increment TAKE 01 twice to make TAKE 03 without changing the label text.",
+            ["TAKE 01", "TAKE 02", "TAKE 03"],
+            ["TAKE 03", "TAKE 02", "TAKE 03"],
+            "gg0f02<C-a>",
+            [["gg0f0", "land on the first frame number"],
+             ["2<C-a>", "increment that number twice in place"]],
+            "number-increment", 5.3,
+            "ascii-art-authoring §8.1 numbered frame identity study", guided=False,
+            reviews=[
+                review(
+                    ["POSE 04", "POSE 05", "POSE 06"],
+                    ["POSE 06", "POSE 05", "POSE 06"],
+                    "gg0f02<C-a>", [["gg0f0", "land on the first pose number"],
+                                     ["2<C-a>", "increment it twice"]],
+                    "ascii-art-authoring §8.1 alternate numbered strip",
+                    "increment a frame label by a counted amount",
+                    "Changed-label review: update only the first numeric identity by two.",
+                    "Keep the label text and every other numbered row unchanged."),
+                review(
+                    ["CELL 07", "CELL 08", "CELL 09"],
+                    ["CELL 09", "CELL 08", "CELL 09"],
+                    "gg0f02<C-a>", [["gg0f0", "land on the first cell number"],
+                                     ["2<C-a>", "increment it twice"]],
+                    "ascii-art-authoring §8.1 second numbered strip",
+                    "increment a changed cell label by two",
+                    "Second-label review: only the first number advances by two.",
+                    "The other labels and their text stay unchanged."),
+            ])))
+
     if module["id"] == "M17":
         global_label = "apply one bounded Normal edit to every row selected by :g"
         missile_start = ss.MISSILE_F1 + ss.MISSILE_F1
@@ -5939,7 +7289,7 @@ def mastery_extension_cards(module):
             "EXPRH", "Retrieve expression substitution as validation only",
             "Copy the leading check digit into the final CHECK row with an expression substitute. The complete Frog pose between them is already authored and must remain byte-for-byte unchanged.",
             frog_start, frog_target, ":5s/0/\\=getline(1)[-1:]/<CR>",
-            [[":5s/0/", "address only the final CHECK row and its stale digit"],
+            [[":5s/0/", "select only the final CHECK row and its stale digit"],
              ["\\=getline(1)[-1:]", "derive the replacement from the leading metadata row"],
              ["<CR>", "update metadata without generating any art cell"]],
             "expression-substitute", 5.25,
@@ -5948,7 +7298,7 @@ def mastery_extension_cards(module):
             reviews=[
                 review(
                     fire_start, fire_target, ":5s/0/\\=getline(1)[-1:]/<CR>",
-                    [[":5s/0/", "address only the final Fireworks CHECK row"],
+                    [[":5s/0/", "select only the final Fireworks CHECK row"],
                      ["\\=getline(1)[-1:]", "derive its digit from the leading metadata"]],
                     "official-Cosmetics/Fireworks res03 willow frame 5 + validation rows", expr_label,
                     "Fireworks review: update only the final CHECK digit from line 1; preserve all three shown canopy rows literally.",
@@ -5956,7 +7306,7 @@ def mastery_extension_cards(module):
                 ),
                 review(
                     missile_start, missile_target, ":5s/0/\\=getline(1)[-1:]/<CR>",
-                    [[":5s/0/", "address only the final missile CHECK row"],
+                    [[":5s/0/", "select only the final missile CHECK row"],
                      ["\\=getline(1)[-1:]", "copy the leading validation digit"]],
                     "official-Games/TowerDefense res18 missile frame 1 + validation rows", expr_label,
                     "Missile review: derive the trailing CHECK digit while every hull and exhaust cell remains unchanged.",
@@ -5969,6 +7319,41 @@ def mastery_extension_cards(module):
         # Keep the fixed-width art glyph guard focused on the enclosed pose.
         expr_hidden["labels"] = True
         rows.append(("M18.06", expr_hidden))
+
+    if module["id"] == "M19":
+        rows.append(("M19.05", card(
+            "VRH", "Retrieve one virtual-replace eye repair",
+            "Change only the right ghost's eyes with Virtual Replace.",
+            PALLAS_LEFT_STRAIN_RAILS + PALLAS_RIGHT_CALM_RAILS,
+            PALLAS_LEFT_STRAIN_RAILS + M19_RIGHT_EYES,
+            "8G0f-gR> <<Esc>",
+            [["8G0f-", "land on the supplied right-ghost eye"],
+             ["gR> <<Esc>", "overwrite only the three eye cells and leave Virtual Replace"]],
+            "virtual-replace", 5.3,
+            "official-Foes/PallasCrown res03 calm to res04 strain eye expression",
+            guided=False,
+            reviews=[
+                review(
+                    PALLAS_LEFT_CALM_RAILS + PALLAS_RIGHT_STRAIN_RAILS,
+                    PALLAS_LEFT_CALM_RAILS + PALLAS_RIGHT_STRAIN_RAILS[:1] + PALLAS_RIGHT_CALM_RAILS[1:2] + PALLAS_RIGHT_STRAIN_RAILS[2:],
+                    "8G0f>gR- -<Esc>",
+                    [["8G0f>", "land on the alternate right-ghost eye"],
+                     ["gR- -<Esc>", "replace only the eye expression"]],
+                    "official-Foes/PallasCrown res04 alternate strain eye",
+                    "replace the nominated three-cell eye with Virtual Replace",
+                    "Changed-eye review: replace only the eye expression while rails and contour stay fixed.",
+                    "The hidden path must use Virtual Replace on the three eye cells."),
+                review(
+                    PALLAS_LEFT_STRAIN_RAILS + PALLAS_RIGHT_STRAIN_RAILS,
+                    PALLAS_LEFT_STRAIN_RAILS + PALLAS_RIGHT_STRAIN_RAILS[:1] + PALLAS_RIGHT_CALM_RAILS[1:2] + PALLAS_RIGHT_STRAIN_RAILS[2:],
+                    "8G0f>gR- -<Esc>",
+                    [["8G0f>", "land on the alternate strain eye"],
+                     ["gR- -<Esc>", "replace only that eye expression"]],
+                    "official-Foes/PallasCrown res02 to res04 strain eye",
+                    "replace the alternate nominated eye with Virtual Replace",
+                    "Second eye review: update the three eye cells and keep the strained contour fixed.",
+                    "Rails and body rows are supplied; only the eye expression is acting."),
+            ])))
 
     if module["id"] == "M11":
         def padded_cleanup_art(art, padding=3):
@@ -6082,96 +7467,263 @@ def mastery_extension_cards(module):
                 ])),
         ])
 
-        undo_label = "visit alternate animation takes through the undo tree"
-        skully_undo = "2G0for!urOg-g+:earlier 1<CR>g+"
-        bunny_undo = "2G0fnr!ur-g-g+:earlier 1<CR>g+"
-        missile_undo = "2G0f'r!ur.g-g+:earlier 1<CR>g+"
-        chick_undo = "gg0f<r!ur-g-g+:earlier 1<CR>g+"
-        bunny_half = [ss.SNOWBUNNY_IDLE[0],
-                      ss.SNOWBUNNY_IDLE[1].replace("n", "-", 1),
-                      ss.SNOWBUNNY_IDLE[2]]
+        undo_label = "compare the chosen and recovered takes through the undo tree"
+        # The cumulative comparison cards finish with two complete three-row
+        # takes.  The first is the selected pose; the second is the abandoned
+        # branch recovered with g-.  g+ returns to the selected pose before
+        # the copied branch is appended.  Routing, yank, and put keys are
+        # supporting recipe detail; the method contract teaches only g-/g+.
+        # Every history take is a complete source frame.  A branch is made by
+        # changing from one registered frame to another, undoing that real
+        # edit, and choosing a sibling source frame; no punctuation is
+        # invented inside credited Stone Story art.
+        skully_abandoned = list(ss.SKULLY_IDLE)
+        skully_comparison = list(ss.SKULLY_LOOK) + skully_abandoned
+        skully_undo = ("2G:s/=/o/g<CR>u2G:s/=,=/O,o/g<CR>"
+                       "g-gg3yyg+Gp")
+        # Every SnowBunny take stays a complete frame from the audited idle or
+        # blink source.  The first change creates idle, undo restores the
+        # original blink, and the branch duplicates that real three-row block;
+        # g-/g+ then travel between the two real history states before Gp
+        # appends the recovered idle block.
+        bunny_comparison = (list(ss.SNOWBUNNY_BLINK)
+                            + list(ss.SNOWBUNNY_BLINK)
+                            + list(ss.SNOWBUNNY_IDLE))
+        bunny_undo = "2G:s/-/n/g<CR>ugg3yyGpg-gg3yyg+Gp"
+        bunny_two_frame_start = (list(ss.SNOWBUNNY_IDLE)
+                                 + list(ss.SNOWBUNNY_BLINK))
+        bunny_three_two_frame_target = (
+            bunny_two_frame_start + bunny_two_frame_start + bunny_two_frame_start)
+        bunny_two_frame_undo = "2G:s/n/-/g<CR>ugg6yyGpg-gg6yyg+Gp"
+        missile_undo = ("2G:s/'/./g<CR>u2G:s/:/::/g<CR>"
+                        ":earlier 1<CR>g+")
+        chick_undo = ("2G0llllllr·u2G0llllllr·"
+                      "2G0llllllllr,")
+        frog_abandoned = list(ss.FROG_HALF)
+        rail = lambda frame: [" " + row for row in frame]
+        history_recipe_frames = {
+            "BR": [rail(ss.SKULLY_BLINK), rail(ss.SKULLY_IDLE),
+                   rail(ss.SKULLY_BLINK), rail(ss.SKULLY_LOOK)],
+            "GM": [rail(ss.FROG_ONE_OPEN), rail(ss.FROG_HALF),
+                   rail(ss.FROG_ONE_OPEN), rail(ss.FROG_SHUT), rail(ss.FROG_HALF)],
+            "GP": [rail(ss.FROG_ONE_OPEN), rail(ss.FROG_HALF),
+                   rail(ss.FROG_ONE_OPEN), rail(ss.FROG_SHUT),
+                   rail(ss.FROG_HALF), rail(ss.FROG_SHUT)],
+            "ER": [rail(ss.MISSILE_F2), rail(ss.MISSILE_F1),
+                   rail(ss.MISSILE_F2), rail(ss.MISSILE_F3),
+                   rail(ss.MISSILE_F2), rail(ss.MISSILE_F3)],
+            "UB": [ss.CHICK_EGG_F2, ss.CHICK_EGG_F3, ss.CHICK_EGG_F2,
+                   ss.CHICK_EGG_F3, ss.CHICK_EGG_F4],
+            "UG": [ss.FROG_ONE_OPEN, ss.FROG_HALF, ss.FROG_ONE_OPEN,
+                   ss.FROG_SHUT, ss.FROG_HALF, ss.FROG_SHUT],
+            "UE": [ss.MISSILE_F2, ss.MISSILE_F1, ss.MISSILE_F2,
+                   ss.MISSILE_F3, ss.MISSILE_F2, ss.MISSILE_F3],
+            "UT": [ss.SKULLY_BLINK, ss.SKULLY_IDLE, ss.SKULLY_BLINK,
+                   ss.SKULLY_LOOK, ss.SKULLY_IDLE, ss.SKULLY_LOOK,
+                   ss.SKULLY_LOOK + ss.SKULLY_IDLE],
+            "UTH": [ss.SNOWBUNNY_BLINK, ss.SNOWBUNNY_IDLE,
+                    ss.SNOWBUNNY_BLINK,
+                    ss.SNOWBUNNY_BLINK + ss.SNOWBUNNY_BLINK,
+                    ss.SNOWBUNNY_IDLE, ss.SNOWBUNNY_IDLE,
+                    ss.SNOWBUNNY_BLINK + ss.SNOWBUNNY_BLINK,
+                    ss.SNOWBUNNY_BLINK + ss.SNOWBUNNY_BLINK + ss.SNOWBUNNY_IDLE],
+        }
+        history_review_frames = {
+            "UTH.1": history_recipe_frames["UTH"],
+            "UTH.2": [bunny_two_frame_start,
+                      ss.SNOWBUNNY_BLINK + ss.SNOWBUNNY_BLINK,
+                      bunny_two_frame_start,
+                      bunny_two_frame_start + bunny_two_frame_start,
+                      ss.SNOWBUNNY_BLINK + ss.SNOWBUNNY_BLINK,
+                      ss.SNOWBUNNY_BLINK + ss.SNOWBUNNY_BLINK,
+                      bunny_two_frame_start + bunny_two_frame_start,
+                      bunny_two_frame_start + bunny_two_frame_start
+                      + ss.SNOWBUNNY_BLINK + ss.SNOWBUNNY_BLINK],
+        }
         rows.extend([
-            # VD-45 (overload audit #4): UT bundled branching, g-/g+ and
-            # :earlier. Each idea is now its own guided step first.
+            ("M11.04", card(
+                "BR", "Branch one eye take",
+                "Try the registered Skully idle pose, undo it, and author the chosen source-backed look before any history travel.",
+                [" " + row for row in ss.SKULLY_BLINK], [" " + row for row in ss.SKULLY_LOOK],
+                "2G:s/=/o/g<CR>u2G:s/=,=/O,o/g<CR>",
+                [["2G:s/=/o/g<CR>", "author the registered Skully idle frame"],
+                 ["u", "undo that source-frame take"],
+                 ["2G:s/=,=/O,o/g<CR>", "author both eyes of the registered Skully look frame in one undo state"]],
+                "undo-tree-travel", 3.6,
+                "official-Pets/Skully res01/res02/res04 source frames; one-column registration offset", guided=True,
+                history_frames=history_recipe_frames["BR"])),
+            ("M11.04", card(
+                "GM", "Walk one undo-tree branch",
+                "After making two source-backed Frog takes, use g- to visit the abandoned older half-blink pose; stop there before the return step.",
+                [" " + row for row in ss.FROG_ONE_OPEN], [" " + row for row in frog_abandoned],
+                "1G:s/O/=/g<CR>u1G:s/O/-/g<CR>g-",
+                [["1G:s/O/=/g<CR>", "author the registered Frog half-blink frame"],
+                 ["u", "undo that source-frame take"],
+                 ["1G:s/O/-/g<CR>", "author the chosen registered Frog shut-eye frame"],
+                 ["g-", "walk back to the abandoned source half-blink frame"]],
+                "undo-tree-travel", 3.65,
+                "official-Pets/Frog res01/res05/res06/res07 source frames; one-column registration offset", guided=True,
+                history_frames=history_recipe_frames["GM"])),
+            ("M11.04", card(
+                "GP", "Return forward from the older undo state",
+                "Recreate the registered Frog branch, visit its older half-blink state, then use g+ as the separate return step to the chosen shut-eye pose.",
+                [" " + row for row in ss.FROG_ONE_OPEN], [" " + row for row in ss.FROG_SHUT],
+                "1G:s/O/=/g<CR>u1G:s/O/-/g<CR>g-g+",
+                [["1G:s/O/=/g<CR>u1G:s/O/-/g<CR>g-", "recreate the source branch and visit its older half-blink state"],
+                 ["g+", "walk forward to the chosen newer shut-eye frame"]],
+                "undo-tree-travel", 3.66,
+                "official-Pets/Frog res01/res05/res06/res07 source frames; forward-history step", guided=True,
+                history_frames=history_recipe_frames["GP"])),
+            ("M11.04", card(
+                "ER", "Revisit one state with :earlier",
+                "Make two registered missile exhaust takes, then use :earlier 1 and g+ to compare the older source state before returning to the chosen pose.",
+                [" " + row for row in ss.MISSILE_F2], [" " + row for row in ss.MISSILE_F3], missile_undo,
+                [["2G:s/'/./g<CR>", "author the registered missile frame 1 exhaust"],
+                 ["u", "undo that source-frame take"],
+                 ["2G:s/:/::/g<CR>", "author the chosen registered missile frame 3 exhaust"],
+                 [":earlier 1<CR>", "visit one older undo-tree state"],
+                 ["g+", "return to the chosen registered frame 3"]],
+                "undo-tree-travel", 3.7,
+                "official-Games/TowerDefense res18 missile frames 1–3; one-column registration offset", guided=True,
+                history_frames=history_recipe_frames["ER"])),
+            # UT is a two-take comparison artifact. Its supporting recipe
+            # branches, copies, and appends the recovered source idle block, while the
+            # independently taught operations are only g- and g+.
             ("M11.04", _with_hint(
-                "u steps back before the ! take. The next change (r,) starts a new branch; the ! take is kept in history, not deleted.",
+                "u steps back before the source frame take. The next change starts a new branch; the source take is kept in history, not deleted.",
                 card(
                 "UB", "Undo, then make a different take: a branch",
-                "Crack the egg with an exaggerated ! first, undo it, then make the chosen , crack instead. Submit the , crack.",
-                ss.CHICK_EGG_F3, ss.CHICK_EGG_F4, "2G0f;lr!ur,",
-                [["2G0f;l", "go to the empty cell right of the first crack"],
-                 ["r!", "author the exaggerated ! crack take"],
-                 ["u", "undo it: back to the empty cell"],
-                 ["r,", "a new change after undo starts a second branch: the chosen , crack"]],
+                "Use the registered Chick hatch pose 3 first, undo it, then make the chosen source-backed pose 4 crack. Submit pose 4.",
+                ss.CHICK_EGG_F2, ss.CHICK_EGG_F4, chick_undo,
+                [["2G0llllllr·", "author the registered Chick hatch frame 3 crack"],
+                 ["u", "undo that source-frame take"],
+                 ["2G0llllllr·", "start a second branch with the same registered crack cell"],
+                 ["2G0llllllllr,", "finish the chosen registered Chick hatch frame 4 crack"]],
                 "undo-tree-travel", 3.71,
-                "official-Pets/Chick res01 hatch frame 3 -> 4", guided=True))),
+                "official-Pets/Chick res01 hatch frames 2–4", guided=True,
+                history_frames=history_recipe_frames["UB"]))),
             ("M11.04", _with_hint(
-                "g- walks back through every state in time order, including the abandoned ! take that u and Ctrl-r cannot reach; g+ walks forward again.",
+                "g- walks back through every source-backed state in time order, including the abandoned half-blink that u and Ctrl-r cannot reach; g+ walks forward again.",
                 card(
                 "UG", "Walk the history with g- and g+",
-                "Close the frog's right eye as ! first, undo it, close it as - instead, then press g- to see the abandoned ! take and g+ to come back. Submit the - eye.",
-                ss.FROG_OPEN, ss.FROG_ONE_OPEN, "0for!ur-g-g+",
-                [["0for!ur-", "make the ! take, undo it, make the chosen - take (two branches)"],
-                 ["g-", "step back in time: the abandoned ! take reappears"],
-                 ["g+", "step forward in time: back to the chosen - eye"]],
+                "Use the registered Frog half-blink first, undo it, choose the shut-eye pose, then press g- to see the abandoned source pose and g+ to come back. Submit the shut-eye pose.",
+                ss.FROG_ONE_OPEN, ss.FROG_SHUT, "1G:s/O/=/g<CR>u1G:s/O/-/g<CR>g-g+",
+                [["1G:s/O/=/g<CR>", "author the registered Frog half-blink frame"],
+                 ["u", "undo that source-frame take, then branch"],
+                 ["1G:s/O/-/g<CR>", "author the chosen registered Frog shut-eye frame"],
+                 ["g-", "step back in time: the abandoned source half-blink reappears"],
+                 ["g+", "step forward in time: back to the chosen source shut-eye frame"]],
                 "undo-tree-travel", 3.72,
-                "official-Pets/Frog res01 -> res05 blink overlay", guided=True))),
+                "official-Pets/Frog res01/res05/res06/res07 source frames", guided=True,
+                history_frames=history_recipe_frames["UG"]))),
             ("M11.04", _with_hint(
-                ":earlier 1 is g- as a command: one state back in time. g+ then returns to the newest state.",
+                ":earlier 1 is g- as a command: one source-backed state back in time. g+ then returns to the newest state.",
                 card(
                 "UE", "Go back one state in time with :earlier",
-                "Flick the missile's exhaust puff to ! first, undo it, make the chosen ' puff, then use :earlier 1 to revisit the older state and g+ to return. Submit the ' puff.",
-                ss.MISSILE_F1, ss.MISSILE_F2, "jf.r!ur':earlier 1<CR>g+",
-                [["jf.r!ur'", "make the ! take, undo it, make the chosen ' take"],
+                "Use registered missile pose 1 and pose 3 exhaust takes, then use :earlier 1 to revisit an older source state and g+ to return. Submit pose 3.",
+                ss.MISSILE_F2, ss.MISSILE_F3, missile_undo,
+                [["2G:s/'/./g<CR>", "author the registered missile frame 1 exhaust"],
+                 ["u", "undo that source-frame take, then branch"],
+                 ["2G:s/:/::/g<CR>", "author the chosen registered missile frame 3 exhaust"],
                  [":earlier 1<CR>", "go one state back in time (the same step as g-)"],
-                 ["g+", "come forward again to the chosen ' puff"]],
+                 ["g+", "come forward again to the chosen source frame 3 puff"]],
                 "undo-tree-travel", 3.73,
-                "official-Games/TowerDefense res18 missile frame 1 -> 2", guided=True))),
+                "official-Games/TowerDefense res18 missile frames 1–3", guided=True,
+                history_frames=history_recipe_frames["UE"]))),
             ("M11.04", _with_hint(
-                "Everything from the last three steps in one pass: branch with u, walk history with g-/g+ and :earlier, finish on the O look.",
+                "The finished comparison keeps the chosen Skully look block first and the recovered source idle block second. g- reveals the old take; g+ returns to look before Gp appends the saved three-row block.",
                 card(
                 "UT", "Compare two Skully look takes through the undo tree",
-                "Try ! as an exaggerated left eye, undo it, author the chosen O look, visit the abandoned ! take with chronological history, then return to and submit the O-eye frame.",
-                ss.SKULLY_IDLE, ss.SKULLY_LOOK, skully_undo,
-                [["2G0for!", "author the exaggerated ! eye take"],
-                 ["u", "return before that take so the next edit creates a branch"],
-                 ["rO", "author the chosen look take"],
-                 ["g-g+", "visit the abandoned older take, then return to the newer choice"],
-                 [":earlier 1<CR>g+", "repeat the history comparison and finish on the chosen O eye"]],
+                "Author the chosen source-backed Skully look take, use g- to recover the source idle take, yank that complete three-row take, use g+ to return to look, then append the saved idle block below the look block.",
+                ss.SKULLY_BLINK, skully_comparison, skully_undo,
+                [["2G:s/=/o/g<CR>u2G:s/=,=/O,o/g<CR>", "branch from source blink and author the complete idle and look poses as separate undo states"],
+                 ["g-", "recover the abandoned source idle take"],
+                 ["gg3yy", "yank the recovered three-row take"],
+                 ["g+", "return to the chosen source look take"],
+                 ["Gp", "append the saved source idle take below look"]],
                 "undo-tree-travel", 3.7,
-                "official-Pets/Skully res01 -> res02 look overlay", guided=True))),
+                "official-Pets/Skully res01/res02/res04 source frames", guided=True,
+                history_frames=history_recipe_frames["UT"]))),
             ("M11.06", card(
                 "UTH", "Retrieve undo-tree comparison on a SnowBunny half-blink",
-                "On the unfamiliar SnowBunny pose, try ! as an exaggerated left eye, undo and author the chosen -, inspect the abandoned take chronologically, then return to the half-blink for submission.",
-                ss.SNOWBUNNY_IDLE, bunny_half, bunny_undo,
-                [["2G0fnr!", "author the exaggerated first-eye take"],
-                 ["ur-", "undo it and create the chosen half-blink branch"],
-                 ["g-g+", "walk to the abandoned take and back chronologically"],
-                 [":earlier 1<CR>g+", "revisit the older state once more and finish on the chosen branch"]],
+                "Build a chosen strip of two complete source blink poses. Use g- to recover the source idle pose, yank it, use g+ to return to the duplicated blink strip, and append the three-row idle pose below it.",
+                ss.SNOWBUNNY_BLINK, bunny_comparison, bunny_undo,
+                [["2G:s/-/n/g<CR>ugg3yyGp", "branch from the supplied source blink, author the source idle, and duplicate the original blink"],
+                 ["g-", "recover the abandoned source idle take"],
+                 ["gg3yy", "yank the recovered three-row take"],
+                 ["g+", "return to the chosen duplicated source blink strip"],
+                 ["Gp", "append the saved source idle take below the blink strip"]],
                 "undo-tree-travel", 5.7,
-                "official-Pets/SnowBunny res01 half-blink study", guided=False,
+                "official-Pets/SnowBunny res01/res03 source frames", guided=False,
+                history_frames=history_recipe_frames["UTH"],
+                duplicate_frames=[{
+                    "frames": [1, 2], "role": "reviewable-duplicate",
+                    "reason": "the duplicated source blink is the chosen history branch",
+                    "playback": False,
+                }],
                 reviews=[
-                    review(ss.MISSILE_F3, ss.MISSILE_F4, missile_undo,
-                           [["r! then u", "try and undo an exaggerated exhaust puff"],
-                            ["r.", "author the chosen settled exhaust"],
-                            ["g-/g+ and :earlier", "inspect the abandoned take and return"]],
-                           "official-Games/TowerDefense res18 missile frame 3 -> 4", undo_label,
-                           "Missile review: branch between an exaggerated exhaust puff and the chosen settle, visit the abandoned take chronologically, and submit the dot.",
-                           "History travel compares takes; the newest chosen take must be restored before saving."),
-                    review(ss.CHICK_PEEP_F3, ss.CHICK_PEEP_F4, chick_undo,
-                           [["r! then u", "try and undo an exaggerated beak"],
-                            ["r-", "author the chosen closed beak"],
-                            ["g-/g+ and :earlier", "inspect the abandoned branch and return"]],
-                           "official-Pets/Chick res03 peep frame 3 -> 4", undo_label,
-                           "Chick review: compare an exaggerated beak against the chosen closed endpoint through the undo tree, then finish on the dash.",
-                           "The art result and the visited history commands are both graded."),
+                    review(ss.SNOWBUNNY_BLINK, bunny_comparison, bunny_undo,
+                           [["2G:s/-/n/g<CR>ugg3yyGp", "branch from the supplied source blink, author source idle, and duplicate the original blink"],
+                            ["g-", "recover the abandoned source idle take"],
+                            ["gg3yy", "yank the recovered three-row take"],
+                            ["g+", "return to the chosen duplicated source blink strip"],
+                            ["Gp", "append the recovered source idle take below the blink strip"]],
+                           "official-Pets/SnowBunny res01 -> res03 blink source frames", undo_label,
+                           "SnowBunny review: compare the duplicated source blink strip with its recovered source idle take; keep the blink strip first and append the abandoned source pose second.",
+                           "The g-/g+ pair is the taught history operation; the yank and put keys only assemble the comparison artifact.",
+                           history_recipe_frames=history_review_frames["UTH.1"]),
+                    review(bunny_two_frame_start,
+                           bunny_two_frame_start + bunny_two_frame_start
+                           + ss.SNOWBUNNY_BLINK + ss.SNOWBUNNY_BLINK,
+                           bunny_two_frame_undo,
+                           [["2G:s/n/-/g<CR>ugg6yyGp", "branch from the two-frame source strip, author the blink strip, and duplicate the original two-frame strip"],
+                            ["g-", "recover the abandoned source idle take"],
+                            ["gg6yy", "yank the recovered two-frame source strip"],
+                            ["g+", "return to the chosen duplicated two-frame source strip"],
+                            ["Gp", "append the saved two-frame source strip below it"]],
+                           "official-Pets/SnowBunny res01 + res03 source-frame strip", undo_label,
+                           "SnowBunny review: keep the two-frame source strip, duplicate it through the undo tree, and append the recovered strip after returning with g+.",
+                           "Both complete strips are source-backed; the g-/g+ pair remains the taught history operation.",
+                           history_recipe_frames=history_review_frames["UTH.2"]),
                 ])),
         ])
+    # A key-hidden performance must use different artwork from its guide.
+    # These authored substitutions preserve the taught cursor landmarks and
+    # command scope while changing the subject/material, not only an ID.
+    retrieval_materials = {
+        "M2.DWH": (("one", "oak"), ("two", "sea")),
+        "M2.DEH": (("one", "owl"), ("two", "sky")),
+        "M2.D2WH": (("red", "rib"), ("blue", "glue"), ("green", "grain")),
+        "M3.Y0H": ((" A ", " X "), (" B ", " Y "), (" C ", " Z "), (" D ", " W ")),
+        "M3.MARKH": (("anchor", "anchar"), ("ancho!", "ancha!"), ("finish", "settle")),
+        "M3.VDH": (("keep", "stay"), ("drop", "trim"), ("tail", "base")),
+        "M4.BDH": (("/", "<"), ("\\", ">")),
+        "M6.JH": (("left", "leaf"), ("right", "root ")),
+        "M6.DDPH": (("top   ", "rise  "), ("middle", "settle"), ("bottom", "ground")),
+        "M7.TCH": (("abc", "axy"), ("Abc", "Axy")),
+        "M7.GTCH": (("blue", "gold"),),
+        "M8.PADH": (("top ", "tip "), ("base", "root"), ("wick", "stem")),
+        "M8.OH": (("flame", "flora"),),
+        "M15.APPH": (("hi", "ho"), ("h!i", "h!o")),
+        "M15.APPAH": (("hi", "ha"),),
+    }
+    for _before, row in rows:
+        changes = retrieval_materials.get(row["id"])
+        if not changes:
+            continue
+        for sample in [row, *row.get("review_variants", [])]:
+            for field in ("start", "target"):
+                changed = []
+                for line in sample[field]:
+                    for old, new in changes:
+                        line = line.replace(old, new)
+                    changed.append(line)
+                sample[field] = changed
     return rows
 
 
 def command_review_contract(cards):
-    """Prove every visibly taught command family returns as hidden changed art."""
+    """Prove every visibly taught command kind returns as hidden changed art."""
     first_guided = {}
     for index, card in enumerate(cards):
         if card.get("grammar_stage") != "guided" or not card.get("expected"):
@@ -6238,9 +7790,9 @@ def primer_question(module):
         ),
         "choices": [
             "ANIMATION: cursor inspection leaves every art cell unchanged | NEOVIM: 5 is the count and j is the down-one-row motion, so the cursor moves down five rows",
-            "ANIMATION: cursor inspection leaves every art cell unchanged | NEOVIM: 5 addresses line five and j deletes that line",
+            "ANIMATION: cursor inspection leaves every art cell unchanged | NEOVIM: 5 selects line five and j deletes that line",
             "ANIMATION: moving the cursor rewrites the five crossed art cells | NEOVIM: 5 is the count and j is the down-one-row motion, so the cursor moves down five rows",
-            "ANIMATION: moving the cursor rewrites the five crossed art cells | NEOVIM: 5 addresses line five and j deletes that line",
+            "ANIMATION: moving the cursor rewrites the five crossed art cells | NEOVIM: 5 selects line five and j deletes that line",
         ],
         "compact_choices": [
             "A: art unchanged · V: 5=count, j=down",
@@ -6251,7 +7803,7 @@ def primer_question(module):
         "correct_choice": 0,
         "feedback": [
             "Correct: count 5 repeats the j down motion five times and does not edit the buffer.",
-            "No: 5j is Normal-mode count plus motion; it neither addresses nor deletes line five.",
+            "No: 5j is Normal-mode count plus motion; it neither selects nor deletes line five.",
             "No: neither character enters Insert mode; 5j only moves the cursor.",
             "No: the digits form the count and j is the motion; movement leaves the art unchanged.",
         ],
@@ -6267,7 +7819,7 @@ def lesson_benefit(module, ordinal):
         3: f"explain the motion intent and authoring principle for {module['title']} from a changed visual prompt",
         4: "retrieve an edit from a visible outcome and action hint without a revealed command recipe",
         5: "produce one exact outcome, then compare two executable methods that reach that same buffer",
-        6: "apply the module intention to unfamiliar ASCII art instead of memorised coordinates",
+        6: "apply the lesson goal to unfamiliar ASCII art instead of memorised coordinates",
         7: f"diagnose the observable {module['title']} defect and select a bounded repair",
         8: "combine five conceptual decisions with one key-hidden art edit before mastery is awarded",
     }[ordinal]
@@ -6292,9 +7844,9 @@ def action_hint(module, card):
     if "yy" in keys or re.search(r"\d+y", keys):
         add("a counted linewise yank and put can copy a complete multi-row frame")
     if re.search(r":[^<]*(?:t|copy)(?:\$|\d)", keys):
-        add("an addressed Ex copy can duplicate a complete row range without moving the cursor through it")
+        add("a :copy command with an explicit range can duplicate a complete row range without moving the cursor through it")
     if re.search(r":[^<]*(?:m|move)(?:\$|\d)", keys):
-        add("an addressed Ex move can reorder a complete frame range as one unit")
+        add("a :move command with an explicit range can reorder a complete frame range as one unit")
     if re.search(r":[^<]*s[/@]", keys):
         add("a line- or range-scoped substitution can change repeated material without redrawing the row")
     if ":global" in keys or re.search(r":g[/@]", keys):
@@ -6337,8 +7889,92 @@ def action_hint(module, card):
     else:
         scope = "Keep the edit on the acting row and preserve its fixed width."
     defect = module["defect"].rstrip(".")
-    return "Vim toolbox: %s. Scope: %s Check against this failure: %s." % (
-        "; ".join(tools[:3]), scope, defect)
+    operation = descriptions or "choose the smallest operation whose scope matches the visible change"
+    return "Operation: %s. Scope: %s Check against this failure: %s." % (
+        operation, scope, defect)
+
+
+# Card-level hints are deliberately narrower than the family-level toolbox.
+# They name only the operation visible on that card, so a learner never gets
+# a menu of unrelated tools while working from a supplied still.
+CARD_BENEFIT_OVERRIDES = {
+    "M0.DG": "Enter an unavailable keyboard glyph as one digraph without shifting the radial rays.",
+    "M0.DGH": "Recall a second digraph while preserving the same one-cell core boundary.",
+    "M4.WIN": "Inspect the same drawing in neighboring windows without duplicating its text.",
+    "M4.REF": "Read a saved alternate frame into a disposable reference without touching the working art.",
+    "M4.DT": "Enter and leave a window comparison without changing any frame glyph.",
+    "M7.D0": "Make one bounded replacement that can be reused at a matching material mark.",
+    "M7.D1": "Repeat that replacement at a second mark while leaving the third untouched.",
+    "M11.BR": "Keep a registered source eye take in history while choosing a different expression.",
+    "M11.GM": "Compare an abandoned source eye take in chronological history and return to the chosen one.",
+    "M11.ER": "Revisit one recorded exhaust change without redrawing the missile.",
+    "M11.AT": "Choose a separator that keeps slash patterns readable and restricts changes to one row.",
+    "M11.COL": "Inspect an exact display column past a short row before inserting anything.",
+    "M11.INS": "Add a nominated comparison edge without overwriting existing hull cells.",
+    "M13.WS": "Land on the start of a space-separated material cluster without counting its glyphs.",
+    "M13.WE": "Land on the end of a material cluster for one endpoint replacement.",
+    "M15.MAC3": "Use a counted macro replay to cover exactly three later material rows.",
+    "M16.ZERO": "Copy a complete plan before the first line while preserving its original.",
+    "M16.INC": "Advance one frame identity by a counted amount without retyping its label.",
+    "M16.INCH": "Retrieve counted increment on unfamiliar labels while preserving neighboring identities.",
+    "M17.LITDOT": "Distinguish a drawn dot from the pattern that matches any character.",
+    "M17.LITBS": "Match one drawn backslash without accidentally introducing a pattern escape.",
+    "M19.VRH": "Stop Virtual Replace at the expression boundary so the ghost contour remains fixed.",
+}
+
+CARD_HINT_OVERRIDES = {
+    "M0.DG": "Use the supplied core row: 2G reaches it, 0 lands at column 1, f* finds the placeholder, and r<C-k>.M replaces one cell.",
+    "M0.DGH": "Repeat the same supplied-row landing and use the !I digraph for the inverted-exclamation target; no other ray changes.",
+    "M0.01": "j0 moves to the acting row and column 1. f* finds its star. ro replaces only that core with o; every accent stays fixed.",
+    "M2.TEN": "Read 10G as one two-digit line count and inspect row ten without editing any supplied face.",
+    "M1.04": "The complete right-facing source pose is already supplied. Delete only the duplicate five-row left pose; do not retype any wing glyph.",
+    "M4.WIN": "Open the supplied disposable split, move focus to the adjacent window, then close that window; leave all lava rows unchanged.",
+    "M4.REF": "Open the supplied reference window, read the alternate file into it, then close only that reference window.",
+    "M4.DT": "Join the supplied window to the comparison with diffthis, then turn diff mode off in the comparison windows.",
+    "M4.DIFF": "Open the supplied reference, bind both diff windows, compare the named exhaust cell, then close only the disposable reference.",
+    "M4.DIFFH": "Compare the supplied Chick reference, change only its beak endpoint, and tear down the disposable diff window.",
+    "M4.SIL": "Open the disposable reference, then use :silent only to suppress the informational :read message.",
+    "M4.TRIM": "Land on the imported first reference row with gg and remove only that complete line with dd.",
+    "M4.SCB": "Set scrollbind in the current comparison window so corresponding reference rows scroll together.",
+    "M7.D0": "Change the first supplied dash to an equals sign; keep the registered rails and every other row fixed.",
+    "M7.D1": "Move to the next supplied homologous dash and repeat the same one-cell change; do not broaden the scope.",
+    "M10.02": "Copy only the complete first lobe after row three; preserve the supplied arch and impact. Saitamaar owns proportional true-metric acceptance.",
+    "M10.04": "Use the supplied impact transcription and change one endpoint in place. Terminal width is not proportional evidence; Saitamaar owns true-metric review.",
+    "M10.06": "The supplied smoke rows are complete. Replace only the redacted shoulder glyph; judge proportional advances in Saitamaar, not terminal cells.",
+    "M11.BR": "Test the supplied Skully idle frame, undo that branch, and author the chosen look frame before reviewing its history.",
+    "M11.GM": "Visit the supplied abandoned Frog half-blink frame with g- and stop there; the forward return is taught next.",
+    "M11.ER": "Use the supplied missile frame branch and :earlier checkpoint, then return to the chosen final exhaust without changing the hull.",
+    "M11.GP": "Recreate the known Frog branch, visit the older take, and use g+ only for the forward return.",
+    "M11.AT": "On the supplied copied row, use @ as the delimiter so both slash strokes change and no neighboring row is touched.",
+    "M11.COL": "Enable virtual editing, then inspect display column 12 of row 2 without changing the missile glyphs.",
+    "M11.INS": "Enable virtual editing, then insert one trail glyph at column 12 of row 2; pad only its empty tail and preserve all existing cells.",
+    "M11.UT": "Keep the chosen Skully look three-row pose first; use g- and g+ to recover and return from the registered idle frame, then append that source pose.",
+    "M11.UTH": "Keep two complete SnowBunny blink poses first; use g- to recover the source idle pose and g+ to return to the duplicated blink strip, then append the three-row idle pose.",
+    "M11.VE": "Virtualedit is the only tool here: land on column 12 and insert one edge on each supplied ragged row.",
+    "M13.WS": "Use lowercase W twice on the supplied texture row, then replace only the second crest; support rows remain unchanged.",
+    "M13.WE": "Use W to reach the visible crest and E to land on its end before one local replacement; preserve every support row.",
+    "M13.BE": "Use W/E and counted 2W to edit the first and third texture clusters; leave the middle cluster and support rows untouched.",
+    "M13.BEB": "After the counted 2W visit, use B to return one WORD start and edit only the middle texture cluster.",
+    "M15.MACR": "Record one supplied colon-to-dot landmark edit in register q; leave the two later marks for replay.",
+    "M15.MAC3": "Record the supplied anchored replacement plus its row travel, then replay that macro exactly three times on the homologous marks.",
+    "M16.ZERO": "Copy the supplied three-line plan to line 0 with the explicit destination; keep the complete plan block intact.",
+    "M16.INC": "On the supplied FRAME 01 label, use the explicit count to advance only its number twice; do not retype the label.",
+    "M16.INCH": "On the unfamiliar supplied label, increment only its number twice; preserve the frame text, art, and timing marker.",
+    "M17.LITDOT": "On the supplied row, match the literal dot with the escaped pattern and replace only those dots; no wildcard match is intended.",
+    "M17.LITBS": "On the supplied row, match literal backslashes with the escaped pattern and replace only those cells; preserve all other glyphs.",
+    "M18.EXPR": "This is validation metadata only: getline(1) returns line 1 text, [-1:] takes its last character, and \\= evaluates that expression; no art row is generated.",
+    "M18.06": "The supplied missile pair needs one last-visible-glyph replacement with g_; preserve its trailing alignment spaces.",
+    "M19.04": "The official right source pose is already present. Delete only the duplicate six-row left pose; keep both rails.",
+    "M19.VRH": "Change only the right ghost's eyes with Virtual Replace.",
+    "M19.06": "The official right mid-wing is already supplied. Delete only the first six rows containing the supplied left mid-wing; do not redraw rows.",
+    "M7.DOT": "Make one dash-to-equals edit, move to each homologous row, and use dot only for that same bounded change.",
+}
+
+
+def card_hint(module, card):
+    return CARD_HINT_OVERRIDES.get(card.get("id"), action_hint(module, card))
+
+
 
 
 # Machine-readable animation decisions.  These are evidence for preview and
@@ -6400,7 +8036,7 @@ def duplicate(pair, role, reason, playback, duration_frames=None):
     return row
 
 
-# A command family is not spaced practice merely because its token appears in
+# A command kind is not spaced practice merely because its token appears in
 # an answer key.  These four late hidden cards are deliberately assigned a
 # second changed-art bank so the newly visible prerequisite (digraph, text
 # object, characterwise Visual, and open-line authoring) returns as retrieval
@@ -6467,8 +8103,9 @@ DUPLICATE_META = {
                 duplicate((4, 5), "reviewable-duplicate", "candidate settle remains pending diagnosis", False)],
     "M7.06": [duplicate((1, 2), "hold", "changed-art retrieval explicitly constructs a two-frame hold", True, 2)],
     "M7.08": [duplicate((1, 2), "hold", "verified anticipation hold after removing the stale settle", True, 2)],
-    "M10.05": [duplicate((3, 4), "hold", "sustain the hatched impact before settle", True, 2)],
-    "M10.08": [duplicate((3, 4), "hold", "retain the verified proportional impact hold", True, 2)],
+    "M10.02": [duplicate((1, 2), "scaffold", "supplied UTF-8 lobe is copied as the bounded transcription scaffold", False)],
+    "M10.05": [duplicate((4, 5), "hold", "sustain the complete hatched impact before settling", True, 2)],
+    "M10.08": [duplicate((4, 5), "hold", "retain the verified hatched impact hold before settling", True, 2)],
     "M11.02": [duplicate((1, 2), "scaffold", "working copy for the slack-tension redraw", False)],
     "M14.02": [duplicate((1, 2), "scaffold", "working paragraph-frame copy for the second palette variant", False)],
     "M14.PARA": [duplicate((1, 2), "scaffold", "working paragraph-frame copy used to make } and P visible", False)],
@@ -6524,15 +8161,14 @@ def make_cards(module, catalog_prompts):
             # the exact keystrokes, not the target or the action-level hint.
             card["show_target"] = True
             card["show_recipe"] = ordinal in (1, 2)
-            card["hint"] = action_hint(module, card)
+            card["hint"] = card_hint(module, card)
             if ordinal == 5:
                 card["method_alternatives"] = card.pop("alternatives")
                 labels = [method["label"] for method in card["method_alternatives"]]
                 card["prompt"] = (
-                    "%s · USE ONE METHOD — choose one accepted path: %s. Do not perform both. "
-                    "Complete the target with the one method you selected; the tutor compares "
-                    "the method evidence only after that single path passes."
-                    % (card_id, " or ".join(labels))
+                    "%s · USE ONE METHOD: %s. Do not perform both. Match TARGET; "
+                    "compare methods after that single path passes."
+                    % (module["title"], " or ".join(labels))
                 )
             if card["artifact"] == "project":
                 migration_starts = module.get("migration_starts", {}).get(ordinal, [])
@@ -6614,14 +8250,30 @@ def build():
     if set(module_defs) != set(MODULE_SEQUENCE):
         raise SystemExit("MODULE_SEQUENCE must name every module exactly once")
     for module_id in MODULE_SEQUENCE:
-        module = module_defs[module_id]
+        # Construction adds method metadata to nested transfers. Keep the
+        # authored definitions immutable across repeated builds in one process.
+        module = deepcopy(module_defs[module_id])
         module_cards = make_cards(module, catalog_prompts)
         if module["id"] == "M0":
-            primer, yank_put, open_line, addressed_substitute, ex_copy = m0_extra_cards(module)
-            module_cards = [primer, module_cards[0], yank_put, open_line,
+            (primer, line_start, find_star, yank_put, open_line, addressed_substitute, ex_copy,
+             digraph_intro, digraph_reinforce) = m0_extra_cards(module)
+            module_cards = [primer, line_start, find_star, module_cards[0], yank_put, open_line,
                             addressed_substitute, module_cards[1], module_cards[2],
-                            module_cards[3], ex_copy] + module_cards[4:]
+                            module_cards[3], ex_copy, digraph_intro,
+                            digraph_reinforce] + module_cards[4:]
         bridge_rows = [*guided_bridge_cards(module), *mastery_extension_cards(module)]
+        if module["id"] == "M4":
+            # The comparison setup is staged: split/window and reference
+            # reading first, then silence, linewise trim, and scroll binding,
+            # and only then the full DIFF card.  Keep each NEW alert at one
+            # command idea even though the source helpers are separate.
+            m4_order = {
+                "M4.VB": 0, "M4.WIN": 1, "M4.REF": 2, "M4.DT": 3,
+                "M4.SIL": 4, "M4.TRIM": 5, "M4.SCB": 6,
+                "M4.BI": 7, "M4.BD": 8, "M4.BC": 9,
+                "M4.DIFF": 10, "M4.GV": 11,
+            }
+            bridge_rows.sort(key=lambda pair: m4_order.get(pair[1]["id"], 99))
         if bridge_rows:
             by_before = {}
             for before, bridge_card in bridge_rows:
@@ -6633,9 +8285,60 @@ def build():
                 expanded.extend(by_before.get(existing["id"], []))
                 expanded.append(existing)
             module_cards = expanded
+        module_reward = None
+        if animation_expansion_available():
+            contract = animation_contract_for(module_id)
+            reward_card = _make_module_reward_card(module, contract, module_cards)
+            insert_at = next(
+                (index + 1 for index, card in enumerate(module_cards)
+                 if card["id"] == f"{module_id}.07"),
+                None,
+            )
+            if insert_at is None:
+                raise ValueError("%s: core .07 card is required before its endcap" % module_id)
+            if any(card["id"] == reward_card["id"] for card in module_cards):
+                raise ValueError("%s: duplicate module endcap card" % module_id)
+            module_cards.insert(insert_at, reward_card)
+            module_reward = deepcopy(reward_card["module_reward"])
         # VD-29: real Stone Story frames replace same-subject "changed art".
         stone_story_variants.apply(module_cards)
         for card in module_cards:
+            if card["id"] in REVIEW_VARIANTS:
+                card["review_variants"] = deepcopy(REVIEW_VARIANTS[card["id"]])
+                card["review_source_card_id"] = card["id"]
+                card.setdefault("review_method_family", "technique:" + card["id"])
+                if card.get("method_requirement"):
+                    for variant in card["review_variants"]:
+                        variant["method_requirement"] = deepcopy(card["method_requirement"])
+            if module_reward is not None:
+                # Keep reward metadata separate from source_motion.  The latter
+                # remains the credited reference-art path for existing cards;
+                # endcap data is learner-owned and has no source-motion claim.
+                card["module_reward"] = deepcopy(module_reward)
+            # Proportional M10 transcription is width-bearing even when a
+            # terminal renderer trims the row.  Keep the contract on every
+            # M10 card and on each authored review variant.
+            if card["module_id"] == "M10":
+                card["preserve_trailing_whitespace"] = True
+                for variant_key in ("variants", "review_variants"):
+                    for variant in card.get(variant_key, []):
+                        variant["preserve_trailing_whitespace"] = True
+            if card["id"] in {"M8.O", "M8.OH", "M8.PAD", "M8.PADH"}:
+                # These lessons deliberately change the number of rows in one
+                # still.  Treat the resulting rows as one authored frame so a
+                # one-line opening is not misread as a toy second frame.
+                card["frame_rows"] = len(card["target"])
+                card["frame_slices"] = [len(card["target"])]
+            # Bridge cards are authored outside ``make_cards``; apply the same
+            # card-specific hint contract after expansion so a new lesson does
+            # not fall back to a toolbox containing unrelated commands.
+            if card["id"] in CARD_HINT_OVERRIDES:
+                card["hint"] = CARD_HINT_OVERRIDES[card["id"]]
+            if card["id"] in CARD_BENEFIT_OVERRIDES:
+                card["lesson_benefit"] = CARD_BENEFIT_OVERRIDES[card["id"]]
+                if card.get("method_requirement"):
+                    card["method_requirement"]["label"] = (
+                        "use the taught " + card["title"].split(" · ")[-1].lower())
             strict = STRICT_HIDDEN_RETRIEVALS.get(card["id"])
             if strict:
                 family, label = strict
@@ -6643,6 +8346,34 @@ def build():
                     label, exact_any_of=[card["expected"]])
                 card["review_source_card_id"] = card["id"]
                 card["review_method_family"] = family
+            history_methods = {
+                "M11.UR": ["u", "<C-r>"],
+                "M11.BR": ["u"], "M11.GM": ["g-"],
+                "M11.GP": ["g+"],
+                "M11.ER": [":earlier 1<CR>", "g+"],
+                # C31: these are presence requirements for the taught
+                # history operations, not exact recipe transcripts.  The
+                # final target remains the independent artifact gate.
+                "M11.UB": ["u"],
+                "M11.UG": ["g-", "g+"],
+                "M11.UE": [":earlier 1<CR>", "g+"],
+                "M11.UT": ["g-", "g+"],
+                "M11.UTH": ["g-", "g+"],
+            }
+            if card["id"] in history_methods:
+                # A guided history step practises the named history operation.
+                # Its branch-building recipe is an example, not a transcript
+                # the learner must reproduce. Exact target equality remains.
+                history_rule = require_method(
+                    "use " + ", ".join(history_methods[card["id"]]) + " in Normal mode",
+                    all_of=history_methods[card["id"]])
+                card["method_requirement"] = history_rule
+                # Hidden history retrieval uses changed art, but its workflow
+                # is still graded by command presence rather than an exact
+                # replay transcript.  Preserve each variant's art/target and
+                # provenance while applying the same minimal taught keys.
+                for variant in card.get("review_variants", []):
+                    variant["method_requirement"] = dict(history_rule)
             if (card.get("grammar_stage") == "hidden"
                     and card.get("method_requirement")
                     and (card.get("review_variants") or card.get("kind") == "transfer")):
@@ -6658,8 +8389,81 @@ def build():
                 card["roadmap_contract"] = STILL_PROMPT_REWRITES[card["id"]]
             owner = STAGE_OWNER_OVERRIDES.get(
                 card["id"], PRIMARY_STAGE_BY_MODULE[module["id"]])
+            if card.get("kind") == "module_reward":
+                owner = STAGE_OWNER_OVERRIDES.get(
+                    f"{module['id']}.08", PRIMARY_STAGE_BY_MODULE[module["id"]])
+            if card.get("kind") == "module_reward" and owner.startswith("S"):
+                # Still-only foundations remain separate from their new
+                # complete-sequence studies in the later animation track.
+                owner = {"M1": "A1", "M19": "A6", "M2": "A3",
+                         "M14": "A1", "M5": "A3"}[module["id"]]
             card["stage_owner"] = owner
             card["artifact_mode"] = ARTIFACT_MODE_BY_STAGE[owner]
+            if card.get("kind") == "module_reward":
+                # The endcap is original learner-owned art from the sibling
+                # catalogue; do not attach a Stone Story source-motion strip.
+                pass
+            elif card["module_id"] == "M0":
+                card["source_motion"] = {
+                    "frames": [stone_story_variants.FIREWORK_RADIAL_F2,
+                               stone_story_variants.FIREWORK_RADIAL_F3,
+                               stone_story_variants.FIREWORK_RADIAL_F4],
+                    "credit": "official-Cosmetics/Fireworks res06 radial frames 2–4; tutorial playback, not source FPS",
+                    "interval": 0.35,
+                }
+            elif card["module_id"] == "M11":
+                # Keep the motion strip and learner-facing title tied to the
+                # actual source art of each history lesson.  In particular,
+                # BR is Skully (not Frog), while the cumulative cards retain
+                # their own Frog, missile, Chick, or SnowBunny provenance.
+                motion_kind = {
+                    "M11.UR": "snowbunny",
+                    "M11.BR": "skully", "M11.GM": "frog", "M11.GP": "frog",
+                    "M11.ER": "missile", "M11.UB": "chick", "M11.UG": "frog",
+                    "M11.UE": "missile", "M11.UT": "skully", "M11.UTH": "snowbunny",
+                }.get(card["id"], "missile")
+                motion = {
+                    "skully": (
+                        [stone_story_variants.SKULLY_IDLE,
+                         stone_story_variants.SKULLY_LOOK,
+                         stone_story_variants.SKULLY_BLINK],
+                        "Skully look study",
+                        "official-Pets/Skully res01 with res02/res04 look overlays",
+                    ),
+                    "frog": (
+                        [stone_story_variants.FROG_OPEN,
+                         stone_story_variants.FROG_ONE_OPEN,
+                         stone_story_variants.FROG_SHUT],
+                        "Frog blink study",
+                        "official-Pets/Frog res01 with res05/res07 blink overlays",
+                    ),
+                    "missile": (
+                        [stone_story_variants.MISSILE_F1,
+                         stone_story_variants.MISSILE_F2,
+                         stone_story_variants.MISSILE_F3,
+                         stone_story_variants.MISSILE_F4],
+                        "Missile fixed-width redraw",
+                        "official-Games/TowerDefense res18 missile frames 1–4",
+                    ),
+                    "chick": (
+                        [stone_story_variants.CHICK_EGG_F3,
+                         stone_story_variants.CHICK_EGG_F4],
+                        "Chick hatch study",
+                        "official-Pets/Chick res01 hatch frames 3–4",
+                    ),
+                    "snowbunny": (
+                        [stone_story_variants.SNOWBUNNY_IDLE,
+                         stone_story_variants.SNOWBUNNY_BLINK],
+                        "SnowBunny blink study",
+                        "official-Pets/SnowBunny res01 with res03 blink overlay",
+                    ),
+                }[motion_kind]
+                card["title"] = motion[1] + " · " + card["title"].split(" · ")[-1]
+                card["source_motion"] = {
+                    "frames": motion[0],
+                    "credit": motion[2] + "; tutorial playback, not source FPS",
+                    "interval": 0.35,
+                }
             # One card supplies evidence to one progression stage.  The old
             # mixed labels made a single pass appear to advance unrelated
             # still and animation stages simultaneously.
@@ -6678,6 +8482,7 @@ def build():
             "defect": module["defect"], "basic": module["basic"],
             "scaled": module["scaled"], "source_ref": module["source_ref"],
             "medium": module.get("medium", "monospace"),
+            "transcription_boundary": module.get("transcription_boundary"),
             "prerequisites": PREREQUISITES[module["id"]],
             "stage_ids": stage_ids,
             "card_ids": [card["id"] for card in module_cards],
@@ -6686,6 +8491,8 @@ def build():
                 if card.get("required_before_mastery")
             ],
         })
+        if module_reward is not None:
+            modules[-1]["module_reward"] = deepcopy(module_reward)
         cards.extend(module_cards)
         questions.extend(question(module, n) for n in range(1, 11))
         if module["id"] == "M0":
@@ -6747,12 +8554,10 @@ def build():
     first_guided = {}
     for card in cards:
         if card.get("method_requirement"):
-            exact = bool(card["method_requirement"].get("exact_any_of"))
             verified_methods.append({
                 "card_id": card["id"],
                 "label": card["method_requirement"]["label"],
-                "evidence": ("runtime-required ordered command path plus exact target" if exact else
-                             "runtime-required token pattern and optional key limit"),
+                "evidence": "correct target plus actual taught semantic commands in any order; extra keys accepted",
             })
         for taught in card.get("method_alternatives", []):
             verified_methods.append({
@@ -6807,8 +8612,11 @@ def build():
     # records replace the scaffold wholesale; the generator only installs the
     # exact prose, choices, and feedback written in the bank.
     authored_questions = {}
-    for authored_path in AUTHORED_QUESTION_FILES:
+    completion_question_ids = set()
+    for authored_path in authored_question_paths():
         authored_file = json.loads(authored_path.read_text(encoding="utf-8"))
+        if authored_path.name == "questions-authored-v2-course-completion.json":
+            completion_question_ids.update(authored_file)
         duplicates = set(authored_questions) & set(authored_file)
         if duplicates:
             raise ValueError("question ids are authored in more than one file: %r" %
@@ -6827,6 +8635,20 @@ def build():
     for question_id, authored in authored_questions.items():
         question_map[question_id].update(authored)
         question_map[question_id]["authorship"] = "manual"
+        if question_map[question_id]["card_id"].endswith(".REWARD"):
+            _expand_endcap_authored_question(
+                question_map[question_id],
+                card_map[question_map[question_id]["card_id"]],
+            )
+        if question_id in completion_question_ids:
+            # The paired prose is hand-authored above; attach the exact
+            # before/after evidence from its owning exercise so every new
+            # completion question remains visibly grounded in art.
+            owner = card_map[question_map[question_id]["card_id"]]
+            question_map[question_id]["prompt"] += "\n\n" + visual_pair(
+                owner.get("start", []), owner.get("target", []))
+            question_map[question_id]["compact_prompt"] += "\n\n" + visual_delta(
+                owner.get("start", []), owner.get("target", []), max_rows=4)
     for override_path in AUTHORED_QUESTION_OVERRIDE_FILES:
         overrides = json.loads(override_path.read_text(encoding="utf-8"))
         unknown_overrides = set(overrides) - set(question_map)
@@ -6859,7 +8681,9 @@ def build():
             ],
         })
     return {
-        "schema": "vim-daily/curriculum@4", "revision": "2026-09-29.65",
+        "schema": "vim-daily/curriculum@4",
+        "revision": "2026-10-02.77" if animation_expansion_available()
+        else "2026-10-01.71",
         "review_intervals_hours": [4, 24, 72, 168, 336],
         "main_stage_sequence": MAIN_STAGE_SEQUENCE,
         "stages": stages, "modules": modules, "cards": cards, "questions": questions,
@@ -7123,6 +8947,13 @@ def validate(cur):
         errors.append("required mastery-review coverage does not match enforced transfer reviews")
     for q in questions:
         if not q.get("source_ref"): errors.append(f"{q['id']}: missing source reference")
+        if q.get("card_id") in HISTORY_CARD_CHARACTERS:
+            for field, value in q.items():
+                if isinstance(value, str):
+                    errors.extend(
+                        f"{q['id']} {field}: {message}"
+                        for message in validate_history_diagram_text(q["card_id"], value)
+                    )
         if q.get("form") != "multiple_choice":
             errors.append(f"{q['id']}: every learner question must be four-choice multiple choice")
         if ("ANIMATION\n" not in q.get("prompt", "")
@@ -7199,14 +9030,25 @@ def validate(cur):
                              if re.fullmatch(r"M\d+\.\d\d", c["id"])]
         if original_ordinals != list(range(1, 9)):
             errors.append(f"{module['id']}: original card sequence is not 1..8")
-        project_steps = [c for c in own if c.get("artifact") == "project"]
+        # A whole-module endcap is a separate full-sequence study.  It shares
+        # the module project namespace but must not be forced into the
+        # single-frame continuation chain used by the eight core cards.
+        project_steps = [c for c in own
+                         if c.get("artifact") == "project"
+                         and c.get("kind") != "module_reward"]
         for before, after in zip(project_steps, project_steps[1:]):
             if before["target"] != after["start"]:
                 errors.append(f"{after['id']}: start does not continue {before['id']}")
     for before_module, after_module in zip(modules, modules[1:]):
         if before_module["project_id"] == after_module["project_id"]:
-            before_steps = [c for c in cards if c["module_id"] == before_module["id"] and c.get("artifact") == "project"]
-            after_steps = [c for c in cards if c["module_id"] == after_module["id"] and c.get("artifact") == "project"]
+            before_steps = [c for c in cards
+                            if c["module_id"] == before_module["id"]
+                            and c.get("artifact") == "project"
+                            and c.get("kind") != "module_reward"]
+            after_steps = [c for c in cards
+                           if c["module_id"] == after_module["id"]
+                           and c.get("artifact") == "project"
+                           and c.get("kind") != "module_reward"]
             if before_steps[-1]["target"] != after_steps[0]["start"]:
                 errors.append(f"{after_module['id']}: shared project does not continue {before_module['id']}")
     for card in cards:
@@ -7250,6 +9092,23 @@ def validate(cur):
             check_visual(card["id"], "start", card["start"], frame_rows,
                          card.get("incomplete_start_frame"))
             check_visual(card["id"], "target", card["target"], frame_rows)
+        if card["id"] in HISTORY_CARD_CHARACTERS:
+            errors.extend(validate_history_card_art(
+                card["id"], card.get("start", []), card.get("target", [])))
+            errors.extend(validate_history_recipe(
+                card["id"], card.get("expected", ""), card.get("recipe", []),
+                frames=card.get("history_recipe_frames")))
+            for index, variant in enumerate(card.get("review_variants", []), 1):
+                errors.extend(
+                    f"{card['id']} review variant {index}: {message}"
+                    for message in validate_history_review_art(card["id"], variant)
+                )
+                errors.extend(
+                    f"{card['id']} review variant {index}: {message}"
+                    for message in validate_history_recipe(
+                        card["id"], variant.get("expected", ""), variant.get("recipe", []),
+                        frames=variant.get("history_recipe_frames"))
+                )
         for qid in card.get("question_ids", []):
             if qid not in qids: errors.append(f"{card['id']}: missing question {qid}")
         if card["kind"] not in ("concept",) and card["ordinal"] not in (3, 7):
@@ -7304,6 +9163,11 @@ def validate(cur):
             starts = [tuple(variant.get("start", [])) for variant in review_variants]
             if len(review_variants) < 2 or len(starts) != len(set(starts)):
                 errors.append(f"{card['id']}: needs two distinct card-specific review variants")
+            if card["id"] in {"M4.BD", "M6.DDP", "M8.PAD"}:
+                primary_start = tuple(card.get("start", []))
+                if any(start == primary_start for start in starts):
+                    errors.append(
+                        f"{card['id']}: every authored review start must differ from its primary start")
             if any(not all(variant.get(field) for field in
                            ("start", "target", "expected", "recipe"))
                    for variant in review_variants):
@@ -7392,7 +9256,8 @@ def validate(cur):
 def main():
     cur = build()
     validate(cur)
-    OUT.write_text(json.dumps(cur, indent=1, ensure_ascii=False) + "\n")
+    from curriculum_publish import publish
+    publish(OUT, json.dumps(cur, indent=1, ensure_ascii=False) + "\n")
     print(f"wrote {OUT}: {len(cur['modules'])} modules, {len(cur['cards'])} cards, {len(cur['questions'])} questions")
 
 

@@ -75,12 +75,18 @@ def send_spec(socket, pane, spec):
             # motion or change.  120 ms remains quick while representing
             # actual individual presses instead of a terminal byte burst.
             for char in literal:
+                if char == ":" and os.environ.get("VIM_DAILY_TEST_KEY_TRACE"):
+                    print("BEFORE COMMAND MODE:\n" + capture(socket, pane), flush=True)
                 send_text(socket, pane, char)
                 time.sleep(0.12)
+                if os.environ.get("VIM_DAILY_TEST_ALL_KEY_TRACE"):
+                    print("AFTER KEY %r:\n%s" % (char, capture(socket, pane)), flush=True)
             literal.clear()
     for token in tokens:
         if token in special or re.fullmatch(r"<C-[A-Za-z]>", token):
             flush()
+            if token == "<CR>" and os.environ.get("VIM_DAILY_TEST_KEY_TRACE"):
+                print("COMMAND BEFORE ENTER:\n" + capture(socket, pane), flush=True)
             tmux(socket, "send-keys", "-t", pane,
                  special.get(token, "C-" + token[3].lower()))
             # Keep an immediately following `:` from being decoded as one
@@ -91,6 +97,14 @@ def send_spec(socket, pane, spec):
                 # Wait past it so `-w` records a standalone <Esc> instead of
                 # folding the next printable byte into <M-x>.
                 time.sleep(1.10)
+            elif token in ("<CR>", "<NL>"):
+                # Let Noice's command-line transition finish before a
+                # following Normal-mode edit or ZZ is sent. The scriptout
+                # can otherwise contain the complete command even though
+                # the UI consumed the immediately following keys too early.
+                time.sleep(0.25)
+                if os.environ.get("VIM_DAILY_TEST_KEY_TRACE"):
+                    print("COMMAND AFTER ENTER:\n" + capture(socket, pane), flush=True)
         else:
             literal.append(token)
     flush()
@@ -163,7 +177,8 @@ def seed(root, passed, *, artifact_card=None, due_review=False, progress_to=None
         card = CARDS[artifact_card]
         project = state / "projects" / card["project_id"]
         project.mkdir(parents=True)
-        (project / "strip.txt").write_text("\n".join(card["start"]) + "\n", encoding="utf-8")
+        name = ("animation-%s.txt" % card["id"] if card.get("artifact") == "animation-study" else "strip.txt")
+        (project / name).write_text("\n".join(card["start"]) + "\n", encoding="utf-8")
 
 
 def answer_for(question_id, order=(0, 1, 2, 3)):
@@ -176,6 +191,10 @@ def answer_for(question_id, order=(0, 1, 2, 3)):
 def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_review=False,
              progress_to=None, choice_order=None, failed_attempts=0,
              key_sequence=None):
+    if "--only-card" in sys.argv:
+        selected = sys.argv[sys.argv.index("--only-card") + 1]
+        if card_id != selected:
+            return
     with tempfile.TemporaryDirectory(prefix="vim-daily-routes-") as tmp:
         root = Path(tmp)
         data = root / "data"
@@ -198,6 +217,10 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
             # VD-12: real data dir so the learner's LazyVim plugins load.
             "XDG_DATA_HOME": os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local" / "share")), "XDG_STATE_HOME": str(root / "state"),
             "EDITOR": "nvim", "TERM": "xterm-256color",
+            # Textual's lesson/result Pilot lives in test_lesson_tui.py.  Keep
+            # this broad route matrix focused on the existing headed editor
+            # signals so each route remains deterministic at three sizes.
+            "VIM_DAILY_TEXTUAL": "0",
             # The daily deck warm-up is exercised by test_deck.py; these routes
             # start at the lesson itself.
             "VIM_DAILY_NO_WARMUP": "1",
@@ -243,7 +266,7 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 for qid in before_qids:
                     wait_signal(inner, question)
                     paired_prompt = " ".join(capture(outer, pane).split())
-                    assert "ANIMATION" in paired_prompt and "NEOVIM" in paired_prompt
+                    assert "ANIMATION" in paired_prompt and "NEOVIM" in paired_prompt, paired_prompt
                     send_text(outer, pane, answer_for(qid))
                     tmux(outer, "send-keys", "-t", pane, "Enter")
 
@@ -333,7 +356,7 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                     raise AssertionError("module check never opened editor:\n" +
                                          capture(outer, pane)) from exc
                 brief = " ".join(capture(outer, pane).split())
-                assert card_id in brief and "exact command keys" in brief
+                assert card_id in brief and "exact keystrokes" in brief.lower(), brief
                 assert "TARGET" in brief and "HINT" in brief
                 assert card["expected"] not in brief
                 send_spec(outer, pane, card["expected"] + "ZZ")
@@ -358,7 +381,9 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 card = route_card
                 assert card_id in brief and card["prompt"][:30] in brief, brief
                 assert "TARGET" in brief, brief
-                visible_target_rows = card["target"] if ROWS >= 28 else card["target"][:6]
+                visible_target_rows = (card["target"][:min(4, card["frame_slices"][0])]
+                                       if card["kind"] == "module_reward" else
+                                       card["target"] if ROWS >= 28 else card["target"][:6])
                 for target_row in visible_target_rows:
                     assert "│" + target_row in brief_raw, brief_raw
                 if card.get("show_recipe", card.get("show_target", False)):
@@ -380,8 +405,11 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                         assert method["keys"] not in brief
                 if route == "compare":
                     assert any(marker in brief.lower() for marker in (
-                        "compare after pass", "comparison appears after verification"
-                    )), brief
+                        "compare after pass", "comparison appears after verification",
+                        "after that single path passes"
+                    )) or all(marker in brief.lower() for marker in (
+                        "after that", "single path", "passes."
+                    )), brief  # pane borders can interrupt the wrapped sentence
                 route_keys = key_sequence
                 send_spec(outer, pane, route_keys or card["expected"] + "ZZ")
 
@@ -394,12 +422,33 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                     try:
                         wait_signal(inner, question)
                     except AssertionError as exc:
+                        state = root / "state" / "vim-daily"
+                        attempts = [json.loads(row) for row in (state / "events-v2.jsonl").read_text().splitlines()
+                                    if json.loads(row).get("card_id") == card_id]
+                        keylogs = [Path(row["keylog"]).read_bytes().hex()
+                                   for row in attempts if row.get("keylog") and Path(row["keylog"]).exists()]
+                        input_receipts = [Path(row["keylog"]).with_suffix(".cursor.json").read_text()
+                                          for row in attempts if row.get("keylog")
+                                          and Path(row["keylog"]).with_suffix(".cursor.json").exists()]
+                        snapshots = [(str(path.name), path.read_text())
+                                     for path in state.glob("projects/*/checkpoints/*-failed-*.txt")]
                         raise AssertionError(
-                            "popup did not open after-question %s:\n%s" %
-                            (qid, capture(outer, pane))
+                            "popup did not open after-question %s:\n%s\nkeylogs=%r\ninput=%r\nfailed=%r" %
+                            (qid, capture(outer, pane), keylogs, input_receipts, snapshots)
                         ) from exc
                     post_prompt = " ".join(capture(outer, pane).split())
-                    assert "ANIMATION" in post_prompt and "NEOVIM" in post_prompt
+                    assert "ANIMATION" in post_prompt and "NEOVIM" in post_prompt, post_prompt
+                    if card_id in {"M11.TR", "M11.LS"}:
+                        visible = tmux(outer, "capture-pane", "-p", "-t", pane,
+                                       capture_output=True).stdout
+                        box_columns = [tuple(i for i, char in enumerate(line) if char == "│")
+                                       for line in visible.splitlines() if line.count("│") >= 4]
+                        # Compact questions intentionally show one face row;
+                        # the full diagram is still available via y/clipboard.
+                        # The popup consumes 85% of the requested outer height.
+                        minimum_rows = 1 if int(ROWS * .85) < 38 else 3
+                        assert len(box_columns) >= minimum_rows, (qid, visible)
+                        assert len(set(box_columns)) == 1, (qid, box_columns, visible)
                     send_text(outer, pane, answer_for(qid))
                     tmux(outer, "send-keys", "-t", pane, "Enter")
 
@@ -434,6 +483,22 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 assert "CONCEPT REPLAY" not in feedback_screen
                 assert "retain the principle" not in feedback_screen
             if route == "compare":
+                if "k opens the full explanation" in feedback_screen:
+                    tmux(outer, "send-keys", "-t", pane, "k", "Enter")
+                    details = ""
+                    for page in range(8):
+                        deadline = time.monotonic() + 3
+                        while time.monotonic() < deadline:
+                            shot = capture(outer, pane)
+                            if "FULL KEY EXPLANATION" in shot:
+                                break
+                            time.sleep(0.05)
+                        details += " ".join(shot.split())
+                        tmux(outer, "send-keys", "-t", pane, "Enter")
+                        time.sleep(0.1)
+                        if "FULL KEY EXPLANATION" not in capture(outer, pane):
+                            break
+                    feedback_screen += details
                 assert all(method["label"] in feedback_screen
                            for method in CARDS[card_id]["method_alternatives"]), feedback_screen
                 assert CARDS[card_id]["expected"] in feedback_screen, feedback_screen
@@ -462,9 +527,20 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
                 raise AssertionError("progress page did not remain held before close")
             tmux(outer, "send-keys", "-t", pane, "Enter")
             wait_signal(inner, done)
-            time.sleep(0.15)
-            if "SKILL TREE / MODULE PROGRESS" in capture(outer, pane):
-                raise AssertionError("popup remained visible after explicit close")
+            # Completion is signalled before the popup owner finishes its EXIT
+            # trap and the enclosing client redraws. Check the live viewport,
+            # not history that may retain the former popup screen.
+            deadline = time.monotonic() + 3
+            while time.monotonic() < deadline:
+                closed_screen = tmux(outer, "capture-pane", "-p", "-t", pane,
+                                     capture_output=True).stdout
+                owner = tmux(inner, "show-options", "-qv", "-t", "lesson",
+                             "@vim_daily_mouse_owner", capture_output=True).stdout.strip()
+                if not owner and "SKILL TREE / MODULE PROGRESS" not in closed_screen:
+                    break
+                time.sleep(0.05)
+            else:
+                raise AssertionError("popup remained visible after explicit close:\n" + closed_screen)
             event_path = root / "state" / "vim-daily" / "events-v2.jsonl"
             events = [json.loads(line) for line in event_path.read_text(
                 encoding="utf-8").splitlines()]
@@ -511,6 +587,31 @@ def exercise(name, *, passed, route, card_id=None, artifact_card=None, due_revie
 if GATE.resolve() != ROOT / "bin" / "vim-daily-gate":
     raise AssertionError("installed gate does not resolve to this checkout")
 
+if "--history-source" in sys.argv:
+    for history in CUR["cards"]:
+        if not history.get("history_source_provenance"):
+            continue
+        exercise("%s source history" % history["id"], passed=0,
+                 route="guided" if history["kind"] == "guided_edit" else "independent",
+                 card_id=history["id"], artifact_card=history["id"],
+                 progress_to=history["id"])
+    raise SystemExit(0)
+
+if "--endcaps" in sys.argv:
+    for endcap in CUR["cards"]:
+        if endcap["kind"] != "module_reward" or endcap.get("medium") == "proportional-sjis":
+            continue  # native proportional proof has its Ghostty-owned harness
+        exercise("%s endcap" % endcap["id"], passed=0, route="independent",
+                 card_id=endcap["id"], artifact_card=endcap["id"],
+                 progress_to=endcap["id"])
+    raise SystemExit(0)
+
+if "--saved-offsets" in sys.argv:
+    for card_id in ("M11.TR", "M11.LS"):
+        exercise("%s saved-note box columns" % card_id, passed=0, route="guided",
+                 card_id=card_id, artifact_card=card_id, progress_to=card_id)
+    raise SystemExit(0)
+
 only_card = next((arg.split("=", 1)[1] for arg in sys.argv
                   if arg.startswith("--only-card=")), None)
 if only_card:
@@ -520,6 +621,7 @@ if only_card:
     route_by_kind = {
         "guided_edit": "guided",
         "independent_edit": "independent",
+        "module_reward": "independent",
         "compare_methods": "compare",
         "concept": "concept",
         "module_check": "check",
@@ -605,7 +707,27 @@ if "--only-primer" in sys.argv:
     exercise("grammar primer", passed=0, route="concept", card_id="M0.P0")
     raise SystemExit(0)
 
+if "--only-transfer" in sys.argv:
+    selected = sys.argv[sys.argv.index("--only-transfer") + 1]
+    exercise("%s live transfer" % selected, passed=0, route="transfer",
+             card_id=selected, artifact_card=selected, progress_to=selected)
+    raise SystemExit(0)
+
+def first_edit_routes():
+    exercise("M0 column-1 navigation prerequisite", passed=passed_before("M0.L0"),
+             route="guided", card_id="M0.L0", artifact_card="M0.L0")
+    exercise("M0 star-find navigation prerequisite", passed=passed_before("M0.F0"),
+             route="guided", card_id="M0.F0", artifact_card="M0.F0")
+    exercise("M0 declared no-0 first-edit alternative", passed=passed_before("M0.01"),
+             route="guided", card_id="M0.01", artifact_card="M0.01", key_sequence="jf*roZZ")
+
+
+if "--only-first-edit" in sys.argv:
+    first_edit_routes()
+    raise SystemExit(0)
+
 exercise("grammar primer", passed=0, route="concept", card_id="M0.P0")
+first_edit_routes()
 exercise("conceptual check", passed=passed_before("M0.03"), route="concept", card_id="M0.03",
          choice_order=(2, 3, 0, 1))
 exercise("conceptual changed-stem retry", passed=passed_before("M0.03"), route="concept", card_id="M0.03",
@@ -619,9 +741,16 @@ exercise("five-question module check", passed=passed_before("M0.08"), route="che
          artifact_card="M0.08")
 exercise("spaced review", passed=4, route="review", due_review=True)
 
-# Every module's distinct transfer artifact is exercised in the live popup,
-# rather than inferring UI safety from generated JSON alone.
+# Every module's distinct transfer artifact is exercised in the live popup.
+# A nested tmux capture terminal is not Ghostty and cannot acknowledge native
+# graphics. An explicit bounded run excludes that display-dependent route;
+# the default full run still requires it. This never disables the product gate.
 for module_number in range(len(CUR["modules"])):
     card_id = "M%d.06" % module_number
+    if ("--without-native-display" in sys.argv
+            and CARDS[card_id].get("medium") == "proportional-sjis"):
+        print("UNVERIFIED %s native Ghostty display: explicitly outside this non-native route matrix" % card_id,
+              flush=True)
+        continue
     exercise("%s live transfer" % card_id, passed=0, route="transfer",
              card_id=card_id, artifact_card=card_id, progress_to=card_id)

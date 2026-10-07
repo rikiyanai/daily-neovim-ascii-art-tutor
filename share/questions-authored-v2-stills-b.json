@@ -108,11 +108,11 @@
     ]
   },
   "M5.Q05": {
-    "prompt": "ANIMATION\nWhy is an addressed copy a clear way to insert this composite?\n\n    BEFORE         AFTER\n    │  /       │   │  /       │\n    │   /      │   │   /      │\n    │----o-----│   │----o-----│\n    │....|.....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n\nNEOVIM\nWhat does `:1,7t7` make explicit?",
+    "prompt": "ANIMATION\nWhy is a copy with an explicit range a clear way to insert this composite?\n\n    BEFORE         AFTER\n    │  /       │   │  /       │\n    │   /      │   │   /      │\n    │----o-----│   │----o-----│\n    │....|.....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n\nNEOVIM\nWhat does `:1,7t7` make explicit?",
     "compact_prompt": "ANIMATION\nCopy the whole composite into the gap.\n\n    │----o-----│\n    │....|.....│\n    │==========│\n\nNEOVIM\nRead `:1,7t7` as range and destination.",
     "animation_prompt": "The inserted frame contains every foreground, contact, texture, and ground row; no support band is omitted.\n\n    BEFORE         AFTER\n    │  /       │   │  /       │\n    │   /      │   │   /      │\n    │----o-----│   │----o-----│\n    │....|.....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│",
-    "animation_answer": "The addressed range copies all seven registered rows into the temporal gap.",
-    "neovim_prompt": "Which part of the Ex command owns source and destination?",
+    "animation_answer": "The explicit range copies all seven registered rows into the temporal gap.",
+    "neovim_prompt": "Which part of the : command owns source and destination?",
     "neovim_answer": "`:1,7t7` names source rows 1–7 and copies them after destination row 7, independent of cursor position.",
     "choices": [
       "ANIMATION: All seven registered rows are inserted as one frame. | NEOVIM: `:1,7t7` names the seven-line source range and destination row.",
@@ -129,7 +129,7 @@
     "correct_choice": 0,
     "feedback": [
       "Correct: the range and destination make the entire frame boundary visible.",
-      "The addressed range contains seven rows, not just the blade.",
+      "The explicit range contains seven rows, not just the blade.",
       "`t` copies and leaves the source; `m` would move it.",
       "No substitution pattern is involved in this frame copy."
     ]
@@ -352,26 +352,26 @@
   },
   "M5.05.P01": {
     "prompt": "ANIMATION\nChoose one copy method for the middle frame; both accepted methods must yield this exact registration.\n\n    BEFORE         AFTER\n    │  /       │   │  /       │\n    │   /      │   │   /      │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │      \\   │   │    |     │\n    │     \\    │   │    |     │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │          │   │      \\   │\n    │          │   │     \\    │\n    │          │   │----o-----│\n    │          │   │.... .....│\n    │          │   │..........│\n    │          │   │==========│\n    │          │   │__________│\n\nNEOVIM\nWhat must the selected method preserve?",
-    "compact_prompt": "ANIMATION\nMiddle frame: vertical blade, same supports.\n\n    │    |     │\n    │----o-----│\n    │.... .....│\n\nNEOVIM\nCompare addressed and counted copy by scope.",
+    "compact_prompt": "ANIMATION\nMiddle frame: vertical blade, same supports.\n\n    │    |     │\n    │----o-----│\n    │.... .....│\n\nNEOVIM\nCompare explicit-range copy and counted copy by scope.",
     "animation_prompt": "The middle frame is a complete copied composite whose blade alone is redrawn vertically; every contact, texture, and ground row stays aligned.\n\n    BEFORE         AFTER\n    │  /       │   │  /       │\n    │   /      │   │   /      │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │      \\   │   │    |     │\n    │     \\    │   │    |     │\n    │----o-----│   │----o-----│\n    │.... .....│   │.... .....│\n    │..........│   │..........│\n    │==========│   │==========│\n    │__________│   │__________│\n    │          │   │      \\   │\n    │          │   │     \\    │\n    │          │   │----o-----│\n    │          │   │.... .....│\n    │          │   │..........│\n    │          │   │==========│\n    │          │   │__________│",
     "animation_answer": "Both copy methods are valid only when they insert the complete seven-row frame before its blade is redrawn.",
-    "neovim_prompt": "How do addressed and counted copy differ?",
-    "neovim_answer": "An Ex range states source and destination explicitly; counted yank/put depends on the cursor, but both must copy seven complete rows.",
+    "neovim_prompt": "How do explicit-range copy and counted copy differ?",
+    "neovim_answer": "A : command range states source and destination explicitly; counted yank/put depends on the cursor, but both must copy seven complete rows.",
     "choices": [
-      "ANIMATION: Either method yields one complete registered middle frame. | NEOVIM: addressed range is explicit; counted yank/put is cursor-relative, but both own seven rows.",
-      "ANIMATION: Only addressed copy can preserve the ground. | NEOVIM: counted yank/put always copies one row.",
+      "ANIMATION: Either method yields one complete registered middle frame. | NEOVIM: explicit range is explicit; counted yank/put is cursor-relative, but both own seven rows.",
+      "ANIMATION: Only copy with an explicit range can preserve the ground. | NEOVIM: counted yank/put always copies one row.",
       "ANIMATION: Counted copy moves the original instead of duplicating it. | NEOVIM: `yy` is a destructive move.",
       "ANIMATION: Both methods safely copy only the blade. | NEOVIM: support rows are optional because they do not animate."
     ],
     "compact_choices": [
       "A: complete middle frame · V: explicit range vs cursor-relative seven-row copy",
-      "A: only Ex preserves ground · V: yank copies one row",
+      "A: only :copy preserves ground · V: yank copies one row",
       "A: counted copy moves source · V: `yy` is destructive",
       "A: blade only enough · V: supports optional"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: method choice changes addressing, not the required seven-row animation object.",
+      "Correct: method choice changes line selection, not the required seven-row animation object.",
       "A correctly bounded counted copy can preserve the ground too.",
       "Yank/put duplicates; it does not remove the source.",
       "Omitting supports makes the middle pose an incoherent frame."
@@ -540,20 +540,20 @@
     ]
   },
   "M10.Q05": {
-    "prompt": "ANIMATION\nWhy may an identical hatched impact frame hold for two beats?\n\n    IMPACT 1       IMPACT 2\n    │／￣￣＼ │     │／￣￣＼ │\n    │|ﾆ二ニ|│     │|ﾆ二ニ|│\n    │＼＿＿／ │     │＼＿＿／ │\n\nNEOVIM\nWhich addressed range copies the complete three-row impact pose?",
+    "prompt": "ANIMATION\nWhy may an identical hatched impact frame hold for two beats?\n\n    IMPACT 1       IMPACT 2\n    │／￣￣＼ │     │／￣￣＼ │\n    │|ﾆ二ニ|│     │|ﾆ二ニ|│\n    │＼＿＿／ │     │＼＿＿／ │\n\nNEOVIM\nWhich explicit range copies the complete three-row impact pose?",
     "compact_prompt": "ANIMATION\nA duplicate can be a timing hold.\n\n    │／￣￣＼ │\n    │|ﾆ二ニ|│\n    │＼＿＿／ │\n\nNEOVIM\nCopy the complete impact block.",
     "animation_prompt": "The duplicate is intentional timing: it holds the hatched impact before the settle while preserving the same three-row outline.\n\n    BEFORE    AFTER\n    │　　⌒? │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│",
     "animation_answer": "A complete identical impact frame can hold the action for a second beat.",
     "neovim_prompt": "How can the impact block be copied by explicit range?",
-    "neovim_answer": "Use `:7,9t$` to copy the three impact rows to the end, keeping hatching and outline together.",
+    "neovim_answer": "Use `:10,12t$` to copy the three impact rows to the end, keeping hatching and outline together.",
     "choices": [
-      "ANIMATION: The duplicate sustains the hatched impact before the settle. | NEOVIM: `:7,9t$` copies all three impact rows as a block.",
+      "ANIMATION: The duplicate sustains the hatched impact before the settle. | NEOVIM: `:10,12t$` copies all three impact rows as a block.",
       "ANIMATION: The duplicate is an accidental static frame. | NEOVIM: delete the second block with `3dd`.",
       "ANIMATION: Only the hatching needs to repeat. | NEOVIM: copy the middle row alone with `:8t$`.",
       "ANIMATION: The impact should be stretched horizontally. | NEOVIM: join the three rows with `J` before copying."
     ],
     "compact_choices": [
-      "A: impact hold · V: `:7,9t$` three rows",
+      "A: impact hold · V: `:10,12t$` three rows",
       "A: accidental frame · V: `3dd`",
       "A: hatching only · V: `:8t$`",
       "A: stretch horizontally · V: join with `J`"
@@ -599,7 +599,7 @@
     "animation_prompt": "The puff expands from lobe to arch, hits a hatched impact and hold, then returns to the lobe as settle.\n\n    FRAME 1   FRAME 2   FRAME 3   FRAME 4   FRAME 5\n    │　　⌒ヽ │   │　／￣＼ │   │／￣￣＼ │   │／￣￣＼ │   │　　⌒ヽ │\n    │　（　　）│   │（　　　）│   │|ﾆ二ニ|│   │|ﾆ二ニ|│   │　（　　）│\n    │　　ヽ_ノ│   │　＼＿／ │   │＼＿＿／ │   │＼＿＿／ │   │　　ヽ_ノ│",
     "animation_answer": "Expansion, impact, impact hold, and return settle form one coherent puff arc.",
     "neovim_prompt": "Which source range supplies the final settle?",
-    "neovim_answer": "Copy the first complete three-row lobe with `:1,3t$`; the addressed range preserves the registered settle.",
+    "neovim_answer": "Copy the first complete three-row lobe with `:1,3t$`; the explicit range preserves the registered settle.",
     "choices": [
       "ANIMATION: The strip expands, impacts, holds, then returns to the lobe. | NEOVIM: append the first three-row lobe as the settle.",
       "ANIMATION: The strip is three unrelated stills. | NEOVIM: append only the impact middle row.",
@@ -626,7 +626,7 @@
     "animation_prompt": "Contained hatching reads as impact material; spilling it outside the outline makes the shape leak into the next pose.\n\n    FRAME 1   FRAME 2   FRAME 3   FRAME 4   FRAME 5\n    │　　⌒ヽ │   │　／￣＼ │   │／￣￣＼ │   │／￣￣＼ │   │　　⌒ヽ │\n    │　（　　）│   │（　　　）│   │|ﾆ二ニ|│   │|ﾆ二ニ|│   │　（　　）│\n    │　　ヽ_ノ│   │　＼＿／ │   │＼＿＿／ │   │＼＿＿／ │   │　　ヽ_ノ│",
     "animation_answer": "Keep the hatching within the impact's left and right contour walls.",
     "neovim_prompt": "What scope changes hatching alone?",
-    "neovim_answer": "Address only the middle hatching row; leave the upper and lower outline rows untouched.",
+    "neovim_answer": "Select only the middle hatching row; leave the upper and lower outline rows untouched.",
     "choices": [
       "ANIMATION: Hatching stays inside the impact walls. | NEOVIM: substitute only the middle row of the impact frame.",
       "ANIMATION: Hatching can cross the outline to show more force. | NEOVIM: substitute the whole three-row block.",
@@ -729,82 +729,82 @@
     ]
   },
   "M10.02.P01": {
-    "prompt": "ANIMATION\nA complete lobe is copied and redrawn as a wider extreme.\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │     │   │　／￣＼ │\n    │     │   │（　　　）│\n    │     │   │　＼＿／ │\n\nNEOVIM\nWhich decomposition matches the operation's two scopes?",
-    "compact_prompt": "ANIMATION\nFull lobe copied, then three rows widened.\n\n    │　／￣＼ │\n    │（　　　）│\n    │　＼＿／ │\n\nNEOVIM\nDecode copy, put, and row-bounded redraw.",
-    "animation_prompt": "AFTER adds a complete three-row lobe copy and changes each copied row into the wider arch; the source remains intact.\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │     │   │　／￣＼ │\n    │     │   │（　　　）│\n    │     │   │　＼＿／ │",
-    "animation_answer": "Copy one complete lobe, then redraw all three copied rows as the wider extreme.",
-    "neovim_prompt": "What grammar keeps copy and redraw bounded?",
-    "neovim_answer": "Linewise `3yy`/`p` owns the three-row copy; `C` edits each copied row through its end, then Escape returns to Normal mode.",
+    "prompt": "ANIMATION\nThe lobe, arch, and hatched impact are already supplied as complete UTF-8 transcriptions. Insert one complete lobe copy immediately after the first pose; leave the arch and impact intact.\n\nCOPIED OBJECT\n│　　⌒ヽ│\n│　（　　）│\n│　　ヽ_ノ│\n\nNEOVIM\nWhich bounded operation inserts those three lines before the later poses?",
+    "compact_prompt": "ANIMATION\nCopy the complete lobe after row three; the supplied arch and impact stay intact.\n\n│　　⌒ヽ│\n│　（　　）│\n│　　ヽ_ノ│\n\nNEOVIM\nWhich linewise scope preserves the transcription?",
+    "animation_prompt": "ANIMATION\nThe target adds one complete duplicate three-row lobe; every UTF-8 glyph and alignment space remains unchanged.",
+    "animation_answer": "Copy the supplied three-row lobe as a complete second pose without redrawing or measuring proportional width.",
+    "neovim_prompt": "NEOVIM\nWhich grammar copies the supplied lobe without inventing proportional acceptance?",
+    "neovim_answer": "gg3yy yanks the first complete lobe; 3Gp puts it after row three, before the supplied arch and impact. Terminal evidence grades only exact UTF-8 text; Saitamaar owns proportional review.",
     "choices": [
-      "ANIMATION: A complete lobe becomes one coherent wider arch. | NEOVIM: copy three lines, put them, then use row-local `C` edits.",
-      "ANIMATION: Only the top contour is widened. | NEOVIM: `C` the first copied row and leave the lower rows.",
-      "ANIMATION: The source lobe is overwritten. | NEOVIM: use `3dd` before the redraw.",
-      "ANIMATION: Three unrelated rows form the arch. | NEOVIM: edit them with a file-wide substitute."
+      "ANIMATION: Add one complete duplicate lobe. | NEOVIM: `gg3yy3Gp` copies three supplied lines.",
+      "ANIMATION: Widen one contour. | NEOVIM: row-local `C` is not part of this copy.",
+      "ANIMATION: Overwrite the source lobe. | NEOVIM: `3dd` deletes the supplied source.",
+      "ANIMATION: Assemble unrelated rows. | NEOVIM: a file-wide substitute changes scope."
     ],
     "compact_choices": [
-      "A: full arch · V: three-line copy + row-local `C`",
-      "A: top only · V: `C` first row",
-      "A: source overwritten · V: `3dd`",
+      "A: duplicate lobe · V: gg3yy3Gp",
+      "A: one contour · V: C",
+      "A: source deleted · V: 3dd",
       "A: unrelated rows · V: global substitute"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the operation separates complete-frame duplication from bounded row redraw.",
-      "Widening one row would repeat the shearing defect.",
-      "The source lobe remains as the first animation pose.",
-      "A broad substitute would risk changing material outside the copied arch."
+      "Correct: gg3yy3Gp copies all three lobe rows after row three and preserves the later source poses.",
+      "No contour widening is requested by this transcription wall.",
+      "The source lobe remains; deleting it fails the copy target.",
+      "A broad substitute would change text outside the three-row source."
     ]
   },
   "M10.04.P01": {
-    "prompt": "ANIMATION\nBefore adding the impact, what must the new frame contain?\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │　／￣＼ │   │　／￣＼ │\n    │（　　　）│   │（　　　）│\n    │　＼＿／ │   │　＼＿／ │\n    │     │   │／￣￣＼ │\n    │     │   │|ﾆ二ニ|│\n    │     │   │＼＿＿／ │\n\nNEOVIM\nWhich answer predicts the target while preserving the existing complete frames?",
-    "compact_prompt": "ANIMATION\nAppend a contained three-row impact.\n\n    │／￣￣＼ │\n    │|ﾆ二ニ|│\n    │＼＿＿／ │\n\nNEOVIM\nKeep hatching inside its outline.",
-    "animation_prompt": "The new impact is a complete three-row pose: top and bottom contours contain the `ﾆ二ニ` material row.\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │　／￣＼ │   │　／￣＼ │\n    │（　　　）│   │（　　　）│\n    │　＼＿／ │   │　＼＿／ │\n    │     │   │／￣￣＼ │\n    │     │   │|ﾆ二ニ|│\n    │     │   │＼＿＿／ │",
-    "animation_answer": "Append one complete impact pose with its hatching bounded by the outline.",
-    "neovim_prompt": "What scope must the authoring action have?",
-    "neovim_answer": "Add exactly three new rows for the impact; do not alter either existing three-row pose.",
+    "prompt": "ANIMATION\nThe supplied twelve-row transcription has one endpoint nominated in the second lobe. Replace only that endpoint; the first lobe and every other proportional UTF-8 cell remain unchanged.\n\nBEFORE\n│　　⌒ヽ│\n│　（　　）│\n│　　ヽ_ノ│\n│　　⌒ヽ│\n│　（　　）│\n│　　ヽ_ノ│\nAFTER\n│　　⌒ヽ│\n│　（　　）│\n│　　ヽ_ノ│\n│　　⌒ヽ│\n│[（　　）│\n│　　ヽ_ノ│\n\nNEOVIM\nWhich bounded cell edit preserves the supplied transcription?",
+    "compact_prompt": "ANIMATION\nChange one supplied endpoint in the second lobe; all other UTF-8 rows stay fixed.\n\n│　（　　）│ → │[（　　）│\nNEOVIM\nWhich local replacement is bounded?",
+    "animation_prompt": "ANIMATION\nOnly the nominated endpoint in the second lobe changes; the first lobe, lower contours, and all alignment spaces remain.",
+    "animation_answer": "Replace the one supplied endpoint in place and preserve the complete transcription around it.",
+    "neovim_prompt": "NEOVIM\nWhat scope does `5G0r[` own?",
+    "neovim_answer": "5G lands on the second lobe's middle row, 0 reaches its first cell, and r[ replaces one endpoint without claiming proportional acceptance.",
     "choices": [
-      "ANIMATION: Three new rows form a contained hatched impact. | NEOVIM: append three rows only, preserving both existing poses.",
-      "ANIMATION: Add hatching to the existing arch row. | NEOVIM: substitute inside the six existing rows.",
-      "ANIMATION: Replace the lobe with the impact. | NEOVIM: delete the first three rows before typing.",
-      "ANIMATION: Add an unbounded hatching row. | NEOVIM: append only `|ﾆ二ニ|` and leave the outline absent."
+      "ANIMATION: One endpoint changes in the second supplied lobe. | NEOVIM: land on that endpoint and replace one cell in place.",
+      "ANIMATION: The first lobe changes too. | NEOVIM: a six-row substitute is broader than the target.",
+      "ANIMATION: Delete the first lobe. | NEOVIM: `3dd` removes supplied source rows.",
+      "ANIMATION: Add a new hatching row. | NEOVIM: insertion changes frame height and spacing."
     ],
     "compact_choices": [
-      "A: contained three-row impact · V: append three rows",
-      "A: hatch arch row · V: substitute six rows",
-      "A: replace lobe · V: delete first three",
-      "A: lone hatch row · V: omit outline"
+      "A: one endpoint · V: local replacement",
+      "A: both lobes · V: six-row substitute",
+      "A: delete first lobe · V: 3dd",
+      "A: new hatch row · V: insertion"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: the target adds one complete three-row impact and leaves earlier poses intact.",
-      "The impact is a new frame, not a material change to the arch.",
-      "Deleting the lobe destroys the expansion arc.",
-      "Without its contour, the hatching is not a readable impact pose."
+      "Correct: 5G0r[ changes the nominated second-lobe endpoint and leaves every supplied row intact.",
+      "Only the second-lobe endpoint is acting; the first lobe remains fixed.",
+      "The source transcription must remain, so deleting three rows is too broad.",
+      "Insertion changes row count and width; this wall is one in-place replacement."
     ]
   },
   "M10.05.P01": {
-    "prompt": "ANIMATION\nThe strip contains a copied identical impact hold after the first impact.\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │　／￣＼ │   │　／￣＼ │\n    │（　　　）│   │（　　　）│\n    │　＼＿／ │   │　＼＿／ │\n    │／￣￣＼ │   │／￣￣＼ │\n    │|ﾆ二ニ|│   │|ﾆ二ニ|│\n    │＼＿＿／ │   │＼＿＿／ │\n    │     │   │／￣￣＼ │\n    │     │   │|ﾆ二ニ|│\n    │     │   │＼＿＿／ │\n\nNEOVIM\nHow should counted yank/put and addressed copy be compared?",
-    "compact_prompt": "ANIMATION\nDuplicate the complete impact hold.\n\n    │／￣￣＼ │   │／￣￣＼ │\n    │|ﾆ二ニ|│   │|ﾆ二ニ|│\n    │＼＿＿／ │   │＼＿＿／ │\n\nNEOVIM\nChoose one complete-block copy method.",
-    "animation_prompt": "The second impact is a deliberate three-row hold, not a partial material duplicate; its outline and hatching match the first impact.\n\n    BEFORE    AFTER\n    │　　⌒ヽ │   │　　⌒ヽ │\n    │　（　　）│   │　（　　）│\n    │　　ヽ_ノ│   │　　ヽ_ノ│\n    │　／￣＼ │   │　／￣＼ │\n    │（　　　）│   │（　　　）│\n    │　＼＿／ │   │　＼＿／ │\n    │／￣￣＼ │   │／￣￣＼ │\n    │|ﾆ二ニ|│   │|ﾆ二ニ|│\n    │＼＿＿／ │   │＼＿＿／ │\n    │     │   │／￣￣＼ │\n    │     │   │|ﾆ二ニ|│\n    │     │   │＼＿＿／ │",
+    "prompt": "ANIMATION\nThe last three rows are one complete hatched impact. Append those rows unchanged to make a deliberate timing hold; the earlier lobe candidates and arch remain intact.\n\nIMPACT (ROWS 10–12)\n│／￣￣＼│\n│|ﾆ二ニ|│\n│＼＿＿／│\n\nNEOVIM\nHow do the two accepted copy methods own the same three-row object?",
+    "compact_prompt": "ANIMATION\nDuplicate the complete impact as a hold.\n\n│／￣￣＼│\n│|ﾆ二ニ|│\n│＼＿＿／│\n\nNEOVIM\nCompare a counted yank with a named line range.",
+    "animation_prompt": "The supplied strip ends in the complete three-row impact shown below. Copy it once without changing its contour or hatching.\n\n│／￣￣＼│\n│|ﾆ二ニ|│\n│＼＿＿／│",
     "animation_answer": "Copy the complete three-row impact to create a timing hold.",
     "neovim_prompt": "What is the meaningful difference between the two accepted methods?",
-    "neovim_answer": "Counted yank/put is cursor-relative; an addressed copy states source and destination explicitly. Both must copy all three impact rows.",
+    "neovim_answer": "Counted yank/put is cursor-relative; a copy with an explicit range states source and destination explicitly. Both must copy all three impact rows.",
     "choices": [
-      "ANIMATION: Both methods create the same complete impact hold. | NEOVIM: counted `3yy`/`p` depends on cursor; an addressed range declares source and destination.",
-      "ANIMATION: Addressed copy duplicates only the hatching. | NEOVIM: counted yank/put is the only way to copy the outline.",
+      "ANIMATION: Both methods create the same complete impact hold. | NEOVIM: counted `3yy`/`p` depends on cursor; an explicit range declares source and destination.",
+      "ANIMATION: Copying with an explicit range duplicates only the hatching. | NEOVIM: counted yank/put is the only way to copy the outline.",
       "ANIMATION: Counted yank moves the original impact. | NEOVIM: `yy` removes the source before putting it.",
       "ANIMATION: Neither method can preserve the Unicode material. | NEOVIM: retype the hatching instead of copying."
     ],
     "compact_choices": [
       "A: same complete hold · V: cursor-relative vs explicit range",
-      "A: Ex copies hatch only · V: yank preserves outline",
+      "A: :copy copies hatch only · V: yank preserves outline",
       "A: yank moves source · V: `yy` deletes",
       "A: Unicode cannot copy · V: retype hatch"
     ],
     "correct_choice": 0,
     "feedback": [
       "Correct: both routes are valid when their object is the complete three-row impact.",
-      "An addressed range copies the same rows, including outline and material.",
+      "An explicit range copies the same rows, including outline and material.",
       "Yank is non-destructive; the source remains for the first impact.",
       "Copying preserves the exact Unicode material and is the point of the hold."
     ]
@@ -945,7 +945,7 @@
     ]
   },
   "M13.Q04": {
-    "prompt": "ANIMATION\nAfter the right-only pulse, three edge accents expand the flash without moving either support row.\n\n    BEFORE             AFTER\n    │..:: ..:: !.::│   │..:! !.:: ..:!│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nHow do end and WORD motions address the three landmarks?",
+    "prompt": "ANIMATION\nAfter the right-only pulse, three edge accents expand the flash without moving either support row.\n\n    BEFORE             AFTER\n    │..:: ..:: !.::│   │..:! !.:: ..:!│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nHow do end and WORD motions reach the three landmarks?",
     "compact_prompt": "ANIMATION\nRead the expanded edge pulse.\n\n    │..:! !.:: ..:!│\n    │.:::..|..:::. │\n    │_____.|._____ │\n\nNEOVIM\nUse E, counted W, and B by landmark.",
     "animation_prompt": "The accent visits the right edge, the centre/right WORD boundary, and the left edge, making a deliberate three-landmark spread rather than a drift.\n\n    BEFORE             AFTER\n    │..:: ..:: ..::│   │..:: !.:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │",
     "animation_answer": "Three bounded texture landmarks expand the pulse across distinct edges while supports remain fixed.",
@@ -1053,23 +1053,23 @@
     ]
   },
   "M13.Q08": {
-    "prompt": "ANIMATION\nWhy are the second and third rows temporal anchors?\n\n    FRAME 1            FRAME 2            FRAME 3\n    │..:: !.:: ..::│   │..:: ..:: !.::│   │..:! !.:: ..:!│\n    │.:::..|..:::. │   │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │   │_____.|._____ │\n\n    FRAME 4            FRAME 5\n    │..:* *.:: ..:*│   │!.:: ..:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nWhich line address keeps WORD edits on the acting first row?",
-    "compact_prompt": "ANIMATION\nSupports repeat while first row pulses.\n\n    │..:: !.:: ..::│   │..:: ..:: !.::│\n    │.:::..|..:::. │   │_____.|._____ │\n\nNEOVIM\nAddress the first row only.",
+    "prompt": "ANIMATION\nWhy are the second and third rows temporal anchors?\n\n    FRAME 1            FRAME 2            FRAME 3\n    │..:: !.:: ..::│   │..:: ..:: !.::│   │..:! !.:: ..:!│\n    │.:::..|..:::. │   │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │   │_____.|._____ │\n\n    FRAME 4            FRAME 5\n    │..:* *.:: ..:*│   │!.:: ..:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │\n\nNEOVIM\nWhich line selector keeps WORD edits on the acting first row?",
+    "compact_prompt": "ANIMATION\nSupports repeat while first row pulses.\n\n    │..:: !.:: ..::│   │..:: ..:: !.::│\n    │.:::..|..:::. │   │_____.|._____ │\n\nNEOVIM\nReach the first row only.",
     "animation_prompt": "The lower two rows repeat exactly in every frame, providing a stable material/ground registration while only row one carries the pulse.\n\n    FRAME 1            FRAME 2            FRAME 3\n    │..:: !.:: ..::│   │..:: ..:: !.::│   │..:! !.:: ..:!│\n    │.:::..|..:::. │   │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │   │_____.|._____ │\n\n    FRAME 4            FRAME 5\n    │..:* *.:: ..:*│   │!.:: ..:: ..::│\n    │.:::..|..:::. │   │.:::..|..:::. │\n    │_____.|._____ │   │_____.|._____ │",
     "animation_answer": "Rows two and three anchor the pulse by staying unchanged across frames.",
     "neovim_prompt": "What line scope protects those anchors?",
-    "neovim_answer": "Address row 1 for the texture substitute, or use an explicit first-row range; never run it over all three rows.",
+    "neovim_answer": "Select row 1 for the texture substitute, or use an explicit first-row range; never run it over all three rows.",
     "choices": [
       "ANIMATION: Lower rows anchor while row one pulses. | NEOVIM: restrict the substitute to row 1 or an explicit first-row range.",
       "ANIMATION: Lower rows are part of every pulse. | NEOVIM: substitute the whole three-row frame.",
       "ANIMATION: Lower rows are disposable whitespace. | NEOVIM: delete rows 2–3 before copying.",
-      "ANIMATION: The pulse belongs to row three. | NEOVIM: address only the ground row."
+      "ANIMATION: The pulse belongs to row three. | NEOVIM: select only the ground row."
     ],
     "compact_choices": [
       "A: rows 2–3 fixed · V: row-1-only substitute",
       "A: lower rows pulse · V: substitute all three",
       "A: lower rows disposable · V: delete 2–3",
-      "A: pulse row 3 · V: address ground"
+      "A: pulse row 3 · V: select ground"
     ],
     "correct_choice": 0,
     "feedback": [
@@ -1188,27 +1188,27 @@
     ]
   },
   "M13.BE.P01": {
-    "prompt": "ANIMATION\nThree landmarks on the middle row are retouched while the upper and lower rows remain identical.\n\n    BEFORE           AFTER\n    │| aa bb cc |│   │| aa bb cc |│\n    │| aa bb cc |│   │| a! +b ?c |│\n    │| aa bb cc |│   │| aa bb cc |│\n\nNEOVIM\nWhich explanation correctly separates WORD starts, ends, and one-cell replacement?",
-    "compact_prompt": "ANIMATION\nMiddle row only: three landmarks change.\n\n    │| aa bb cc |│\n    │| a! +b ?c |│\n    │| aa bb cc |│\n\nNEOVIM\nUse WORD landmarks; preserve rows 1 and 3.",
-    "animation_prompt": "Only the middle row's three named clusters change; the first and third rows remain exact copies.\n\n    BEFORE           AFTER\n    │| aa bb cc |│   │| a! +b ?c |│\n    │| aa bb cc |│   │| aa bb cc |│\n    │| aa bb cc |│   │| aa bb cc |│",
-    "animation_answer": "Three one-cell material edits occur on the middle row, with both support rows untouched.",
-    "neovim_prompt": "What is the correct bounded grammar?",
-    "neovim_answer": "Use `W`/`E`/`B` to land on each whitespace-separated landmark, then `r` the nominated cell; keep the substitute on row 1 of the selection.",
+    "prompt": "ANIMATION\nThe first and third texture clusters are retouched on the middle row; the middle cluster and both support rows remain unchanged.\n\n    BEFORE           AFTER\n    │| aa bb cc |│   │| aa bb cc |│\n    │| aa bb cc |│   │| a! bb ?c |│\n    │| aa bb cc |│   │| aa bb cc |│\n\nNEOVIM\nWhat does counted 2W add to the W/E path?",
+    "compact_prompt": "ANIMATION\nRetouch the first and third clusters only.\n\n    │| aa bb cc |│\n    │| a! bb ?c |│\n    │| aa bb cc |│\n\nNEOVIM\nUse W/E, then counted 2W.",
+    "animation_prompt": "Only the first and third named clusters change; the middle cluster and both support rows remain exact copies.\n\n    BEFORE           AFTER\n    │| aa bb cc |│   │| aa bb cc |│\n    │| aa bb cc |│   │| a! bb ?c |│\n    │| aa bb cc |│   │| aa bb cc |│",
+    "animation_answer": "Two one-cell material edits occur on the middle row, with the middle cluster and both support rows untouched.",
+    "neovim_prompt": "What does counted 2W add to the W/E path?",
+    "neovim_answer": "W/E establishes the first cluster boundary, then 2W crosses two space-separated WORD starts to reach the third cluster before r replaces its cell.",
     "choices": [
-      "ANIMATION: Middle-row landmarks change; upper and lower rows stay exact. | NEOVIM: traverse WORD starts/ends and use `r` at each target.",
+      "ANIMATION: First and third middle-row clusters change; support rows stay exact. | NEOVIM: use W/E, counted 2W, and r at the two targets.",
       "ANIMATION: All three rows receive one replacement each. | NEOVIM: use a global substitute across the block.",
       "ANIMATION: Cluster gaps close as each mark changes. | NEOVIM: use `x` at every landmark.",
       "ANIMATION: The row is rewritten from scratch. | NEOVIM: use `C` over the whole middle row."
     ],
     "compact_choices": [
-      "A: middle row only · V: WORD landmarks + `r`",
+      "A: first + third clusters · V: W/E + 2W + r",
       "A: all rows change · V: global substitute",
       "A: gaps close · V: `x` each landmark",
       "A: rewrite row · V: whole-row `C`"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: each WORD landmark names a bounded material edit on the acting row.",
+      "Correct: W/E finds the first boundary, 2W reaches the third cluster, and r changes only its nominated cell.",
       "The support rows are unchanged, so a block-wide substitute is too broad.",
       "`x` closes gaps and shifts later clusters.",
       "A whole-row change exceeds the three nominated cells."
@@ -1436,17 +1436,17 @@
     "animation_prompt": "Both methods produce the same complete face object because each carries three art rows plus the blank separator into the third variant.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|o|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │",
     "animation_answer": "The valid object is the complete four-line face paragraph, including its separator.",
     "neovim_prompt": "When is each copy method clearest?",
-    "neovim_answer": "`yap` names the paragraph structurally; an addressed four-line copy states source and destination numerically. Both preserve the same four lines.",
+    "neovim_answer": "`yap` names the paragraph structurally; a copy of an explicit four-line range states source and destination numerically. Both preserve the same four lines.",
     "choices": [
-      "ANIMATION: Both methods yield a complete face plus separator. | NEOVIM: `yap` is structural; an explicit four-line range is address-based, but both own four lines.",
-      "ANIMATION: Paragraph copy carries only the eye row. | NEOVIM: addressed copy is the only way to preserve the separator.",
-      "ANIMATION: Addressed copy moves the source paragraph away. | NEOVIM: `:t` is destructive like `:m`.",
+      "ANIMATION: Both methods yield a complete face plus separator. | NEOVIM: `yap` is structural; an explicit four-line range is number-based, but both own four lines.",
+      "ANIMATION: Paragraph copy carries only the eye row. | NEOVIM: copy with an explicit range is the only way to preserve the separator.",
+      "ANIMATION: Copying with an explicit range moves the source paragraph away. | NEOVIM: `:t` is destructive like `:m`.",
       "ANIMATION: The separator is decorative and may be omitted. | NEOVIM: copy only the three nonblank rows."
     ],
     "compact_choices": [
       "A: face + separator · V: structural `yap` vs explicit four-line range",
       "A: paragraph copies eye only · V: range alone keeps separator",
-      "A: addressed copy moves source · V: `:t` destructive",
+      "A: copy with an explicit range moves source · V: `:t` destructive",
       "A: separator decorative · V: copy three rows"
     ],
     "correct_choice": 0,
@@ -1566,12 +1566,12 @@
     ]
   },
   "M14.Q10": {
-    "prompt": "ANIMATION\nA paragraph copy includes neighbouring prose or omits the separator. What boundary is broken?\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|o|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhat should be checked before a paragraph yank or addressed copy?",
+    "prompt": "ANIMATION\nA paragraph copy includes neighbouring prose or omits the separator. What boundary is broken?\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|o|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nWhat should be checked before a paragraph yank or copy with an explicit range?",
     "compact_prompt": "ANIMATION\nFrame boundary is wrong.\n\n    │/^\\  [*+] │\n    │|o|       │\n    │\\_/       │\n    │          │\n\nNEOVIM\nCheck blank lines and cursor object.",
     "animation_prompt": "Including prose or omitting the blank line makes the copied object too large or too small, so face variants stop being independent paragraphs.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|o|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │",
     "animation_answer": "The paragraph boundary must contain exactly three art rows plus the separator and no neighbouring prose.",
     "neovim_prompt": "What preflight check prevents the boundary error?",
-    "neovim_answer": "Inspect blank lines and cursor placement; confirm `ap` or the addressed four-line range owns exactly one face object.",
+    "neovim_answer": "Inspect blank lines and cursor placement; confirm `ap` or the explicit four-line range owns exactly one face object.",
     "choices": [
       "ANIMATION: Each variant owns its three art rows and one separator only. | NEOVIM: inspect blank lines and cursor/object scope before `yap` or `:t`.",
       "ANIMATION: Neighbouring prose can travel with the face as timing metadata. | NEOVIM: copy until the next nonblank paragraph ends.",
@@ -1701,15 +1701,15 @@
     ]
   },
   "M14.05.P01": {
-    "prompt": "ANIMATION\nChoose one method to create the third complete face; both accepted methods must preserve the two existing paragraphs.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|+|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │          │   │/^\\  [*+] │\n    │          │   │|+|       │\n    │          │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nHow do paragraph copy and addressed four-line copy compare?",
-    "compact_prompt": "ANIMATION\nThird paragraph is a complete plus-eye face.\n\n    │/^\\  [*+] │\n    │|+|       │\n    │\\_/       │\n    │          │\n\nNEOVIM\nCompare structural and addressed copy.",
+    "prompt": "ANIMATION\nChoose one method to create the third complete face; both accepted methods must preserve the two existing paragraphs.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|+|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │          │   │/^\\  [*+] │\n    │          │   │|+|       │\n    │          │   │\\_/       │\n    │          │   │          │\n\nNEOVIM\nHow do paragraph copy and copy of an explicit four-line range compare?",
+    "compact_prompt": "ANIMATION\nThird paragraph is a complete plus-eye face.\n\n    │/^\\  [*+] │\n    │|+|       │\n    │\\_/       │\n    │          │\n\nNEOVIM\nCompare structural copy and explicit-range copy.",
     "animation_prompt": "The third object is a complete plus-eye face with its separator; the first two paragraphs remain unchanged.\n\n    BEFORE         AFTER\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|*|       │   │|*|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │/^\\  [*+] │   │/^\\  [*+] │\n    │|+|       │   │|+|       │\n    │\\_/       │   │\\_/       │\n    │          │   │          │\n    │          │   │/^\\  [*+] │\n    │          │   │|+|       │\n    │          │   │\\_/       │\n    │          │   │          │",
     "animation_answer": "Either accepted copy method creates one full four-line face paragraph as the third variant.",
     "neovim_prompt": "What is the method and risk comparison?",
-    "neovim_answer": "`yap` follows paragraph boundaries; an addressed four-line copy states the same object explicitly. Both are safe only when the separator is included and the destination is correct.",
+    "neovim_answer": "`yap` follows paragraph boundaries; a copy of an explicit four-line range states the same object explicitly. Both are safe only when the separator is included and the destination is correct.",
     "choices": [
       "ANIMATION: Third face is complete and prior faces remain registered. | NEOVIM: structural paragraph copy and explicit four-line copy are equivalent when both include the separator and correct destination.",
-      "ANIMATION: Paragraph copy may omit the separator safely. | NEOVIM: addressed copy is always safer regardless of destination.",
+      "ANIMATION: Paragraph copy may omit the separator safely. | NEOVIM: copy with an explicit range is always safer regardless of destination.",
       "ANIMATION: The third face can be only its eye row. | NEOVIM: either method may copy one visible row.",
       "ANIMATION: Copying should replace the first face. | NEOVIM: use a move command for the structural method."
     ],
@@ -1868,7 +1868,7 @@
     "animation_prompt": "The top dither band becomes lighter while brick geometry and the angled shadow remain unchanged, so the silhouette is preserved.\n\n    BEFORE          AFTER\n    │..::..::.. │   │.......... │\n    │[]__[]__[] │   │[]__[]__[] │\n    │\\________/ │   │\\________/ │",
     "animation_answer": "A material-only substitution changes dither density while preserving brick and shadow geometry.",
     "neovim_prompt": "What range keeps that material edit bounded?",
-    "neovim_answer": "Address the copied dither row only and substitute its colons with dots; do not run the pattern over the brick or shadow rows.",
+    "neovim_answer": "Reach the copied dither row only and substitute its colons with dots; do not run the pattern over the brick or shadow rows.",
     "choices": [
       "ANIMATION: Dither lightens; brick and shadow silhouettes stay fixed. | NEOVIM: substitute only on the copied dither row.",
       "ANIMATION: Every row becomes dotted. | NEOVIM: substitute colons across the whole file.",
@@ -1898,19 +1898,19 @@
     "neovim_answer": "`<C-v>...$A|` follows a visible rectangle; `:4,6s/$/|/` states a line range. Either is safe only with the correct three-row scope.",
     "choices": [
       "ANIMATION: One edge is appended to each of the same three rows. | NEOVIM: blockwise `$A` and an explicit `:4,6` range are equivalent when their row scope matches.",
-      "ANIMATION: Blockwise append shifts existing cells while substitute does not. | NEOVIM: only the Ex range can preserve fixed width.",
+      "ANIMATION: Blockwise append shifts existing cells while substitute does not. | NEOVIM: only the : command range can preserve fixed width.",
       "ANIMATION: The range substitute appends an edge to every row in the file. | NEOVIM: broad range is harmless because `|` is an edge glyph.",
       "ANIMATION: The block method affects only the first selected row. | NEOVIM: `$A` cannot act on a rectangle."
     ],
     "compact_choices": [
       "A: same three row ends · V: block scope = `:4,6` scope",
-      "A: block shifts, Ex fixed · V: Ex only safe",
+      "A: block shifts, :s fixed · V: :s only safe",
       "A: every file row · V: broad range harmless",
       "A: first row only · V: `$A` not rectangle-capable"
     ],
     "correct_choice": 0,
     "feedback": [
-      "Correct: method choice changes addressing, not the required three-row end scope.",
+      "Correct: method choice changes line selection, not the required three-row end scope.",
       "Both methods append without shifting the existing row text when scoped correctly.",
       "A broad range can append edges to unrelated frames, regardless of glyph meaning.",
       "Blockwise append acts across the selected rows, not just the first one."
@@ -1976,9 +1976,9 @@
     "animation_prompt": "The top dither band changes material, while the angled base remains a dark depth anchor; lightening both would flatten the ground.\n\n    FRAME 1           FRAME 2           FRAME 3\n    │..::..::..   │   │..........|  │   │..........   │\n    │ []__[]__[]  │   │  []__[]__[]|│   │ []__[]__[]  │\n    │\\________/   │   │\\________/|  │   │\\________/   │",
     "animation_answer": "Keep lightening on the top dither row; preserve the angled base as depth material.",
     "neovim_prompt": "What selection or range expresses this row ownership?",
-    "neovim_answer": "Select or address only the dither row for the substitution; leave brick and shadow rows outside the scope.",
+    "neovim_answer": "Select or select only the dither row for the substitution; leave brick and shadow rows outside the scope.",
     "choices": [
-      "ANIMATION: Dither lightens while angled base remains a depth anchor. | NEOVIM: address only the dither row.",
+      "ANIMATION: Dither lightens while angled base remains a depth anchor. | NEOVIM: select only the dither row.",
       "ANIMATION: All three rows should use the lighter material. | NEOVIM: substitute the complete frame.",
       "ANIMATION: The base is a duplicate dither band. | NEOVIM: include the shadow row in the macro.",
       "ANIMATION: Lightening the base improves alignment. | NEOVIM: delete the base before substituting."
@@ -2211,6 +2211,34 @@
       "Correct: the option defines the animation-cell unit before applying one bounded tread-row pan.",
       "shiftwidth controls indentation size; it does not search for or replace material glyphs.",
       "Indentation adds a prefix to the row and leaves all internal tread spacing unchanged."
+    ]
+  },
+  "M15.MACR.P01": {
+    "source_ref": "Authored three-row material study; Neovim help recording",
+    "prompt": "ANIMATION\nOne colon landmark becomes a dot while the two later landmarks and both support rows stay fixed.\n\n    BEFORE       AFTER\n    │| : : : |│   │| . : : |│\n    │|_______|│   │|_______|│\n    │| shadow |│   │| shadow |│\n\nNEOVIM\nWhat does recording register q preserve?",
+    "compact_prompt": "ANIMATION\nRecord one landmark edit; leave two for later replay.\n\n    │| : : : |│ → │| . : : |│\n    │|_______|│    │|_______|│\n    │| shadow |│    │| shadow |│\n\nNEOVIM\nWhat does q record?",
+    "animation_prompt": "ANIMATION\nOnly the first material landmark changes; later colons and support rows remain fixed.\n    │| : : : |│ → │| . : : |│\n    │|_______|│    │|_______|│\n    │| shadow |│    │| shadow |│",
+    "animation_answer": "One bounded colon-to-dot edit is recorded; two homologous marks remain available.",
+    "neovim_prompt": "NEOVIM\nWhat does recording register q preserve?",
+    "neovim_answer": "qq starts register q, f:r. records the landmark find and replacement, and the closing q stops recording before any replay.",
+    "choices": [
+      "ANIMATION: One colon becomes a dot; later marks and supports stay fixed. | NEOVIM: qq records f:r. in register q, then q stops recording.",
+      "ANIMATION: All three colons change immediately. | NEOVIM: qq runs the macro three times while recording.",
+      "ANIMATION: The support row is rewritten. | NEOVIM: q deletes the entire buffer into a register.",
+      "ANIMATION: The row gains extra cells. | NEOVIM: recording inserts typed text instead of commands."
+    ],
+    "compact_choices": [
+      "A: one landmark · V: qq + f:r. + q",
+      "A: all colons now · V: qq replays while recording",
+      "A: support rewritten · V: q deletes buffer",
+      "A: row grows · V: recording inserts text"
+    ],
+    "correct_choice": 0,
+    "feedback": [
+      "Correct: recording stores the bounded find-and-replace path for later @q replay.",
+      "Recording captures the path but does not replay it until recording stops.",
+      "The support row remains unchanged and no buffer deletion occurs.",
+      "A macro records commands and motion; it does not insert an extra row."
     ]
   },
   "M15.MAC.P01": {

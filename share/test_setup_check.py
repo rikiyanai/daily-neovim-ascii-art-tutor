@@ -62,6 +62,7 @@ def test_installer() -> None:
         assert "[missing] Hardtime" in second.stdout
         assert (home / ".local/bin/vim-daily-gate").resolve() == ROOT / "bin/vim-daily-gate"
         assert (home / ".local/bin/vim-daily-setup-check").resolve() == CHECKER
+        assert (home / ".local/bin/vim-daily-sjis").resolve() == ROOT / "bin/vim-daily-sjis"
         assert (data_home / "vim-daily").resolve() == ROOT / "share"
         assert not (config_home / "nvim").exists(), "installer created a Neovim config"
 

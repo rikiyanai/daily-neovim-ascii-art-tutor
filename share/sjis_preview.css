@@ -1,0 +1,24 @@
+:root {
+  color-scheme: dark;
+  background: #111318;
+  color: #e8eaf0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+body { margin: 0; }
+main { max-width: 1500px; margin: 0 auto; padding: 24px; }
+h1, h2 { letter-spacing: .04em; }
+h1 { font-size: 1.4rem; }
+h2 { font-size: .9rem; margin: 0 0 8px; }
+#status { color: #a7b0c6; }
+.panels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.panel, .difference, .receipt { border: 1px solid #3b4252; background: #1a1e27; padding: 12px; }
+.raw { min-height: 5em; max-height: 18em; overflow: auto; white-space: pre; tab-size: 4; background: #0c0e12; padding: 10px; color: #f0f2f5; }
+.native-font-ready .raw { font-family: SaitamaarTutor; font-size: 16px; line-height: 17px; font-kerning: none; font-variant-ligatures: none; }
+.panel, .difference { overflow: auto; }
+.raster, #difference-image { display: block; max-width: none; image-rendering: auto; background: #000; margin-top: 10px; }
+.receipt { margin: 12px 0 16px; white-space: pre-wrap; color: #cbd4e8; }
+.receipt .fail { color: #ff8080; }
+.receipt .pass { color: #8fe0a5; }
+.difference { margin-top: 16px; }
+@media (max-width: 900px) { .panels { grid-template-columns: 1fr; } }

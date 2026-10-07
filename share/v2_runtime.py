@@ -8,13 +8,17 @@ module and passes its editor/keylog helpers in through RuntimeConfig.
 from __future__ import annotations
 
 import datetime as dt
+import contextlib
 import fcntl
 import hashlib
+import io
 import json
 import os
 import random
+import secrets
 import re
 import shutil
+import socket
 import subprocess
 import tempfile
 import textwrap
@@ -44,12 +48,304 @@ class RuntimeConfig:
     question_rendered: object | None = None
     question_answer: object | None = None
     practice: bool = False
+    native_preview_factory: object | None = None
+    curriculum_revision: str | None = None
+    curriculum_contract_sha256: str | None = None
 
 
 # The launcher reads this after a held result so `r` can repeat the exact
 # lesson route rather than accidentally selecting the next card.
 LAST_RUN_CARD_ID = None
 LAST_RUN_KIND = None
+LAST_FEEDBACK_CONTEXT = None
+LAST_FEEDBACK_DETAILS = []
+
+_UI_STYLE = None
+_DASHBOARD_THEME = None
+_LESSON_TUI = None
+_RETRO_MODULE_REWARDS = None
+_METHOD_POLICY = None
+
+# A Textual result screen returns its held action to the launcher.  The
+# existing launcher still owns repeat/next state, so this is a small bridge,
+# not a second grading or progress authority.
+TEXTUAL_ROUTE = None
+
+
+def _sibling_module(name):
+    """The installed gate need not put share/ on sys.path."""
+    import importlib.util
+    import sys
+    spec = importlib.util.spec_from_file_location("vim_daily_" + name,
+                                                  Path(__file__).with_name(name + ".py"))
+    module = importlib.util.module_from_spec(spec)
+    # Dataclasses and other reflection resolve annotations through the import
+    # registry, including modules loaded from the installed sibling directory.
+    sys.modules[spec.name] = module
+    try:
+        spec.loader.exec_module(module)
+    except Exception:
+        sys.modules.pop(spec.name, None)
+        raise
+    return module
+
+
+def _ui_style():
+    global _UI_STYLE
+    if _UI_STYLE is None:
+        _UI_STYLE = _sibling_module("ui_style")
+    return _UI_STYLE
+
+
+def _dashboard_theme():
+    global _DASHBOARD_THEME
+    if _DASHBOARD_THEME is None:
+        _DASHBOARD_THEME = _sibling_module("dashboard_theme")
+    return _DASHBOARD_THEME
+
+
+def _lesson_tui():
+    """Load the optional lesson/result surface beside this runtime."""
+    global _LESSON_TUI
+    if _LESSON_TUI is None:
+        _LESSON_TUI = _sibling_module("lesson_tui")
+    return _LESSON_TUI
+
+
+def _retro_module_rewards():
+    """Load the read-only C34 reward selector beside this runtime."""
+    global _RETRO_MODULE_REWARDS
+    if _RETRO_MODULE_REWARDS is None:
+        _RETRO_MODULE_REWARDS = _sibling_module("retro_module_rewards")
+    return _RETRO_MODULE_REWARDS
+
+
+def _textual_enabled():
+    try:
+        return bool(_lesson_tui().enabled())
+    except (ImportError, OSError, SyntaxError):
+        return False
+
+
+class _TtyCapture(io.StringIO):
+    """Capture a fully expanded result page while retaining TTY colour paths."""
+
+    def isatty(self):
+        return True
+
+
+def _capture_tty(function, *args, **kwargs):
+    """Capture output for Textual without invoking compact/ellipsis paths."""
+    output = _TtyCapture()
+    old_size = shutil.get_terminal_size
+    # The Textual body is scrollable.  Give the existing prose renderer enough
+    # rows to emit every sentence, while preserving its real terminal-width
+    # wrapping and ANSI role markup for Rich/Textual to consume.
+    shutil.get_terminal_size = lambda *_a, **_k: os.terminal_size((120, 1000))
+    try:
+        with contextlib.redirect_stdout(output):
+            function(*args, **kwargs)
+    finally:
+        shutil.get_terminal_size = old_size
+    # Page bodies are rendered inside Textual; a legacy clear-screen control
+    # would otherwise become literal content or repaint the host surface.
+    return output.getvalue().replace("\033[2J\033[H", "")
+
+
+def _show_lesson_screen(cfg, card, lesson):
+    """Paint the lesson brief, then return whether the editor may open."""
+    global TEXTUAL_ROUTE
+    if not _textual_enabled():
+        return True
+    try:
+        body = Path(lesson).read_text(encoding="utf-8")
+        route = _lesson_tui().show(
+            _lesson_tui().lesson_pages(body, card=card), result=False)
+    except (OSError, ImportError, SyntaxError):
+        return True
+    # Enter is the only action that proceeds to the actual Neovim editor.
+    # Closing a lesson screen is a learner cancellation, never a credit path.
+    if route != "edit":
+        TEXTUAL_ROUTE = "close"
+    return route == "edit"
+
+
+def _show_concept_screen(cfg, cur, progress, card, context):
+    """Paint a concept lesson before its authored question."""
+    global TEXTUAL_ROUTE
+    if not _textual_enabled():
+        return True
+    lines = ["%s — %s" % (card["id"], card["title"]),
+             _progress_line(cfg, progress, card),
+             "WHY: %s" % context["why"][1],
+             "BUYS: %s" % context["buys"],
+             "SOURCE: %s" % context["source"]]
+    if card.get("teaching_lines"):
+        lines += ["", "TEACH FIRST"]
+        lines += ["  " + str(line) for line in card["teaching_lines"]]
+    lines += ["", "DO THIS: %s" % card["prompt"],
+              "CHECK YOUR UNDERSTANDING: both the animation reading and Neovim decision must be correct."]
+    try:
+        route = _lesson_tui().show(
+            _lesson_tui().lesson_pages("\n".join(lines), card=card), result=False)
+    except (ImportError, OSError, SyntaxError):
+        return True
+    if route != "edit":
+        TEXTUAL_ROUTE = "close"
+    return route == "edit"
+
+
+def _module_reward_view(motion, *, module_id=None, status=None):
+    """Build a production viewer View from canonical complete-frame motion."""
+    V = _viewer_module()
+    frames = [list(frame) for frame in motion.get("frames", ())]
+    if len(frames) < 8:
+        raise ValueError("module reward playback requires at least eight frames")
+    title = motion.get("title", "complete module animation")
+    if module_id:
+        label = ("prior study · preview only" if status == "prior_study"
+                 else "mastered endcap" if status == "mastered" else "complete reward")
+        title = "RETROSPECTIVE MODULE REWARD · %s · %s · %d frames · not learner output" % (
+            module_id, label, len(frames))
+    labels = ["pose %02d" % (index + 1) for index in range(len(frames))]
+    holds = {index: "hold" for index in range(1, len(frames))
+             if frames[index] == frames[index - 1]}
+    return V.View(title, frames, labels=labels, holds=holds, kind="module_reward")
+
+
+def _show_result_screen(cfg, cur, card, progress, replay, completed):
+    """Show feedback + progress tabs and route controls to existing owners."""
+    global TEXTUAL_ROUTE
+    selected_motion = (_retro_module_rewards().completion_reward(cur, card)
+                       if completed else None)
+    # Preserve the existing failure surface for an explicitly supplied but
+    # malformed native reward: its transport error is visible and never
+    # changes grading, rather than being silently skipped by the selector.
+    if (completed and selected_motion is None
+            and isinstance(card.get("module_reward"), dict)
+            and card.get("module_reward")):
+        selected_motion = card["module_reward"]
+    result_card = card
+    if selected_motion and not card.get("module_reward"):
+        result_card = dict(card, module_reward=selected_motion)
+    if completed and result_card.get("medium") == "proportional-sjis" and result_card.get("module_reward"):
+        # Native-font motion is a result reward, not a terminal-cell alignment
+        # fallback or a second grading authority. Failure never revokes credit.
+        try:
+            transport = _native_module("sjis_terminal")
+            with transport.temporary_tmux_passthrough():
+                receipt = _native_module("module_native_playback").play(result_card["module_reward"])
+            if replay and replay.get("keylog"):
+                # Bind reward playback to this actual attempt without adding
+                # learner credit or changing the already-recorded verdict.
+                reward_path = Path(replay["keylog"]).with_suffix(".reward.json")
+                record = dict(receipt, schema="vim-daily/native-result-reward@1",
+                              card_id=card["id"], curriculum_revision=cur["revision"],
+                              keylog_sha256=_hash_file(Path(replay["keylog"])))
+                _write_lines_atomic(reward_path, [json.dumps(record, sort_keys=True)])
+        except Exception as exc:
+            print("Native module reward unavailable: %s. Your grade is unchanged." % exc)
+    if not _textual_enabled():
+        # The stdlib result surface still uses the real production viewer for
+        # fixed-grid module rewards.  This keeps the complete sequence visible
+        # when Textual is deliberately disabled in a headed gate run.
+        if completed and result_card.get("medium") != "proportional-sjis" and selected_motion:
+            viewer = _viewer_module()
+            if viewer.enabled():
+                viewer.play([_module_reward_view(selected_motion,
+                                                 module_id=card.get("module_id"),
+                                                 status=("mastered"
+                                                         if card.get("kind") in ("module_check", "module_reward")
+                                                         else None))])
+        return False
+    TEXTUAL_ROUTE = None
+    feedback = _capture_tty(_post_feedback, cfg, cur, card, replay,
+                            completed=completed)
+    progress_body = _capture_tty(_post_progress, cfg, cur, card, progress,
+                                 completed=completed)
+    # C32: an eligible completed lesson reaches moving art on Feedback itself.
+    # The source poses are credited rewards, never presented as learner output.
+    ui = _lesson_tui()
+    reward = ui.result_reward_spec(result_card) if completed else None
+    pages = ui.result_pages(feedback, progress_body, reward=reward)
+
+    def mounted():
+        # The headed tests use this callback as the actual painted-screen
+        # boundary; it runs after Textual has mounted and refreshed the tabs.
+        callback = getattr(cfg, "feedback_rendered", None)
+        if callback:
+            callback()
+
+    while True:
+        try:
+            route = _lesson_tui().show(pages, result=True, mounted=mounted)
+        except (ImportError, OSError, SyntaxError):
+            return False
+        if route in ("feedback", "f"):
+            collect_feedback(input, screen="result")
+            continue
+        if route in ("dashboard", "d"):
+            open_dashboard(cfg, cur, progress)
+            continue
+        if route in ("watch", "v", "w"):
+            replay_last_view()
+            continue
+        # ``hold_open`` consumes this value and keeps the established launcher
+        # state machine responsible for repeat/next and practice credit.
+        TEXTUAL_ROUTE = route or "close"
+        return True
+
+
+def _paint(text, role):
+    style = _ui_style()
+    enabled = __import__("sys").stdout.isatty() and style.colour_enabled()
+    return style.ansi(role, enabled=enabled) + str(text) + (style.RESET if enabled else "")
+
+
+def _wrap_prose(text, width=None, indent="", subsequent=None):
+    width = width or max(40, shutil.get_terminal_size((80, 24)).columns - 4)
+    return textwrap.wrap(str(text), width=width, initial_indent=indent,
+                         subsequent_indent=subsequent if subsequent is not None else indent + "  ",
+                         break_long_words=False, break_on_hyphens=False) or [indent]
+
+
+def _command_spans(text):
+    """Commands actually shown in feedback, not guesses about prose words."""
+    pattern = r"`([^`]+)`|(:[0-9%,$]*s[^\w\s][^\s`]+)"
+    return [(m.start(1) if m.group(1) is not None else m.start(2),
+             m.end(1) if m.group(1) is not None else m.end(2))
+            for m in re.finditer(pattern, text)]
+
+
+def _partial_key_colours(text, correct):
+    """Only differing key spans are red; matching parts remain green."""
+    import difflib
+    mine, theirs = _command_spans(text), _command_spans(correct)
+    out, cursor = [], 0
+    for index, (start, end) in enumerate(mine):
+        out.append(text[cursor:start])
+        expected = correct[slice(*theirs[min(index, len(theirs) - 1)])] if theirs else ""
+        keys = text[start:end]
+        for tag, a, b, _c, _d in difflib.SequenceMatcher(None, keys, expected,
+                                                        autojunk=False).get_opcodes():
+            # Keep matching spans visible and green.  The previous renderer
+            # only appended non-equal spans, so a correct command disappeared
+            # from the correction comparison and a partial answer could not
+            # be read as "right here, wrong there".
+            if tag == "equal":
+                out.append(_paint(keys[a:b], "ok"))
+            elif a != b:
+                out.append(_paint(keys[a:b], "fail"))
+        cursor = end
+    out.append(text[cursor:])
+    return "".join(out)
+
+
+def _concept_shape():
+    slots = ((":", "meta"), ("{where}", "warn"), ("s", "ok"), ("/", "meta"),
+             ("{find}", "key"), ("/", "meta"), ("{replace}", "ok"),
+             ("/", "meta"), ("{flags}", "flags"))
+    return "".join(_paint(text, role) for text, role in slots)
 
 
 # VD-43: the learner can send a message about what is wrong from any
@@ -120,7 +416,7 @@ def collect_feedback(input_fn=input, screen=None):
     with open(path, "a", encoding="utf-8") as handle:
         fcntl.flock(handle, fcntl.LOCK_EX)
         handle.write(json.dumps(row, ensure_ascii=False) + "\n")
-    print("  ✓ feedback saved — thank you (%s)" % path)
+    print("  %s feedback saved — thank you (%s)" % (_paint("✓", "ok"), path))
     return True
 
 
@@ -500,10 +796,45 @@ def read_events(cfg):
     return rows
 
 
+def _bind_curriculum(cfg, cur):
+    """Pin the in-memory contract used for this attempt, not the live symlink."""
+    cfg.curriculum_revision = cur["revision"]
+    cfg.curriculum_contract_sha256 = hashlib.sha256(
+        json.dumps(cur, sort_keys=True, ensure_ascii=False,
+                   separators=(",", ":")).encode("utf-8")).hexdigest()
+
+
+def _native_handoff_ack(cur):
+    """Acknowledge child lock plus curriculum load to the native selector."""
+    socket_path = os.environ.get("VIM_DAILY_NATIVE_ACK_SOCKET")
+    nonce = os.environ.get("VIM_DAILY_NATIVE_ACK_NONCE")
+    if not (os.environ.get("VIM_DAILY_NATIVE_WINDOW") and socket_path and nonce):
+        return
+    # A continuation in this same child must not send a second acknowledgement
+    # to the selector after its bounded listener has closed.
+    os.environ.pop("VIM_DAILY_NATIVE_ACK_SOCKET", None)
+    os.environ.pop("VIM_DAILY_NATIVE_ACK_NONCE", None)
+    payload = json.dumps({"nonce": nonce, "phase": "curriculum-loaded",
+                          "pid": os.getpid(), "revision": cur.get("revision")},
+                         separators=(",", ":"))
+    try:
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as client:
+            client.settimeout(2.0)
+            client.connect(socket_path)
+            client.sendall((payload + "\n").encode("utf-8"))
+    except (OSError, ValueError) as exc:
+        # Stop before artifact creation or grading when the parent cannot
+        # receive this child. The selector owns timeout/window cleanup.
+        raise RuntimeError("Native tutor session acknowledgement failed; no lesson was attempted.") from exc
+
+
 def append_event(cfg, event):
     paths = _paths(cfg)
     paths["events"].parent.mkdir(parents=True, exist_ok=True)
     row = dict(event)
+    if getattr(cfg, "curriculum_revision", None):
+        row.setdefault("curriculum_revision", cfg.curriculum_revision)
+        row.setdefault("curriculum_contract_sha256", cfg.curriculum_contract_sha256)
     row.setdefault("event_id", "%s-%08x" % (
         dt.datetime.now().astimezone().strftime("%Y%m%dT%H%M%S%f%z"), random.getrandbits(32)))
     row.setdefault("at", dt.datetime.now().astimezone().isoformat())
@@ -772,35 +1103,82 @@ def _question_map(cur):
     return {q["id"]: q for q in cur["questions"]}
 
 
-def _compact_question_text(value, width=64):
-    """Wrap compact prompts deliberately instead of letting the terminal do it."""
+def _align_question_art(value):
+    """Align display-only box borders without changing authored question text."""
+    lines = str(value).splitlines()
+    if not any("│" in line for line in lines):
+        return str(value)
+    parts_by_line = [line.split("│") if "│" in line else None for line in lines]
+    widths = {}
+    for parts in parts_by_line:
+        if not parts:
+            continue
+        for index in range(1, len(parts) - 1, 2):
+            widths[index] = max(widths.get(index, 0), _cell_width(parts[index]))
+        # Authored gaps sometimes compensate for a shorter BEFORE row.
+        # Once that row is padded, retaining the old compensation offsets
+        # the AFTER border. Each gap is a separate layout column.
+        for index in range(2, len(parts) - 1, 2):
+            widths[index] = max(widths.get(index, 0), _cell_width(parts[index]))
+    aligned = []
+    for line, parts in zip(lines, parts_by_line):
+        if not parts:
+            aligned.append(line)
+            continue
+        for index in range(1, len(parts) - 1, 2):
+            target = widths.get(index, _cell_width(parts[index]))
+            parts[index] += " " * max(0, target - _cell_width(parts[index]))
+        for index in range(2, len(parts) - 1, 2):
+            target = widths[index]
+            gap = parts[index].strip()
+            room = max(0, target - _cell_width(gap))
+            parts[index] = " " * (room // 2) + gap + " " * (room - room // 2)
+        aligned.append("│".join(parts))
+    return "\n".join(aligned)
+
+
+def _question_display_text(value, width=None):
+    """Render prose and preserve multiline art rows in a display copy."""
     paragraphs = []
     for paragraph in str(value).split("\n\n"):
-        # ASCII evidence is layout, not prose. Joining these rows destroys the
-        # before/after comparison precisely on the small popup that needs the
-        # compact prompt.
         if "│" in paragraph:
-            paragraphs.append(paragraph.rstrip())
+            rows = []
+            for row in _align_question_art(paragraph.rstrip()).splitlines():
+                if "│" in row or not width:
+                    rows.append(row)
+                else:
+                    rows.extend(_wrap_prose(row, width))
+            paragraphs.append("\n".join(rows))
             continue
         line = " ".join(part.strip() for part in paragraph.splitlines() if part.strip())
-        if line:
-            paragraphs.append(textwrap.fill(line, width=width))
-    return "\n".join(paragraphs)
+        if not line:
+            continue
+        paragraphs.append("\n".join(_wrap_prose(line, width)) if width else line)
+    return "\n\n".join(paragraphs)
+
+
+def _compact_question_text(value, width=64):
+    """Wrap compact prompts deliberately instead of letting the terminal do it."""
+    # ASCII evidence is layout, not prose. Keep its row breaks and pad only a
+    # display copy so right borders line up even when an authored row is short.
+    rendered = _question_display_text(value, width=width)
+    return rendered.replace("\n\n", "\n")
 
 
 def _compact_choice_text(value, width=62):
     """Keep both halves readable as two labeled compact rows."""
+    if "│" in str(value) or "\n" in str(value):
+        return _align_question_art(str(value))
     value = " ".join(str(value).split())
     for marker in (" · V: ", " | NEOVIM: "):
         if marker in value:
             animation, neovim = value.split(marker, 1)
             animation = animation.removeprefix("ANIMATION: ").removeprefix("A: ")
             neovim = neovim.removeprefix("NEOVIM: ").removeprefix("V: ")
-            return "ANIM: %s\n     VIM: %s" % (
-                textwrap.shorten(animation, width=width - 6, placeholder="…"),
-                textwrap.shorten(neovim, width=width - 5, placeholder="…"),
-            )
-    return textwrap.shorten(value, width=width, placeholder="…")
+            return "\n".join(
+                _wrap_prose(animation, width, indent="ANIM: ", subsequent="      ")
+                + _wrap_prose(neovim, width, indent="VIM:  ", subsequent="      "))
+    return "\n".join(_wrap_prose(value, width))
 
 
 def _copy_text_to_clipboard(value):
@@ -830,15 +1208,24 @@ def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=Non
         random.shuffle(order)
     compact = (__import__("sys").stdout.isatty()
                and shutil.get_terminal_size((80, 24)).lines < 38)
+    if __import__("sys").stdout.isatty() and q.get("evidence", {}).get("full"):
+        # Eight complete side-by-side frame plates cannot fit even the large
+        # popup. Show named changed-row samples here; the complete sequence
+        # remains in its lesson/animation tab and the clipboard question.
+        compact = True
     if __import__("sys").stdout.isatty():
         # Neovim has just exited on paired after-questions. Without a fresh
         # page its final grid remains behind the short question text and makes
         # choices appear interleaved with unrelated terminal content.
         print("\033[2J\033[H", end="")
     prompt = q.get("compact_prompt", q["prompt"]) if compact else q["prompt"]
-    displayed_choices = q["choices"]
+    # Compact choices are separately authored, not truncated full sentences.
+    # They retain both domains while leaving the question stem on screen.
+    displayed_choices = q.get("compact_choices", q["choices"]) if compact else q["choices"]
     if compact:
         prompt = _compact_question_text(prompt)
+    else:
+        prompt = _align_question_art(prompt)
     if __import__("sys").stdout.isatty():
         columns = shutil.get_terminal_size((80, 24)).columns
         displayed_choices = [
@@ -855,8 +1242,10 @@ def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=Non
     for shown, original in enumerate(order):
         print("  %s) %s" % (letters[shown], displayed_choices[original]))
     clipboard_page = "%s\n%s" % (
-        prompt,
-        "\n".join("%s) %s" % (letters[shown], displayed_choices[original])
+        q["prompt"] if q.get("evidence", {}).get("full") else prompt,
+        "\n".join("%s) %s" % (letters[shown],
+                  q["choices"][original] if q.get("evidence", {}).get("full")
+                  else displayed_choices[original])
                   for shown, original in enumerate(order)),
     )
     if rendered:
@@ -894,7 +1283,7 @@ def ask_question(q, *, input_fn=input, shuffle=True, rendered=None, evidence=Non
     return right, chosen
 
 
-_KEY_TOKEN = re.compile(r"<([^>]+)>")
+_KEY_TOKEN = re.compile(r"<((?:[A-Za-z]-)?[A-Za-z0-9]+)>")
 _FORBIDDEN_EX = re.compile(
     r"(?i):\s*(?:!|w(?:rite)?\b|wa\b|x\b|xit\b|q(?:uit)?\b|qa\b|e(?:dit)?\b|"
     r"source\b|so\b|runtime\b|packadd\b|lua\b|python\w*\b|perl\b|ruby\b|"
@@ -1048,8 +1437,21 @@ def _print_choice_explanation(q, chosen, *, compact=False):
     feedback = q.get("feedback", [])
     width = max(40, shutil.get_terminal_size((80, 24)).columns - 4)
 
-    def field(label, text):
-        text = " ".join(str(text).split())
+    def field(label, text, correct_text=None, role=None):
+        raw_text = str(text)
+        # Keep authored art rows as rows.  Only prose is wrapped/flattened;
+        # borders are padded in this display copy and the canonical question
+        # payload remains untouched.
+        if "│" in raw_text or "\n" in raw_text:
+            head = "  %s  " % label
+            indent = " " * 4
+            for index, row in enumerate(_align_question_art(raw_text).splitlines()):
+                prefix = head if index == 0 else indent
+                rendered = _partial_key_colours(row, correct_text) if correct_text else (
+                    _paint(row, role) if role else row)
+                print(prefix + rendered)
+            return
+        text = " ".join(raw_text.split())
         halves = text.split(" | NEOVIM: ", 1) if " | NEOVIM: " in text else [text]
         if len(halves) == 2:
             halves = ["ANIM: " + halves[0].removeprefix("ANIMATION: "),
@@ -1060,21 +1462,25 @@ def _print_choice_explanation(q, chosen, *, compact=False):
             first = head if index == 0 else indent
             for row in textwrap.wrap(half, width=width, initial_indent=first,
                                      subsequent_indent=indent + "  ") or [first]:
-                print(row)
+                print(_partial_key_colours(row, correct_text) if correct_text else
+                      (_paint(row, role) if role else row))
 
     if not isinstance(chosen, int) or chosen < 0 or chosen >= len(choices):
         print("  YOUR ANSWER  (not recorded)")
         return
-    field("YOUR ANSWER", choices[chosen])
+    field("YOUR ANSWER", choices[chosen], correct_text=choices[correct])
     if chosen != correct:
         why_missed = (feedback[chosen] if chosen < len(feedback)
                       else "That choice does not match the shown result.")
         field("WHY IT MISSES", _concept_text(why_missed))
-        field("CORRECT ANSWER", choices[correct])
+        field("CORRECT ANSWER", choices[correct], correct_text=choices[correct])
     concept = feedback[correct] if correct < len(feedback) else ""
     concept = _concept_text(concept)
     if concept:
         field("CONCEPT", concept)
+    if any(_command_spans(text) for text in (choices[chosen], choices[correct])) and any(
+            re.search(r":[0-9%,$]*s[^\w\s]", text) for text in choices):
+        print("  CONCEPT SHAPE  " + _concept_shape())
 
 
 def _question_answer_guidance(form):
@@ -1294,8 +1700,19 @@ def _artifact_path(cfg, card):
         base = _paths(cfg)["sessions"] / "practice" / card["project_id"] / card["id"]
     else:
         base = _paths(cfg)["projects"] / card["project_id"]
+        if card.get("history_source_provenance"):
+            # C35: a new source-faithful task must not overwrite the operator's
+            # rejected old strip or its checkpoints. Start a separate study
+            # keyed to this card's exact art contract, not a migrated old file.
+            contract = {key: card.get(key) for key in
+                        ("id", "start", "target", "expected", "history_source_provenance")}
+            identity = hashlib.sha256(json.dumps(contract, sort_keys=True,
+                ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()[:20]
+            base = base / "source-history" / card["id"] / identity
     if card.get("artifact") == "transfer":
         return base / ("transfer-%s.txt" % card["id"])
+    if card.get("artifact") == "animation-study":
+        return base / ("animation-%s.txt" % card["id"])
     return base / "strip.txt"
 
 
@@ -1342,7 +1759,7 @@ def _module_for_card(cur, card):
 def _lesson_context(cur, card):
     """Return the authored teaching contract shared by briefs and debriefs."""
     module = _module_for_card(cur, card)
-    return {
+    context = {
         "module": module,
         "why": [
             "Motion intent: %s." % module["meaning"].rstrip("."),
@@ -1352,6 +1769,15 @@ def _lesson_context(cur, card):
         "buys": card["lesson_benefit"],
         "source": card.get("source_ref") or module["source_ref"],
     }
+    # A module's missile narrative does not explain a Dracula alignment step.
+    if card.get("review_source_card_id", card["id"]) == "M11.CUC":
+        context["why"] = [
+            "Motion intent: align the walking cape with the standing cape.",
+            "Authoring principle: use one screen column as a registration guide.",
+            "Failure to watch: deleting a contour glyph instead of the extra leading space.",
+        ]
+        context["buys"] = "Compare the two cape rows with a column guide, then remove only the extra space."
+    return context
 
 
 _KEYS_MODULE = None
@@ -1560,7 +1986,8 @@ def _substitute_anatomy_lines(card, wrap, heading, width=None):
     if not anatomy:
         # Memory plan §1: Normal-mode recipes get the same tree (count,
         # operator, motion ...). None when it would not fit: no clipped rows.
-        rows = K.anatomy(card.get("expected", ""), width) if width else None
+        rows = K.anatomy(card.get("expected", ""), width,
+                         shape=card.get("key_shape")) if width else None
         return [heading] + rows if rows else []
     rows, english = anatomy
     lines = [heading]
@@ -1594,7 +2021,7 @@ def _new_concept_alert(card, cur, width=None):
         # A reinforcement lesson reuses an earlier idea: remind, do not alert.
         lines = []
         if card.get("show_recipe"):
-            lines += _substitute_anatomy_lines(card, wrap, "REMEMBER · HOW TO READ IT")
+            lines += _substitute_anatomy_lines(card, wrap, "REMEMBER · HOW TO READ IT", width)
         return remember + lines + symbols
     lines = ["★ NEW CONCEPT ALERT · %d new idea%s · %s" % (
         len(new), "" if len(new) == 1 else "s",
@@ -1730,6 +2157,11 @@ def _compact_target_lines(card, width=66):
     for size in slices:
         frames.append(target[start:start + size])
         start += size
+    if card.get("kind") == "module_reward":
+        # Eight complete poses must not disappear behind horizontal clipping.
+        # Lesson scrolling exposes each separately labelled canonical plate.
+        return [line for index, frame in enumerate(frames, 1)
+                for line in ["FRAME %02d" % index, *["  │" + row for row in frame]]]
     rows = []
     # Readability audit #4: pad each frame to its own width so the frame
     # separators stay in one column and the frames read as registered.
@@ -1746,171 +2178,158 @@ def _compact_target_lines(card, width=66):
     return rows
 
 
+def _recipe_shape(card, width=66):
+    if not card.get("show_recipe", card.get("show_target", True)):
+        return None
+    keys = card.get("expected") or ""
+    if not keys:
+        return None
+    if card.get("key_shape"):
+        return "SHAPE  " + card["key_shape"]
+    K = _keys_module()
+    rows = K.anatomy(keys, width)
+    if rows:
+        for index, line in enumerate(rows):
+            if line.strip().lower().startswith("shape"):
+                return "SHAPE  " + " ".join(row.strip() for row in rows[index:]).split(":", 1)[1].strip()
+    if K.substitute_anatomy(keys):
+        return "SHAPE  :{where}s/{find}/{replace}/{flags}"
+    return None
+
+
+def _reminder_matches_recipe(reminder, expected):
+    """Drop authored generic reminders whose command is outside this recipe."""
+    reminder = str(reminder)
+    expected = str(expected or "")
+    checks = (
+        ("/pattern", "/" in expected and "<CR>" in expected),
+        ("f*", "f*" in expected),
+        ("g-/g+", "g-" in expected or "g+" in expected),
+        (":earlier", ":earlier" in expected),
+        ("R enters", "R" in expected),
+        ("current-line selector", ":s" in expected),
+    )
+    return all(marker not in reminder or present for marker, present in checks)
+
+
+def _brief_key_reminders(card):
+    """Retain only keys this step actually uses; never sibling lesson prose."""
+    expected = card.get("expected") or ""
+    if card.get("key_vocabulary"):
+        return [row for row in card["key_vocabulary"]
+                if _reminder_matches_recipe(row, expected)]
+    K = _keys_module()
+    rows = []
+    for family, meaning in K.families(expected):
+        base = family.replace('"{reg}', "")
+        reminder = K.FAMILY_TEACH.get(base) or K.FAMILY_TEACH.get(
+            base.replace("[count]", "")) or meaning
+        if reminder not in rows and _reminder_matches_recipe(reminder, expected):
+            rows.append(reminder)
+    return rows
+
+
+def _scoped_hint(card):
+    """Keep hidden-card guidance about this operation, not a generic sibling."""
+    hint = str(card.get("hint") or "").strip()
+    expected = card.get("expected") or ""
+    if not hint:
+        return "; then ".join(why for _keys, why in card.get("recipe", []))
+    if "Vim toolbox" in hint:
+        clauses = re.split(r"(?<=[.!?])\s+", hint)
+        kept = [clause for clause in clauses if _reminder_matches_recipe(clause, expected)]
+        hint = " ".join(kept).strip()
+    if "/pattern" in hint and "/" not in expected:
+        hint = hint.replace("/pattern<CR> searches; ", "")
+    if "f*" in hint and "f*" not in expected:
+        hint = hint.replace("f*", "the visible landmark")
+    return hint or "Follow the scoped operation described in DO THIS."
+
+
 def _write_session_lesson(cfg, cur, progress, card):
+    """Today's task first; repeated reference material in a closed MORE fold."""
     note_feedback_context(revision=cur.get("revision"), card_id=card.get("id"),
                           card_title=card.get("title"), module_id=card.get("module_id"),
                           question_id=None, answer=None, answer_correct=None,
                           lesson_result=None, screen="lesson")
-    """Build the brief rendered above an art-only project strip by Neovim."""
     lesson = _paths(cfg)["sessions"] / card["project_id"] / (card["id"] + ".txt")
     context = _lesson_context(cur, card)
-    compact_brief = (__import__("sys").stdout.isatty()
-                     and shutil.get_terminal_size((80, 24)).lines < 38)
+    compact = (__import__("sys").stdout.isatty()
+               and shutil.get_terminal_size((80, 24)).lines < 38)
+    width = 66 if compact else 78
     show_target = card.get("show_target", True)
-    show_recipe = card.get("show_recipe", card.get("show_target", False))
-    recipe = " → ".join(keys for keys, _why in card.get("recipe", []))
-    hint = card.get("hint") or "; then ".join(
-        why for _keys, why in card.get("recipe", []))
+    show_recipe = card.get("show_recipe", show_target)
+    hint = _scoped_hint(card)
     if "choose the smallest normal-mode operation" in hint:
-        # VD-13: a generic hint teaches nothing; point at the per-key teaching.
         hint = "use the commands explained under HOW THE KEYS YOU NEED WORK"
-    legacy_keys, legacy_sources, legacy_concepts = _legacy_teaching(card)
-    key_vocabulary = list(card.get("key_vocabulary", []))
-    for line in legacy_keys:
-        if line not in key_vocabulary:
-            key_vocabulary.append(line)
-    if compact_brief:
-        header = [
-            "NEOVIM × ASCII ANIMATION · %s" % card["id"],
-            # VD-13: own line, so XP/today survive the 68-cell clip.
-            _clip(_progress_line(cfg, progress, card), 68),
-        ]
-        # Readability audit #2: the task sentence was clipped at 54 cells and
-        # lost its actual instruction. Wrap it to at most three rows instead.
-        do_rows = textwrap.wrap(card["prompt"], width=58) or [""]
-        # About 11 brief rows are visible at 80x24; TARGET must stay whole.
-        target_rows = len(_compact_target_lines(card)) if show_target else 0
-        budget = max(1, min(3, 7 - target_rows))
-        if len(do_rows) > budget:
-            do_rows = do_rows[:budget - 1] + [_clip(" ".join(do_rows[budget - 1:]), 58)]
-        header.append("DO THIS · " + do_rows[0])
-        header.extend("          " + row for row in do_rows[1:])
-        if not show_recipe:
-            boundary = "keys hidden · compare after pass" if card.get(
-                "method_alternatives") else "exact command keys hidden"
-            header.append(_clip("HINT · %s · %s" % (boundary, hint), 66))
-        else:
-            banner = _new_concept_banner(card, cur)
-            header.append(banner or _clip("HINT · " + hint, 66))
-        if show_target:
-            header.append("TARGET")
-            header.extend(_compact_target_lines(card))
-        if show_recipe:
-            header.append("RECIPE  " + recipe)
-        else:
-            header.append("EVIDENCE  exact command keys remain hidden")
-        header.extend(_new_concept_alert(card, cur, width=66))
-        header.extend(_key_teaching(card, width=66, cur=cur))
-        if card.get("method_alternatives"):
-            header.append("USE ONE METHOD  either one passes; both are compared after you pass")
-        header.extend([
-            "WHY THIS EXISTS",
-            "Motion intent: " + _clip(context["module"]["meaning"], 57),
-            "Authoring principle: " + _clip(context["module"]["principle"], 51),
-            "Failure to watch: " + _clip(context["module"]["defect"], 55),
-            "WHAT THIS LESSON BUYS YOU  " + _clip(context["buys"], 42),
-        ])
-        header.append("KEYS WORTH KEEPING")
-        if key_vocabulary:
-            header.extend("  " + _clip(line, 64) for line in key_vocabulary)
-        elif show_recipe:
-            header.append("  " + _clip(recipe, 64))
-        else:
-            header.append("  F1 help · u undo · <C-r> redo · :wq submit")
-        header.append("WHERE THIS METHOD COMES FROM  " + _clip(context["source"], 39))
-        header.extend("LEGACY SOURCE  " + _clip(source, 50) for source in legacy_sources)
-        for title, paradigm in legacy_concepts:
-            header.append("LEGACY VIM CONCEPT  " + _clip(title, 46))
-            header.extend("  " + _clip(line, 64) for line in paradigm.splitlines() if line.strip())
-        header.extend([
-            "BASIC HELP  o new line below · O above · Space waits for WhichKey · clean mode F1",
-            "COPY / PASTE  drag selects · Cmd-C copies · y copies a whole question · Cmd-V pastes",
-            "READING THE RECIPE  <CR> press Enter · <Esc> Escape · <C-r> hold Ctrl, press r",
-            "  <C-k>.M middle-dot digraph · {N} any number · {char} any glyph · no braces typed",
-            "SUBMIT / STUCK  :wq submits · :q! exits without submission",
-        ])
-        _write_lines_atomic(lesson, header)
-        return lesson
-    header = [
-        "NEOVIM × ASCII ANIMATION  ·  %s" % card["id"],
-        card["title"],
-        _progress_line(cfg, progress, card),
-        "SKILL  %s" % card["skill"],
-    ]
-    if not show_recipe:
-        evidence = "exact command keys remain hidden; target and action hint remain visible"
-        if card.get("method_alternatives"):
-            evidence += "; comparison appears after verification"
-        header.append("EVIDENCE  " + evidence)
-    header.extend(["DO THIS", "  %s" % card["prompt"]])
-    banner = _new_concept_banner(card, cur, width=78)
+    cell = progress["modules"][card["module_id"]]
+    level, _title, into, needed = _level(progress["xp"])
+    header = _wrap_prose("PROGRESS  %s · %s %s %d/%d · Lv%d %d/%d" % (
+        card["id"], card["module_id"], _bar(cell["done"], cell["total"], 8),
+        cell["done"], cell["total"], level, into, needed), width)
+    header += _wrap_prose(card["prompt"], width, indent="DO THIS · ",
+                          subsequent="          ")
+    banner = _new_concept_banner(card, cur, width)
     if banner:
-        header.append(banner)
+        header += banner.splitlines()
+    if not show_recipe and not show_target:
+        header.append("HINT · Exact keystrokes stay hidden until evaluation.")
     if show_target:
-        header.append("TARGET")
-        header.extend("  │" + line for line in card["target"])
+        header.append("TARGET" if show_recipe else
+                      "TARGET · HINT: Exact keystrokes stay hidden until evaluation.")
+        header += (_compact_target_lines(card, width) if compact else
+                   ["  │" + row for row in card["target"]])
     if show_recipe:
-        header.append("COMMAND RECIPE")
-        header.extend("  %-14s %s" % (keys, why) for keys, why in card["recipe"])
+        if compact:
+            header += _wrap_prose("RECIPE  " + " → ".join(
+                keys for keys, _why in card.get("recipe", [])), width)
+        else:
+            header.append("COMMAND RECIPE")
+            for keys, why in card.get("recipe", []):
+                header += _wrap_prose("%-14s %s" % (keys, why), width, indent="  ")
+        shape = _recipe_shape(card, width)
+        if shape:
+            header += _wrap_prose(shape, width)
     else:
-        header.extend(["HINT", "  " + hint, "  Exact keystrokes stay hidden until evaluation."])
-    header.extend(_key_teaching(card, cur=cur))
-    if not show_recipe and card.get("method_alternatives"):
-        header.extend([
-            "CHALLENGE",
-            "  Make the outcome with one method; comparison appears after verification.",
-        ])
-    elif not show_recipe:
-        header.append("INDEPENDENT ATTEMPT")
-    header.append("WHY THIS EXISTS")
-    header.extend("  " + line for line in context["why"])
-    # VD-42: the full alert follows the task, target and why block so those
-    # stay on the first screen; the banner under DO THIS points down here.
-    alert = _new_concept_alert(card, cur, width=78)
-    if alert:
-        header.append("")
-        header.extend(alert)
-    header.extend([
-        "",
-        "WHAT THIS LESSON BUYS YOU",
-        "  " + context["buys"],
-        "",
-        "KEYS WORTH KEEPING",
-    ])
-    if key_vocabulary:
-        header.extend("  " + line for line in key_vocabulary)
-    elif show_recipe and card.get("recipe"):
-        header.extend("  %-14s %s" % (keys, why) for keys, why in card["recipe"])
-    else:
-        header.extend([
-            "  F1 cheat sheet  <C-w>w switch task/art  u undo  <C-r> redo.",
-            "  :wq submit  :q! exit without submission.",
-        ])
-    header.extend([
-        "",
-        "WHERE THIS METHOD COMES FROM",
-        "  " + context["source"],
-    ])
-    if legacy_sources:
-        header.extend(["", "LEGACY LESSON SOURCES"])
-        header.extend("  " + source for source in legacy_sources)
-    for title, paradigm in legacy_concepts:
-        header.extend(["", "LEGACY VIM CONCEPT", "  " + title])
-        header.extend("  " + line for line in paradigm.splitlines())
-    header.extend([
-        "",
-        "READING THE RECIPE",
-        "  <CR> Enter  <Esc> Escape  <BS> Backspace  <C-v> Ctrl-v  <C-k>.M middle-dot digraph",
-        "  <C-v> = hold Ctrl, press v.  {char} any glyph  {N} any number  [count] optional",
-        "  number; you never type the braces.",
-        "",
-        "SUBMIT / STUCK",
-        "  :wq submits. :q! exits without submission. Retry restores this card's checkpoint.",
-        "  The task brief is read-only. <C-w>w switches between the brief and art.",
-        "  o opens a new line below; O opens one above.",
-        "  Drag to select popup text, then Cmd-C; press y to copy a whole question; Cmd-V pastes.",
-        "  Personal config keeps Hardtime and WhichKey (press Space and wait); clean mode uses F1.",
-    ])
+        header += _wrap_prose(hint, width, indent="  ")
+    header += _new_concept_alert(card, cur, width=width)
+    header += _key_teaching(card, width=width, cur=cur)
+    header += ["", "── MORE · za opens/closes · / finds ──"]
+    header += _wrap_prose(card["title"], width)
+    header += _wrap_prose(card["skill"], width, indent="SKILL  ", subsequent="       ")
+    header += ["WHY THIS EXISTS"]
+    for line in context["why"]:
+        header += _wrap_prose(line, width, indent="  ")
+    header += ["WHAT THIS LESSON BUYS YOU",
+               *_wrap_prose(context["buys"], width, indent="  "),
+               "KEYS WORTH KEEPING"]
+    reminders = _brief_key_reminders(card)
+    # Hidden retrieval must not leak the exact answer through a reminder.
+    if not show_recipe:
+        reminders = [row for row in reminders if card.get("expected", "") not in row]
+    for row in reminders:
+        header += _wrap_prose(row, width, indent="  ")
+    _keys, sources, concepts = _legacy_teaching(card)
+    header += ["WHERE THIS METHOD COMES FROM",
+               *_wrap_prose(context["source"], width, indent="  ")]
+    for source in sources:
+        header += _wrap_prose("LEGACY SOURCE  " + source, width)
+    for title, paradigm in concepts:
+        header += ["LEGACY VIM CONCEPT", *_wrap_prose(title, width, indent="  ")]
+        for row in paradigm.splitlines():
+            if row.strip():
+                header += _wrap_prose(row, width, indent="  ")
+    header += ["READING THE RECIPE",
+               "  <CR> Enter · <Esc> Escape · <C-r> hold Ctrl, press r",
+               "  <C-k>.M middle-dot digraph · Ctrl-K, then . then M",
+               "  {char} any glyph · {N} any number · no braces typed",
+               "SUBMIT / STUCK",
+               "  :wq submits · :q! exits without submission",
+               "  Ctrl-W W switches between the brief and the art.",
+               "BASIC HELP",
+               "  F1 cheat sheet · Space waits for WhichKey · u undo",
+               "COPY / PASTE",
+               "  Drag selects · Cmd-C copies · y copies a question · Cmd-V pastes"]
     _write_lines_atomic(lesson, header)
     return lesson
 
@@ -1932,16 +2351,18 @@ def _hash_file(path):
 def _update_manifest(cur, card, path):
     # A transfer is deliberately an unseen, separate artifact.  It must not
     # become the module's playable strip merely because it was verified last.
-    manifest_path = path.parent / ("transfer-manifest.json"
-                                   if card.get("artifact") == "transfer"
-                                   else "manifest.json")
+    manifest_name = ("transfer-manifest.json" if card.get("artifact") == "transfer"
+                     else "animation-%s-manifest.json" % card["id"]
+                     if card.get("artifact") == "animation-study" else "manifest.json")
+    manifest_path = path.parent / manifest_name
     try:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         manifest = {"schema": "vim-daily/project@1", "project_id": card["project_id"],
                     "module_id": card["module_id"], "history": [], "source_refs": []}
     entry = {"card_id": card["id"], "at": _now().isoformat(),
-             "sha256": _hash_file(path), "rows": len(_read_lines(path))}
+             "sha256": _hash_file(path),
+             "rows": len(_read_lines(path, card.get("preserve_trailing_whitespace", False)))}
     if card.get("animation"):
         entry["animation"] = card["animation"]
     if card.get("duplicate_frames"):
@@ -2037,9 +2458,25 @@ def _legacy_attempt(cfg, card_id):
         os.close(fd)
 
 
+class _TypedInputTokens(list):
+    """Decoded physical keys with the Vim mode observed for each token.
+
+    The ordinary keylog path intentionally remains a plain list.  A typed
+    receipt is different: its mode is evidence, not a hint that may be
+    reconstructed from the key characters after a state-changing Ex command.
+    """
+
+    def __init__(self, tokens, modes):
+        super().__init__(tokens)
+        self.modes = list(modes)
+        if len(self) != len(self.modes):
+            raise ValueError("typed-input token/mode length mismatch")
+
+
 def _without_brief_navigation(typed):
     """Remove keystrokes used only to inspect the tutor's read-only split."""
-    out, index = [], 0
+    out, out_modes, index = [], [], 0
+    modes = getattr(typed, "modes", None)
     while index < len(typed):
         # VD-13: the brief is now reached with <C-w>w (or <C-w>h in the wide
         # layout); keys typed there (scrolling, /search) are not art edits.
@@ -2064,23 +2501,96 @@ def _without_brief_navigation(typed):
                 index = end + 2
                 continue
         out.append(typed[index])
+        if modes is not None:
+            out_modes.append(modes[index])
         index += 1
-    return out
+    return _TypedInputTokens(out, out_modes) if modes is not None else out
 
 
-def _attempt_replay(cfg, card, keylog, before, got):
+def _typed_input_tokens(cfg, receipt):
+    """Decode the nonce-validated pre-mapping receipt, not mapping replay."""
+    if receipt is None:
+        return None
+    # A legacy outer cursor receipt predates the typed-input field.  Keep its
+    # old scriptout fallback, but fail closed for a fresh-shaped receipt that
+    # has an input list with a missing/wrong schema.
+    if receipt.get("input_schema") != "vim-daily/typed-input@1":
+        return [] if "input" in receipt else None
+    rows = receipt.get("input")
+    if not isinstance(rows, list):
+        return []
+    try:
+        tokens, modes = [], []
+        previous = None
+        for row in rows:
+            if (not isinstance(row, dict) or not isinstance(row.get("mode"), str)
+                    or not isinstance(row.get("typed_hex"), str)
+                    or not re.fullmatch(r"(?:[0-9a-f]{2})+", row["typed_hex"])):
+                return []
+            chunk = bytes.fromhex(row["typed_hex"])
+            # WhichKey re-feeds operator keys with the typed flag. Native dd
+            # has modes n,no; a genuine following d starts in n, not no. Two
+            # identical doubled-operator endings both reported in no therefore
+            # describe one pending operation's replay, not two typed commands.
+            # Never deduplicate Normal-mode d, text, counts or compound motions.
+            current = (row["mode"], chunk)
+            if (previous == current and row["mode"].startswith("no")
+                    and chunk in (b"d", b"y", b"c", b">", b"<", b"=")):
+                continue
+            decoded = cfg.decode_keylog(chunk)
+            if not isinstance(decoded, list):
+                return []
+            tokens.extend(decoded)
+            modes.extend([row["mode"]] * len(decoded))
+            previous = current
+        return _TypedInputTokens(tokens, modes)
+    except (ValueError, TypeError):
+        return []
+
+
+def _typed_input_required(cfg):
+    """Fresh Neovim attempts require the pre-mapping receipt contract."""
+    name = os.path.basename(str(getattr(cfg, "editor", ""))).lower()
+    if not (name.startswith("nvim") or name == "neovide"):
+        return False
+    # Test/embedding adapters may intentionally provide a legacy editor
+    # callback while retaining ``editor='nvim'`` in their fixture config.  The
+    # production callback is the gate's own run_editor function; only that
+    # fresh Neovim transport can claim the typed-input contract automatically.
+    callback = getattr(cfg, "run_editor", None)
+    source = getattr(getattr(callback, "__code__", None), "co_filename", "")
+    return Path(source).name == "vim-daily-gate"
+
+
+def _attempt_replay(cfg, card, keylog, before, got, receipt=None,
+                    require_typed_input=False):
     """Return the visible actual-vs-taught key table for one edit attempt."""
     try:
         typed = _without_brief_navigation(cfg.decode_keylog(Path(keylog).read_bytes()))
     except OSError:
         typed = []
+    physical = _typed_input_tokens(cfg, receipt)
+    typed_contract = (receipt is not None
+                      and receipt.get("input_schema") == "vim-daily/typed-input@1"
+                      and isinstance(receipt.get("input"), list))
+    if physical is not None:
+        typed = _without_brief_navigation(physical)
+    elif require_typed_input:
+        # Never grade a fresh Neovim attempt from -w: personal mappings can
+        # rewrite that stream.  An empty typed stream is deliberately
+        # evidence-poor and therefore cannot satisfy a method requirement.
+        typed = _TypedInputTokens([], [])
     expected = cfg.tokenize(card.get("expected", "")) if cfg.tokenize else []
     if cfg.keystroke_table:
         table = cfg.keystroke_table(typed, expected, width=24)
     else:
         table = ["  actual: %s" % ("".join(typed) or "(none)"),
                  "  taught: %s" % (card.get("expected") or "(none)")]
-    return {"type": "edit", "table": table, "actual_tokens": typed,
+    return {"type": "edit", "keylog": str(keylog), "table": table, "actual_tokens": typed,
+            "input_source": ("typed-input-receipt" if physical is not None and typed_contract else
+                              "typed-input-receipt-invalid" if physical is not None else
+                              "typed-input-missing" if require_typed_input
+                              else "scriptout-legacy"),
             "actual_keys": "".join(typed) or "(none)",
             "taught_keys": "".join(expected) or "(none)",
             "before": before, "got": got,
@@ -2114,7 +2624,110 @@ def _keylog_fields(path):
     path = Path(path)
     if not path.exists():
         return {}
-    return {"keylog": str(path), "keylog_sha256": _hash_file(path)}
+    fields = {"keylog": str(path), "keylog_sha256": _hash_file(path)}
+    contract = path.with_suffix(".contract.json")
+    if contract.is_file():
+        fields.update({"attempt_contract": str(contract),
+                       "attempt_contract_sha256": _hash_file(contract)})
+    input_receipt = path.with_suffix(".cursor.json")
+    if input_receipt.is_file():
+        fields.update({"input_receipt": str(input_receipt),
+                       "input_receipt_sha256": _hash_file(input_receipt)})
+    return fields
+
+
+class _CursorReceiptEnv:
+    """Context manager keeping the fresh cursor-receipt environment live."""
+
+    def __init__(self, path, keylog, attempt):
+        self.path = path
+        self.keylog = keylog
+        self.attempt = attempt
+        self.receipt = Path(keylog).with_suffix(".cursor.json")
+        self.token = "%s:%s:%s:%s" % (Path(path).resolve(), os.getpid(), attempt,
+                                     secrets.token_hex(16))
+        self.previous = {}
+
+    def __enter__(self):
+        try:
+            self.receipt.unlink()
+        except OSError:
+            pass
+        for name, value in (("VIM_DAILY_CURSOR_RECEIPT", str(self.receipt.resolve())),
+                            ("VIM_DAILY_CURSOR_ATTEMPT", self.token)):
+            self.previous[name] = os.environ.get(name)
+            os.environ[name] = value
+        return self
+
+    def __exit__(self, *_):
+        for name, value in self.previous.items():
+            if value is None:
+                os.environ.pop(name, None)
+            else:
+                os.environ[name] = value
+
+
+def _read_cursor_receipt(receipt, token, path):
+    """Accept only a fresh receipt bound to this attempt and art buffer."""
+    try:
+        data = json.loads(Path(receipt).read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        return None
+    if not isinstance(data, dict):
+        return None
+    expected_path = str(Path(path).resolve())
+    def same_art_path(value):
+        try:
+            return str(Path(value).resolve()) == expected_path
+        except (OSError, TypeError, ValueError):
+            return False
+    if (data.get("schema") != "vim-daily/cursor-receipt@1"
+            or data.get("attempt") != token
+            or data.get("event") != "VimLeavePre"
+            or not same_art_path(data.get("artifact"))
+            or not same_art_path(data.get("buffer_path"))):
+        return None
+    cursor = data.get("cursor")
+    if (not isinstance(cursor, dict) or type(cursor.get("row")) is not int
+            or type(cursor.get("column")) is not int
+            or type(data.get("display_column")) is not int
+            or min(cursor["row"], cursor["column"], data["display_column"]) < 1):
+        return None
+    return data
+
+
+def _cursor_goal_error(card, replay):
+    """Return a visible failure when a navigation card lacks final cursor proof."""
+    goal = card.get("cursor_goal")
+    if not goal:
+        return None
+    receipt = replay.get("cursor_receipt")
+    if not receipt:
+        return ("✓ Your result matches the target. ✗ Not counted yet: no fresh art-buffer "
+                "cursor receipt was captured at submission; navigation credit is withheld.")
+    row = receipt["cursor"].get("row")
+    column = receipt.get("display_column")
+    if row != goal.get("row") or column != goal.get("column"):
+        return ("✓ Your result matches the target. ✗ Not counted yet: final art cursor was "
+                "row %s, display column %s; expected row %s, display column %s." % (
+                    row, column, goal.get("row"), goal.get("column")))
+    return None
+
+
+def _recovery_input_receipt(keylog, path, card, before):
+    """Recover typed evidence only through its original owning contract."""
+    try:
+        contract = json.loads(Path(keylog).with_suffix(".contract.json").read_text())
+    except (OSError, ValueError, TypeError):
+        return None
+    if (not isinstance(contract, dict)
+            or contract.get("schema") != "vim-daily/attempt-contract@1"
+            or contract.get("card") != card or contract.get("before") != before
+            or not isinstance(contract.get("cursor_attempt"), str)
+            or not contract["cursor_attempt"]):
+        return None
+    return _read_cursor_receipt(Path(keylog).with_suffix(".cursor.json"),
+                                contract["cursor_attempt"], path)
 
 
 def _executed_ex_commands(tokens):
@@ -2167,7 +2780,10 @@ def _is_submit_ex(command):
     if not segments or any(not segment for segment in segments):
         return False
     for segment in segments:
-        match = re.match(r"^([A-Za-z]+)!?(?:\s+.*)?$", segment)
+        # Arguments are not a save operation.  In particular, `:write !cmd`
+        # is a shell command whose argument text must remain evidence; treating
+        # it as cleanup let arbitrary command-line text satisfy an edit path.
+        match = re.match(r"^([A-Za-z]+)!?$", segment)
         if not match or match.group(1).lower() not in submit_names:
             return False
     return True
@@ -2194,23 +2810,417 @@ def _edit_tokens_without_submit(tokens):
     return out
 
 
-def _contains_ordered(tokens, sequences):
-    """Return true when token sequences occur in order with other keys between."""
-    cursor = 0
-    for wanted in sequences:
-        found = None
-        for index in range(cursor, len(tokens) - len(wanted) + 1):
-            if tokens[index:index + len(wanted)] == wanted:
-                found = index + len(wanted)
-                break
-        if found is None:
-            return False
-        cursor = found
-    return True
+def _semantic_tokens(tokens):
+    """Project captured keys into normal, insert, and executed-Ex events.
+
+    Required paths are authored as operations, not as arbitrary characters in
+    a command-line argument or inserted payload.  This projection keeps the
+    exact method-path tolerance for real navigation, mappings, corrections,
+    and recovery while making mode boundaries observable.
+    """
+    projected = []
+    source_modes = getattr(tokens, "modes", None)
+    mode = "normal"
+    argument = None
+    operator = None
+    prefix = None
+    text_object = False
+    recording = False
+    visual = None
+    index = 0
+    # ``list(tokens)`` below intentionally keeps ordinary callers unchanged,
+    # but a typed receipt carries a parallel mode ledger.  Preserve it across
+    # that copy so state-changing Ex commands cannot make later Insert bytes
+    # look like Normal commands.
+    tokens = list(tokens)
+    recorded_modes = source_modes
+
+    def recorded_mode_at(position):
+        if recorded_modes is None or position >= len(recorded_modes):
+            return None
+        value = recorded_modes[position]
+        if not isinstance(value, str):
+            return None
+        if value.startswith("i"):
+            return "insert"
+        if value.startswith("Rv"):
+            return "virtual_replace"
+        if value.startswith("R"):
+            return "replace"
+        if value[:1] in ("v", "V", "s", "S", "\x16", "\x13"):
+            return "visual"
+        if value.startswith("n"):
+            return "normal"
+        if value in ("r", "rm", "r?"):
+            return "argument"
+        # c/t/prompt states cannot become Normal commands merely because
+        # a mapping or Ex operation entered them without a typed delimiter.
+        return "unattributed"
+
+    while index < len(tokens):
+        token = tokens[index]
+        observed = recorded_mode_at(index)
+        if observed == "insert":
+            mode = "insert"
+            argument = None
+            operator = prefix = None
+            text_object = False
+            visual = None
+        elif observed in ("replace", "virtual_replace"):
+            # Neovim reports R while consuming the single-character Normal
+            # r argument too. Only an already witnessed r owns that literal;
+            # an R entered by Ex/mapping remains Replace-mode payload.
+            if not (observed == "replace" and argument in (
+                    "replace", "digraph-first", "digraph-second")):
+                mode = observed
+                argument = None
+                operator = prefix = None
+                text_object = False
+                visual = None
+        elif observed == "visual":
+            if mode != "normal":
+                argument = operator = prefix = None
+                text_object = False
+            mode = "normal"
+            # A Visual register/prefix spans callbacks. Resetting it for
+            # every selected-mode byte loses the genuine "ay operation.
+            visual = visual or True
+        elif observed == "normal" and mode in ("insert", "replace", "virtual_replace"):
+            mode = "normal"
+            operator = prefix = None
+            text_object = False
+        elif observed == "unattributed" or (observed == "argument" and not argument):
+            argument = operator = prefix = None
+            text_object = False
+            visual = None
+            projected.append(("unattributed", token))
+            index += 1
+            continue
+        if argument:
+            projected.append(("argument", token))
+            if argument == "replace" and token == "<C-k>":
+                argument = "digraph-first"
+            elif argument == "digraph-first":
+                argument = "digraph-second"
+            elif argument == "change-motion":
+                mode = "insert"
+                argument = None
+            else:
+                argument = None
+            index += 1
+            continue
+        if mode == "normal" and token in (":", "/", "?"):
+            command = []
+            end = index + 1
+            while end < len(tokens):
+                value = tokens[end]
+                if value == "<CR>":
+                    # Case and pattern spaces are semantically significant.
+                    text = "".join(command).strip()
+                    if token == ":" and visual:
+                        # Visual ':' supplies this range before the typed text.
+                        # ':earlier' in that context is not the taught Normal
+                        # history command, even when its letters are identical.
+                        text = "'<,'>" + text
+                        visual = None
+                    projected.append(("ex" if token == ":" else "search", text))
+                    index = end + 1
+                    break
+                if value in ("<Esc>", "<C-c>"):
+                    index = end + 1
+                    break
+                if value in ("<BS>", "<C-h>"):
+                    if command:
+                        command.pop()
+                elif value == "<C-u>":
+                    command = []
+                elif value == "<C-w>":
+                    while command and command[-1].isspace():
+                        command.pop()
+                    while command and not command[-1].isspace():
+                        command.pop()
+                elif len(value) == 1:
+                    command.append(value)
+                end += 1
+            else:
+                index = len(tokens)
+            continue
+        if mode == "normal" and visual and token in ("u", "U"):
+            projected.append(("visual", token))
+            visual = None
+            index += 1
+            continue
+        projected.append((mode, token))
+        if mode in ("insert", "replace", "virtual_replace"):
+            if token in ("<Esc>", "<C-c>"):
+                mode = "normal"
+        elif token in ("<Esc>", "<C-c>"):
+            operator = prefix = None
+            text_object = False
+            visual = None
+        elif visual and token in ("d", "y", "c", "x", "p", "P", "I", "A", "J", "~", ">", "<", "=", "r"):
+            visual = None
+            operator = prefix = None
+            if token in ("c", "I", "A"):
+                mode = "insert"
+            elif token == "r":
+                argument = "replace"
+        elif token in ("v", "V", "<C-v>"):
+            visual = None if visual == token else token
+        elif text_object:
+            text_object = False
+            if operator == "c":
+                mode = "insert"
+            operator = None
+        elif operator:
+            if token.isdigit():
+                pass
+            elif token in ("i", "a"):
+                text_object = True
+            elif token in ("f", "F", "t", "T"):
+                argument = "change-motion" if operator == "c" else "motion"
+                operator = None
+            else:
+                if operator == "c":
+                    mode = "insert"
+                operator = None
+        elif prefix:
+            if prefix == "g" and token in ("R", "i", "I"):
+                mode = "virtual_replace" if token == "R" else "insert"
+            elif prefix == "z" and token == "y" and visual:
+                visual = None
+            elif prefix == "g" and token == "v":
+                visual = "v"
+            elif prefix == "g" and token in ("~", "u", "U"):
+                operator = "case"
+            prefix = None
+        elif token in ("g", "z", "<C-w>"):
+            prefix = token
+        elif token == "q":
+            if not recording:
+                argument = "register"
+            recording = not recording
+        elif token in ("r", "f", "F", "t", "T", '"', "m", "'", "`", "@"):
+            argument = "replace" if token == "r" else "literal"
+        elif token in ("d", "c", "y"):
+            operator = token
+        elif token in ("i", "I", "a", "A", "o", "O", "C", "S", "s", "R"):
+            mode = "replace" if token == "R" else "insert"
+        index += 1
+    return projected
+
+
+def _semantic_command_events(events):
+    """Keep command prefixes and their arguments as one evidence event.
+
+    ``gg`` followed by ``+`` is not ``g+``. Likewise ``fX`` followed by
+    ``r*`` did not practise ``f*``. Harmless events may surround a command,
+    but cannot donate characters to construct a command that never ran.
+    """
+    grouped = []
+    index = 0
+    events = list(events)
+    while index < len(events):
+        mode, value = events[index]
+        if mode == "normal" and index + 1 < len(events):
+            next_mode, next_value = events[index + 1]
+            if ((value in ("g", "z", "<C-w>") and next_mode == "normal")
+                    or (value in ("r", "f", "F", "t", "T", '"', "m", "'", "`", "@", "q")
+                        and next_mode == "argument")):
+                grouped.append((mode, value + next_value))
+                index += 2
+                continue
+        grouped.append((mode, value))
+        index += 1
+    return grouped
+
+
+def _method_operation_tokens(tokens):
+    """Ignore incidental positioning, but retain operator/Visual motions.
+
+    ``j`` before ``dw`` merely reaches the row; ``j`` after ``d`` owns the
+    deletion scope. Insert, argument, search and Ex events remain distinct,
+    so text which happens to spell a Normal-mode command cannot earn credit.
+    """
+    events = _semantic_tokens(tokens)
+    kept = []
+    operator = False
+    visual = None
+    prefix = None
+    for index, (mode, value) in enumerate(events):
+        event = (mode, value)
+        if mode != "normal":
+            kept.append(event)
+            if mode == "argument":
+                operator = False
+            continue
+        if value in ("<Esc>", "<C-c>"):
+            operator = visual = False
+            prefix = None
+        elif visual or operator:
+            if value in ("d", "y", "c") and visual:
+                visual = False
+            if not value.isdigit() and value not in ("i", "a", "f", "F", "t", "T"):
+                operator = False
+        elif prefix:
+            if prefix == "g" and value in ("~", "u", "U"):
+                operator = True
+            prefix = None
+        elif value in ("v", "V", "<C-v>"):
+            visual = True
+        elif value in ("d", "y", "c"):
+            operator = True
+        elif value in ("g", "z", "<C-w>"):
+            prefix = value
+        elif value in ("h", "j", "k", "l", "0", "^", "$"):
+            # Zero inside a count is not the column-zero motion: 10G must
+            # not be weakened to 1G while incidental 0 is ignored.
+            if not (value == "0" and index and events[index - 1][0] == "normal"
+                    and events[index - 1][1].isdigit()):
+                continue
+        kept.append(event)
+    return _semantic_command_events(kept)
+
+
+def _method_path_matches(actual, expected, card):
+    """C31: command presence, never the order of a worked recipe.
+
+    Commands stay atomic: unrelated ``d`` presses cannot manufacture ``dd``;
+    literal Insert/Ex text cannot manufacture a Normal-mode command. Repeating
+    a command in the example does not impose a repetition quota on the learner.
+    The caller independently checks the exact target and any cursor receipt.
+    """
+    wanted = set(_method_commands(expected, navigation=card.get("navigation_only", False)))
+    used = set(_method_commands(actual, navigation=card.get("navigation_only", False)))
+    return bool(wanted) and wanted.issubset(used)
+
+
+def _method_commands(tokens, *, navigation=False):
+    """Mode-bound, complete commands used anywhere in an attempt.
+
+    Text entered in Insert/Replace mode is the artifact, not an additional
+    method requirement. Counts and operator motions belong to their command;
+    free positioning and selection-size motions do not belong to a recipe.
+    """
+    events = _semantic_tokens(tokens)
+    commands = []
+    index = 0
+    visual = None
+    register = ""
+    incidental = {"h", "j", "k", "l", "0", "^", "$"}
+    while index < len(events):
+        mode, value = events[index]
+        if mode in ("ex", "search"):
+            commands.append((mode, value))
+            if mode == "ex":
+                visual = None
+                register = ""
+            index += 1
+            continue
+        if mode == "visual":
+            commands.append(("normal", "Visual " + value))
+            visual = None
+            register = ""
+            index += 1
+            continue
+        if mode in ("insert", "replace", "virtual_replace") and value in ("<C-r>", "<C-k>"):
+            size = 1 if value == "<C-r>" else 2
+            arguments = events[index + 1:index + 1 + size]
+            if len(arguments) == size and all(m == mode and len(v) == 1 for m, v in arguments):
+                commands.append((mode, value + "".join(v for _m, v in arguments)))
+                index += size + 1
+                continue
+        if mode != "normal":
+            index += 1
+            continue
+        if value in ("<Esc>", "<C-c>"):
+            visual = None
+            register = ""
+            index += 1
+            continue
+        count = ""
+        while (index < len(events) and events[index][0] == "normal"
+               and events[index][1].isdigit()
+               and (events[index][1] != "0" or count)):
+            count += events[index][1]
+            index += 1
+        if index >= len(events) or events[index][0] != "normal":
+            continue
+        value = events[index][1]
+        index += 1
+        if value in ("g", "z", "<C-w>"):
+            if index >= len(events) or events[index][0] != "normal":
+                continue
+            value += events[index][1]
+            index += 1
+        elif value in ("r", "f", "F", "t", "T", '"', "m", "'", "`", "@", "q"):
+            if index < len(events) and events[index][0] == "argument":
+                value += events[index][1]
+                index += 1
+                if value == "r<C-k>":
+                    arguments = events[index:index + 2]
+                    if len(arguments) != 2 or any(m != "argument" for m, _v in arguments):
+                        continue
+                    value += "".join(v for _m, v in arguments)
+                    index += 2
+            elif value != "q":
+                continue
+        if value.startswith('"'):
+            # A register prefix owns the next command; it cannot be combined
+            # with a yank/put executed somewhere else in the attempt.
+            register = count + value
+            continue
+        if value in ("v", "V", "<C-v>", "gv"):
+            visual = None if visual == value else value
+        elif visual and (value in ("d", "y", "c", "x", "p", "P", "I", "A", "J", "~", ">", "<", "=")
+                         or value.startswith("r")):
+            value = "Visual " + value
+            visual = None
+        elif visual and value == "zy":
+            value = "Visual zy"
+            visual = None
+        elif visual and value not in incidental:
+            # History, g-prefixed and other commands typed in a selection
+            # cannot supply their Normal-mode counterparts. Selection-size
+            # motions remain incidental; explicit Visual operators above
+            # retain their established command spelling.
+            value = "Visual " + value
+        elif value in ("d", "y", "c", ">", "<", "=", "g~", "gu", "gU"):
+            motion = ""
+            while (index < len(events) and events[index][0] == "normal"
+                   and events[index][1].isdigit()):
+                motion += events[index][1]
+                index += 1
+            if index >= len(events) or events[index][0] != "normal":
+                continue
+            part = events[index][1]
+            index += 1
+            if part in ("<Esc>", "<C-c>"):
+                continue
+            motion += part
+            if part in ("i", "a"):
+                if index >= len(events) or events[index][0] != "normal":
+                    continue
+                motion += events[index][1]
+                index += 1
+            elif part in ("f", "F", "t", "T"):
+                if index >= len(events) or events[index][0] != "argument":
+                    continue
+                motion += events[index][1]
+                index += 1
+            value += motion
+        if value in incidental and not navigation:
+            register = ""
+            continue
+        commands.append(("normal", count + value))
+        if register:
+            commands.append(("normal", register + count + value))
+            register = ""
+    return commands
 
 
 def _linewise_yank_put_matches(tokens, rows):
-    """Recognize a whole-frame linewise yank followed later by p/P."""
+    """Recognize complete linewise yank and put commands in any order."""
     count = list(str(rows))
     yanks = [count + ["y", "y"]]
     if rows > 1:
@@ -2219,7 +3229,7 @@ def _linewise_yank_put_matches(tokens, rows):
             ["V"] + offset + ["j", "y"],
             ["y"] + offset + ["j"],
         ])
-    return any(_contains_ordered(tokens, [yank, [put]])
+    return any(_method_path_matches(tokens, yank + [put], {})
                for yank in yanks for put in ("p", "P"))
 
 
@@ -2228,15 +3238,16 @@ def _normalise_ex(command):
 
 
 def _mode_text_matches(tokens, mode, text):
-    """Recognize Replace/Virtual Replace plus the literal text it entered.
+    """Attribute an actual Replace/Virtual Replace entry under C31.
 
-    A real plugin mapping can replay the mode prefix into Neovim's ``-w``
-    scriptout (for example ``gRgR``).  The final buffer remains the exact
-    result gate; method attribution therefore looks for the mode, then the
-    contiguous authored text, then the mode exit, while allowing mapping
-    replay or learner navigation between those three semantic events.
+    ``text`` is historical example metadata, not a required payload recipe.
+    The operator permits taught keys anywhere, including exploration later
+    undone; the exact saved target independently checks the resulting art.
+    Register/digraph commands still retain their actual input-mode context.
     """
-    return _contains_ordered(tokens, [list(mode), list(text), ["<Esc>"]])
+    # The exact saved artifact checks the text. This check only attributes the
+    # demonstrated Replace/Virtual Replace operation, not its recipe payload.
+    return ("normal", mode) in _method_commands(tokens)
 
 
 def _method_evidence_matches(method, actual, executed_commands):
@@ -2253,8 +3264,8 @@ def _method_evidence_matches(method, actual, executed_commands):
             "%d,%dco%s" % (start, end, destination),
             "%d,%dcopy%s" % (start, end, destination),
         }
-        return any(_normalise_ex(command) in accepted
-                   for _first, _last, command in executed_commands)
+        return any(command.replace(" ", "") in accepted
+                   for mode, command in _semantic_tokens(actual) if mode == "ex")
     if kind == "mode_text":
         return _mode_text_matches(
             actual, str(evidence["mode"]), str(evidence["text"])
@@ -2265,15 +3276,19 @@ def _method_evidence_matches(method, actual, executed_commands):
 def _method_family(cfg, card, replay):
     """Name a demonstrated comparison method inside an otherwise valid attempt."""
     raw = replay.get("actual_tokens", [])
-    actual = _edit_tokens_without_submit(raw)
+    actual = raw
     if not actual:
         return None
     executed_commands = [row for row in _executed_ex_commands(raw)
                          if not _is_submit_ex(row[2])]
     for method in card.get("method_alternatives", []):
         expected = cfg.tokenize(method["keys"]) if cfg.tokenize else list(method["keys"])
-        expected = _edit_tokens_without_submit(expected)
-        if (_contains_tokens(actual, expected)
+        # A named comparison method does not require its example line-address
+        # route. Exact target equality already verifies where the edits landed.
+        wanted = set(_method_commands(expected))
+        wanted = {event for event in wanted if not (
+            event[0] == "normal" and re.fullmatch(r"(?:[0-9]*G|[0-9]*gg)", event[1]))}
+        if ((bool(wanted) and wanted.issubset(set(_method_commands(actual))))
                 or _method_evidence_matches(method, actual, executed_commands)):
             return method["label"]
     return None
@@ -2285,25 +3300,6 @@ def _contains_tokens(tokens, wanted):
         return False
     return any(tokens[index:index + len(wanted)] == wanted
                for index in range(len(tokens) - len(wanted) + 1))
-
-
-def _contains_ordered_tokens(tokens, wanted):
-    """True when every required token occurs in order, allowing other input.
-
-    The final buffer remains an exact equality gate.  This trace gate proves
-    that the taught commands were present without treating look-around keys,
-    undo/correction, Hardtime-blocked presses, or mapping-prefix replay from
-    the operator's real config as a failed lesson.
-    """
-    if not wanted:
-        return False
-    cursor = 0
-    for token in tokens:
-        if token == wanted[cursor]:
-            cursor += 1
-            if cursor == len(wanted):
-                return True
-    return False
 
 
 def _method_goal(card):
@@ -2323,10 +3319,11 @@ def _method_goal(card):
 
 
 def _method_miss_message(card, detail=None):
-    return ("✓ Your result matches the target. ✗ Not counted yet: this lesson is "
-            "practising %s, and your keys did not use it. Try again with that method "
-            "(any correct method is fine outside this lesson).%s" % (
-                _method_goal(card), (" " + detail) if detail else ""))
+    return ("✓ Target correct. Your result matches the target, but you did not use "
+            "the taught command: %s. Press r for an instant retry. Extra, reordered "
+            "and exploratory keys are accepted.%s" % (
+                (card.get("method_requirement") or {}).get("label") or _method_goal(card),
+                (" " + detail) if detail else ""))
 
 
 def _required_method_error(cfg, card, replay):
@@ -2334,7 +3331,18 @@ def _required_method_error(cfg, card, replay):
     rule = card.get("method_requirement")
     if not rule:
         return None
-    actual = _edit_tokens_without_submit(replay.get("actual_tokens", []))
+    # Declared alternatives still need captured, positively recognized keys.
+    # Exact artifact equality is enforced by the caller, never by this helper.
+    if _method_family(cfg, card, replay):
+        return None
+    actual = replay.get("actual_tokens", [])
+    focal = _taught_method_paths(card)
+    if focal:
+        tokenize = cfg.tokenize or _keys_module().tokens
+        if any(all(_method_path_matches(actual, tokenize(command), card)
+                   for command in path) for path in focal):
+            return None
+        return _method_miss_message(card)
     exact_paths = [
         cfg.tokenize(keys) if cfg.tokenize else list(keys)
         for keys in rule.get("exact_any_of", [])
@@ -2347,18 +3355,35 @@ def _required_method_error(cfg, card, replay):
         cfg.tokenize(keys) if cfg.tokenize else list(keys)
         for keys in rule.get("all_of", [])
     ]
-    if exact_paths and not any(_contains_ordered_tokens(actual, path)
+    # Legacy exact_any_of is a carrier of example commands, not an exact or
+    # ordered transcript contract. All three rule forms use C31 presence.
+    captured = replay.get("actual_tokens", [])
+    if exact_paths and not any(_method_path_matches(captured, path, card)
                                for path in exact_paths):
         return _method_miss_message(card)
-    if alternatives and not any(_contains_tokens(actual, wanted) for wanted in alternatives):
+    if alternatives and not any(_method_path_matches(actual, wanted, card) for wanted in alternatives):
         return _method_miss_message(card)
-    if required and not all(_contains_tokens(actual, wanted) for wanted in required):
+    if required and not all(_method_path_matches(actual, wanted, card) for wanted in required):
         return _method_miss_message(card)
-    maximum = rule.get("max_tokens")
-    if maximum is not None and len(actual) > maximum:
-        return ("✓ Your result matches the target. ✗ Not counted yet: this lesson allows at "
-                "most %d keys and you used %d; try a shorter path." % (maximum, len(actual)))
+    # C31 forbids rejecting a correct taught-method result for extra keys.
     return None
+
+
+def _taught_method_paths(card):
+    """The card's explicit primitive rule wins over a legacy recipe carrier."""
+    rule = card.get("method_requirement") or {}
+    if rule.get("all_of"):
+        paths = [list(rule["all_of"])]
+    else:
+        global _METHOD_POLICY
+        if _METHOD_POLICY is None:
+            _METHOD_POLICY = _sibling_module("method_policy")
+        paths = _METHOD_POLICY.taught_paths(card, rule)
+    # zy is a Visual-only primitive, not a Normal command. The focal list
+    # stores fragments, so supply its block context when interpreting that
+    # taught fragment. Actual traces still need a real selection and zy.
+    return [["<C-v>zy" if command == "zy" else command for command in path]
+            for path in paths]
 
 
 def _unrecognized_method_message(replay):
@@ -2369,6 +3394,62 @@ def _unrecognized_method_message(replay):
     shown = replay.get("actual_keys") or "".join(actual)
     return ("The target matches and edit keys were captured, but neither taught "
             "method was recognized in this attempt. Captured keys: %s" % shown)
+
+
+def _defer_taught_method(cfg, cur, card, progress, replay):
+    """A declared alternate counts; the taught commands return as due practice."""
+    if not replay or not replay.get("method_family"):
+        return
+    actual = replay.get("actual_tokens", [])
+    tokenize = cfg.tokenize or _keys_module().tokens
+    focal = _taught_method_paths(card) or [[card.get("expected", "")]]
+    if any(all(_method_path_matches(actual, tokenize(command), card)
+               for command in path) for path in focal):
+        return
+    D = _deck_module()
+    from types import SimpleNamespace
+    recorder = SimpleNamespace(append_event=append_event, _now=_now)
+    taught = {family for family, _ in _keys_module().families(card.get("expected", ""))}
+    method = next((m for m in card.get("method_alternatives", [])
+                   if m["label"] == replay["method_family"]), None)
+    demonstrated = {family for family, _ in _keys_module().families(method["keys"])} if method else set()
+    taught -= demonstrated
+    for family in cur.get("deck", {}).get("families", []):
+        if taught.intersection(family.get("parser_families", [])):
+            for item in family.get("items", []):
+                D.record(recorder, cfg, cur, progress, item["id"], "again", "alternate-method")
+
+
+def _badge_rows(cfg, cur, progress):
+    streak = _legacy_streak(cfg.state)[1] if cfg else 0
+    cards = {c["id"]: c for c in cur["cards"]}
+    ranged = sum(1 for cid in progress.get("passed_cards", [])
+                 if any("[range]" in family for family, _meaning in
+                        _keys_module().families(cards.get(cid, {}).get("expected") or "")))
+    return _dashboard_theme().badge_status(cur, progress, {
+        "events": read_events(cfg) if cfg else [], "target": cfg.target if cfg else 12,
+        "values": {"best_streak": streak, "commands": len(learned_deck(cur, progress)),
+                   "range": ranged},
+    })
+
+
+def _celebrate_progress(cfg, cur, before, progress, before_badges):
+    if getattr(cfg, "practice", False):
+        return
+    T = _dashboard_theme()
+    rewards = []
+    for badge in _badge_rows(cfg, cur, progress):
+        if badge["earned"] and badge["id"] not in before_badges:
+            trophy = T.trophy_for(badge["id"]) or {
+                "art": [badge.get("icon", badge["glyph"])], "credit": T.TUTOR_CREDIT}
+            rewards.append(dict(trophy, title=badge["name"], kind="badge"))
+    old_level = _level(before["xp"])[0]
+    level, title, _into, _need = _level(progress["xp"])
+    if level > old_level:
+        rewards.append({"title": "Level %d · %s" % (level, title), "kind": "level",
+                        "art": T.avatar_for_level(level), "credit": T.TUTOR_CREDIT})
+    if rewards:
+        _viewer_module().celebrate(rewards, duration=2.0)
 
 
 def _legacy_today(state):
@@ -2430,7 +3511,7 @@ def _two_column_replay(left, right, left_label, right_label, *, width=None, max_
     for i in range(first, last):
         a = left[i] if i < len(left) else "<missing>"
         b = right[i] if i < len(right) else "<missing>"
-        mark = mark_glyph if i in differing else " "
+        mark = (_paint("✗", "fail") if mark_glyph == "✗" else mark_glyph) if i in differing else " "
         lines.append("%s %3d  %s │ %s" % (mark, i + 1, _fit_cells(a, col), _fit_cells(b, col).rstrip()))
     hidden = [i for i in differing if i >= last]
     if last < total and not minimal:
@@ -2458,8 +3539,10 @@ def _artifact_replay(replay, completed, *, width=None, max_rows=None, minimal=Fa
         row = differing[0]
         if row < len(target) and row < len(got):
             column = _first_difference(target[row], got[row])
-            lines.append("  ✗ = row differs · first difference at column %d of row %d" % (
-                column + 1, row + 1))
+            display_column = _cell_width(target[row][:column]) + 1
+            lines.append("  ✗ = row differs · first difference at column %d "
+                         "(character %d) of row %d" % (
+                             display_column, column + 1, row + 1))
         else:
             lines.append("  ✗ = row differs · row %d is %s" % (
                 row + 1, "extra in yours" if row >= len(target) else "missing from yours"))
@@ -2476,7 +3559,7 @@ def _print_check_replay(replay, bold, off, *, compact=False):
         q = outcome["question"]
         chosen = outcome["chosen"]
         correct = q["correct_choice"]
-        mark = "✓" if chosen == correct else "✗"
+        mark = _paint("✓", "ok") if chosen == correct else _paint("✗", "fail")
         print("  %s%d chose: %s" % (mark, index, q["choices"][chosen]))
         if chosen == correct and not compact:
             print("     why: %s" % q["feedback"][correct])
@@ -2491,25 +3574,70 @@ def _clear_if_tty():
 
 
 def _clip(value, width=48):
-    return textwrap.shorten(" ".join(str(value).split()), width=width, placeholder="…")
+    """Legacy name: prose is wrapped, never silently discarded."""
+    return "\n".join(_wrap_prose(" ".join(str(value).split()), width, subsequent="  "))
 
 
 # Reserve the prompt, popup borders, and the outer tmux status row.
 _FEEDBACK_TRAILER_LINES = 5
 
 
+def _result_key_ledger(card, replay):
+    """A correct artifact has no 'wrong extra keys' or recipe-order diff."""
+    if not replay.get("target_matches"):
+        return replay.get("table", [])
+    actual = replay.get("actual_tokens", [])
+    used = _method_commands(actual, navigation=True)
+    used_set = set(used)
+    rule = card.get("method_requirement") or {}
+    focal = _taught_method_paths(card)
+    if not focal:
+        paths = rule.get("all_of") or rule.get("any_of") or rule.get("exact_any_of")
+        focal = [list(paths)] if paths else [[card.get("expected", "")]]
+    # Show the closest accepted alternative, not red keys from every other
+    # valid alternative. Used commands remain green under every outcome.
+    paths = max(focal, key=lambda path: sum(
+        command in used_set for keystring in path for command in _method_commands(
+            _keys_module().tokens(keystring), navigation=card.get("navigation_only", False))))
+    taught = []
+    for path in paths:
+        for command in _method_commands(_keys_module().tokens(path),
+                                        navigation=card.get("navigation_only", False)):
+            if command not in taught:
+                taught.append(command)
+    def show(command):
+        mode, value = command
+        return (":" + value + "<CR>" if mode == "ex" else
+                "/" + value + "<CR>" if mode == "search" else value)
+    # Both columns describe executed operations. All used commands are green;
+    # only an absent taught command is red. The full ledger remains on k.
+    lines = ["  YOU TYPED                         THE RECIPE ASKS FOR (taught commands)",
+             "  --------------------------------  --------------------------------"]
+    used = list(dict.fromkeys(used))
+    for index in range(max(len(used), len(taught))):
+        mine = show(used[index]) if index < len(used) else ""
+        command = taught[index] if index < len(taught) else None
+        theirs = show(command) if command else ""
+        role = "ok" if command in used_set else "fail"
+        note = "used" if command in used_set else "not used" if command else "extra accepted"
+        lines.append("  %s  │ %s  %s" % (
+            _paint(mine, "ok"), _paint(theirs, role), note))
+    return lines
+
+
 def _post_feedback_ultra(card, replay, completed, context, concept_replay,
                          check_replay, bold, off, replay_rows=None, minimal=False,
-                         ledger_rows=None, breakdown_packed=False):
+                         ledger_rows=None, breakdown_packed=False, defer_breakdown=False):
     """Fit essential result evidence in an 80x24 popup without scrolling it away."""
     if replay and replay.get("type") == "edit":
         print("%sRESULT COMPARISON%s  %s" % (
-            bold, off, "exact target" if completed else "mismatch: yours vs target"))
+            bold, off, "exact target" if completed or replay.get("target_matches")
+            else "mismatch: yours vs target"))
         for line in _artifact_replay(replay, completed, max_rows=replay_rows,
                                      minimal=minimal):
             print(line)
         print("%sKEYSTROKE LEDGER%s  YOU TYPED │ THE RECIPE ASKS FOR" % (bold, off))
-        table = replay.get("table", [])
+        table = _result_key_ledger(card, replay)
         if table:
             # VD-12: the popup is always "compact" (<55 rows), and printing only
             # table[2:3] hid every ledger row after the first. Show every row
@@ -2529,10 +3657,10 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
             for row in textwrap.wrap("METHOD CHECK  " + replay["method_evidence_error"],
                                      width=max(40, shutil.get_terminal_size((80, 24)).columns - 4),
                                      subsequent_indent="  "):
-                print(row)
+                print(row.replace("✓", _paint("✓", "ok")).replace("✗", _paint("✗", "fail")))
         elif replay.get("method_family"):
             print("METHOD CHECK  demonstrated: %s" % replay["method_family"])
-            for method in card.get("method_alternatives", []):
+            for method in ([] if defer_breakdown else card.get("method_alternatives", [])):
                 print("  %s  %s: %s" % (
                     method["label"], method["keys"], _clip(method["why"], 28)))
     elif replay and replay.get("type") == "paired_question":
@@ -2576,12 +3704,12 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
         wrong = [(index, outcome) for index, outcome in enumerate(outcomes, 1)
                  if outcome["chosen"] != outcome["question"]["correct_choice"]]
         if outcomes and not wrong:
-            print("✓ all %d choices correct; detailed explanations remain in the attempt record" %
+            print(_paint("✓", "ok") + " all %d choices correct; detailed explanations remain in the attempt record" %
                   len(outcomes))
         for index, outcome in wrong[:2]:
             q, chosen = outcome["question"], outcome["chosen"]
             correct = q["correct_choice"]
-            print("✗%d chose: %s → %s" % (
+            print(_paint("✗", "fail") + "%d chose: %s → %s" % (
                 index, _clip(q["choices"][chosen], 38), _clip(q["choices"][correct], 22)))
     if replay and replay.get("playback_verified"):
         print("%sPLAYBACK VERIFIED%s  automatic equal-height strip preview completed" % (
@@ -2595,13 +3723,15 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
         method_compare = bool(replay and replay.get("method_family")
                               and card.get("method_alternatives"))
         breakdown = [] if method_compare else _answer_breakdown(card, width=width)
-        if method_compare:
+        if defer_breakdown:
+            print("THE ANSWER, KEY BY KEY · k opens the full explanation")
+        elif method_compare:
             pass
         elif breakdown and (breakdown_packed or minimal):
             # Tight popup: one wrapped paragraph instead of one row per command.
             items = " · ".join(line.strip() for line in breakdown[1:])
             wrapped = textwrap.wrap("%s  %s" % (breakdown[0], items), width=width) or [""]
-            for line in wrapped[:3]:
+            for line in wrapped:
                 print(line)
         elif breakdown:
             print("%s%s%s" % (bold, breakdown[0], off))
@@ -2610,36 +3740,44 @@ def _post_feedback_ultra(card, replay, completed, context, concept_replay,
         else:
             for method in card.get("method_alternatives", []):
                 print("ALSO %s: %s" % (method["label"], method["keys"]))
-    print("%sSOURCE%s  %s" % (bold, off, context["source"]))
+    for row in _wrap_prose(context["source"],
+                            max(40, shutil.get_terminal_size((80, 24)).columns - 4),
+                            indent="SOURCE  ", subsequent="        "):
+        print(row)
 
 
 def _print_feedback_do_this(card, replay, completed, concept_replay, compact, bold, off):
     """Every result page states the learner's next action (VD-11)."""
     if completed:
         action = "press Enter for skill-tree progress."
+    elif replay and replay.get("target_matches") and replay.get("method_evidence_error"):
+        action = "target correct; press r for an instant retry with the red taught command."
     elif concept_replay:
         action = "read why the correct answer is right, then press Enter."
     else:
         action = ("compare YOURS with TARGET (✗ = row differs), press Enter, "
-                  "then redo: " + card.get("prompt", ""))
+                  "then retry the task shown in the lesson brief.")
     if compact:
         width = max(40, shutil.get_terminal_size((80, 24)).columns - 4)
         wrapped = textwrap.wrap(action, width=width - 9) or [""]
         print("%sDO THIS%s  %s" % (bold, off, wrapped[0]))
-        for extra in wrapped[1:3]:
+        for extra in wrapped[1:]:
             print("         " + extra)
-        return min(3, len(wrapped))
+        return len(wrapped)
     print("%sDO THIS%s  %s" % (bold, off, action))
     return 1
 
 
 def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
     """Render held page one: artifact evidence and authored correction."""
+    global LAST_FEEDBACK_CONTEXT, LAST_FEEDBACK_DETAILS
+    LAST_FEEDBACK_CONTEXT = (cfg, cur, card, replay, completed)
+    LAST_FEEDBACK_DETAILS = []
     note_feedback_context(revision=cur.get("revision"), card_id=card.get("id"),
                           card_title=card.get("title"), module_id=card.get("module_id"),
                           lesson_result="complete" if completed else "not passed",
                           screen="result")
-    bold, dim, off, green, red, _yellow = cfg.colours
+    bold, dim, off, green, red, yellow = cfg.colours
     context = _lesson_context(cur, card)
     compact = (__import__("sys").stdout.isatty()
                and shutil.get_terminal_size((80, 24)).lines < 55)
@@ -2659,21 +3797,26 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
             "both passed" if completed else "did not both pass",
             "was awarded" if completed else "was not awarded"))
     elif completed:
-        print("%sLESSON COMPLETE%s  ·  %s  ·  %s" % (green + bold, off, card["id"], card["title"]))
+        heading = "PRACTICE COMPLETE" if getattr(cfg, "practice", False) else "LESSON COMPLETE"
+        print("%s%s%s  ·  %s  ·  %s" % (green + bold, heading, off, card["id"], card["title"]))
         if concept_replay:
             print("verified outcome: the conceptual choice is correct")
         elif not (compact and check_replay):
             print("verified outcome: the saved project matches the target exactly")
     else:
-        print("%sATTEMPT NOT PASSED%s  ·  %s  ·  %s" % (red + bold, off, card["id"], card["title"]))
+        method_miss = bool(replay and replay.get("target_matches") and replay.get("method_evidence_error"))
+        heading = "RESULT ✓ · METHOD ✗" if method_miss else "ATTEMPT NOT PASSED"
+        shown_heading = (_paint("RESULT ", "warn") + _paint("✓", "ok")
+                         + _paint(" · METHOD ", "warn") + _paint("✗", "fail")) if method_miss else heading
+        print("%s%s%s  ·  %s  ·  %s" % (
+            (yellow if method_miss else red) + bold, shown_heading, off, card["id"], card["title"]))
         if concept_replay:
             print("no progress awarded: the conceptual choice was incorrect")
         elif check_replay:
             if not compact:
                 print("no progress awarded: the module-check concept threshold was not met")
         elif replay and replay.get("target_matches"):
-            print("no progress awarded: the saved project matches the exact target, "
-                  "but the required method was not demonstrated")
+            print("TARGET CORRECT · the taught command still needs practice; instant retry: r")
         else:
             print("no progress awarded: the saved project did not match the exact target")
 
@@ -2694,6 +3837,7 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
         ledger_total = max(1, len((replay or {}).get("table", [])) - 2)
 
         packed = False
+        deferred = False
 
         def render(rows, minimal=False, ledger=None):
             buffer = io.StringIO()
@@ -2701,8 +3845,14 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
                 _post_feedback_ultra(card, replay, completed, context, concept_replay,
                                      check_replay, bold, off, replay_rows=rows,
                                      minimal=minimal, ledger_rows=ledger,
-                                     breakdown_packed=packed)
+                                     breakdown_packed=packed, defer_breakdown=deferred)
             return buffer.getvalue()
+
+        def screen_rows(text):
+            columns = shutil.get_terminal_size((80, 24)).columns
+            plain = re.sub(r"\x1b\[[0-9;]*m", "", text)
+            return sum(max(1, (_cell_width(line) + columns - 1) // columns)
+                       for line in plain.splitlines())
 
         rows = max(1, available)
         ledger = ledger_total
@@ -2710,21 +3860,32 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
         # Shrink the ledger to three rows first, then pack the key-by-key
         # answer into a paragraph (VD-13), then the artifact replay, then the
         # ledger to one row, so both two-column comparisons stay visible.
-        while text.count("\n") > available and ledger > 3:
+        while screen_rows(text) > available and ledger > 3:
             ledger -= 1
             text = render(rows, ledger=ledger)
-        if text.count("\n") > available:
+        if screen_rows(text) > available:
             packed = True
             text = render(rows, ledger=ledger)
-        while text.count("\n") > available and rows > 1:
+        while screen_rows(text) > available and rows > 1:
             rows -= 1
             text = render(rows, ledger=ledger)
-        while text.count("\n") > available and ledger > 1:
+        while screen_rows(text) > available and ledger > 1:
             ledger -= 1
             text = render(rows, ledger=ledger)
-        if text.count("\n") > available:
+        if screen_rows(text) > available:
             # Tight page (e.g. module check at 80x24): keep both columns but
             # show only the first changed row, without elision/legend lines.
+            text = render(1, minimal=True, ledger=1)
+        if screen_rows(text) > available and replay and replay.get("type") == "edit":
+            # Keep every sentence on explicit held detail pages rather than
+            # silently cutting tails from the artifact evidence screen.
+            deferred = True
+            LAST_FEEDBACK_DETAILS = _answer_breakdown(
+                card, width=max(40, shutil.get_terminal_size((80, 24)).columns - 8))
+            for method in card.get("method_alternatives", []):
+                LAST_FEEDBACK_DETAILS += _wrap_prose("%s · %s · %s" % (
+                    method["label"], method["keys"], method["why"]),
+                    width=max(40, shutil.get_terminal_size((80, 24)).columns - 8))
             text = render(1, minimal=True, ledger=1)
         print(text, end="")
         return
@@ -2741,10 +3902,11 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
         else:
             print("%sThe save/quit command is ignored. A different path may still be valid when the target matches.%s"
                   % (dim, off))
-            for line in replay.get("table", []):
+            for line in _result_key_ledger(card, replay):
                 print(line)
         if replay.get("method_evidence_error"):
-            print("  METHOD CHECK: %s" % replay["method_evidence_error"])
+            print("  METHOD CHECK: %s" % replay["method_evidence_error"].replace(
+                "✓", _paint("✓", "ok")).replace("✗", _paint("✗", "fail")))
         elif replay.get("method_family"):
             print("  METHOD CHECK: demonstrated %s" % replay["method_family"])
     elif replay and replay.get("type") == "paired_question":
@@ -2829,9 +3991,40 @@ def _post_feedback(cfg, cur, card, replay=None, *, completed=True):
     if review_replay:
         footer = "REVIEW RETRIEVED" if completed else "REVIEW NEEDS WORK"
     else:
-        footer = "LESSON COMPLETE" if completed else "ATTEMPT NOT PASSED"
+        footer = ("PRACTICE COMPLETE" if getattr(cfg, "practice", False) else "LESSON COMPLETE") if completed else (
+            "RESULT ✓ · METHOD ✗" if replay and replay.get("target_matches")
+            and replay.get("method_evidence_error") else "ATTEMPT NOT PASSED")
     print("\n%s%s%s  ·  %s  ·  result summary above" % (
-        green + bold if completed else red + bold, footer, off, card["id"]))
+        green + bold if completed else (
+            yellow + bold if footer == "RESULT ✓ · METHOD ✗" else red + bold),
+        footer.replace("✓", _paint("✓", "ok")).replace("✗", _paint("✗", "fail")), off, card["id"]))
+
+
+def show_feedback_details(input_fn=input):
+    """Read every deferred explanation row, then restore the result screen."""
+    if not LAST_FEEDBACK_DETAILS:
+        print("The full key explanation is already on this result page.")
+        return
+    budget = max(4, shutil.get_terminal_size((80, 24)).lines - 5)
+    width = max(20, shutil.get_terminal_size((80, 24)).columns - 4)
+    # A breakdown item can contain several wrapped rows. Pagination budgets
+    # terminal rows, not items, so no sentence can scroll its page heading away.
+    lines = [row for item in LAST_FEEDBACK_DETAILS for logical in item.splitlines()
+             for row in _wrap_prose(logical, width)]
+    pages = [lines[i:i + budget] for i in range(0, len(lines), budget)]
+    for index, page in enumerate(pages):
+        _clear_if_tty()
+        print("FULL KEY EXPLANATION · %d/%d" % (index + 1, len(pages)))
+        print("\n".join(page))
+        try:
+            answer = input_fn("Enter = continue · q = return to result: ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if answer == "q":
+            break
+    if LAST_FEEDBACK_CONTEXT:
+        cfg, cur, card, replay, completed = LAST_FEEDBACK_CONTEXT
+        _post_feedback(cfg, cur, card, replay, completed=completed)
 
 
 def progress_full_rows(cur):
@@ -2856,6 +4049,9 @@ def _post_progress(cfg, cur, card, progress, *, completed=True):
     ultra = (__import__("sys").stdout.isatty()
              and shutil.get_terminal_size((80, 24)).lines < progress_full_rows(cur))
     print("%s%s%s  ·  %s  ·  %s" % (colour, label, off, card["id"], card["title"]))
+    if completed and progress.get("awarded_xp") and not getattr(cfg, "practice", False):
+        print(_paint("+%d XP · +%d commands" % (
+            progress["awarded_xp"], progress.get("new_commands", 0)), "ok"))
     print("\n%sSKILL TREE / MODULE PROGRESS%s%s" % (
         bold, off, " · S stills → A animation · P optional" if ultra else ""))
     print_tree(cur, progress, cfg, compact=ultra)
@@ -2873,7 +4069,7 @@ def _post_progress(cfg, cur, card, progress, *, completed=True):
         for row in textwrap.wrap("CURRENT MODULE MAP  %s %s" % (module["id"], cells),
                                  width=width, subsequent_indent="  ",
                                  break_long_words=False):
-            print(row)
+            print(row.replace("✓", _paint("✓", "ok")))
         print("today %d/%d" % (_legacy_today(cfg.state), cfg.target))
     else:
         print("\n%sCURRENT MODULE MAP%s" % (bold, off))
@@ -2888,6 +4084,14 @@ def _post_lesson(cfg, cur, card, progress, replay=None, *, completed=True):
     """Render separate held feedback and progression pages."""
     if not completed:
         _legacy_attempt(cfg, card["id"])
+    # Textual owns the mounted feedback/progress surface when it is available;
+    # the runtime still produces both bodies and remains the only owner of
+    # feedback, progress and credit decisions.  Its route is consumed by the
+    # launcher's existing held-action loop below.
+    # Native result playback also belongs to the non-Textual route. The
+    # screen helper performs it before selecting the available text surface.
+    if _show_result_screen(cfg, cur, card, progress, replay, completed):
+        return
     _post_feedback(cfg, cur, card, replay, completed=completed)
     if cfg.feedback_rendered:
         cfg.feedback_rendered()
@@ -2898,6 +4102,7 @@ def _post_lesson(cfg, cur, card, progress, replay=None, *, completed=True):
 
 def _complete(cfg, cur, card, *, question_id=None, extra=None, replay=None):
     before_progress = project(cur, read_events(cfg))
+    before_badges = {b["id"] for b in _badge_rows(cfg, cur, before_progress) if b["earned"]}
     event = {"type": "card", "result": "pass", "card_id": card["id"],
              "module_id": card["module_id"], "curriculum_revision": cur["revision"],
              "question_id": question_id}
@@ -2905,6 +4110,11 @@ def _complete(cfg, cur, card, *, question_id=None, extra=None, replay=None):
         event["next_due"] = _next_due(cur, 0)
     if extra:
         event.update(extra)
+    if replay and replay.get("method_family"):
+        method = next((m for m in card.get("method_alternatives", [])
+                       if m["label"] == replay["method_family"]), {})
+        event["method_tier"] = "taught" if method.get("keys") == card.get("expected") else "declared"
+        event["method_family"] = replay["method_family"]
     if card.get("kind") == "module_check":
         # A mastered module points at both its final checkpoint and the unseen
         # transfer artifact that preceded it.  The hashes remain in the
@@ -2927,6 +4137,7 @@ def _complete(cfg, cur, card, *, question_id=None, extra=None, replay=None):
             "transfer_sha256": transfer_event.get("artifact_sha256"),
         }
     append_event(cfg, event)
+    _defer_taught_method(cfg, cur, card, before_progress, replay)
     _legacy_credit(cfg, card["id"])
     streak, best_streak, all_time = _legacy_streak(cfg.state)
     if getattr(cfg, "practice", False):
@@ -2938,14 +4149,17 @@ def _complete(cfg, cur, card, *, question_id=None, extra=None, replay=None):
             green, bold, streak, "" if streak == 1 else "s", flame,
             best_streak, all_time, "" if all_time == 1 else "s", off))
     progress = rebuild(cfg, cur)
+    progress["awarded_xp"] = progress["xp"] - before_progress["xp"]
+    progress["new_commands"] = max(0, len(learned_deck(cur, progress))
+                                  - len(learned_deck(cur, before_progress)))
     progress["new_unlocks"] = [
         stage["id"] for stage in cur["stages"]
         if before_progress["stages"][stage["id"]]["state"] == "locked"
         and progress["stages"][stage["id"]]["state"] != "locked"
     ]
     cell = progress["modules"][card["module_id"]]
-    print("\n✓ %s complete — %s %d/%d (%s)" % (
-        card["id"], card["module_id"], cell["done"], cell["total"], cell["state"]))
+    print("\n%s %s complete — %s %d/%d (%s)" % (
+        _paint("✓", "ok"), card["id"], card["module_id"], cell["done"], cell["total"], cell["state"]))
     nxt = next_card(cur, progress)
     if nxt:
         print("next: %s  %s" % (nxt["id"], nxt["title"]))
@@ -2953,6 +4167,7 @@ def _complete(cfg, cur, card, *, question_id=None, extra=None, replay=None):
         current = progress.get("current_stage")
         print("%s" % ("stage %s is waiting on spaced review" % current
                        if current else "main S0-A7 path mastered"))
+    _celebrate_progress(cfg, cur, before_progress, progress, before_badges)
     _post_lesson(cfg, cur, card, progress, replay)
     if cfg.post_rendered:
         cfg.post_rendered()
@@ -2961,19 +4176,25 @@ def _complete(cfg, cur, card, *, question_id=None, extra=None, replay=None):
 
 
 def run_concept(cfg, cur, progress, card):
-    print("\n%s — %s" % (card["id"], card["title"]))
+    _bind_curriculum(cfg, cur)
     context = _lesson_context(cur, card)
     q = _question_for_card(cur, progress, card)
+    if _textual_enabled():
+        if not _show_concept_screen(cfg, cur, progress, card, context):
+            return 0
+    else:
+        print("\n%s — %s" % (card["id"], card["title"]))
     ultra = (__import__("sys").stdout.isatty()
              and shutil.get_terminal_size((80, 24)).lines < 28)
-    print(_clip(_progress_line(cfg, progress, card), 70) if ultra
-          else _progress_line(cfg, progress, card))
-    if not ultra:
-        print("WHY: %s" % context["why"][1])
-        print("BUYS: %s" % context["buys"])
-        print("SOURCE: %s" % context["source"])
+    if not _textual_enabled():
+        print(_clip(_progress_line(cfg, progress, card), 70) if ultra
+              else _progress_line(cfg, progress, card))
+        if not ultra:
+            print("WHY: %s" % context["why"][1])
+            print("BUYS: %s" % context["buys"])
+            print("SOURCE: %s" % context["source"])
     teaching = card.get("teaching_lines", [])
-    if teaching:
+    if teaching and not _textual_enabled():
         print("TEACH FIRST")
         for line in teaching:
             print("  %s" % line)
@@ -2992,12 +4213,12 @@ def run_concept(cfg, cur, progress, card):
                 note_feedback_context(revision=cur.get("revision"), card_id=card["id"],
                                       card_title=card.get("title"), screen="teach-first")
                 collect_feedback(input, screen="teach-first")
-    if ultra:
+    if ultra and not _textual_enabled():
         print("DO THIS %s: choose the answer whose ANIMATION and NEOVIM halves are both correct."
               % card["id"])
-    else:
+    elif not _textual_enabled():
         print("DO THIS: %s" % card["prompt"])
-    if not ultra:
+    if not ultra and not _textual_enabled():
         print("CHECK YOUR UNDERSTANDING: both the animation reading and Neovim decision must be correct.")
     question_evidence = {}
     right, chosen = ask_authored_question(
@@ -3120,7 +4341,94 @@ def run_check_questions(cfg, cur, progress, card):
     return True, replay
 
 
+def _native_module(name):
+    """Load the installed sibling while retaining its normal dataclass imports."""
+    import importlib
+    import sys
+    directory = str(Path(__file__).resolve().parent)
+    inserted = directory not in sys.path
+    if inserted:
+        sys.path.insert(0, directory)
+    try:
+        return importlib.import_module(name)
+    finally:
+        if inserted:
+            sys.path.remove(directory)
+
+
+def _native_adapter():
+    return _native_module("sjis_tutor")
+
+
+def _run_native_editor(cfg, card, path, keylog, lesson, before):
+    """Connect proportional editing to a live, displayed native preview."""
+    # Keep the exact loaded task beside its unique attempt keylog. A hash is
+    # an identity, not a recoverable copy of a later-edited live curriculum.
+    contract_path = Path(keylog).with_suffix(".contract.json")
+    _write_lines_atomic(contract_path, [json.dumps({
+        "schema": "vim-daily/attempt-contract@1",
+        "curriculum_revision": getattr(cfg, "curriculum_revision", None),
+        "curriculum_contract_sha256": getattr(cfg, "curriculum_contract_sha256", None),
+        "cursor_attempt": os.environ.get("VIM_DAILY_CURSOR_ATTEMPT"),
+        "card": card, "before": before,
+    }, sort_keys=True, ensure_ascii=False)])
+    args = (str(path), 1, card.get("cursor", "^"), str(keylog), str(lesson),
+            card["prompt"], _scoped_hint(card))
+    if card.get("medium") != "proportional-sjis":
+        cfg.run_editor(*args)
+        return None
+    receipt_path = Path(keylog).with_suffix(".native.json")
+    try:
+        adapter = _native_adapter()
+        factory = getattr(cfg, "native_preview_factory", None)
+        if factory is None:
+            factory = (adapter.TutorPreview if os.environ.get("VIM_DAILY_NATIVE_SURFACE") == "browser"
+                       else _sibling_module("sjis_terminal").TerminalPreview)
+        with factory(path, card["target"], before_rows=before) as preview:
+            print("NATIVE PROPORTIONAL PREVIEW: %s" % preview.url)
+            print("Inspect the native Saitamaar BEFORE / YOURS / TARGET and changed-pixel panels. Editable text remains in Neovim.")
+            cfg.run_editor(*args)
+            receipt = preview.final_receipt()
+        adapter.write_receipt(receipt_path, receipt)
+        receipt["evidence_path"] = str(receipt_path)
+        return receipt
+    except Exception as exc:
+        # Renderer failures deny credit; no monospace alignment fallback.
+        receipt = {"schema": "vim-daily/proportional-attempt@1", "ready": False,
+                   "reasons": ["Native preview unavailable: %s" % exc],
+                   "operator_visual_acceptance": "required"}
+        print(receipt["reasons"][0])
+        return receipt
+
+
+def _native_recovery_receipt(card, path, keylog, before_path):
+    if card.get("medium") != "proportional-sjis":
+        return None
+    try:
+        receipt_path = Path(keylog).with_suffix(".native.json")
+        data = json.loads(receipt_path.read_text(encoding="utf-8"))
+        adapter = _native_adapter()
+        metrics = adapter.native.load_font_metrics(
+            os.environ.get("VIM_DAILY_SAITAMAAR_FONT") or adapter.native.DEFAULT_FONT_PATH)
+        identity = data["display"]["identity"]
+        target_hash = hashlib.sha256(adapter.art_text(card["target"]).encode("utf-8")).hexdigest()
+        if (data.get("schema") != "vim-daily/proportional-attempt@1" or not data.get("ready")
+                or data.get("artifact_sha256") != _hash_file(path)
+                or identity.get("yours_text_sha256") != _hash_file(path)
+                or identity.get("source_byte_sha256") != _hash_file(before_path)
+                or identity.get("target_text_sha256") != target_hash
+                or identity.get("font_sha256") != metrics.font_sha256
+                or identity.get("font_size_px") != metrics.font_size_px
+                or identity.get("line_pitch_px") != metrics.line_pitch_px):
+            return {"ready": False, "reasons": ["The saved target has no current bound native-preview receipt. Reopen the native page on a fresh attempt."]}
+        data["evidence_path"] = str(receipt_path)
+        return data
+    except Exception as exc:
+        return {"ready": False, "reasons": ["The saved target has no usable native display receipt; transcription alone cannot advance this lesson. %s" % exc]}
+
+
 def run_edit(cfg, cur, progress, card):
+    _bind_curriculum(cfg, cur)
     check_replay = None
     path = _artifact_path(cfg, card)
     variants = card.get("variants", [])
@@ -3134,6 +4442,11 @@ def run_edit(cfg, cur, progress, card):
         if chosen is None:
             chosen = variants[progress["attempts"].get(card["id"], 0) % len(variants)]
         card = dict(card)
+        # Shape and vocabulary belong to the selected drawing/command path.
+        # A retry must not inherit the primary drawing's literal landmarks.
+        for field in ("key_shape", "key_vocabulary"):
+            if field not in chosen:
+                card.pop(field, None)
         card.update(chosen)
         card["variant_index"] = variants.index(chosen)
         if existing is not None and existing != _card_lines(card, card["start"]):
@@ -3192,10 +4505,30 @@ def run_edit(cfg, cur, progress, card):
         print("Upgraded the verified project checkpoint to the revised multi-row lesson art; "
               "the prior text remains in checkpoints/.")
     target_lines = _card_lines(card, card["target"])
-    if current == target_lines:
+    # Window/reference exercises deliberately leave the art unchanged.  A
+    # freshly seeded start is not a recovered attempt: the learner must still
+    # open the editor and demonstrate the workflow recorded in the key log.
+    if current == target_lines and current != _card_lines(card, card["start"]):
         recovery_extra = {"artifact": str(path), "artifact_sha256": _hash_file(path),
                           "recovered": True}
         recovery_replay = check_replay
+        recovery_keylog = _latest_attempt_keylog(path.parent, "keys-%s" % card["id"])
+        recovery_before = path.parent / "checkpoints" / (card["id"] + "-before.txt")
+        native_recovery = _native_recovery_receipt(card, path, recovery_keylog, recovery_before)
+        if native_recovery and not native_recovery["ready"]:
+            _checkpoint(cfg, card, path, "uncredited-native-target")
+            if recovery_before.exists():
+                shutil.copy2(recovery_before, path)
+            else:
+                _write_lines_atomic(path, card["start"])
+            append_event(cfg, {"type": "card", "result": "fail", "card_id": card["id"],
+                              "module_id": card["module_id"], "reason": "missing-native-preview",
+                              "native_preview": native_recovery, "recovered": True})
+            print(" ".join(native_recovery["reasons"]))
+            cfg.hold_open()
+            return 1
+        if native_recovery:
+            recovery_extra["native_preview"] = native_recovery
         if card.get("method_alternatives") or card.get("method_requirement"):
             recovered_keylog = _latest_attempt_keylog(
                 path.parent, "keys-%s" % card["id"])
@@ -3204,7 +4537,11 @@ def run_edit(cfg, cur, progress, card):
             before_path = path.parent / "checkpoints" / (card["id"] + "-before.txt")
             before = (_read_lines(before_path, card.get("preserve_trailing_whitespace", False))
                       if before_path.exists() else card["start"])
-            recovery_replay = _attempt_replay(cfg, card, keylog, before, current)
+            recovered_receipt = _recovery_input_receipt(keylog, path, card, before)
+            recovery_replay = _attempt_replay(
+                cfg, card, keylog, before, current, recovered_receipt,
+                require_typed_input=_typed_input_required(cfg))
+            recovery_replay["target_matches"] = True
             method_family = (_method_family(cfg, card, recovery_replay)
                              if card.get("method_alternatives") else None)
             method_error = _required_method_error(cfg, card, recovery_replay)
@@ -3280,8 +4617,7 @@ def run_edit(cfg, cur, progress, card):
         for keys, why in card["recipe"]:
             print("  %-14s %s" % (keys, why))
     else:
-        print("hint: %s" % (card.get("hint") or "; then ".join(
-            why for _keys, why in card.get("recipe", []))))
+        print("hint: %s" % _scoped_hint(card))
         print("Exact command keys stay hidden until this attempt is evaluated.")
         if card.get("method_alternatives"):
             print("After success both taught approaches are shown.")
@@ -3293,14 +4629,27 @@ def run_edit(cfg, cur, progress, card):
         keylog_path = _next_attempt_keylog(path.parent, "keys-%s" % card["id"])
         keylog = str(keylog_path)
         lesson = _write_session_lesson(cfg, cur, progress, card)
-        cfg.run_editor(str(path), 1, card.get("cursor", "^"), keylog, str(lesson),
-                       card["prompt"], card.get("hint"))
+        if not _show_lesson_screen(cfg, card, lesson):
+            cfg.hold_open()
+            return 0
+        with _CursorReceiptEnv(path, keylog_path, tries) as cursor_env:
+            native_receipt = _run_native_editor(cfg, card, path, keylog, lesson, current)
         got = _read_lines(path, card.get("preserve_trailing_whitespace", False))
-        replay = _attempt_replay(cfg, card, keylog, current, got)
+        receipt = _read_cursor_receipt(cursor_env.receipt, cursor_env.token, path)
+        replay = _attempt_replay(
+            cfg, card, keylog, current, got, receipt,
+            require_typed_input=_typed_input_required(cfg))
+        if receipt:
+            replay["cursor_receipt"] = receipt
         if check_replay:
             replay["check_replay"] = check_replay
         exact_target = got == target_lines
         replay["target_matches"] = exact_target
+        if native_receipt:
+            replay["native_preview"] = native_receipt
+            if not native_receipt["ready"]:
+                exact_target = False
+                replay["method_evidence_error"] = " ".join(native_receipt["reasons"])
         method_family = (_method_family(cfg, card, replay)
                          if card.get("method_alternatives") else None)
         method_error = _required_method_error(cfg, card, replay)
@@ -3312,6 +4661,10 @@ def run_edit(cfg, cur, progress, card):
         if exact_target and method_error:
             exact_target = False
             replay["method_evidence_error"] = method_error
+        cursor_error = _cursor_goal_error(card, replay)
+        if exact_target and cursor_error:
+            exact_target = False
+            replay["method_evidence_error"] = cursor_error
         if exact_target:
             _checkpoint(cfg, card, path, "after")
             _update_manifest(cur, card, path)
@@ -3332,6 +4685,10 @@ def run_edit(cfg, cur, progress, card):
             extra.update(_keylog_fields(keylog_path))
             if "variant_index" in card:
                 extra["variant_index"] = card["variant_index"]
+            if replay.get("cursor_receipt"):
+                extra["cursor_receipt"] = replay["cursor_receipt"]
+            if native_receipt:
+                extra["native_preview"] = native_receipt
             if method_family:
                 extra["method_family"] = method_family
             if card.get("method_requirement"):
@@ -3358,6 +4715,8 @@ def run_edit(cfg, cur, progress, card):
                                     if replay.get("method_evidence_error")
                                     else "target-mismatch")}
         failure_event.update(_keylog_fields(keylog_path))
+        if native_receipt:
+            failure_event["native_preview"] = native_receipt
         append_event(cfg, failure_event)
         if card.get("kind") == "transfer":
             variants = card.get("variants", [])
@@ -3377,6 +4736,14 @@ def run_edit(cfg, cur, progress, card):
         if replay.get("method_evidence_error"):
             print(replay["method_evidence_error"])
         print("failed snapshot preserved; working artifact restored to this card's checkpoint")
+        if TEXTUAL_ROUTE is not None:
+            # The mounted result has already collected Repeat/Next/Close.
+            # Let the launcher consume that action; a second plain retry
+            # prompt would swallow the result-screen Repeat request.
+            if cfg.post_rendered:
+                cfg.post_rendered()
+            cfg.hold_open()
+            return 1
         # VD-13: a failed transfer used to stop here ("changed-art variant is
         # next"), so the learner could not retry. It now falls through to the
         # same retry prompt as every other edit; the remediation stays scheduled.
@@ -3413,7 +4780,11 @@ def _changed_review_card(cur, review, key):
         raise ValueError("card %s has no source-linked changed-art review bank" % key)
     variant_index = int(review.get("stage", 0)) % len(variants)
     card = dict(source)
-    card.update(variants[variant_index])
+    variant = variants[variant_index]
+    for field in ("key_shape", "key_vocabulary"):
+        if field not in variant:
+            card.pop(field, None)
+    card.update(variant)
     card.update({
         "id": "%s.R" % review["module_id"],
         "title": "Spaced changed-art edit",
@@ -3430,7 +4801,9 @@ def _changed_review_card(cur, review, key):
 
 def _run_review_edit(cfg, cur, progress, key, review):
     card = _changed_review_card(cur, review, key)
-    base = _paths(cfg)["projects"] / card["project_id"] / "reviews"
+    base = (_artifact_path(cfg, card).parent / "reviews"
+            if card.get("history_source_provenance") else
+            _paths(cfg)["projects"] / card["project_id"] / "reviews")
     path = base / ("review-%s.txt" % key.replace(".", "-"))
     if path.exists():
         _checkpoint(cfg, card, path, "previous")
@@ -3441,15 +4814,32 @@ def _run_review_edit(cfg, cur, progress, key, review):
         card["variant_index"] + 1))
     print("DO THIS: %s" % card["prompt"])
     lesson = _write_session_lesson(cfg, cur, progress, card)
-    cfg.run_editor(str(path), 1, card.get("cursor", "^"), keylog, str(lesson),
-                   card["prompt"], card.get("hint"))
+    if not _show_lesson_screen(cfg, card, lesson):
+        cfg.hold_open()
+        return False, card, path, None
+    with _CursorReceiptEnv(path, keylog, 1) as cursor_env:
+        native_receipt = _run_native_editor(cfg, card, path, keylog, lesson, before)
     got = _read_lines(path, card.get("preserve_trailing_whitespace", False))
-    replay = _attempt_replay(cfg, card, keylog, before, got)
+    receipt = _read_cursor_receipt(cursor_env.receipt, cursor_env.token, path)
+    replay = _attempt_replay(
+        cfg, card, keylog, before, got, receipt,
+        require_typed_input=_typed_input_required(cfg))
+    if receipt:
+        replay["cursor_receipt"] = receipt
     method_error = _required_method_error(cfg, card, replay)
     if method_error:
         replay["method_evidence_error"] = method_error
     passed = (got == _card_lines(card, card["target"])
               and method_error is None)
+    cursor_error = _cursor_goal_error(card, replay)
+    if cursor_error:
+        replay["method_evidence_error"] = cursor_error
+        passed = False
+    if native_receipt:
+        replay["native_preview"] = native_receipt
+        if not native_receipt["ready"]:
+            passed = False
+            replay["method_evidence_error"] = " ".join(native_receipt["reasons"])
     if not passed:
         _checkpoint(cfg, card, path, "failed")
         _write_lines_atomic(path, card["start"])
@@ -3457,6 +4847,9 @@ def _run_review_edit(cfg, cur, progress, key, review):
 
 
 def run_review(cfg, cur, progress, key, review):
+    _bind_curriculum(cfg, cur)
+    before_progress = project(cur, read_events(cfg))
+    before_badges = {b["id"] for b in _badge_rows(cfg, cur, before_progress) if b["earned"]}
     q = _review_question(cur, progress, review["module_id"], review.get("question_id"))
     print("Spaced review — changed conceptual variant for %s" % review["module_id"])
     print("DO THIS: retrieve the principle and choose the best-supported answer.")
@@ -3484,6 +4877,8 @@ def run_review(cfg, cur, progress, key, review):
     if artifact_path is not None:
         event.update({"artifact": str(artifact_path),
                       "artifact_sha256": _hash_file(artifact_path)})
+    if edit_replay and edit_replay.get("native_preview"):
+        event["native_preview"] = edit_replay["native_preview"]
     append_event(cfg, event)
     if completed:
         _legacy_credit(cfg, "review-" + review["module_id"])
@@ -3494,6 +4889,8 @@ def run_review(cfg, cur, progress, key, review):
             "id": key, "module_id": review["module_id"]
         }, "Q", changed, "spaced retrieval requires both concept and exact edit")
     updated = rebuild(cfg, cur)
+    if completed:
+        _celebrate_progress(cfg, cur, before_progress, updated, before_badges)
     card = next((c for c in cur["cards"] if c["id"] == key), None)
     if card is None:
         card = next(c for c in cur["cards"] if c["module_id"] == review["module_id"])
@@ -3607,7 +5004,7 @@ def _module_card_map(cur, progress, module_id):
         # VD-13: non-numeric ids such as the M0.P0 grammar primer crashed here.
         suffix = card_id.rsplit(".", 1)[1]
         label = "%02d" % int(suffix) if suffix.isdigit() else suffix
-        cells.append("%s%s" % (label, "✓" if card_id in passed else "○"))
+        cells.append("%s%s" % (label, _paint("✓", "ok") if card_id in passed else "○"))
     return "%s cards: %s" % (module_id, " ".join(cells))
 
 
@@ -3664,7 +5061,7 @@ def print_learned(cur, progress):
     print("WHAT YOU HAVE LEARNED · %d commands · oldest first" % len(deck))
     print("(× = lessons that used it; review the ones with low counts first)")
     for family, reminder, times, first in deck:
-        print("  ✓ %-3s %s" % ("×%d" % times, reminder))
+        print("  %s %-3s %s" % (_paint("✓", "ok"), "×%d" % times, reminder))
         example = K.example_for(family)
         if example:
             print("         e.g. %s" % example)
@@ -3698,7 +5095,7 @@ def learned_symbols(cur, progress):
 
 def _journey_rows(cur, progress):
     marks = {"locked": "·", "available": "○", "learning": "◐",
-             "check_ready": "◆", "review_pending": "↻", "mastered": "✓"}
+             "check_ready": "◆", "review_pending": "↻", "mastered": _paint("✓", "ok")}
     current = progress.get("current_stage")
     rows = []
     for stage in cur["stages"]:
@@ -3712,14 +5109,14 @@ def _journey_rows(cur, progress):
 
 def print_tree(cur, progress, cfg=None, *, compact=False):
     marks = {"locked": "·", "available": "○", "learning": "◐",
-             "check_ready": "◆", "review_pending": "↻", "mastered": "✓"}
+             "check_ready": "◆", "review_pending": "↻", "mastered": _paint("✓", "ok")}
     if compact:
         nodes = []
         for stage in cur["stages"]:
             cell = progress["stages"][stage["id"]]
             nodes.append("%s%s %d/%d" % (
                 marks[cell["state"]], stage["id"], cell["done"], cell["total"]))
-        print("KEY  ○ open · ◐ learning · ◆ check · ↻ review · ✓ mastered · locked")
+        print("KEY  ○ open · ◐ learning · ◆ check · ↻ review · %s mastered · locked" % _paint("✓", "ok"))
         for start in range(0, len(nodes), 6):
             print(("STAGES  " if start == 0 else "        ") + " | ".join(nodes[start:start + 6]))
         due = sum(1 for r in progress["reviews"].values() if _due(r.get("next_due")))
@@ -3736,9 +5133,11 @@ def print_tree(cur, progress, cfg=None, *, compact=False):
         if cfg:
             streak, best, total = _legacy_streak(cfg.state)
             bold, _dim, off, _green, _red, _yellow = cfg.colours
-            flame = " 🔥" if streak >= 3 else ""
-            print("%sstreak: %d day%s%s · best %d · all-time %d%s" % (
-                bold, streak, "" if streak == 1 else "s", flame, best, total, off))
+            flame = _paint("🔥", "warn") if streak else ""
+            best_text = (_paint("★ best ever", "warn") if streak and streak >= best
+                         else "best %d" % best)
+            print("%sstreak: %d day%s %s · %s · all-time %d%s" % (
+                bold, streak, "" if streak == 1 else "s", flame, best_text, total, off))
         current = progress.get("current_stage") or "complete"
         nxt = next_card(cur, progress)
         print("current stage: %s · next: %s" % (
@@ -3757,7 +5156,7 @@ def print_tree(cur, progress, cfg=None, *, compact=False):
     print("\nWHAT YOU HAVE LEARNED · %d commands (full deck with examples: vim-daily-gate --learned)"
           % len(deck))
     for _family, reminder, times, _first in deck:
-        print("  ✓ %-3s %s" % ("×%d" % times, _clip(reminder, 90)))
+        print("  %s %-3s %s" % (_paint("✓", "ok"), "×%d" % times, _clip(reminder, 90)))
     print("\nMODULES · each is one art project")
     for module in cur["modules"]:
         cell = progress["modules"][module["id"]]
@@ -3770,13 +5169,20 @@ def print_tree(cur, progress, cfg=None, *, compact=False):
     level, title, into, needed = _level(progress["xp"])
     print("XP: %d   LEVEL %d %s: %d/%d toward next level" % (
         progress["xp"], level, title, into, needed))
-    print("badges: %s" % (", ".join(progress["badges"]) or "none yet"))
+    print("\nBADGES")
+    for badge in _badge_rows(cfg, cur, progress):
+        mark = _paint("✓", "ok") if badge["earned"] else "○"
+        icon = _paint(badge.get("icon", badge["glyph"]), badge.get("style", "warn"))
+        print("  %s %s %s · %d/%d" % (
+            mark, icon, badge["name"], badge["have"], badge["need"]))
     if cfg:
         streak, best, total = _legacy_streak(cfg.state)
         bold, _dim, off, _green, _red, _yellow = cfg.colours
-        flame = " 🔥" if streak >= 3 else ""
-        print("%sstreak: %d day%s%s   best: %d   all-time completions: %d%s" % (
-            bold, streak, "" if streak == 1 else "s", flame, best, total, off))
+        flame = _paint("🔥", "warn") if streak else ""
+        best_text = (_paint("★ best ever", "warn") if streak and streak >= best
+                     else "best: %d" % best)
+        print("%sstreak: %d day%s %s   %s   all-time completions: %d%s" % (
+            bold, streak, "" if streak == 1 else "s", flame, best_text, total, off))
     nxt = next_card(cur, progress)
     print("current stage: %s" % (progress.get("current_stage") or "main path complete"))
     print("next: %s" % ((nxt["id"] + " " + nxt["title"])
@@ -3852,29 +5258,63 @@ def _viewer_module():
     return _VIEWER_MODULE
 
 
-def project_view(cfg, cur, module_id):
-    """The module's verified project strip as a viewer View, or None."""
-    V = _viewer_module()
-    module = next((m for m in cur["modules"] if m["id"] == module_id), None)
-    if not module or module.get("preview_mode") == "layers":
-        return None
+def _project_directory(cfg, module):
+    """Resolve a current or historical folder by the manifest's module identity."""
     base = _paths(cfg)["projects"] / module["project_id"]
     if not (base / "manifest.json").exists():
         # A project renamed after the learner saved work keeps its old folder;
         # find it by the module id its manifest records.
         for manifest_path in sorted(_paths(cfg)["projects"].glob("*/manifest.json")):
             try:
-                if json.loads(manifest_path.read_text(encoding="utf-8")).get("module_id") == module_id:
+                if json.loads(manifest_path.read_text(encoding="utf-8")).get("module_id") == module["id"]:
                     base = manifest_path.parent
                     break
             except (OSError, ValueError):
                 continue
+    return base
+
+
+def _lesson_view_preserving_whitespace(card, rows, before=None):
+    """Build a viewer View without normalising width-bearing trailing spaces."""
+    V = _viewer_module()
+    frames = V.split_frames(rows, card.get("frame_slices"))
+    title = "%s · %s" % (card["id"], card.get("title", ""))
+    if card.get("navigation_only"):
+        # This is cursor travel over untouched art, not artwork animation.
+        study = _lesson_tui()
+        first = rows[0] if rows else ""
+        initial = {"row": 1, "column": _cell_width(first[:len(first) - len(first.lstrip())]) + 1}
+        diagnostic_frames = []
+        for position in (initial, card["cursor_goal"]):
+            art, carets = study._navigation_overlay(rows, position)
+            diagnostic_frames.append([line for row, caret in zip(art, carets)
+                                      for line in (row, caret)])
+        return V.View(title + " · unchanged artwork · not animation",
+                      diagnostic_frames, labels=["cursor start", "cursor goal"], kind="navigation")
+    if frames and len(frames) > 1 and card.get("artifact_mode") != "still-study":
+        holds = {i: "hold" for i in range(1, len(frames)) if frames[i] == frames[i - 1]}
+        return V.View(title, frames, holds=holds)
+    start = list(before if before is not None else card.get("start", []))
+    if not start or start == list(rows):
+        return V.View(title + " · still study · not animation", [list(rows)], labels=["yours"], kind="still")
+    return V.View(title, [start, list(rows)], labels=["before", "yours"], kind="edit")
+
+
+def project_view(cfg, cur, module_id):
+    """The module's verified project strip as a viewer View, or None."""
+    V = _viewer_module()
+    module = next((m for m in cur["modules"] if m["id"] == module_id), None)
+    if not module or module.get("preview_mode") == "layers":
+        return None
+    base = _project_directory(cfg, module)
     try:
         manifest = json.loads((base / "manifest.json").read_text(encoding="utf-8"))
-        lines = _read_lines(base / "strip.txt")
     except (OSError, ValueError):
         return None
     card = next((c for c in cur["cards"] if c["id"] == manifest.get("current_card")), None)
+    if not card:
+        return None
+    lines = _read_lines(base / "strip.txt", card.get("preserve_trailing_whitespace", False))
     frames = V.split_frames(lines, card.get("frame_slices") if card else None)
     if not frames or len(frames) < 2:
         return None
@@ -3886,55 +5326,108 @@ def project_view(cfg, cur, module_id):
 def watch_your_work(cfg, cur, card, path):
     """VD-62: after a pass, play what the learner just made (first-class viewer)."""
     V = _viewer_module()
-    if not V.enabled():
-        return None
     try:
-        rows = _read_lines(path)
+        rows = _read_lines(path, card.get("preserve_trailing_whitespace", False))
     except OSError:
         return None
     views = []
     if card.get("kind") == "module_check":
         views.append(project_view(cfg, cur, card["module_id"]))
-    views.append(V.lesson_view(card, rows))
+    views.append(_lesson_view_preserving_whitespace(card, rows))
     if card.get("kind") != "module_check" and card.get("artifact") != "transfer":
         views.append(project_view(cfg, cur, card["module_id"]))
     views = [v for v in views if v]
     if not views:
         return None
     LAST_VIEW["views"] = views
+    # The preference disables automatic playback, not the explicit Watch
+    # action on the held result screen. Keep the current views available.
+    if not V.enabled():
+        return None
     return V.play(views)
 
 
 def completed_gallery(cfg, cur, progress):
-    """Every passed lesson's saved work as a playable View, in curriculum order.
+    """Every passed lesson plus eligible canonical module rewards as Views.
 
     Uses the per-lesson checkpoints (`<card>-before.txt`, `<card>-after.txt`)
     that every pass already writes, so a later lesson overwriting the project
-    strip does not lose earlier animations."""
+    strip does not lose earlier animations.  Retrospective module entries are
+    read-only reward previews and are never learner checkpoints."""
     V = _viewer_module()
     passed = set(progress.get("passed_cards", []))
     order = {card["id"]: index for index, card in enumerate(cur["cards"])}
     cards = {card["id"]: card for card in cur["cards"]}
     found = {}
-    for after in _paths(cfg)["projects"].glob("*/checkpoints/*-after.txt"):
+    for after in _paths(cfg)["projects"].glob("**/checkpoints/*-after.txt"):
         card_id = after.name[:-len("-after.txt")]
         card = cards.get(card_id)
         if card is None or card_id not in passed:
             continue
         try:
-            rows = _read_lines(after)
+            rows = _read_lines(after, card.get("preserve_trailing_whitespace", False))
             before_path = after.with_name(card_id + "-before.txt")
-            before = _read_lines(before_path) if before_path.exists() else None
+            before = (_read_lines(before_path, card.get("preserve_trailing_whitespace", False))
+                      if before_path.exists() else None)
         except OSError:
             continue
-        view = V.lesson_view(card, rows, before=before)
+        view = _lesson_view_preserving_whitespace(card, rows, before=before)
         previous = found.get(card_id)
         if previous is None or after.stat().st_mtime > previous["mtime"]:
             found[card_id] = {"card_id": card_id, "module_id": card["module_id"],
                               "title": card.get("title", ""), "view": view,
                               "frames": len(view.frames), "kind": view.kind,
                               "mtime": after.stat().st_mtime}
-    return sorted(found.values(), key=lambda row: order.get(row["card_id"], 0))
+    gallery = sorted(found.values(), key=lambda row: order.get(row["card_id"], 0))
+    # C34: older learners have genuine passed-card evidence but no generated
+    # reward-endcap event.  Add a read-only canonical animation entry; this is
+    # deliberately separate from the learner's checkpoint and never changes
+    # ``passed_cards`` or the append-only ledger.
+    for reward in _retro_module_rewards().gallery_rewards(cur, progress):
+        animation = reward["animation"]
+        view = _module_reward_view(animation, module_id=reward["module_id"],
+                                   status=reward["status"])
+        gallery.append({
+            "card_id": "%s.RETRO" % reward["module_id"],
+            "module_id": reward["module_id"],
+            "title": "%s · %s" % (reward["title"],
+                                    "prior study preview" if reward["status"] == "prior_study"
+                                    else "mastered endcap"),
+            "view": view,
+            "frames": len(view.frames),
+            "kind": "module_reward",
+            "status": reward["status"],
+            "prior_study": reward["prior_study"],
+            "mastered": reward["mastered"],
+            "legacy_completion": reward["legacy_completion"],
+            "credit": reward["credit"],
+            "mtime": 0,
+        })
+    return gallery
+
+
+def _show_retroactive_module_rewards(cfg, cur, progress):
+    """Preview unmastered retro rewards once during a normal launch.
+
+    This is a display-only route.  It intentionally runs before the daily
+    cap/cooldown decision, so an existing learner sees the new reward on the
+    next launch even when no lesson is due, while ``VIM_DAILY_SKIP`` and
+    machine-facing quiet modes remain silent.
+    """
+
+    rewards = _retro_module_rewards().startup_rewards(cur, progress)
+    if not rewards:
+        return False
+    viewer = _viewer_module()
+    if not viewer.enabled():
+        return False
+    views = [_module_reward_view(row["animation"], module_id=row["module_id"],
+                                status=row["status"])
+             for row in rewards]
+    print("RETROSPECTIVE MODULE REWARDS · prior study previews · no mastery awarded")
+    LAST_VIEW["views"] = views
+    viewer.play(views)
+    return True
 
 
 def replay_last_view():
@@ -3949,6 +5442,14 @@ def view_command(cfg, cur, progress, args):
     """`--view [MODULE|LESSON]`: play a module's project strip (default: latest
     module) or one passed lesson's saved work."""
     module_id = args[0] if args else None
+    if module_id and any(module["id"] == module_id for module in cur["modules"]):
+        # A retroactive reward is a complete canonical sequence even when the
+        # learner has no saved module strip for the newly inserted endcap.
+        reward_items = [row for row in completed_gallery(cfg, cur, progress)
+                        if row["module_id"] == module_id and row.get("kind") == "module_reward"]
+        if reward_items:
+            _viewer_module().play([reward_items[-1]["view"]])
+            return 0
     if module_id and any(card["id"] == module_id for card in cur["cards"]):
         item = next((row for row in completed_gallery(cfg, cur, progress)
                      if row["card_id"] == module_id), None)
@@ -3978,7 +5479,7 @@ def preview_project(cfg, cur, module_id, speed=0.35):
     if not module:
         print("no such module: %s" % module_id)
         return 1
-    base = _paths(cfg)["projects"] / module["project_id"]
+    base = _project_directory(cfg, module)
     path = base / "strip.txt"
     manifest_path = base / "manifest.json"
     if not path.exists() or not manifest_path.exists():
@@ -3990,7 +5491,7 @@ def preview_project(cfg, cur, module_id, speed=0.35):
         print("invalid project manifest: %s" % manifest_path)
         return 1
     card = next((c for c in cur["cards"] if c["id"] == manifest.get("current_card")), None)
-    lines = _read_lines(path)
+    lines = _read_lines(path, card.get("preserve_trailing_whitespace", False))
     if not card:
         print("manifest refers to an unknown card")
         return 1
@@ -4025,14 +5526,44 @@ def preview_project(cfg, cur, module_id, speed=0.35):
 
 
 def run(cfg, argv, *, force=False):
-    global LAST_RUN_CARD_ID, LAST_RUN_KIND
+    """Lock interactive launches before loading their curriculum contract."""
+    mode = argv[0] if argv else "run"
+    interactive_modes = {"run", "--force", "--if-due", "--continue", "--card",
+                         "--practice-card", "--practice-review", "--quiz"}
+    sys_ = __import__("sys")
+    deck_write = mode in ("--deck-miss", "--quiz")
+    interactive = (mode in interactive_modes and sys_.stdin.isatty()
+                   and sys_.stdout.isatty())
+    native_handoff = bool(os.environ.get("VIM_DAILY_NATIVE_WINDOW")
+                          and os.environ.get("VIM_DAILY_NATIVE_ACK_SOCKET"))
+    if not deck_write and not interactive and not native_handoff:
+        return _run_session(cfg, argv, force=force)
+    lock = SessionLock(_paths(cfg)["lock"])
+    try:
+        lock.__enter__()
+    except RuntimeError as exc:
+        print("Tutor session not started: %s." % exc)
+        print("The active popup owns progress; close it before starting another lesson.")
+        cfg.hold_open()
+        return 1
+    try:
+        return _run_session(cfg, argv, force=force, session_lock=lock)
+    finally:
+        lock.__exit__(None, None, None)
+
+
+def _run_session(cfg, argv, *, force=False, session_lock=None):
+    global LAST_RUN_CARD_ID, LAST_RUN_KIND, TEXTUAL_ROUTE
     LAST_RUN_CARD_ID = None
     LAST_RUN_KIND = None
+    TEXTUAL_ROUTE = None
     LAST_VIEW["views"] = None
     cur = load_curriculum(cfg.share)
+    _bind_curriculum(cfg, cur)
     events = read_events(cfg)
     progress = project(cur, events)
     save_projection(cfg, progress)
+    _native_handoff_ack(cur)
     mode = argv[0] if argv else "run"
     continuation = mode == "--continue"
     cfg.practice = mode in ("--practice-card", "--practice-review")
@@ -4069,7 +5600,7 @@ def run(cfg, argv, *, force=False):
     if mode == "--list":
         passed = set(progress["passed_cards"])
         for card in cur["cards"]:
-            print("%s  %-16s %-22s %s" % ("✓" if card["id"] in passed else "·", card["id"], card["kind"], card["title"]))
+            print("%s  %-16s %-22s %s" % (_paint("✓", "ok") if card["id"] in passed else "·", card["id"], card["kind"], card["title"]))
         return 0
     card = None
     practice_review = None
@@ -4128,6 +5659,13 @@ def run(cfg, argv, *, force=False):
     elif mode not in ("run", "--force", "--if-due", "--due-quiet", "--continue"):
         return None
 
+    # Normal CLI, manual popup and hourly popup all own the same catch-up
+    # display. Explicit card/practice and quiet machine checks stay scoped.
+    if (mode in ("run", "--force", "--if-due") and not cfg.practice
+            and __import__("sys").stdin.isatty() and __import__("sys").stdout.isatty()
+            and not any(os.environ.get(name) for name in
+                        ("VIM_DAILY_SKIP", "VIM_DAILY_ACTIVE", "NVIM"))):
+        _show_retroactive_module_rewards(cfg, cur, progress)
     explicit_force = force or mode in ("--force", "--card", "--practice-card", "--practice-review")
     if not explicit_force:
         if (not continuation and
@@ -4154,14 +5692,36 @@ def run(cfg, argv, *, force=False):
         return 0
     review = due_review(cur, progress)
     candidate = card or next_card(cur, progress)
-    lock = SessionLock(_paths(cfg)["lock"])
-    try:
-        lock.__enter__()
-    except RuntimeError as exc:
-        print("Tutor session not started: %s." % exc)
-        print("The active popup owns progress; close it before starting another lesson.")
-        cfg.hold_open()
-        return 1
+    review_due_now = (False if cfg.practice else
+                      should_run_review(events, review, candidate, explicit_force))
+    native_card = (next((row for row in cur["cards"] if row["id"] == review[0]), None)
+                   if review_due_now else candidate)
+    if practice_review:
+        native_card = card
+    if (os.environ.get("VIM_DAILY_POPUP") and os.environ.get("TMUX")
+            and (native_card or {}).get("medium") == "proportional-sjis"):
+        # No lock, attempt or grade is created in the popup. The same gate
+        # resumes the chosen scheduler route in a normal native-capable pane.
+        # The child loads and locks its own contract before showing a lesson.
+        # Release the selector's launch lock before the child starts.
+        if session_lock is not None:
+            session_lock.__exit__(None, None, None)
+        try:
+            window = _native_module("native_window_route").open_window(cfg, argv)
+        except Exception as exc:
+            print("Native tutor window unavailable: %s. No lesson was attempted." % exc)
+            return 1
+        print("Native JIS lesson opened in temporary tmux window %s." % window)
+        return 0
+    lock = session_lock or SessionLock(_paths(cfg)["lock"])
+    if session_lock is None:
+        try:
+            lock.__enter__()
+        except RuntimeError as exc:
+            print("Tutor session not started: %s." % exc)
+            print("The active popup owns progress; close it before starting another lesson.")
+            cfg.hold_open()
+            return 1
     try:
         # A held result may leave wrapped prompt fragments in a compact tmux
         # popup. Every newly selected route starts on a clean terminal page.
@@ -4170,8 +5730,6 @@ def run(cfg, argv, *, force=False):
             LAST_RUN_CARD_ID = practice_review[0]
             LAST_RUN_KIND = "review"
             return run_review(cfg, cur, progress, practice_review[0], practice_review[1])
-        review_due_now = (False if cfg.practice else
-                          should_run_review(events, review, candidate, explicit_force))
         # Memory plan 2026-09-29: before the first lesson of the day, up to
         # three deck items from the upcoming lesson's families (s skips).
         if mode in ("run", "--force", "--if-due") and not cfg.practice:
@@ -4193,4 +5751,5 @@ def run(cfg, argv, *, force=False):
             return run_concept(cfg, cur, progress, card)
         return run_edit(cfg, cur, progress, card)
     finally:
-        lock.__exit__(None, None, None)
+        if session_lock is None:
+            lock.__exit__(None, None, None)

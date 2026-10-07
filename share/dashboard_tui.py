@@ -30,14 +30,14 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 import dashboard_theme as TH  # noqa: E402
+import ui_style as UI  # noqa: E402
 import v2_runtime as V2  # noqa: E402
 
 UNAVAILABLE = 3
 
 
 def colour_enabled(env=None):
-    env = os.environ if env is None else env
-    return "NO_COLOR" not in env and env.get("TERM", "") not in ("", "dumb")
+    return UI.colour_enabled(env)
 
 
 def animations_enabled(env=None):
@@ -99,21 +99,10 @@ def _rule_values(model):
 
 def _badges(model):
     values = _rule_values(model)
-    progress = model["progress"]
-    rows = []
-    for badge in TH.BADGES:
-        if badge["rule"] == "stage":
-            cell = progress["stages"][badge["stage"]]
-            have = cell["done"] + cell["reviews_done"]
-            need = cell["total"] + cell["reviews_total"]
-            earned = cell["state"] == "mastered"
-        else:
-            have, need = values[badge["rule"]], badge["need"]
-            earned = have >= need
-        if badge.get("runtime"):
-            earned = badge["id"] in progress["badges"]
-        rows.append(dict(badge, have=min(have, need), need=need, earned=earned))
-    return rows
+    return TH.badge_status(
+        model["cur"], model["progress"],
+        {"events": model["events"], "target": model["target"], "values": values},
+    )
 
 
 def _card_state(cid, stage_state, progress):
@@ -257,12 +246,17 @@ def bar(done, total, width=10):
 
 
 def _fit(options, width):
-    """First Text whose cell width fits; the last option is cropped."""
+    """Choose the first compact form that fits without an ellipsis.
+
+    Full prose belongs on the scrollable detail pages.  The dashboard header
+    has progressively compact forms, so the final fallback crops a label at a
+    cell boundary instead of showing a misleading prose ellipsis.
+    """
     for option in options:
         if option.cell_len <= width:
             return option
     last = options[-1].copy()
-    last.truncate(max(1, width), overflow="ellipsis")
+    last.truncate(max(1, width), overflow="crop")
     return last
 
 
@@ -321,7 +315,8 @@ def header_lines(model, width, phase=0.0, animate=False):
             sparkle = Text.assemble(
                 (" " + glyphs[k % 4], colours[k % len(colours)]),
                 (glyphs[(k + 2) % 4], colours[(k + 1) % len(colours)]))
-        head = Text.assemble(" · next ", (nb["glyph"] + " " + nb["name"], "bold"))
+        head = Text.assemble(" · next ", (nb["icon"], S[nb["style"]]),
+                             (" " + nb["name"], "bold"))
         tail = Text.assemble(" %d/%d" % (nb["have"], nb["need"]), sparkle)
         badge_opts = [
             Text.assemble(badge, head, " ", bar(nb["have"], nb["need"], 10), tail,
@@ -376,15 +371,23 @@ def journey_map(model, width):
 # ------------------------------------------------------------------ labels
 
 def _clip_plain(text, width):
+    """Return a compact, word-boundary label with no prose ellipsis.
+
+    Tree rows are intentionally compact.  Their standard, unabridged prose is
+    available in the Enter detail page; this helper never emits a partial word
+    or the Unicode ellipsis marker.
+    """
     from rich.cells import cell_len
     if cell_len(text) <= width:
         return text
-    out = ""
-    for ch in text:
-        if cell_len(out + ch + "…") > width:
+    words = str(text).split()
+    out = []
+    for word in words:
+        candidate = " ".join(out + [word])
+        if cell_len(candidate) > width:
             break
-        out += ch
-    return out + "…"
+        out.append(word)
+    return " ".join(out)
 
 
 def node_label(kind, data, width):
@@ -427,12 +430,14 @@ def node_label(kind, data, width):
         return Text.assemble(("✓ ", S["ok"]), (count, S["meta"]),
                              _clip_plain(reminder, max(6, width - 2 - len(count))))
     if kind == "badge":
+        icon = data.get("icon", data["glyph"])
+        badge_style = S.get(data.get("style"), S["meta"])
         if data["earned"]:
-            return Text.assemble((data["glyph"] + " " + data["name"], S["ok"]),
+            return Text.assemble((icon + " " + data["name"], S["ok"]),
                                  (_clip_plain("  " + data["desc"],
                                               max(4, width - len(data["name"]) - 2)), S["meta"]))
         count = " %d/%d " % (data["have"], data["need"])
-        return Text.assemble((data["glyph"] + " " + data["name"], S["meta"]), " ",
+        return Text.assemble((icon + " " + data["name"], badge_style), " ",
                              bar(data["have"], data["need"], 6), count,
                              (_clip_plain(data["desc"], max(4, width - len(data["name"])
                                                         - 12 - len(count))), S["meta"]))
@@ -443,6 +448,14 @@ def node_label(kind, data, width):
                              _clip_plain(title, max(6, width - 12 - len(tail) - 6)),
                              (" %d" % count, S["ok"]), (tail, S["meta"]))
     if kind == "gallery":
+        if data.get("kind") == "module_reward":
+            status = data.get("status", "preview").replace("_", " ")
+            tail = " · %d frames · %s" % (data["frames"], status)
+            prefix = data["card_id"] + " "
+            return Text.assemble(("★ ", S["ok"]), (prefix, "bold"),
+                                 _clip_plain(data["title"].split(" · ", 1)[-1],
+                                             max(6, width - 2 - len(prefix) - len(tail))),
+                                 (tail, S["meta"]))
         if data["frames"] > 1 and data["kind"] == "lesson":
             what = "%d frames" % data["frames"]
             glyph, style = "▶ ", S["ok"]
@@ -516,7 +529,9 @@ def badge_detail(model, row):
     from rich.text import Text
     S = TH.STYLE
     out = Text()
-    out.append(row["glyph"] + " " + row["name"] + "\n", style=S["ok"] if row["earned"] else "bold")
+    icon = row.get("icon", row["glyph"])
+    badge_style = S.get(row.get("style"), S["meta"])
+    out.append(icon + " " + row["name"] + "\n", style=S["ok"] if row["earned"] else badge_style)
     out.append(row["desc"] + "\n", style=S["meta"])
     if row["earned"]:
         out.append("✓ earned\n", style=S["ok"])
@@ -862,7 +877,10 @@ def make_app(model, *, state, animate=None, colour=None):
             while parent is not None:
                 parent.expand()
                 parent = parent.parent
-            self.call_after_refresh(lambda: (tree.move_cursor(node), tree.scroll_to_node(node)))
+            # Cursor identity is model state, not a deferred paint effect.
+            # Deferring it twice can leave the first mounted screen unfocused.
+            tree.move_cursor(node)
+            self.call_after_refresh(tree.scroll_to_node, node)
 
         def fold(self, key):
             tree = self.query_one(JourneyTree)

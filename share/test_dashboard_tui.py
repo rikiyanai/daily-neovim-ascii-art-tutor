@@ -10,6 +10,7 @@ Needs Textual: when this interpreter lacks it, the test re-runs itself with
 the managed venv python from install.sh, or reports SKIP when that is absent.
 """
 import asyncio
+from contextlib import nullcontext
 import datetime as dt
 import json
 import os
@@ -68,105 +69,156 @@ def node_kind(node):
     return node.data[0] if node is not None and node.data else None
 
 
+def tree_nodes(tree):
+    out = []
+
+    def walk(node):
+        for child in node.children:
+            out.append(child)
+            walk(child)
+
+    walk(tree.root)
+    return out
+
+
 async def pilot_run(state):
     model = D.build_model(state, HERE, target=12)
+    # Keep playback isolated from a real viewer in Pilot.  The synthetic item
+    # is enough to exercise both Enter and ``w`` on a gallery row.
+    gallery_card = S0["card_ids"][0]
+    model["gallery"] = [{
+        "module_id": "M0", "card_id": gallery_card, "title": "Gallery sample",
+        "frames": 2, "kind": "lesson", "view": {"kind": "lesson", "rows": ["  o  "]},
+    }]
     app = D.make_app(model, state=state, animate=False, colour=True)
-    async with app.run_test(size=(80, 24)) as pilot:
-        await pilot.pause()
-        tree = app.query_one("#tree")
-        # Opens on the current stage with the current module under the cursor.
-        stage_nodes = list(tree.root.children)[:len(cur["stages"])]
-        s0 = stage_nodes[0]
-        assert s0.data[1]["id"] == "S0" and s0.is_expanded
-        assert all(not n.is_expanded for n in stage_nodes[1:])
-        assert node_kind(tree.cursor_node) == "module", tree.cursor_node
+    class FakeViewer:
+        def __init__(self):
+            self.calls = []
 
-        # j / k move.
-        line = tree.cursor_line
-        await pilot.press("j")
-        assert tree.cursor_line == line + 1
-        await pilot.press("k")
-        assert tree.cursor_line == line
+        def play(self, views):
+            self.calls.append(list(views))
 
-        # zc on a module closes its parent stage fold only when it is a leaf;
-        # on the stage row za toggles.
-        tree.move_cursor(s0)
-        await pilot.pause()
-        await pilot.press("z", "a")
-        assert not s0.is_expanded
-        await pilot.press("z", "o")
-        assert s0.is_expanded
-        await pilot.press("z", "c")
-        assert not s0.is_expanded
-        await pilot.press("z", "R")
-        assert all(n.is_expanded for n in stage_nodes)
-        await pilot.press("z", "M")
-        assert all(not n.is_expanded for n in tree.root.children)
-        # "z" alone followed by an unrelated key does not fold anything.
-        await pilot.press("z", "x")
-        assert not s0.is_expanded
+    fake_viewer = FakeViewer()
+    old_project_view = D.V2.project_view
+    old_viewer_module = D.V2._viewer_module
+    old_suspend = app.suspend
+    D.V2.project_view = lambda *_args, **_kwargs: None
+    D.V2._viewer_module = lambda: fake_viewer
+    app.suspend = lambda: nullcontext()
+    try:
+        async with app.run_test(size=(80, 24)) as pilot:
+            await pilot.pause()
+            tree = app.query_one("#tree")
+            # Opens on the current stage with the current module under the cursor.
+            stage_nodes = list(tree.root.children)[:len(cur["stages"])]
+            s0 = stage_nodes[0]
+            assert s0.data[1]["id"] == "S0" and s0.is_expanded
+            assert all(not n.is_expanded for n in stage_nodes[1:])
+            assert node_kind(tree.cursor_node) == "module", tree.cursor_node
 
-        # Enter on a stage toggles it; Enter on a module opens its page.
-        tree.move_cursor(s0)
-        await pilot.pause()
-        await pilot.press("enter")
-        assert s0.is_expanded
-        await pilot.press("j")
-        assert node_kind(tree.cursor_node) == "module"
-        await pilot.press("enter")
-        await pilot.pause()
-        page = app.screen
-        assert type(page).__name__ == "Page", page
-        body = page.query("Static").first().render()
-        assert "lessons" in str(body)
-        await pilot.press("escape")
-        await pilot.pause()
-        assert app.screen is not page
+            # j / k move.
+            line = tree.cursor_line
+            await pilot.press("j")
+            assert tree.cursor_line == line + 1
+            await pilot.press("k")
+            assert tree.cursor_line == line
 
-        # 80x24: nothing is wider than the pane.
-        await pilot.press("z", "R")
-        await pilot.pause()
-        assert tree.virtual_size.width <= tree.size.width, (tree.virtual_size, tree.size)
-        for widget_id in ("line1", "line2", "line3", "map", "keys"):
-            widget = app.query_one("#" + widget_id)
-            rendered = widget.render()
-            width = getattr(rendered, "cell_len", None)
-            if width is None:
-                width = len(str(rendered))
-            assert widget.region.right <= 80 and width <= widget.size.width, widget_id
+            # zc on a module closes its parent stage fold only when it is a leaf;
+            # on the stage row za toggles.
+            tree.move_cursor(s0)
+            await pilot.pause()
+            await pilot.press("z", "a")
+            assert not s0.is_expanded
+            await pilot.press("z", "o")
+            assert s0.is_expanded
+            await pilot.press("z", "c")
+            assert not s0.is_expanded
+            await pilot.press("z", "R")
+            assert all(n.is_expanded for n in stage_nodes)
+            await pilot.press("z", "M")
+            assert all(not n.is_expanded for n in tree.root.children)
+            # "z" alone followed by an unrelated key does not fold anything.
+            await pilot.press("z", "x")
+            assert not s0.is_expanded
 
-        # / search moves to the match and opens its parents.
-        await pilot.press("z", "M", "slash")
-        for ch in "stroke runs":
-            await pilot.press("space" if ch == " " else ch)
-        await pilot.press("enter")
-        await pilot.pause()
-        await pilot.pause()
-        assert node_kind(tree.cursor_node) == "stage"
-        assert tree.cursor_node.data[1]["id"] == "S1", tree.cursor_node.data
+            # Enter on a stage toggles it; Enter on a module opens its page.
+            tree.move_cursor(s0)
+            await pilot.pause()
+            await pilot.press("enter")
+            assert s0.is_expanded
+            await pilot.press("j")
+            assert node_kind(tree.cursor_node) == "module"
+            await pilot.press("enter")
+            await pilot.pause()
+            page = app.screen
+            assert type(page).__name__ == "Page", page
+            body = page.query("Static").first().render()
+            assert "lessons" in str(body)
+            await pilot.press("escape")
+            await pilot.pause()
+            assert app.screen is not page
 
-        # ? help, closed with q (q on a page closes the page, not the app).
-        await pilot.press("question_mark")
-        await pilot.pause()
-        assert type(app.screen).__name__ == "Page"
-        await pilot.press("q")
-        await pilot.pause()
-        assert type(app.screen).__name__ != "Page"
+            # 80x24: nothing is wider than the pane.
+            await pilot.press("z", "R")
+            await pilot.pause()
+            assert tree.virtual_size.width <= tree.size.width, (tree.virtual_size, tree.size)
+            for widget_id in ("line1", "line2", "line3", "map", "keys"):
+                widget = app.query_one("#" + widget_id)
+                rendered = widget.render()
+                width = getattr(rendered, "cell_len", None)
+                if width is None:
+                    width = len(str(rendered))
+                assert widget.region.right <= 80 and width <= widget.size.width, widget_id
 
-        # f feedback writes the shared feedback store with screen=dashboard.
-        await pilot.press("f")
-        await pilot.pause()
-        for ch in "tree ok":
-            await pilot.press("space" if ch == " " else ch)
-        await pilot.press("enter")
-        await pilot.pause()
-        rows = [json.loads(x) for x in
-                v2.feedback_path(state).read_text(encoding="utf-8").splitlines()]
-        assert rows[-1]["message"] == "tree ok" and rows[-1]["screen"] == "dashboard", rows
+            # Gallery playback is deliberately mocked: Pilot can verify the
+            # navigation contract without switching the host terminal.
+            gallery_module = next(n for n in tree_nodes(tree) if node_kind(n) == "gallery_module")
+            gallery_item = gallery_module.children[0]
+            tree.move_cursor(gallery_item)
+            await pilot.press("enter")
+            await pilot.pause()
+            assert fake_viewer.calls and fake_viewer.calls[-1][0] == model["gallery"][0]["view"]
+            calls = len(fake_viewer.calls)
+            await pilot.press("w")
+            await pilot.pause()
+            assert len(fake_viewer.calls) == calls + 1
 
-        # q quits.
-        await pilot.press("q")
-        await pilot.pause()
+            # / search moves to the match and opens its parents.
+            await pilot.press("z", "M", "slash")
+            for ch in "stroke runs":
+                await pilot.press("space" if ch == " " else ch)
+            await pilot.press("enter")
+            await pilot.pause()
+            await pilot.pause()
+            assert node_kind(tree.cursor_node) == "stage"
+            assert tree.cursor_node.data[1]["id"] == "S1", tree.cursor_node.data
+
+            # ? help, closed with q (q on a page closes the page, not the app).
+            await pilot.press("question_mark")
+            await pilot.pause()
+            assert type(app.screen).__name__ == "Page"
+            await pilot.press("q")
+            await pilot.pause()
+            assert type(app.screen).__name__ != "Page"
+
+            # f feedback writes the shared feedback store with screen=dashboard.
+            await pilot.press("f")
+            await pilot.pause()
+            for ch in "tree ok":
+                await pilot.press("space" if ch == " " else ch)
+            await pilot.press("enter")
+            await pilot.pause()
+            rows = [json.loads(x) for x in
+                    v2.feedback_path(state).read_text(encoding="utf-8").splitlines()]
+            assert rows[-1]["message"] == "tree ok" and rows[-1]["screen"] == "dashboard", rows
+
+            # q quits.
+            await pilot.press("q")
+            await pilot.pause()
+    finally:
+        D.V2.project_view = old_project_view
+        D.V2._viewer_module = old_viewer_module
+        app.suspend = old_suspend
     assert app.return_code in (0, None) and not app.is_running
     return model
 

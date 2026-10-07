@@ -4,6 +4,7 @@
 Falsifier: if the documented keystrokes do not produce the documented target,
 the drill is unpassable and must not ship.
 """
+import importlib.machinery
 import importlib.util, json, os, re, subprocess, sys, tempfile
 
 spec = importlib.util.spec_from_loader(

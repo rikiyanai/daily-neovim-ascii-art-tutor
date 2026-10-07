@@ -17,6 +17,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import v2_runtime as v2  # noqa: E402
+import learner_text  # noqa: E402
+import v2_keys  # noqa: E402
 
 cur = json.loads(Path(sys.argv[1] if len(sys.argv) > 1 else HERE / "curriculum-v2.json")
                  .read_text(encoding="utf-8"))
@@ -48,6 +50,25 @@ POPUP_COLUMNS = (72, 90, 169)
 MAX_WRONG_HALF_REUSE = 3
 
 failures = collections.defaultdict(list)
+
+# Negative controls cover both the normal lesson and the less-visible review
+# and compact-question surfaces. A green scan must exercise the rejection.
+for phrase in ("scope marker", "an command-line substitute", "Ex command",
+               "line address", "addressed row", "addresses column 12"):
+    fixture = {"cards": [{"id": "fixture", "variants": [{"hint": phrase}]}],
+               "questions": [{"id": "fixture.P01", "compact_choices": [phrase]}]}
+    assert len(learner_text.learner_text_failures(fixture)) == 2, phrase
+assert not learner_text.prose_issue("Select row 2; type :2s/o/O/g and press Enter.")
+failures["learner wording regression"].extend(
+    "%s: %r" % row for row in learner_text.learner_text_failures(cur))
+for (symbol, role), (meaning, short) in v2_keys.SYMBOL_ROLES.items():
+    for text in (meaning, short):
+        if issue := learner_text.prose_issue(text):
+            failures["learner wording regression"].append(f"symbol {symbol}/{role}: {issue!r}")
+for table in (v2_keys.FAMILY_TEACH, v2_keys.EXAMPLES):
+    for family, text in table.items():
+        if issue := learner_text.prose_issue(text):
+            failures["learner wording regression"].append(f"key teaching {family}: {issue!r}")
 
 
 def norm(text):
@@ -153,7 +174,7 @@ for message, locations in feedback_use.items():
             "%s: %s" % (", ".join(locations), message[:80]))
 
 total = sum(1 for q in cur["questions"] if q.get("form") == "multiple_choice")
-if failures:
+if any(failures.values()):
     for rule, rows in failures.items():
         print("FAIL %-40s %4d  e.g. %s" % (rule, len(rows), "; ".join(rows[:3])))
     print("questions checked: %d" % total)

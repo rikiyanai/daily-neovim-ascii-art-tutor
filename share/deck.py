@@ -36,8 +36,14 @@ DECK_SOURCE = HERE / "deck-v2.json"
 # Plan §3: the quiz misconceptions every deck must keep.
 REQUIRED_ITEMS = ("DK.G.01", "DK.F.01", "DK.YP.01", "DK.S.01", "DK.S.02", "DK.S.03",
                   "DK.U.01", "DK.D.01", "DK.D.02")
-# Every command family these reached modules use must have a deck family.
-COVERAGE_MODULES = ("M0", "M11")
+# Every command family the course uses must have a deck family.  The deck is a
+# course-wide reference, rather than a primer-only aid: later modules revisit
+# the same grammar with new art and also introduce registers, Visual mode,
+# macros, windows and Ex commands.
+COVERAGE_MODULES = tuple("M%d" % number for number in range(20))
+# These are pure cursor-navigation controls.  They are deliberately the only
+# omissions: word motions, counts, operators, display commands and command-line
+# forms all carry a learner-facing explanation in the authored source.
 COVERAGE_EXEMPT = {"h", "k", "l", "[count]h", "[count]k", "[count]l"}
 ITEM_KINDS = ("predict", "decode", "typed_keys")
 GRADES = ("again", "hard", "good")
@@ -360,7 +366,7 @@ def _letters(item):
 
 def item_lines(family, item, header, width, order=None):
     """The question screen for one item, already wrapped to width."""
-    lines = [header[:width]]
+    lines = wrap(header, width, "", "  ")
     lines += wrap(item["prompt"], width, "  ", "  ")
     rows = item.get("rows") or []
     if rows:
@@ -561,6 +567,15 @@ def ask_item(rt, cfg, cur, progress, item_id, header, *, source, input_fn=input,
             right_line=None if right else "RIGHT ANSWER: %s" % item["choices"][item["answer"]])
     _clear()
     for line in lines:
+        if line.startswith("✓"):
+            line = rt._paint(line, "ok")
+        elif line.startswith("✗"):
+            line = rt._paint(line, "fail")
+        elif item["kind"] == "typed_keys" and line.strip().startswith("YOUR KEYS:"):
+            shown = line.split(":", 1)[1].lstrip()
+            good = item["sample_answer"]
+            line = line[:line.index(":") + 1] + " " + rt._partial_key_colours(
+                "`" + shown + "`", "`" + good + "`")
         print(line)
     rt.note_feedback_context(question_id=item_id, answer_correct=bool(right),
                              screen=source + "-result")
