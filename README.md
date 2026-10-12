@@ -78,13 +78,13 @@ copy the previous frame, then change only the cells that move.
   │   ∞_/(_
   │   |{\\
   │   |-´ )
-  │   |/__\\
+  │   |/__\
   │    `  ´
   │      ,
   │   ∞_/(_
   │   |{\\
   │   |-,/
-  │   |/__\\
+  │   |/__\
   │    `  ´
 
 >>>>>>>>>>  edit below this line, nothing above it  <<<<<<<<<<
@@ -92,7 +92,7 @@ copy the previous frame, then change only the cells that move.
    ∞_/(_
    |{\\
    |-´ )
-   |/__\\
+   |/__\
     `  ´
 ```
 
@@ -198,81 +198,6 @@ visible; evidence-bearing cards explicitly hide them until the attempt is
 grading. The active lower buffer and every motion/write address only the
 art-only `strip.txt`.
 
-## Example terminal UI
-
-The popup and dashboard mix a tree view, progress bars, and a lesson brief in a
-single dark tmux interface. The following examples show a few representative
-screens from the project workflow.
-
-```text
-vim drill . drag selects • Cmd-C copies • questions: y copies all
-
-  0 0 0  Lv5 Tween Reader          33/80 XP  →  Lv6 Scene Author Intermediate
-  1 day • best 23                  today 0/12
-  badges 10/24 • next ++25 commands  22/25 • learn 25 different commands
-  stills S0 S1 S2 S3 S4 S5 S6 S7    animation A0 A1 A2 A3 A4 A5 A6 A7  side P
-
-  ▾ S0 Grid and overwrite          0/21 available
-  ▸ Fireworks radial loop          7/9
-  ▸ Missile fixed-width redraw     20/27  → now
-  ▸ S1 Stroke runs                0/9
-  ▸ S2 Hand mirroring             0/9
-  ▸ S3 Antialiasing               0/15
-  ▸ S4 Joint edits                0/7
-  ▸ S5 Variants and palette        0/12
-  ▸ S6 Layers and seams           0/8
-  ▸ S7 Texture and ground         0/9
-
-  YOUR ANIMATIONS 33 Enter/w plays
-  TO REVISIT 9
-  COMMANDS LEARNED 22
-```
-
-```text
-vim drill . drag selects • Cmd-C copies • questions: y copies all
-
-  0 0 0  Lv5 Tween Reader          33/80 XP  →  Lv6 Scene Author Intermediate
-  1 day • best 23                  today 0/12
-  badges 10/24 • next ++25 commands 22/25 • learn 25 different commands
-  stills S0 S1 S2 S3 S4 S5 S6 S7    animation A0 A1 A2 A3 A4 A5 A6 A7  side P
-
-  ▾ A1 Extrema and copy-vary         6/12
-  ▸ Fireworks radial loop            7/10
-  ▸ Acronian wing joint              0/1
-  ▸ Variant palette                  0/1
-  ▾ A2 In-betweens and onion skin     0/50
-  ▾ A3 Coherent anchors              0/18
-  ▾ Missile fixed-width redraw       0/2
-    ▾ Missile fixed-width redraw
-      ▾ Lesson mastery check
-  ▸ Face focus                      0/1
-  ▸ Layered scene                  0/3
-  ▸ Coherent anchors               0/12
-
-  YOUR ANIMATIONS 33  Enter/w plays
-  TO REVISIT 9
-  COMMANDS LEARNED 22
-```
-
-```text
-vim drill . drag selects • Cmd-C copies • questions: y copies all
-
-  0 0 0  Lv5 Tween Reader          33/80 XP  →  Lv6 Scene Author Intermediate
-  1 day • best 23                  today 0/12
-  badges 10/24 • next ++25 commands 22/25 • learn 25 different commands
-  stills S0 S1 S2 S3 S4 S5 S6 S7    animation A0 A1 A2 A3 A4 A5 A6 A7 side P
-
-  ▾ M11.01 Foundation edit • before → yours
-  ▾ M11.02 Develop the strip • before → yours
-  ▾ M11.11 Use @ as a substitute delimiter • before → yours
-  ▾ M11.15 Compare editing methods • before → yours
-  ▾ M11.RETRO prior study preview • 8 frames • prior study
-
-  TO REVISIT 9
-  COMMANDS LEARNED 22
-  BADGES 16/24
-```
-
 ## The three triggers
 
 1. `.zshrc` — a new interactive shell or tmux pane.
@@ -288,7 +213,7 @@ cooldown and the daily cap, so they are cheap to fire.
 ```sh
 VIM_DAILY_TARGET=12       drills per day
 VIM_DAILY_COOLDOWN=900    seconds between prompts
-VIM_DAILY_MAX_TRIES=3     attempts before it lets you through
+VIM_DAILY_MAX_TRIES=3     attempts before it lets me through
 VIM_DAILY_SKIP=1          bypass for one shell
 VIM_DAILY_CURRICULUM      path to an alternate legacy curriculum.json
 VIM_DAILY_CURRICULUM_V2   path to an alternate curriculum-v2.json
@@ -472,8 +397,8 @@ Three rules, all enforced by `test_drills.py`:
   them `#`, which is the transparency character, used as ink.
 - **SHORT** — at most 16 keystrokes and 75 seconds, at most 8 starting rows.
 - **REAL** — the recipe is driven through an actual nvim and must reach the
-target. Targets are *derived* from the art by the operation being taught,
-never retyped, because a retyped target is one no recipe can reach.
+  target. Targets are *derived* from the art by the operation being taught,
+  never retyped, because a retyped target is one no recipe can reach.
 
 Downloaded art goes through `share/intake_art.py`, which splits a text file
 into blank-line-delimited blocks, reports glyph violations and signature rows,
