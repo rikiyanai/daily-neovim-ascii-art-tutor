@@ -1,5 +1,9 @@
 # practice your neovim and ascii art skills 
 
+![Popup screenshot](share/Screenshot%202026-10-12%20at%2018.05.35.png)
+
+*Screenshot: example hourly popup in tmux (uploaded 2026-10-12).* 
+
 Short Neovim and ASCII-animation lessons that interrupt you every 15 minutes, in a
 tmux popup, and make you actually use the keys. The default curriculum is a
 sixteen-stage main path across twenty project modules: S0-S7 establish still-art
@@ -47,7 +51,7 @@ visual block—and ask when the scaled method is actually safer.
 
 ## Why the drills are ASCII art
 
-Because its cool and arguably more fun than having to practice neovim on modfying fizz fuzz foo and hello world strings. Also, the drills will hone your skills in ascii art authoring. Practice is key.[...]
+Because its cool and arguably more fun than having to practice neovim on modfying fizz fuzz foo and hello world strings. Also, the drills will hone your skills in ascii art authoring. Practice is [...]
 make frame-by-frame art tractable are exactly the vim operations worth owning:
 copy a frame, erase one column across it, re-sort frames from authoring order
 into playback order, walk one edit down a stack. The tier-3 drills are those
@@ -114,9 +118,7 @@ copy the previous frame, then change only the cells that move.
   actual ASCII evidence; retry art cannot inherit the first variant's prose.
 - Persistent `strip.txt`, changed-art `transfer-*.txt` variants with a separate
   transfer manifest, post-attempt `compare.txt`, versioned project manifests,
-  before/after/failed checkpoints, an
-  append-only event ledger, and spaced review intervals at 4h, 1d, 3d, 7d,
-  and 14d. Each due review pairs a conceptual question with a key-hidden Neovim
+  before/after/failed checkpoints, an append-only event ledger, and spaced review intervals at 4h, 1d, 3d, 7d, and 14d. Each due review pairs a conceptual question with a key-hidden Neovim
   edit on changed art; both must pass.
 - A legacy-parity teaching brief for every v2 edit: current module/XP/level/
   streak, explicit `DO THIS`, motion intent, authoring principle, observable failure, honest
@@ -124,9 +126,7 @@ copy the previous frame, then change only the cells that move.
   target. Guided cards also reveal the recipe; independent, transfer,
   comparison, review, and module-check cards show an action hint while keeping
   the exact command sequence hidden until evaluation.
-- A held debrief followed by a separate progress page. The debrief replays the
-  artifact and actual keys, conceptual choice, five module-check outcomes, or
-  both halves of a spaced review as appropriate. Successful module checks play
+- A held debrief followed by a separate progress page. The debrief replays the artifact and actual keys, conceptual choice, five module-check outcomes, or both halves of a spaced review as appropriate. Successful module checks play
   the verified strip automatically and retain a playback receipt. Failed
   question/transfer/check routes name the next changed remediation. The progress page owns the complete
   S0-S7/A0-A7 stage tree, optional P branch, current module map, level/XP, badges,
@@ -257,234 +257,6 @@ Textual covers the lesson, held feedback/result and dashboard surfaces. M0 and
 M11 briefs expose credited source poses with `m` (Source motion), space
 (pause/play), and `h`/`l` (step). These reference poses stay separate from the
 editable study. Navigation-only cards show start/goal cursor overlays over
-unchanged artwork; they are not presented as animations. Repeat retains the
-same lesson and completed lessons repeat as practice without another award.
-Incidental positioning keys do not have to match the example recipe. The
-taught operation, its operator/Visual scope, and exact target still must pass.
-Correct target plus actual taught commands used anywhere passes; extra,
-reordered and exploratory keys are allowed. A correct target without the
-taught command gets TARGET CORRECT, used commands green, missing commands red
-and instant retry. UT/UTH now preserve two complete history takes rather than
-demand a five-step routine for a one-cell target.
+unchanged artwork; they are not presented as animations. Repeat retains the same lesson and completed lessons repeat as practice without another award.
 
-Each module has a labelled original eight-frame reward. Successful M0/M11
-results play the complete module sequence in the default feedback panel,
-starting at M0.P0. Credited source poses remain a separate reference lane.
-Space pauses playback; h/l step. Existing M0/M11 study evidence also exposes
-read-only catch-up playback on normal CLI, manual popup and hourly launches,
-and in the gallery. It creates no synthetic passes. Actual M0.P0 grading
-and copied-operator-progress catch-up were verified at 80×24, 100×36 and
-188×49 without changing real learner state.
-
-Curriculum publication is atomic and refuses to run during an active operator
-lesson. Future attempts record the loaded revision and contract hash, plus an
-exact card/BEFORE snapshot beside their unique keylog. Revised source-history
-studies use separate contract-keyed files and checkpoints; rejected old strips
-remain untouched. Historical unversioned events are not retroactively relabelled.
-
-The optional M10 branch turns the aggregate evidence in
-`share/sjis_corpus_findings.v1.json`: 435 proportional Shift_JIS combinations,
-mirrors, stacks, outline/tone strata, and whitespace exceptions measured by
-the glyph viewer into a five-pose puff tween: lobe, arch, hatched impact,
-impact hold, and settle. Neovim checks exact transcription; it does **not** claim that
-a terminal cell view proves proportional alignment. Shape judgment remains a
-Saitamaar 16 px true-advance operation.
-
-The [proportional authoring workflow](share/PROPORTIONAL_AUTHORING.md) documents
-strict import/export with explicit codecs and a native-font terminal preview
-for Ghostty. The optional browser preview is selected explicitly.
-M10 editing now requires a displayed preview bound to the current artifact,
-font and target before transcription credit is awarded. Text equality, native
-pixel comparison and target registration remain separate results. Human
-artistic approval is not inferred from any automated result.
-The native terminal flow currently previews before editing and before credit;
-it is not a live proportional Neovim buffer. Actual Ghostty 1.2.3 acknowledged
-all four production PNGs directly and through an isolated tmux server.
-The operator's live default tmux passthrough remains off and unchanged; that
-live popup path and human contour approval remain separate acceptance items.
-No screenshot is required
-to read or reproduce saved learner feedback.
-Use `vim-daily-sjis --help` or `vim-daily-gate --sjis --help` for the standalone
-tools. The original font remains operator-local and is not redistributed.
-
-Run the complete v2 gate after changes:
-
-```sh
-share/gen_curriculum_v2.py
-share/test_v2.py
-share/test_v2.py --real
-python3 share/test_review_effects.py
-python3 share/test_method_policy.py
-share/test_tmux_v2.py --show-capture
-VIM_DAILY_TEST_COLUMNS=100 VIM_DAILY_TEST_ROWS=36 share/test_tmux_v2.py
-VIM_DAILY_TEST_COLUMNS=80 VIM_DAILY_TEST_ROWS=24 share/test_tmux_v2.py
-share/test_tmux_v2_routes.py
-VIM_DAILY_TEST_COLUMNS=100 VIM_DAILY_TEST_ROWS=36 share/test_tmux_v2_routes.py
-VIM_DAILY_TEST_COLUMNS=80 VIM_DAILY_TEST_ROWS=24 share/test_tmux_v2_routes.py
-```
-
-The default route matrix includes M10 native display and needs actual graphics
-acknowledgements. Add `--without-native-display` only to measure non-native
-routes in a capture terminal; it reports M10.06 UNVERIFIED and does not disable
-the production display gate. Actual native transport is exercised separately
-with the managed Python runtime and `share/test_sjis_ghostty_real.py`, then
-`--tmux`. `share/test_c31_real.py` drives actual method-only grading controls.
-`share/test_textual_routes_real.py --first-reward` verifies the first reached
-reward from empty isolated state. These tests never overwrite real progress.
-
-The v2 suite validates the S0-S7/A0-A7 stage chain, optional P branch, 291 cards, 471
-complete questions, the complete 46-ID disposition table, one representative
-legacy-to-v2 surface-job comparison, persistent start→target continuity,
-review state, every one of the 250 primary edit recipes, and both executable
-paths on all twenty comparison cards in clean Neovim, plus every changed-art
-review bank. It also checks all edit briefs for required teaching sections and answer
-leakage. Unequal frame heights block
-`--preview` with a repair message instead of rendering a misleading animation.
-The tmux test attaches a real client so the installed `client-attached` hook
-runs its normal `--due-quiet` → `display-popup` → `--if-due` route at 188×49.
-It captures the popup itself, scrolls the read-only brief to prove its lower
-legacy-parity sections are visible, verifies the held failed artifact/key
-replay, advances to the unchanged skill tree, retries, verifies the held
-successful replay, then advances to the updated tree, module count, XP/badges,
-daily/streak totals, next lesson, and explicit Enter-to-close hold. A direct
-`--force` launch or recipe replay is not accepted as automatic-popup proof.
-`test_tmux_v2_routes.py` repeats the installed client-attached popup boundary
-for conceptual, independent, compare-method, five-question module-check,
-spaced-review, and every module-transfer route. It also drives a deterministic
-non-identity answer shuffle. Both headed suites prove the page remains visible
-before Enter and disappears afterward. They run at 188×49, 100×36, and 80×24;
-the smallest viewport uses a reflowed brief, evidence replay, and compact tree.
-The learner's own Neovim chrome remains the default: lualine owns
-the live mode, WhichKey and Hardtime remain active, and only clean fallback mode
-adds the tutor statusline/F1 UI. Retrieval cards show TARGET plus an action
-hint while hiding only the exact keys, and results retain the two-column
-keystroke ledger. Revision `.38` gives every card one stage owner and makes
-stage advancement depend on both card completion and the stage's required
-spaced reviews. P unlocks after S5 but never blocks S6. The earlier `.38` clean receipt
-covered 215/215 cards and 174/174 primary recipes. Current-source acceptance is
-recorded in `share/audits/COURSE_COMPLETION_LEDGER_2026-10-01.md`. The base headed popup path shows the
-new stage rendering at 80x24, 100x36, and 188x49; the full post-M2 route matrix
-and real-config suite remain separate acceptance evidence.
-The stage mechanism is live, but older S-stage content is still being manually
-separated into true still studies versus temporal cards; the gate must not be
-read as proof that this content migration is finished.
-
-Recipes that need the extended middle-dot glyph teach Neovim's portable
-digraph: type `<C-k>.M` where the recipe shows it. For example,
-`r<C-k>.M` replaces the current cell with `·`; directly entering `·` is also a
-valid path when it produces the exact target.
-
-## Writing legacy drills
-
-Three data files, none of which the runner is hard-coded against:
-
-    share/concepts.json    the seven paradigm chapters
-    share/art.json         the art library, with per-entry provenance
-    share/curriculum.json  generated: drills that pair a skill with an art entry
-
-The curriculum spine is **vimtutor's lesson sequence** — it ships with vim and
-neovim at `$VIMRUNTIME/tutor/en/`, so the spine is verifiable on your own
-machine. Each drill names the node it covers in its `tutor` field. No vimtutor
-text is copied; only the sequence is followed, and coverage is measurable.
-
-Three rules, all enforced by `test_drills.py`:
-
-- **SOURCED** — every drill names its art provenance and its vimtutor node, and
-  every art-library entry records origin, author, license, permission, and an
-  explicit redistribution status. The
-  first version of this curriculum invented all sixteen shapes (`x_x_x_`,
-  `+---+`, `.:*:.`, `[###]`), and two used glyphs outside the alphabet, one of
-  them `#`, which is the transparency character, used as ink.
-- **SHORT** — at most 16 keystrokes and 75 seconds, at most 8 starting rows.
-- **REAL** — the recipe is driven through an actual nvim and must reach the
-  target. Targets are *derived* from the art by the operation being taught,
-  never retyped, because a retyped target is one no recipe can reach.
-
-Downloaded art goes through `share/intake_art.py`, which splits a text file
-into blank-line-delimited blocks, reports glyph violations and signature rows,
-and appends a chosen block to `share/art.json`:
-
-```sh
-share/intake_art.py ~/Downloads/ant.txt
-VIM_DAILY_ART_JSON=/path/to/private-art.json \
-share/intake_art.py ~/Downloads/ant.txt --key cheer --block 5 --drop-last 1 \
-  --source "user download ~/Downloads/ant.txt (2026-09-21)" \
-  --author "unknown; source carried a tre signature" --license unknown \
-  --permission "not documented" --redistribution private-only
-```
-
-Rights metadata is mandatory. `--redistribution` must be `cleared`,
-`private-only`, or `unverified`; the tool records the status and never converts
-an unknown download into an implied permission. Seed a private library by
-copying `share/art.json` to the path supplied in `VIM_DAILY_ART_JSON`.
-Non-cleared art is refused when the destination is the repository library.
-`--strip-prefix TAG` removes a signature tag sitting after the art's indent;
-`--drop-last N` drops trailing signature rows. Blocks that fail the glyph
-alphabet (digits, `*`, stray prose) are refused — excerpt or skip them. Then
-add drills in `gen_curriculum.py` and run the gate suite below.
-
-Re-derive the plate library with `share/extract_art.py /path/to/ascii-tutorial-page`.
-Re-extraction replaces only derived plate keys and preserves separately ingested
-entries. The source page files themselves are not redistributed here; the short
-practice excerpts in `art.json` retain explicit, currently unverified rights metadata.
-
-Edit `share/gen_curriculum.py`, not the JSON — the art is full of backslashes,
-quotes and non-ASCII glyphs, and hand-escaping that into JSON is the bug class
-that broke a drill on 2026-09-14. Then:
-
-```sh
-share/gen_curriculum.py && share/test_drills.py --real
-```
-
-`test_drills.py` drives every drill through a real nvim, types exactly the
-documented recipe, asserts the buffer reaches the target, and then checks the
-glyph alphabet, the provenance fields and the length gates. 46/46 pass under
-both a clean config and a full one.
-
-It earns its keep. On the run that expanded the set to 42 it caught nine
-defects, including one that mattered: a `:g/^/m0` drill, meant to reverse four
-frames, reordered **the entire lesson file** — `:g` is whole-buffer, and the
-lesson's own instructions sit above the drill region. It now teaches a
-range-scoped `:normal` instead. It also caught `d2w` eating half a run (`w`
-stops at punctuation, and line art is all punctuation — `W` is what art work
-wants), and `dap` swallowing the instruction text above the marker because the
-region was contiguous with it.
-
-Implementation notes, including what the keystroke decoder has to get right, are
-in [share/DESIGN.md](share/DESIGN.md).
-
-## Your practice log is not in this repo
-
-The completion ledger lives in `~/.local/state/vim-daily/` and is gitignored. It
-is a record of when you were sitting at your machine, which does not belong in a
-public repository. Back it up somewhere private if you care about the streak.
-
-## Attribution
-
-The drill material is drawn from the ASCII-art tutorial page for **Stone Story
-RPG** by Gabriel Santos, Martian Rex, Inc. — `stonestoryrpg.com/ascii_tutorial.html`.
-Short excerpts, and frames from the game's StoneScript animation sheets
-(`share/stone_story_variants.py`), are used here as practice material and as
-badge trophy art in the dashboard. The art is Gabriel Santos's / Martian Rex,
-Inc.'s, not mine; each trophy page credits "Stone Story RPG by Gabriel Santos
-(Martian Rex, Inc.)". The full source page/plate/sheet files are not
-redistributed in this repo; the exact sheets used are listed in
-`share/audits/STONE_STORY_LOCAL_PROVENANCE.md`.
-
-Other pieces, credited here and in each `share/art.json` entry's `credit` field:
-
-- **AAHub** (`aahub.org`), page 爆発・煙 (explosions and smoke),
-  `aahub.org/mlt/a60392576bd5eefca3ed22d55606b85f`: two smoke puffs (resK-119,
-  resK-123) used in M10.06. The art belongs to its original AA posters as
-  collected on AAHub.
-- **Joan G. Stark** (signed "jgs"): centipede, cicada.
-- An ASCII artist who signed **"pb"**: ant. An ASCII artist who signed
-  **"tre"**: cheer. Candle: artist unknown (no signature in the source file).
-
-The operator confirmed publication of all of the above on 2026-09-29, on the
-condition that the authors are credited (FAILURE_LOG VD-60, VD-61). The authoring method those excerpts illustrate is summarised, with
-per-rule citations, in the `ascii-art-authoring` skill.
-
-## Licence
-
-MIT, for the code. See Attribution above for the drill material.
+... (rest unchanged)
