@@ -1,8 +1,8 @@
 # practice your neovim and ascii art skills 
 
 ![Popup screenshot](share/Screenshot%202026-10-12%20at%2018.05.35.png)
-
-*Screenshot: example hourly popup in tmux (uploaded 2026-10-12).* 
+![Popup screenshot](share/Screenshot%202026-10-12%20at%2018.07.20.png)
+![Popup screenshot](share/Screenshot%202026-10-12%20at%2018.08.24.png)
 
 Short Neovim and ASCII-animation lessons that interrupt you every 15 minutes, in a
 tmux popup, and make you actually use the keys. The default curriculum is a
@@ -22,7 +22,7 @@ for, because the keystrokes are recorded.
 ```
   YOU TYPED                THE RECIPE ASKS FOR
   cw~._.~._                cw~._.~._            ok
-                           .                    you skipped this
+                            .                    you skipped this
   <Esc>0                   <Esc>0               ok
   lll                      f.;;                 not this
 ```
