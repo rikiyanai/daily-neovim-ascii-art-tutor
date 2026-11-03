@@ -81,9 +81,13 @@ def screen(frames: dict[tuple[int, str], tuple[str, ...]] | None, *, path: Path,
         wide_rows = sum(cell_width(row) != W for frame in frames.values() for row in frame)
         if wide_rows:
             rows.append(f"WIDTH WARNING: {wide_rows} art rows occupy more than {W} terminal columns (e.g. full-width glyphs).")
-        rows.extend(["CURRENT FRAME (dots are transparent spaces)", "   +" + "-" * W + "+",
-                     *["   |" + line + "|" for line in frames[(view, pose)]],
-                     "   +" + "-" * W + "+", "", "WALK KEY FRAMES — current view", *filmstrip(frames, view)])
+        border = "+" + "-" * W + "+"
+        rows.extend(["ACTIVE FRAME                  IDLE REFERENCE (dots are transparent)",
+                     "   " + border + "     " + border,
+                     *["   |" + active + "|     |" + reference + "|"
+                       for active, reference in zip(frames[(view, pose)], frames[(view, "idle")])],
+                     "   " + border + "     " + border,
+                     "", "WALK KEY FRAMES — current view", *filmstrip(frames, view)])
         rows.append("     " + "   ".join("^".center(12) if not idle and step == i else " ".center(12) for i in range(4)))
     return "\n".join(row[:size.columns] for row in rows[:size.lines - 1]) + "\n"
 
